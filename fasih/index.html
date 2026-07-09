@@ -1,63 +1,72 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <title>Dashboard FASIH Pendataan SE 2026</title>
-    
-    <meta property="og:title" content="Dashboard FASIH Pendataan SE 2026">
-    <meta name="description" content="Dashboard FASIH Pendataan SE 2026 di Kabupaten Kapuas Hulu">
-    <meta property="og:description" content="Dashboard FASIH Pendataan SE 2026 di Kabupaten Kapuas Hulu">
-    
-    <meta property="og:image" content="https://se-6108.github.io/fasih/icon.png">
-    <meta property="og:image:width" content="300">
-    <meta property="og:image:height" content="300">
-    <meta property="og:type" content="website">
-    
-    <meta property="og:url" content="https://se-6108.github.io/fasih/">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting to Dashboard FASIH...</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    <link rel="icon" type="image/png" href="icon.png">
-    <link rel="shortcut icon" href="icon.png">
+  <style>
+    body { font-family: 'Montserrat', sans-serif; }
+    .custom-spinner { 
+      width: 3.5rem; 
+      height: 3.5rem; 
+      border: 4px solid #bfdbfe; 
+      border-top-color: #2563eb; 
+      border-radius: 50%; 
+      animation: spin 1s linear infinite; 
+      margin: 0 auto; 
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
 
-    <style>
-        body, html { 
-            margin: 0; 
-            padding: 0; 
-            width: 100%; 
-            height: 100%; 
-            overflow: hidden; 
-            background-color: #f0f2f5; 
-        }
-        
-        .iframe-container {
-            position: fixed; 
-            top: 0; left: 0; right: 0; bottom: 0;
-            width: 100%; height: 100%;
-            z-index: 1;
-            overflow: hidden;
-            -webkit-overflow-scrolling: touch;
+  <script>
+    // =========================================================================
+    // TEMPELKAN URL WEB APP GOOGLE APPS SCRIPT (EXEC) ANDA DI BAWAH INI:
+    // =========================================================================
+    const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx_xJs4SGPhbZxrlJcsLd2AZN9wIbLxpFbEqcsPVB4rlMmtyNzAlsFtOIyvzdFdPLQ/exec";
+
+
+    window.onload = function() {
+        // Validasi jika URL belum diganti
+        if (GAS_WEBAPP_URL.includes("AKfycb...")) {
+            document.getElementById('loading-text').innerText = "URL WEB APP BELUM DIKONFIGURASI!";
+            document.getElementById('loading-text').classList.remove('text-blue-600');
+            document.getElementById('loading-text').classList.add('text-red-600');
+            document.getElementById('spinner').style.display = 'none';
+            return;
         }
 
-        iframe {
-            width: 100%;
-            border: none;
-            position: absolute;
-            left: 0;
-            top: -4px;
-            height: calc(100% + 4px); 
-            display: block;
-        }
-    </style>
+        // Jalankan pengalihan otomatis langsung saat halaman selesai dimuat
+        window.location.href = GAS_WEBAPP_URL;
+    };
+  </script>
 </head>
-<body>
+<body class="h-screen w-screen bg-blue-50/30 flex flex-col items-center justify-center text-gray-800 p-4">
 
-    <div class="iframe-container">
-        <iframe 
-            src="https://script.google.com/macros/s/AKfycbx_xJs4SGPhbZxrlJcsLd2AZN9wIbLxpFbEqcsPVB4rlMmtyNzAlsFtOIyvzdFdPLQ/exec"
-            allow="geolocation; microphone; camera; fullscreen">
-        </iframe>
-    </div>
+  <div class="text-center p-8 bg-white border border-gray-200 rounded-[2rem] shadow-xl max-w-sm w-full transition-all">
+    
+    <div id="spinner" class="custom-spinner mb-5"></div>
+    
+    <h2 id="loading-text" class="text-xs text-blue-600 font-black tracking-widest animate-pulse uppercase">
+      Mengarahkan ke Dashboard FASIH...
+    </h2>
+    
+    <p class="text-[11px] text-gray-400 mt-4 font-medium leading-relaxed">
+      Jika halaman tidak berpindah secara otomatis dalam beberapa detik, silakan klik tombol manual di bawah ini:
+    </p>
+    
+    <a href="#" onclick="window.location.href = GAS_WEBAPP_URL; return false;" 
+       class="inline-block mt-5 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl text-xs font-bold transition uppercase tracking-wider shadow-md active:scale-95">
+      Buka Dashboard
+    </a>
+  </div>
+
+  <div class="mt-6 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+    Dashboard Monitoring FASIH
+  </div>
 
 </body>
 </html>
