@@ -313,10 +313,9 @@
 
 <script>
   // =========================================================================
-  // MASUKKAN URL API GAS ANDA (HASIL DEPLOY BARU) DI BAWAH INI:
+  // MASUKKAN URL API GAS ANDA DI BAWAH INI:
   // =========================================================================
   const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwIJ1XuJqzDpgjyPEHmbdENzrtAuLBWuEWx8Kj_hdwi98qdeIVlqNGqgwLSwKy3_ic/exec";
-
 
   let DASH_DATA = [];
   let dashFilteredData = [];
@@ -399,7 +398,6 @@
       const badgeTarget = document.getElementById('badgeTarget');
       if (badgeTarget) badgeTarget.innerText = `TARGET PROGRESS : ${timing.y.toFixed(2)}%`;
 
-      // API FETCH MENGGANTIKAN GOOGLE.SCRIPT.RUN
       fetch(GAS_API_URL)
         .then(response => {
            if (!response.ok) throw new Error("Jaringan bermasalah atau URL API salah.");
@@ -416,9 +414,24 @@
           DASH_DATA = res.data;
           if(globalLoader) globalLoader.classList.add('hidden');
           
+          let warningHTML = "";
+          if (res.integrityErrorCount > 0) {
+              warningHTML = `
+                <div class="bg-red-50 border border-red-300 text-red-800 p-3.5 rounded-xl mb-4 text-xs shadow-sm text-left animate-pulse">
+                    <b class="flex items-center gap-1.5 mb-1 text-[13px]">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                       WARNING: Integritas Data Pusat
+                    </b>
+                    Sistem mendeteksi ada <b>${res.integrityErrorCount} Assignment</b> yang jumlah laporannya <i>(Open/Draft/Submit/dkk)</i> tidak sinkron dengan kolom <b>'Total Target'</b>.
+                    <br><br><span class="italic text-red-600 opacity-90">Sistem otomatis menggunakan <b>Total Target Absolut</b> untuk mengunci persentase pencapaian agar performa petugas tetap akurat.</span>
+                </div>
+              `;
+          }
+
           Swal.fire({
               title: '<span class="text-lg font-black text-gray-800 tracking-wide uppercase">Info Target Pendataan</span>',
               html: `
+                  ${warningHTML}
                   <div class="text-sm text-gray-700 text-left space-y-3 mt-2 font-medium">
                       <p>Saat ini Pendataan SE memasuki <b class="text-blue-600">Hari ke-${timing.x}</b>.</p>
                       <p>Batas target proporsional saat ini adalah <b class="text-purple-600">${timing.y.toFixed(2)}% dari total assignment tiap petugas</b> <span class="text-gray-500 italic text-xs">(akumulasi target harian Hari ke-${timing.effDay})</span>.</p>
@@ -433,18 +446,12 @@
                           
                           <div class="mt-3 p-2.5 bg-amber-100 text-amber-900 border border-amber-300 rounded-lg shadow-sm">
                              <b class="flex items-center gap-1 text-[13px] mb-1">💰 Syarat Pencairan Termin 1:</b>
-                             Sebagai informasi, per tanggal <b>15 Juli 2026</b> minimal capaian persentase <b>APPROVED</b> harus menyentuh angka <b>40%</b> agar dapat dilakukan pencairan termin 1 (berlaku untuk seluruh PPL dan PML).
+                             Sebagai informasi, per tanggal <b>15 Juli 2026</b> minimal capaian persentase <b>APPROVED</b> harus menyentuh angka <b>40%</b> agar dapat dilakukan pencairan termin 1.
                           </div>
-                      </div>
-
-                      <div class="mt-5 pt-3 border-t border-gray-100 text-center">
-                          <span class="text-[9px] font-light text-gray-400 tracking-wider">
-                              Hubungi Fayadh untuk saran perbaikan dashboard dan request fitur 😎
-                          </span>
                       </div>
                   </div>
               `,
-              icon: 'info',
+              icon: res.integrityErrorCount > 0 ? 'warning' : 'info',
               confirmButtonText: 'OKE, SIAP!',
               buttonsStyling: false,
               customClass: {
@@ -564,7 +571,8 @@
     });
 
     dashFilteredData.forEach(row => {
-      row.calcTotal = row.open + row.draft + row.submit + row.reject + row.approve;
+      // FIX PERHITUNGAN BARU: Gunakan Target Absolut
+      row.calcTotal = row.totalAbsolut || (row.open + row.draft + row.submit + row.reject + row.approve);
       row.agg_submit = row.submit + row.reject + row.approve; 
       
       tSls++;
@@ -651,9 +659,13 @@
     let htmlContent = '';
     pageData.forEach((row, index) => {
       let prioBadge = row.prioritas === 1 ? `<span class="ml-1 bg-amber-100 text-amber-700 border border-amber-300 px-1.5 py-0.5 rounded text-[8px] font-black tracking-wider shadow-sm">PRIORITAS</span>` : '';
+      
       htmlContent += `
-        <tr class="even:bg-blue-50/20 odd:bg-white hover:bg-blue-100/30 transition border-b border-blue-100">
-          <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-blue-100">${startIdx + index + 1}</td>
+        <tr class="even:bg-blue-50/20 odd:bg-white hover:bg-blue-100/30 transition border-b border-blue-100 ${row.isMismatch ? 'bg-red-50/30' : ''}">
+          <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-blue-100">
+             ${startIdx + index + 1}
+             ${row.isMismatch ? '<br><span title="Target Mismatch" class="text-red-500 text-[10px]">⚠️</span>' : ''}
+          </td>
           <td class="px-4 py-3 font-mono text-[11px] text-blue-800 font-bold align-middle border-r border-blue-100">${row.idSls}</td>
           <td class="px-4 py-3 leading-tight align-middle"><span class="font-bold text-gray-800 text-xs">${row.nmsls}</span> ${prioBadge}<br><span class="text-[9px] text-gray-500 uppercase font-bold">${row.desa} - Kec. ${row.kec}</span></td>
           <td class="px-4 py-3 leading-tight align-middle">
@@ -989,7 +1001,7 @@
     const exportData = dashFilteredData.map((row, idx) => ({
       "No": idx + 1, "ID SLS": row.idSls, "Kecamatan": row.kec, "Desa": row.desa, "Nama SLS": row.nmsls, "Prioritas": row.prioritas === 1 ? "Ya" : "Tidak", 
       "PJ Kuda": row.pj, "PML": row.pml, "Email PML": row.emailPml, "PPL": row.ppl, "Email PPL": row.emailPpl,
-      "Open": row.open, "Draft": row.draft, "Submit": row.submit, "Reject": row.reject, "Approve": row.approve, "Total": row.calcTotal
+      "Open": row.open, "Draft": row.draft, "Submit": row.submit, "Reject": row.reject, "Approve": row.approve, "Total Target": row.calcTotal
     }));
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
