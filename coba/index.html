@@ -41,7 +41,7 @@
     .custom-spinner { width: 3.5rem; height: 3.5rem; border: 4px solid #bfdbfe; border-top-color: #2563eb; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .dashboard-table th { position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: pointer;}
-    .dashboard-table th:hover { background-color: #dbeafe; }
+    .dashboard-table th:hover { opacity: 0.95; }
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     
     .ts-control { border-radius: 0.75rem !important; border-color: #e2e8f0 !important; padding: 0.75rem 1rem !important; font-size: 0.75rem !important; font-family: 'Montserrat', sans-serif !important; background-color: #ffffff !important; font-weight: 700; text-transform: uppercase; color: #1e293b !important;}
@@ -92,8 +92,8 @@
            </div>
         </div>
         <div class="flex gap-2 relative z-10 overflow-x-auto pb-1">
-           <!-- TOMBOL ADMIN PANEL -->
-           <button onclick="authAdminPanel()" class="bg-indigo-900 hover:bg-black text-white px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-md border border-indigo-700 uppercase tracking-wide mr-2">
+           <!-- TOMBOL NINJA ADMIN (Hidden by default) -->
+           <button id="btnAdminUpload" onclick="authAdminPanel()" class="hidden bg-indigo-900 hover:bg-black text-white px-4 py-2.5 rounded-lg text-xs font-bold transition items-center gap-2 shadow-md border border-indigo-700 uppercase tracking-wide mr-2">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg> Admin Upload
            </button>
            <button onclick="downloadImage()" id="btnImage" class="bg-blue-50 hover:bg-white text-blue-700 px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-sm border border-blue-200 uppercase tracking-wide">
@@ -162,8 +162,10 @@
          <button id="btnTab3" onclick="switchTab(3)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Progress PML</button>
          <button id="btnTab4" onclick="switchTab(4)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Progress Kecamatan</button>
          <button id="btnTab5" onclick="switchTab(5)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Visualisasi Data</button>
+         <!-- TIGA TAB BARU ANALISA -->
          <button id="btnTab6" onclick="switchTab(6)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-amber-500 hover:text-amber-600 transition flex gap-1 items-center">📊 Analisa Keluarga</button>
-         <button id="btnTab7" onclick="switchTab(7)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-purple-500 hover:text-purple-600 transition flex gap-1 items-center">📈 Analisa Usaha</button>
+         <button id="btnTab7" onclick="switchTab(7)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-purple-500 hover:text-purple-600 transition flex gap-1 items-center">📈 Analisa BKU</button>
+         <button id="btnTab8" onclick="switchTab(8)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-emerald-500 hover:text-emerald-600 transition flex gap-1 items-center">🏡 Analisa Usaha Keluarga</button>
       </div>
 
       <div class="px-6 py-3 bg-gray-50/50 flex gap-2 items-center border-b border-blue-100 flex-wrap" id="filterArea">
@@ -191,7 +193,7 @@
          <!-- TAB 1: DETAIL SLS -->
          <div id="tab1-content" class="flex-1 w-full dashboard-table block">
            <table class="w-full text-left border-collapse min-w-[1200px]">
-             <thead class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50 border-b border-blue-200">
+             <thead class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50 border-b border-blue-200 sticky top-0 z-10">
                <tr>
                  <th class="px-4 py-3 bg-blue-50 border-r border-blue-100 w-12 text-center rounded-tl-2xl">No</th>
                  <th onclick="sortTabel('idSls')" class="px-4 py-3 bg-blue-50 border-r border-blue-100 hover:bg-blue-100 transition">ID SLS ↕</th>
@@ -211,7 +213,7 @@
          <!-- TAB 2: PROGRESS PPL -->
          <div id="tab2-content" class="hidden flex-1 w-full dashboard-table">
            <table class="w-full text-left border-collapse min-w-[1450px]"> 
-             <thead class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50 border-b border-blue-200">
+             <thead class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50 border-b border-blue-200 sticky top-0 z-10">
                <tr>
                  <th class="px-4 py-3 bg-blue-50 border-r border-blue-100 w-12 text-center rounded-tl-2xl">No</th>
                  <th onclick="sortTabelPpl('ppl')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition cursor-pointer">Nama PPL ↕</th>
@@ -235,7 +237,7 @@
          <!-- TAB 3: PROGRESS PML -->
          <div id="tab3-content" class="hidden flex-1 w-full dashboard-table">
            <table class="w-full text-left border-collapse min-w-[1550px]">
-             <thead class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50 border-b border-blue-200">
+             <thead class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50 border-b border-blue-200 sticky top-0 z-10">
                <tr>
                  <th class="px-4 py-3 bg-blue-50 border-r border-blue-100 w-12 text-center rounded-tl-2xl">No</th>
                  <th onclick="sortTabelPml('pml')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition cursor-pointer">Nama PML ↕</th>
@@ -262,7 +264,7 @@
          <!-- TAB 4: PROGRESS KECAMATAN -->
          <div id="tab4-content" class="hidden flex-1 w-full dashboard-table">
            <table class="w-full text-left border-collapse min-w-[950px]">
-             <thead class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50 border-b border-blue-200">
+             <thead class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50 border-b border-blue-200 sticky top-0 z-10">
                <tr>
                  <th class="px-4 py-3 bg-blue-50 border-r border-blue-100 w-12 text-center rounded-tl-2xl">No</th>
                  <th onclick="sortTabelKec('kec')" class="px-4 py-3 bg-blue-50 border-r border-blue-100 hover:bg-blue-100 transition cursor-pointer">Kecamatan ↕</th>
@@ -294,42 +296,67 @@
            </div>
          </div>
 
-         <!-- TAB 6: ANALISA KELUARGA (BARU) -->
-         <div id="tab6-content" class="hidden flex-1 w-full dashboard-table">
+         <!-- TAB 6: ANALISA KELUARGA -->
+         <div id="tab6-content" class="hidden flex-1 w-full dashboard-table block">
            <table class="w-full text-left border-collapse min-w-[1200px]">
-             <thead class="text-[10px] uppercase text-amber-900 font-bold bg-amber-100 border-b border-amber-300">
+             <thead class="text-[10px] uppercase text-amber-900 font-bold tracking-wider bg-amber-100 border-b border-amber-300 sticky top-0 z-10">
                <tr>
-                 <th class="px-4 py-3 w-12 text-center rounded-tl-2xl">No</th>
-                 <th onclick="sortTabAnalis('idSls')" class="px-4 py-3 hover:bg-amber-200 cursor-pointer border-l border-amber-200">ID SLS / Desa ↕</th>
-                 <th onclick="sortTabAnalis('ppl')" class="px-4 py-3 hover:bg-amber-200 cursor-pointer border-l border-amber-200">Petugas PPL ↕</th>
-                 <th class="px-4 py-3 text-center border-l border-amber-200">Prelist Awal</th>
-                 <th class="px-4 py-3 text-center text-green-700 border-l border-amber-200">Ditemukan</th>
-                 <th class="px-4 py-3 text-center text-blue-700 border-l border-amber-200">Kel. Baru</th>
-                 <th class="px-4 py-3 text-center text-gray-700 border-l border-amber-200">Meninggal</th>
-                 <th class="px-4 py-3 text-center text-red-700 border-l border-amber-200 rounded-tr-2xl">Tdk Ditemukan</th>
+                 <th class="px-4 py-3 bg-amber-100 border-r border-amber-200 w-12 text-center rounded-tl-2xl">No</th>
+                 <th onclick="sortTabAnalis('idSls')" class="px-4 py-3 bg-amber-100 border-r border-amber-200 hover:bg-amber-200 transition cursor-pointer">ID SLS ↕</th>
+                 <th onclick="sortTabAnalis('nmsls')" class="px-4 py-3 bg-amber-100 hover:bg-amber-200 transition cursor-pointer">Wilayah ↕</th>
+                 <th onclick="sortTabAnalis('ppl')" class="px-4 py-3 bg-amber-100 hover:bg-amber-200 transition cursor-pointer">Petugas (PPL/PML) ↕</th>
+                 <th onclick="sortTabAnalis('pj')" class="px-4 py-3 bg-amber-100 hover:bg-amber-200 transition cursor-pointer">PJ Kuda ↕</th>
+                 <th class="px-4 py-3 bg-amber-100 text-center border-l border-amber-200 text-slate-800">Prelist Awal</th>
+                 <th class="px-4 py-3 bg-amber-100 text-center border-l border-amber-200 text-green-700">Ditemukan</th>
+                 <th class="px-4 py-3 bg-amber-100 text-center border-l border-amber-200 text-blue-700">Kel. Baru</th>
+                 <th class="px-4 py-3 bg-amber-100 text-center border-l border-amber-200 text-gray-700">Meninggal</th>
+                 <th class="px-4 py-3 bg-amber-100 text-center border-l border-amber-200 text-red-700 rounded-tr-2xl">Tdk Ditemukan</th>
                </tr>
              </thead>
-             <tbody id="tableKeluarga" class="text-xs divide-y divide-gray-100 text-gray-700"></tbody>
+             <tbody id="tableKeluarga" class="text-xs divide-y divide-amber-100 text-gray-700 tags-upper"></tbody>
            </table>
          </div>
 
-         <!-- TAB 7: ANALISA USAHA (BARU) -->
-         <div id="tab7-content" class="hidden flex-1 w-full dashboard-table">
+         <!-- TAB 7: ANALISA BKU (USAHA PERUSAHAAN) -->
+         <div id="tab7-content" class="hidden flex-1 w-full dashboard-table block">
            <table class="w-full text-left border-collapse min-w-[1200px]">
-             <thead class="text-[10px] uppercase text-purple-900 font-bold bg-purple-100 border-b border-purple-300">
+             <thead class="text-[10px] uppercase text-purple-900 font-bold tracking-wider bg-purple-100 border-b border-purple-300 sticky top-0 z-10">
                <tr>
-                 <th class="px-4 py-3 w-12 text-center rounded-tl-2xl">No</th>
-                 <th onclick="sortTabAnalis('idSls')" class="px-4 py-3 hover:bg-purple-200 cursor-pointer border-l border-purple-200">ID SLS / Desa ↕</th>
-                 <th onclick="sortTabAnalis('ppl')" class="px-4 py-3 hover:bg-purple-200 cursor-pointer border-l border-purple-200">Petugas PPL ↕</th>
-                 <th class="px-4 py-3 text-center border-l border-purple-200">Prelist Usaha</th>
-                 <th class="px-4 py-3 text-center text-green-700 border-l border-purple-200">Ditemukan</th>
-                 <th class="px-4 py-3 text-center text-blue-700 border-l border-purple-200">Usaha Baru</th>
-                 <th class="px-4 py-3 text-center text-gray-700 border-l border-purple-200">Tutup</th>
-                 <th class="px-4 py-3 text-center text-amber-700 border-l border-purple-200">Ganda</th>
-                 <th class="px-4 py-3 text-center text-red-700 border-l border-purple-200 rounded-tr-2xl">Tdk Ditemukan</th>
+                 <th class="px-4 py-3 bg-purple-100 border-r border-purple-200 w-12 text-center rounded-tl-2xl">No</th>
+                 <th onclick="sortTabAnalis('idSls')" class="px-4 py-3 bg-purple-100 border-r border-purple-200 hover:bg-purple-200 transition cursor-pointer">ID SLS ↕</th>
+                 <th onclick="sortTabAnalis('nmsls')" class="px-4 py-3 bg-purple-100 hover:bg-purple-200 transition cursor-pointer">Wilayah ↕</th>
+                 <th onclick="sortTabAnalis('ppl')" class="px-4 py-3 bg-purple-100 hover:bg-purple-200 transition cursor-pointer">Petugas (PPL/PML) ↕</th>
+                 <th onclick="sortTabAnalis('pj')" class="px-4 py-3 bg-purple-100 hover:bg-purple-200 transition cursor-pointer">PJ Kuda ↕</th>
+                 <th class="px-4 py-3 bg-purple-100 text-center border-l border-purple-200 text-slate-800">Prelist Usaha</th>
+                 <th class="px-4 py-3 bg-purple-100 text-center border-l border-purple-200 text-green-700">Ditemukan</th>
+                 <th class="px-4 py-3 bg-purple-100 text-center border-l border-purple-200 text-blue-700">Baru</th>
+                 <th class="px-4 py-3 bg-purple-100 text-center border-l border-purple-200 text-gray-700">Tutup</th>
+                 <th class="px-4 py-3 bg-purple-100 text-center border-l border-purple-200 text-amber-700">Ganda</th>
+                 <th class="px-4 py-3 bg-purple-100 text-center border-l border-purple-200 text-red-700 rounded-tr-2xl">Tdk Ditemukan</th>
                </tr>
              </thead>
-             <tbody id="tableUsaha" class="text-xs divide-y divide-gray-100 text-gray-700"></tbody>
+             <tbody id="tableUsaha" class="text-xs divide-y divide-purple-100 text-gray-700 tags-upper"></tbody>
+           </table>
+         </div>
+
+         <!-- TAB 8: ANALISA USAHA KELUARGA -->
+         <div id="tab8-content" class="hidden flex-1 w-full dashboard-table block">
+           <table class="w-full text-left border-collapse min-w-[1200px]">
+             <thead class="text-[10px] uppercase text-emerald-900 font-bold tracking-wider bg-emerald-100 border-b border-emerald-300 sticky top-0 z-10">
+               <tr>
+                 <th class="px-4 py-3 bg-emerald-100 border-r border-emerald-200 w-12 text-center rounded-tl-2xl">No</th>
+                 <th onclick="sortTabAnalis('idSls')" class="px-4 py-3 bg-emerald-100 border-r border-emerald-200 hover:bg-emerald-200 transition cursor-pointer">ID SLS ↕</th>
+                 <th onclick="sortTabAnalis('nmsls')" class="px-4 py-3 bg-emerald-100 hover:bg-emerald-200 transition cursor-pointer">Wilayah ↕</th>
+                 <th onclick="sortTabAnalis('ppl')" class="px-4 py-3 bg-emerald-100 hover:bg-emerald-200 transition cursor-pointer">Petugas (PPL/PML) ↕</th>
+                 <th onclick="sortTabAnalis('pj')" class="px-4 py-3 bg-emerald-100 hover:bg-emerald-200 transition cursor-pointer">PJ Kuda ↕</th>
+                 <th class="px-4 py-3 bg-emerald-100 text-center border-l border-emerald-200 text-green-700">Ditemukan</th>
+                 <th class="px-4 py-3 bg-emerald-100 text-center border-l border-emerald-200 text-blue-700">Baru</th>
+                 <th class="px-4 py-3 bg-emerald-100 text-center border-l border-emerald-200 text-gray-700">Tutup</th>
+                 <th class="px-4 py-3 bg-emerald-100 text-center border-l border-emerald-200 text-amber-700">Ganda</th>
+                 <th class="px-4 py-3 bg-emerald-100 text-center border-l border-emerald-200 text-red-700 rounded-tr-2xl">Tdk Ditemukan</th>
+               </tr>
+             </thead>
+             <tbody id="tableUsahaKeluarga" class="text-xs divide-y divide-emerald-100 text-gray-700 tags-upper"></tbody>
            </table>
          </div>
 
@@ -356,7 +383,7 @@
   // =========================================================================
   // MASUKKAN URL API GAS ANDA DI BAWAH INI:
   // =========================================================================
-  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxSfOmssbzxzyoNXRdRtFFkXLxyFNJc7KNdPpL8h63H2p-7htGTtj7L7EXZ8QzhnUSP/exec";
+  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwIJ1XuJqzDpgjyPEHmbdENzrtAuLBWuEWx8Kj_hdwi98qdeIVlqNGqgwLSwKy3_ic/exec";
 
   let DASH_DATA = [];
   let dashFilteredData = [];
@@ -372,6 +399,25 @@
   let chartKecObj;
   let activeTabId = 1;
   let kecChartMapGlobal = {};
+  
+  // =========================================================================
+  // HOTKEYS NINJA ADMIN UPLOAD (Ketik 'f' 4 kali)
+  // =========================================================================
+  let keyStrokes = '';
+  document.addEventListener('keydown', (e) => {
+      if(e.key.toLowerCase() === 'f') {
+          keyStrokes += 'f';
+          if(keyStrokes.includes('ffff')) {
+              const btn = document.getElementById('btnAdminUpload');
+              btn.classList.toggle('hidden');
+              btn.classList.toggle('flex');
+              keyStrokes = '';
+              Swal.fire({toast: true, position: 'top-end', icon: 'success', title: 'Panel Admin Aktif!', showConfirmButton: false, timer: 1500});
+          }
+      } else {
+          keyStrokes = '';
+      }
+  });
 
   window.onload = function() {
     initDashboard();
@@ -379,9 +425,7 @@
 
   function toProperCase(str) {
       if (!str) return '';
-      return str.toLowerCase().replace(/(^|\s)\S/g, function(s) {
-          return s.toUpperCase();
-      }).trim();
+      return str.toLowerCase().replace(/(^|\s)\S/g, function(s) { return s.toUpperCase(); }).trim();
   }
 
   function getHariPendataan() {
@@ -391,9 +435,7 @@
 
       let actualDate = new Date(wib);
       let effectiveDate = new Date(wib);
-      if (wib.getHours() < 21) {
-          effectiveDate.setDate(effectiveDate.getDate() - 1);
-      }
+      if (wib.getHours() < 21) { effectiveDate.setDate(effectiveDate.getDate() - 1); }
 
       const startYear = 2026; const startMonth = 5; const startDateDate = 15;
       const endYear = 2026; const endMonth = 7; const endDateDate = 31;
@@ -550,29 +592,41 @@
 
   function switchTab(tabId) {
      activeTabId = tabId;
-     // Reset Button Styles
-     for(let i=1; i<=7; i++) {
+     
+     // 1. Ganti Default Pagination (PPL, PML, KECAMATAN = Semua. Sisanya = 10)
+     if ([2, 3, 4].includes(tabId)) {
+        dashRowsPerPage = 999999;
+        if(document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "999999";
+     } else {
+        dashRowsPerPage = 10;
+        if(document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "10";
+     }
+     dashCurrentPage = 1;
+
+     // 2. Reset Button Styles
+     for(let i=1; i<=8; i++) {
         let btn = document.getElementById('btnTab'+i);
         if(btn) {
-           btn.className = btn.className.replace(/border-blue-500|border-amber-500|border-purple-500|text-blue-700|text-amber-600|text-purple-600/g, "border-transparent text-gray-500");
+           btn.className = btn.className.replace(/border-blue-500|border-amber-500|border-purple-500|border-emerald-500|text-blue-700|text-amber-600|text-purple-600|text-emerald-600/g, "border-transparent text-gray-500");
         }
         let tabC = document.getElementById('tab'+i+'-content');
         if(tabC) { tabC.classList.add('hidden'); tabC.classList.remove('block'); }
      }
      
-     // Set Active Button Style
+     // 3. Set Active Button Style
      let btnAct = document.getElementById('btnTab'+tabId);
      if(btnAct) {
         btnAct.classList.remove("border-transparent", "text-gray-500");
         if(tabId === 6) btnAct.classList.add("border-amber-500", "text-amber-600");
         else if(tabId === 7) btnAct.classList.add("border-purple-500", "text-purple-600");
+        else if(tabId === 8) btnAct.classList.add("border-emerald-500", "text-emerald-600");
         else btnAct.classList.add("border-blue-500", "text-blue-700");
      }
      
      let tabAct = document.getElementById('tab'+tabId+'-content');
      if(tabAct) { tabAct.classList.remove('hidden'); tabAct.classList.add('block'); }
      
-     if(document.getElementById('paginasiArea')) document.getElementById('paginasiArea').style.display = ([1,2,3,4,6,7].includes(tabId)) ? 'flex' : 'none';
+     if(document.getElementById('paginasiArea')) document.getElementById('paginasiArea').style.display = ([1,2,3,4,6,7,8].includes(tabId)) ? 'flex' : 'none';
      
      if(tabId === 1) renderTabelPaginasi();
      if(tabId === 2) renderLeaderboard();
@@ -580,7 +634,8 @@
      if(tabId === 4) renderProgressKecamatan();
      if(tabId === 5) renderVisualisasi();
      if(tabId === 6) renderTab6Keluarga();
-     if(tabId === 7) renderTab7Usaha();
+     if(tabId === 7) renderTab7Bku();
+     if(tabId === 8) renderTab8UsahaKel();
   }
 
   function sortLogic(arr, col, isAsc) {
@@ -620,13 +675,7 @@
       row.calcTotal = row.totalAbsolut || (row.open + row.draft + row.submit + row.reject + row.approve);
       row.agg_submit = row.submit + row.reject + row.approve; 
       
-      tSls++;
-      tOpen += row.open;
-      tDraft += row.draft; 
-      tSubmit += row.submit; 
-      tReject += row.reject;
-      tApprove += row.approve;
-      tTotal += row.calcTotal;
+      tSls++; tOpen += row.open; tDraft += row.draft; tSubmit += row.submit; tReject += row.reject; tApprove += row.approve; tTotal += row.calcTotal;
     });
 
     if(sortCol !== '') { sortLogic(dashFilteredData, sortCol, sortAsc); }
@@ -636,7 +685,6 @@
 
     let pProgPendataan = tTotal > 0 ? ((tProgPendataan / tTotal) * 100).toFixed(1) + '%' : '0%';
     let pProgSubmit = tTotal > 0 ? ((tProgSubmit / tTotal) * 100).toFixed(1) + '%' : '0%';
-    
     let pOpen = tTotal > 0 ? ((tOpen / tTotal) * 100).toFixed(1) + '%' : '0%';
     let pDraft = tTotal > 0 ? ((tDraft / tTotal) * 100).toFixed(1) + '%' : '0%';
     let pSubmit = tTotal > 0 ? ((tSubmit / tTotal) * 100).toFixed(1) + '%' : '0%';
@@ -662,7 +710,8 @@
     if(activeTabId === 4) renderProgressKecamatan();
     if(activeTabId === 5) renderVisualisasi();
     if(activeTabId === 6) renderTab6Keluarga();
-    if(activeTabId === 7) renderTab7Usaha();
+    if(activeTabId === 7) renderTab7Bku();
+    if(activeTabId === 8) renderTab8UsahaKel();
   }
 
   function sortTabel(colName) { if(sortCol === colName) sortAsc = !sortAsc; else { sortCol = colName; sortAsc = true; } filterTabel(); }
@@ -673,7 +722,7 @@
 
   function changePerPage() {
     let sel = document.getElementById('perPageSelect');
-    if(sel) { dashRowsPerPage = parseInt(sel.value); dashCurrentPage = 1; switchTab(activeTabId); }
+    if(sel) { dashRowsPerPage = parseInt(sel.value); dashCurrentPage = 1; filterTabel(); }
   }
 
   function getPaginatedData(dataArray) {
@@ -932,51 +981,100 @@
      }
   }
 
-  // --- RENDERER TAB 6 (KELUARGA) ---
+  // --- RENDERER TAB 6 (ANALISA KELUARGA) ---
   function renderTab6Keluarga() {
+    const tbody = document.getElementById('tableKeluarga');
+    if(!tbody) return;
     const {data, startIdx} = getPaginatedData(dashFilteredData);
-    let html = '';
-    data.forEach((r, i) => {
-      let ext = r.extKel || {prelist:0, ditemukan:0, baru:0, meninggal:0, tdk:0};
-      let alertClass = (ext.tdk > (ext.prelist * 0.2)) ? 'bg-red-50/50' : 'hover:bg-amber-50/30';
-      html += `
-        <tr class="border-b border-amber-100 transition ${alertClass}">
-          <td class="px-4 py-3 text-center font-black text-gray-500">${startIdx + i + 1}</td>
-          <td class="px-4 py-3 leading-tight border-l border-amber-100"><span class="font-mono text-[11px] font-bold text-amber-900">${r.idSls}</span><br><span class="text-[9px] font-bold text-gray-500 uppercase">${r.desa} - Kec. ${r.kec}</span></td>
-          <td class="px-4 py-3 leading-tight border-l border-amber-100"><span class="text-[10px] font-bold text-blue-700 uppercase">PPL: ${r.ppl||'-'}</span><br><span class="font-normal text-[9px] text-indigo-700 uppercase">PML: ${r.pml||'-'}</span></td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-slate-800 border-l border-amber-100 bg-amber-50/10">${ext.prelist}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-green-700 bg-green-50/30 border-l border-amber-100">${ext.ditemukan}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 bg-blue-50/30 border-l border-amber-100">${ext.baru}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-gray-600 bg-gray-50/50 border-l border-amber-100">${ext.meninggal}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-red-700 ${ext.tdk>0?'bg-red-50/80':''} border-l border-amber-100">${ext.tdk}</td>
+
+    let htmlContent = '';
+    data.forEach((row, index) => {
+      let ext = row.extKel || {prelist:0, ditemukan:0, baru:0, meninggal:0, tdk:0};
+      let alertClass = (ext.tdk > (ext.prelist * 0.2)) ? 'bg-red-50/50 hover:bg-red-100/50' : 'even:bg-amber-50/20 odd:bg-white hover:bg-amber-100/30';
+      
+      htmlContent += `
+        <tr class="transition border-b border-amber-100 ${alertClass}">
+          <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-amber-200">${startIdx + index + 1}</td>
+          <td class="px-4 py-3 font-mono text-[11px] text-amber-900 font-bold align-middle border-r border-amber-200">${row.idSls}</td>
+          <td class="px-4 py-3 leading-tight align-middle"><span class="font-bold text-gray-800 text-xs">${row.nmsls}</span><br><span class="text-[9px] text-gray-500 uppercase font-bold">${row.desa} - Kec. ${row.kec}</span></td>
+          <td class="px-4 py-3 leading-tight align-middle">
+            <span class="text-blue-600 font-bold text-[10px] uppercase">PPL: ${row.ppl || '-'}</span>
+            <span class="text-indigo-600 font-bold text-[10px] uppercase mt-1 block">PML: ${row.pml || '-'}</span>
+          </td>
+          <td class="px-4 py-3 font-bold text-gray-700 text-[11px] align-middle uppercase">${row.pj}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-slate-800 align-middle border-l border-amber-200">${ext.prelist}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-green-700 align-middle border-l border-amber-200">${ext.ditemukan}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 align-middle border-l border-amber-200">${ext.baru}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-gray-700 align-middle border-l border-amber-200">${ext.meninggal}</td>
+          <td class="px-4 py-3 text-center font-mono font-black text-red-700 align-middle border-l border-amber-200">${ext.tdk}</td>
         </tr>
       `;
     });
-    document.getElementById('tableKeluarga').innerHTML = html || '<tr><td colspan="8" class="text-center py-10 italic text-gray-400">Data Eksternal Keluarga Belum Diupload atau Data Tidak Ditemukan.</td></tr>';
+    tbody.innerHTML = htmlContent || '<tr><td colspan="10" class="text-center py-10 italic text-gray-400">Data Eksternal Keluarga Belum Diupload atau Data Tidak Ditemukan.</td></tr>';
   }
 
-  // --- RENDERER TAB 7 (USAHA) ---
-  function renderTab7Usaha() {
+  // --- RENDERER TAB 7 (ANALISA BKU) ---
+  function renderTab7Bku() {
+    const tbody = document.getElementById('tableUsaha');
+    if(!tbody) return;
     const {data, startIdx} = getPaginatedData(dashFilteredData);
-    let html = '';
-    data.forEach((r, i) => {
-      let ext = r.extUsa || {prelist:0, ditemukan:0, baru:0, tutup:0, ganda:0, tdk:0};
-      let alertClass = (ext.tdk > (ext.prelist * 0.2)) ? 'bg-red-50/50' : 'hover:bg-purple-50/30';
-      html += `
-        <tr class="border-b border-purple-100 transition ${alertClass}">
-          <td class="px-4 py-3 text-center font-black text-gray-500">${startIdx + i + 1}</td>
-          <td class="px-4 py-3 leading-tight border-l border-purple-100"><span class="font-mono text-[11px] font-bold text-purple-900">${r.idSls}</span><br><span class="text-[9px] font-bold text-gray-500 uppercase">${r.desa} - Kec. ${r.kec}</span></td>
-          <td class="px-4 py-3 leading-tight border-l border-purple-100"><span class="text-[10px] font-bold text-blue-700 uppercase">PPL: ${r.ppl||'-'}</span><br><span class="font-normal text-[9px] text-indigo-700 uppercase">PML: ${r.pml||'-'}</span></td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-slate-800 border-l border-purple-100 bg-purple-50/10">${ext.prelist}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-green-700 bg-green-50/30 border-l border-purple-100">${ext.ditemukan}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 bg-blue-50/30 border-l border-purple-100">${ext.baru}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-gray-600 bg-gray-50/50 border-l border-purple-100">${ext.tutup}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-amber-600 bg-amber-50/30 border-l border-purple-100">${ext.ganda}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-red-700 ${ext.tdk>0?'bg-red-50/80':''} border-l border-purple-100">${ext.tdk}</td>
+
+    let htmlContent = '';
+    data.forEach((row, index) => {
+      let ext = row.extBku || {prelist:0, ditemukan:0, baru:0, tutup:0, ganda:0, tdk:0};
+      let alertClass = (ext.tdk > (ext.prelist * 0.2)) ? 'bg-red-50/50 hover:bg-red-100/50' : 'even:bg-purple-50/20 odd:bg-white hover:bg-purple-100/30';
+      
+      htmlContent += `
+        <tr class="transition border-b border-purple-100 ${alertClass}">
+          <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-purple-200">${startIdx + index + 1}</td>
+          <td class="px-4 py-3 font-mono text-[11px] text-purple-900 font-bold align-middle border-r border-purple-200">${row.idSls}</td>
+          <td class="px-4 py-3 leading-tight align-middle"><span class="font-bold text-gray-800 text-xs">${row.nmsls}</span><br><span class="text-[9px] text-gray-500 uppercase font-bold">${row.desa} - Kec. ${row.kec}</span></td>
+          <td class="px-4 py-3 leading-tight align-middle">
+            <span class="text-blue-600 font-bold text-[10px] uppercase">PPL: ${row.ppl || '-'}</span>
+            <span class="text-indigo-600 font-bold text-[10px] uppercase mt-1 block">PML: ${row.pml || '-'}</span>
+          </td>
+          <td class="px-4 py-3 font-bold text-gray-700 text-[11px] align-middle uppercase">${row.pj}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-slate-800 align-middle border-l border-purple-200">${ext.prelist}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-green-700 align-middle border-l border-purple-200">${ext.ditemukan}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 align-middle border-l border-purple-200">${ext.baru}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-gray-700 align-middle border-l border-purple-200">${ext.tutup}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-amber-700 align-middle border-l border-purple-200">${ext.ganda}</td>
+          <td class="px-4 py-3 text-center font-mono font-black text-red-700 align-middle border-l border-purple-200">${ext.tdk}</td>
         </tr>
       `;
     });
-    document.getElementById('tableUsaha').innerHTML = html || '<tr><td colspan="9" class="text-center py-10 italic text-gray-400">Data Eksternal Usaha Belum Diupload atau Data Tidak Ditemukan.</td></tr>';
+    tbody.innerHTML = htmlContent || '<tr><td colspan="11" class="text-center py-10 italic text-gray-400">Data Eksternal Usaha Belum Diupload atau Data Tidak Ditemukan.</td></tr>';
+  }
+
+  // --- RENDERER TAB 8 (ANALISA USAHA KELUARGA) ---
+  function renderTab8UsahaKel() {
+    const tbody = document.getElementById('tableUsahaKeluarga');
+    if(!tbody) return;
+    const {data, startIdx} = getPaginatedData(dashFilteredData);
+
+    let htmlContent = '';
+    data.forEach((row, index) => {
+      let ext = row.extUsKel || {ditemukan:0, baru:0, tutup:0, ganda:0, tdk:0};
+      
+      htmlContent += `
+        <tr class="transition border-b border-emerald-100 even:bg-emerald-50/20 odd:bg-white hover:bg-emerald-100/30">
+          <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-emerald-200">${startIdx + index + 1}</td>
+          <td class="px-4 py-3 font-mono text-[11px] text-emerald-900 font-bold align-middle border-r border-emerald-200">${row.idSls}</td>
+          <td class="px-4 py-3 leading-tight align-middle"><span class="font-bold text-gray-800 text-xs">${row.nmsls}</span><br><span class="text-[9px] text-gray-500 uppercase font-bold">${row.desa} - Kec. ${row.kec}</span></td>
+          <td class="px-4 py-3 leading-tight align-middle">
+            <span class="text-blue-600 font-bold text-[10px] uppercase">PPL: ${row.ppl || '-'}</span>
+            <span class="text-indigo-600 font-bold text-[10px] uppercase mt-1 block">PML: ${row.pml || '-'}</span>
+          </td>
+          <td class="px-4 py-3 font-bold text-gray-700 text-[11px] align-middle uppercase">${row.pj}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-green-700 align-middle border-l border-emerald-200">${ext.ditemukan}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 align-middle border-l border-emerald-200">${ext.baru}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-gray-700 align-middle border-l border-emerald-200">${ext.tutup}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-amber-700 align-middle border-l border-emerald-200">${ext.ganda}</td>
+          <td class="px-4 py-3 text-center font-mono font-black text-red-700 align-middle border-l border-emerald-200">${ext.tdk}</td>
+        </tr>
+      `;
+    });
+    tbody.innerHTML = htmlContent || '<tr><td colspan="10" class="text-center py-10 italic text-gray-400">Data Eksternal Usaha Keluarga Belum Diupload atau Data Tidak Ditemukan.</td></tr>';
   }
 
   function goDashPage(pageNum) { dashCurrentPage = pageNum; switchTab(activeTabId); }
@@ -1025,7 +1123,7 @@
              <label class="font-black text-purple-800 block mb-2">2. Upload Pendataan Usaha (.xlsx)</label>
              <input type="file" id="fileUsa" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-purple-600 file:text-white file:font-bold hover:file:bg-purple-700 transition">
           </div>
-          <p class="text-[10px] text-gray-500 font-medium italic mt-2 text-center">Pilih file yang ingin diperbarui (bisa salah satu atau keduanya sekaligus).</p>
+          <p class="text-[10px] text-gray-500 font-medium italic mt-2 text-center">Pilih file yang ingin diperbarui (bisa salah satu atau keduanya sekaligus). Sistem otomatis memecah file Usaha menjadi BKU & Usaha Keluarga.</p>
         </div>
       `,
       confirmButtonText: 'SINKRONISASI SEKARANG', showCancelButton: true, allowOutsideClick: false,
@@ -1049,8 +1147,9 @@
           await sendToGAS('keluarga', dataKel);
        }
        if(fUsa) {
-          let dataUsa = await parseExcelUsaha(fUsa);
-          await sendToGAS('usaha', dataUsa);
+          let dataUsa = await parseExcelUsahaAll(fUsa);
+          if(dataUsa.bku && dataUsa.bku.length > 1) await sendToGAS('usaha_bku', dataUsa.bku);
+          if(dataUsa.kel && dataUsa.kel.length > 1) await sendToGAS('usaha_kel', dataUsa.kel);
        }
        Swal.fire('Integrasi Berhasil!', 'Data Eksternal telah tersimpan ke dalam Database dan siap dianalisa.', 'success').then(()=>{ location.reload(); });
      } catch (err) {
@@ -1097,14 +1196,15 @@
     });
   }
 
-  // --- ENGINE PARSING USAHA ---
-  function parseExcelUsaha(file) {
+  // --- ENGINE PARSING USAHA (BKU & KELUARGA) SEKALIGUS ---
+  function parseExcelUsahaAll(file) {
     return new Promise((resolve, reject) => {
       let reader = new FileReader();
       reader.onload = e => {
         try {
           let wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
-          let mapUsa = {};
+          let resBKU = [["KODE_16", "PRELIST", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]];
+          let resKel = [["KODE_16", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]];
           
           let sUP = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA PERUSAHAAN'));
           if(sUP) {
@@ -1122,7 +1222,9 @@
                    } return;
                 }
                 let kd = String(r[0]||'').trim();
-                if(kd.length === 16) { mapUsa[kd] = { p:Number(r[cIdx.p]||0), d:Number(r[cIdx.d]||0), b:Number(r[cIdx.b]||0), tu:Number(r[cIdx.tu]||0), g:Number(r[cIdx.g]||0), t:Number(r[cIdx.t]||0) }; }
+                if(kd.length === 16) {
+                    resBKU.push([kd, Number(r[cIdx.p]||0), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.tu]||0), Number(r[cIdx.g]||0), Number(r[cIdx.t]||0)]);
+                }
              });
           }
 
@@ -1143,15 +1245,12 @@
                 }
                 let kd = String(r[0]||'').trim();
                 if(kd.length === 16) {
-                   if(!mapUsa[kd]) mapUsa[kd] = {p:0, d:0, b:0, tu:0, g:0, t:0};
-                   mapUsa[kd].d += Number(r[cIdx.d]||0); mapUsa[kd].b += Number(r[cIdx.b]||0); mapUsa[kd].tu += Number(r[cIdx.tu]||0); mapUsa[kd].g += Number(r[cIdx.g]||0); mapUsa[kd].t += Number(r[cIdx.t]||0);
+                    resKel.push([kd, Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.tu]||0), Number(r[cIdx.g]||0), Number(r[cIdx.t]||0)]);
                 }
              });
           }
 
-          let res = [["KODE_16", "PRELIST", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]];
-          for(let k in mapUsa) { res.push([ k, mapUsa[k].p, mapUsa[k].d, mapUsa[k].b, mapUsa[k].tu, mapUsa[k].g, mapUsa[k].t ]); }
-          resolve(res);
+          resolve({bku: resBKU, kel: resKel});
         } catch(err) { reject(err); }
       };
       reader.readAsArrayBuffer(file);
