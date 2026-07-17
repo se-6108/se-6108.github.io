@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=1400"> 
-  
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -15,23 +14,17 @@
   <meta property="og:title" content="Dashboard Monitoring FASIH">
   <meta property="og:description" content="Sistem Monitoring Progress Pencacahan dan Pengawasan Sensus Ekonomi 2026 Kabupaten Kapuas Hulu.">
   <meta property="og:image" content="https://se-6108.github.io/fasih/icon.png">
-  <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="300">
-  <meta property="og:image:height" content="300">
-  <meta property="og:url" content="https://se-6108.github.io/fasih/">
   <title>Dashboard Monitoring FASIH</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
   
   <style>
     body { font-family: 'Montserrat', sans-serif; background-color: #f0fdf4; } 
@@ -40,31 +33,48 @@
     .swal2-html-container { overflow: hidden !important; } 
     .custom-spinner { width: 3.5rem; height: 3.5rem; border: 4px solid #bfdbfe; border-top-color: #2563eb; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .dashboard-table th { position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: pointer;}
-    .dashboard-table th:hover { opacity: 0.95; }
-    .scrollbar-hide::-webkit-scrollbar { display: none; }
     
+    /* PENGATURAN STICKY HEADER & FILTER DROPDOWN */
+    .dashboard-table th { 
+      position: sticky; 
+      top: 0; 
+      z-index: 20; 
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1); 
+      cursor: pointer;
+    }
+    .dashboard-table th .filter-select {
+      margin-top: 4px;
+      width: 100%;
+      font-size: 9px;
+      padding: 2px 4px;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      background-color: white;
+      color: #334155;
+      outline: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .dashboard-table th .filter-select:hover { border-color: #3b82f6; }
+    
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
     .ts-control { border-radius: 0.75rem !important; border-color: #e2e8f0 !important; padding: 0.75rem 1rem !important; font-size: 0.75rem !important; font-family: 'Montserrat', sans-serif !important; background-color: #ffffff !important; font-weight: 700; text-transform: uppercase; color: #1e293b !important;}
     .ts-control.focus { border-color: #2563eb !important; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important; }
     .ts-control.single.has-items input { opacity: 0; width: 0; padding: 0; margin: 0; border: none; } 
-    .ts-control { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%239ca3af'%3e%3cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 16px 12px; padding-right: 4rem !important; }
-    
     .ts-wrapper.has-items .ts-control > input { display: none !important; }
-    .ts-wrapper .clear-button { position: absolute !important; right: 2.2rem !important; top: 50% !important; transform: translateY(-50%) !important; margin: 0 !important; border: none !important; color: #ef4444 !important; font-size: 18px !important; font-weight: bold !important; z-index: 10; cursor: pointer; transition: transform 0.1s;}
-    .ts-wrapper .clear-button:hover { transform: translateY(-50%) scale(1.2) !important; color: #dc2626 !important; }
-
     .teks-upper { text-transform: uppercase !important; }
     tr, .group, .flex-col { page-break-inside: avoid !important; break-inside: avoid-page !important; }
   </style>
 </head>
 <body class="h-screen overflow-hidden bg-blue-50/30 flex flex-col text-gray-800">
 
-  <div id="globalLoading" class="fixed inset-0 z-[100] bg-white/95 flex flex-col items-center justify-center transition-opacity duration-300 flex">
+  <div id="globalLoading" class="fixed inset-0 z-[100] bg-white/95 flex flex-col items-center justify-center transition-opacity duration-300">
       <div class="custom-spinner"></div>
       <span class="text-sm text-blue-600 mt-4 font-black tracking-widest animate-pulse">MEMUAT DASHBOARD FASIH...</span>
   </div>
 
   <div id="halaman-dashboard" class="flex flex-col h-full w-full relative z-10">
+    <!-- HEADER UTAMA -->
     <div class="bg-white border-b border-blue-200 shadow-sm flex-none z-40 relative flex flex-col">
       <div class="px-6 py-4 flex justify-between items-center bg-gradient-to-r from-[#2563eb] to-[#1e3a8a] relative overflow-hidden flex-wrap gap-4">
         <div class="absolute -top-4 -left-4 w-20 h-20 rounded-full bg-white opacity-10"></div>
@@ -92,7 +102,7 @@
            </div>
         </div>
         <div class="flex gap-2 relative z-10 overflow-x-auto pb-1">
-           <!-- TOMBOL NINJA ADMIN (Hidden by default) -->
+           <!-- TOMBOL NINJA ADMIN (Disembunyikan default) -->
            <button id="btnAdminUpload" onclick="authAdminPanel()" class="hidden bg-indigo-900 hover:bg-black text-white px-4 py-2.5 rounded-lg text-xs font-bold transition items-center gap-2 shadow-md border border-indigo-700 uppercase tracking-wide mr-2">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg> Admin Upload
            </button>
@@ -108,77 +118,44 @@
         </div>
       </div>
 
+      <!-- CARD METRIK STATIS -->
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 gap-3 px-6 py-4 bg-blue-50/40 border-b border-blue-100">
-        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
-            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-slate-200 opacity-[0.25] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-            <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-1 relative z-10">Beban SLS</p>
-            <h3 id="dashTotSls" class="text-2xl font-black text-slate-800 relative z-10">-</h3>
-        </div>
-        <div class="bg-gradient-to-br from-indigo-50 to-white p-3 rounded-xl border border-indigo-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
-            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-indigo-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-            <p class="text-[9px] text-indigo-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Assignment</p>
-            <h3 id="dashTotTarget" class="text-2xl font-black text-indigo-700 relative z-10">-</h3>
-        </div>
-        <div class="bg-gradient-to-br from-fuchsia-50 to-white p-3 rounded-xl border border-fuchsia-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
-            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-fuchsia-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
-            <p class="text-[9px] text-fuchsia-600 font-bold uppercase tracking-wider mb-1 relative z-10">Progress Pendataan</p>
-            <h3 id="dashProgPendataan" class="text-2xl font-black text-fuchsia-700 relative z-10">-</h3>
-        </div>
-        <div class="bg-gradient-to-br from-sky-50 to-white p-3 rounded-xl border border-sky-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
-            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-sky-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-            <p class="text-[9px] text-sky-600 font-bold uppercase tracking-wider mb-1 relative z-10">Progress Submit</p>
-            <h3 id="dashProgSubmit" class="text-2xl font-black text-sky-700 relative z-10">-</h3>
-        </div>
-        <div class="bg-gradient-to-br from-blue-50 to-white p-3 rounded-xl border border-blue-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
-            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-blue-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
-            <p class="text-[9px] text-blue-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Open</p>
-            <h3 id="dashTotOpen" class="text-2xl font-black text-blue-700 relative z-10">-</h3>
-        </div>
-        <div class="bg-gradient-to-br from-amber-50 to-white p-3 rounded-xl border border-amber-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
-            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-amber-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-            <p class="text-[9px] text-amber-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Draft</p>
-            <h3 id="dashTotDraft" class="text-2xl font-black text-amber-700 relative z-10">-</h3>
-        </div>
-        <div class="bg-gradient-to-br from-purple-50 to-white p-3 rounded-xl border border-purple-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
-            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-purple-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-            <p class="text-[9px] text-purple-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Submit</p>
-            <h3 id="dashTotSubmit" class="text-2xl font-black text-purple-700 relative z-10">-</h3>
-        </div>
-        <div class="bg-gradient-to-br from-red-50 to-white p-3 rounded-xl border border-red-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
-            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-red-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-            <p class="text-[9px] text-red-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Reject</p>
-            <h3 id="dashTotReject" class="text-2xl font-black text-red-700 relative z-10">-</h3>
-        </div>
-        <div class="bg-gradient-to-br from-green-50 to-white p-3 rounded-xl border border-green-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
-            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-green-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.41-1.4L9 16.2z"/></svg>
-            <p class="text-[9px] text-green-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Approve</p>
-            <h3 id="dashTotApprove" class="text-2xl font-black text-green-700 relative z-10">-</h3>
-        </div>
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-1 relative z-10">Beban SLS</p><h3 id="dashTotSls" class="text-2xl font-black text-slate-800 relative z-10">-</h3></div>
+        <div class="bg-gradient-to-br from-indigo-50 to-white p-3 rounded-xl border border-indigo-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-indigo-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Assignment</p><h3 id="dashTotTarget" class="text-2xl font-black text-indigo-700 relative z-10">-</h3></div>
+        <div class="bg-gradient-to-br from-fuchsia-50 to-white p-3 rounded-xl border border-fuchsia-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-fuchsia-600 font-bold uppercase tracking-wider mb-1 relative z-10">Progress Pendataan</p><h3 id="dashProgPendataan" class="text-2xl font-black text-fuchsia-700 relative z-10">-</h3></div>
+        <div class="bg-gradient-to-br from-sky-50 to-white p-3 rounded-xl border border-sky-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-sky-600 font-bold uppercase tracking-wider mb-1 relative z-10">Progress Submit</p><h3 id="dashProgSubmit" class="text-2xl font-black text-sky-700 relative z-10">-</h3></div>
+        <div class="bg-gradient-to-br from-blue-50 to-white p-3 rounded-xl border border-blue-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-blue-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Open</p><h3 id="dashTotOpen" class="text-2xl font-black text-blue-700 relative z-10">-</h3></div>
+        <div class="bg-gradient-to-br from-amber-50 to-white p-3 rounded-xl border border-amber-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-amber-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Draft</p><h3 id="dashTotDraft" class="text-2xl font-black text-amber-700 relative z-10">-</h3></div>
+        <div class="bg-gradient-to-br from-purple-50 to-white p-3 rounded-xl border border-purple-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-purple-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Submit</p><h3 id="dashTotSubmit" class="text-2xl font-black text-purple-700 relative z-10">-</h3></div>
+        <div class="bg-gradient-to-br from-red-50 to-white p-3 rounded-xl border border-red-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-red-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Reject</p><h3 id="dashTotReject" class="text-2xl font-black text-red-700 relative z-10">-</h3></div>
+        <div class="bg-gradient-to-br from-green-50 to-white p-3 rounded-xl border border-green-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-green-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Approve</p><h3 id="dashTotApprove" class="text-2xl font-black text-green-700 relative z-10">-</h3></div>
       </div>
       
+      <!-- NAVIGASI TAB MENU -->
       <div class="px-6 pt-3 bg-white flex gap-6 border-b border-gray-200 overflow-x-auto scrollbar-hide">
          <button id="btnTab1" onclick="switchTab(1)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-blue-500 text-blue-700 transition">Detail SLS</button>
          <button id="btnTab2" onclick="switchTab(2)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Progress PPL</button>
          <button id="btnTab3" onclick="switchTab(3)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Progress PML</button>
          <button id="btnTab4" onclick="switchTab(4)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Progress Kecamatan</button>
          <button id="btnTab5" onclick="switchTab(5)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Visualisasi Data</button>
-         <!-- TIGA TAB BARU ANALISA -->
          <button id="btnTab6" onclick="switchTab(6)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-amber-500 hover:text-amber-600 transition flex gap-1 items-center">📊 Analisa Keluarga</button>
          <button id="btnTab7" onclick="switchTab(7)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-purple-500 hover:text-purple-600 transition flex gap-1 items-center">📈 Analisa BKU</button>
          <button id="btnTab8" onclick="switchTab(8)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-emerald-500 hover:text-emerald-600 transition flex gap-1 items-center">🏡 Analisa Usaha Keluarga</button>
       </div>
 
+      <!-- GLOBAL FILTER MENU -->
       <div class="px-6 py-3 bg-gray-50/50 flex gap-2 items-center border-b border-blue-100 flex-wrap" id="filterArea">
-         <div class="flex-none w-48"><input type="text" id="dashSearch" onkeyup="filterTabel()" placeholder="PENCARIAN DATA..." class="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-bold focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none h-[34px] teks-upper text-gray-700 shadow-sm"></div>
+         <div class="flex-none w-48"><input type="text" id="dashSearch" onkeyup="handleGlobalFilter()" placeholder="PENCARIAN DATA..." class="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-bold focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none h-[34px] teks-upper text-gray-700 shadow-sm"></div>
          <div class="flex-1 min-w-[130px]"><select id="fPrio"><option value="">STATUS PRIORITAS</option><option value="1">YA</option><option value="0">TIDAK</option></select></div>
          <div class="flex-1 min-w-[130px]"><select id="fKec"><option value="">KECAMATAN</option></select></div>
-         <div class="fPml flex-1 min-w-[130px]"><select id="fPml"><option value="">PML</option></select></div>
+         <div class="flex-1 min-w-[130px]"><select id="fPml"><option value="">PML</option></select></div>
          <div class="flex-1 min-w-[130px]"><select id="fPpl"><option value="">PPL</option></select></div>
          <div class="flex-1 min-w-[130px]"><select id="fPj"><option value="">PJ KUDA</option></select></div>
          <div class="flex-1 min-w-[150px]"><select id="fStatusPetugas"><option value="">STATUS TARGET</option><option value="Tercapai">TERCAPAI</option><option value="Belum Tercapai">BELUM TERCAPAI</option></select></div>
       </div>
     </div>
 
+    <!-- MAIN DASHBOARD AREA -->
     <div class="flex-1 bg-blue-50/20 relative p-4 flex flex-col min-h-0">
       <div id="captureArea" class="flex-1 flex flex-col min-h-0 bg-white border border-gray-200 rounded-2xl shadow-sm overflow-auto transition-all">
          
@@ -192,94 +169,33 @@
          
          <!-- TAB 1: DETAIL SLS -->
          <div id="tab1-content" class="flex-1 w-full dashboard-table block">
-           <table class="w-full text-left border-collapse min-w-[1200px]">
-             <thead class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50 border-b border-blue-200 sticky top-0 z-10">
-               <tr>
-                 <th class="px-4 py-3 bg-blue-50 border-r border-blue-100 w-12 text-center rounded-tl-2xl">No</th>
-                 <th onclick="sortTabel('idSls')" class="px-4 py-3 bg-blue-50 border-r border-blue-100 hover:bg-blue-100 transition">ID SLS ↕</th>
-                 <th onclick="sortTabel('nmsls')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition">Wilayah ↕</th>
-                 <th onclick="sortTabel('ppl')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition">Petugas (PPL/PML) ↕</th>
-                 <th onclick="sortTabel('pj')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition">PJ Kuda ↕</th>
-                 <th onclick="sortTabel('open')" class="px-4 py-3 text-center bg-blue-50 text-blue-800 border-l border-blue-100 hover:bg-blue-100 transition">Open ↕</th>
-                 <th onclick="sortTabel('draft')" class="px-4 py-3 text-center bg-amber-50 text-amber-800 border-l border-amber-100 hover:bg-amber-100 transition">Draft ↕</th>
-                 <th onclick="sortTabel('agg_submit')" class="px-4 py-3 text-center bg-purple-50 text-purple-800 border-l border-purple-100 hover:bg-purple-100 transition">Submit ↕</th>
-                 <th onclick="sortTabel('calcTotal')" class="px-4 py-3 text-center bg-indigo-50 text-indigo-900 border-l border-indigo-200 hover:bg-indigo-100 transition rounded-tr-2xl">Total ↕</th>
-               </tr>
-             </thead>
+           <table class="w-full text-left border-collapse min-w-[1350px]">
+             <!-- HEADER DI-RENDER DINAMIS MELALUI JAVASCRIPT AGAR FILTER DROPDOWN TERBENTUK -->
+             <thead id="headTab1" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead>
              <tbody id="tableBodyDash" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
            </table>
          </div>
 
-         <!-- TAB 2: PROGRESS PPL -->
+         <!-- TAB 2: PPL -->
          <div id="tab2-content" class="hidden flex-1 w-full dashboard-table">
-           <table class="w-full text-left border-collapse min-w-[1450px]"> 
-             <thead class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50 border-b border-blue-200 sticky top-0 z-10">
-               <tr>
-                 <th class="px-4 py-3 bg-blue-50 border-r border-blue-100 w-12 text-center rounded-tl-2xl">No</th>
-                 <th onclick="sortTabelPpl('ppl')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition cursor-pointer">Nama PPL ↕</th>
-                 <th onclick="sortTabelPpl('kec')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition cursor-pointer">Kecamatan ↕</th>
-                 <th onclick="sortTabelPpl('o')" class="px-4 py-3 text-center bg-blue-50 border-l border-blue-100 text-blue-800 hover:bg-blue-100 transition cursor-pointer">Open ↕</th>
-                 <th onclick="sortTabelPpl('d')" class="px-4 py-3 text-center bg-amber-50 border-l border-amber-100 text-amber-800 hover:bg-amber-100 transition cursor-pointer">Draft ↕</th>
-                 <th onclick="sortTabelPpl('agg_s')" class="px-4 py-3 text-center bg-purple-50 border-l border-purple-100 text-purple-800 hover:bg-purple-100 transition cursor-pointer">Submit ↕</th>
-                 <th onclick="sortTabelPpl('t')" class="px-4 py-3 text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200 hover:bg-indigo-200 transition cursor-pointer">Total ↕</th>
-                 <th onclick="sortTabelPpl('avg_raw')" class="px-4 py-3 text-center bg-orange-50 border-l border-orange-100 text-orange-800 hover:bg-orange-100 transition cursor-pointer whitespace-nowrap">Rata² Submit Harian ↕</th>
-                 <th onclick="sortTabelPpl('pct_pendataan')" class="px-4 py-3 text-center bg-fuchsia-50 border-l border-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-100 transition cursor-pointer whitespace-nowrap">% Pendataan ↕</th>
-                 <th onclick="sortTabelPpl('pct_submit')" class="px-4 py-3 text-center bg-sky-50 border-l border-sky-100 text-sky-800 hover:bg-sky-100 transition cursor-pointer whitespace-nowrap">% Submit ↕</th>
-                 <th onclick="sortTabelPpl('pct_approve')" class="px-4 py-3 text-center bg-emerald-50 border-l border-emerald-100 text-emerald-800 hover:bg-emerald-100 transition cursor-pointer whitespace-nowrap">% Approved ↕</th>
-                 <th onclick="sortTabelPpl('kekurangan')" class="px-4 py-3 text-center bg-rose-50 border-l border-rose-100 text-rose-800 hover:bg-rose-100 transition cursor-pointer whitespace-nowrap">Kekurangan ↕</th>
-                 <th onclick="sortTabelPpl('statusTarget')" class="px-4 py-3 text-center bg-gray-100 border-l border-gray-200 text-gray-700 hover:bg-gray-200 transition cursor-pointer rounded-tr-2xl whitespace-nowrap">Status Capaian Target ↕</th>
-               </tr>
-             </thead>
+           <table class="w-full text-left border-collapse min-w-[1600px]"> 
+             <thead id="headTab2" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead>
              <tbody id="tableLeaderboard" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
            </table>
          </div>
 
-         <!-- TAB 3: PROGRESS PML -->
+         <!-- TAB 3: PML -->
          <div id="tab3-content" class="hidden flex-1 w-full dashboard-table">
-           <table class="w-full text-left border-collapse min-w-[1550px]">
-             <thead class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50 border-b border-blue-200 sticky top-0 z-10">
-               <tr>
-                 <th class="px-4 py-3 bg-blue-50 border-r border-blue-100 w-12 text-center rounded-tl-2xl">No</th>
-                 <th onclick="sortTabelPml('pml')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition cursor-pointer">Nama PML ↕</th>
-                 <th onclick="sortTabelPml('kec')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition cursor-pointer">Kecamatan ↕</th>
-                 <th onclick="sortTabelPml('o')" class="px-4 py-3 text-center bg-blue-50 border-l border-blue-100 text-blue-800 hover:bg-blue-100 transition cursor-pointer">Open ↕</th>
-                 <th onclick="sortTabelPml('d')" class="px-4 py-3 text-center bg-amber-50 border-l border-amber-100 text-amber-800 hover:bg-amber-100 transition cursor-pointer">Draft ↕</th>
-                 <th onclick="sortTabelPml('sub')" class="px-4 py-3 text-center bg-purple-50 border-l border-purple-100 text-purple-800 hover:bg-purple-100 transition cursor-pointer">Submit ↕</th>
-                 <th onclick="sortTabelPml('rej')" class="px-4 py-3 text-center bg-red-50 border-l border-red-100 text-red-800 hover:bg-red-100 transition cursor-pointer">Reject ↕</th>
-                 <th onclick="sortTabelPml('app')" class="px-4 py-3 text-center bg-green-50 border-l border-green-100 text-green-800 hover:bg-green-100 transition cursor-pointer">Approve ↕</th>
-                 <th onclick="sortTabelPml('t')" class="px-4 py-3 text-center bg-indigo-100 border-l border-indigo-200 text-indigo-900 hover:bg-indigo-200 transition cursor-pointer">Total ↕</th>
-                 <th onclick="sortTabelPml('pct_open')" class="px-4 py-3 text-center bg-blue-50 border-l border-blue-100 text-blue-800 hover:bg-blue-100 transition cursor-pointer whitespace-nowrap">% Open ↕</th>
-                 <th onclick="sortTabelPml('pct_draft')" class="px-4 py-3 text-center bg-amber-50 border-l border-amber-100 text-amber-800 hover:bg-amber-100 transition cursor-pointer whitespace-nowrap">% Draft ↕</th>
-                 <th onclick="sortTabelPml('pct_sub')" class="px-4 py-3 text-center bg-purple-50 border-l border-purple-100 text-purple-800 hover:bg-purple-100 transition cursor-pointer whitespace-nowrap">% Submit ↕</th>
-                 <th onclick="sortTabelPml('pct_rej')" class="px-4 py-3 text-center bg-rose-50 border-l border-rose-100 text-rose-800 hover:bg-rose-100 transition cursor-pointer whitespace-nowrap">% Reject ↕</th>
-                 <th onclick="sortTabelPml('pct_app')" class="px-4 py-3 text-center bg-emerald-50 border-l border-emerald-100 text-emerald-800 hover:bg-emerald-100 transition cursor-pointer whitespace-nowrap">% Approve ↕</th>
-                 <th onclick="sortTabelPml('kekurangan')" class="px-4 py-3 text-center bg-rose-50 border-l border-rose-100 text-rose-800 hover:bg-rose-100 transition cursor-pointer whitespace-nowrap">Kekurangan ↕</th>
-                 <th onclick="sortTabelPml('statusTarget')" class="px-4 py-3 text-center bg-gray-100 border-l border-gray-200 text-gray-700 hover:bg-gray-200 transition cursor-pointer rounded-tr-2xl whitespace-nowrap">Status Capaian Target ↕</th>
-               </tr>
-             </thead>
+           <table class="w-full text-left border-collapse min-w-[1700px]">
+             <thead id="headTab3" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead>
              <tbody id="tablePml" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
            </table>
          </div>
 
-         <!-- TAB 4: PROGRESS KECAMATAN -->
+         <!-- TAB 4: KECAMATAN -->
          <div id="tab4-content" class="hidden flex-1 w-full dashboard-table">
-           <table class="w-full text-left border-collapse min-w-[950px]">
-             <thead class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50 border-b border-blue-200 sticky top-0 z-10">
-               <tr>
-                 <th class="px-4 py-3 bg-blue-50 border-r border-blue-100 w-12 text-center rounded-tl-2xl">No</th>
-                 <th onclick="sortTabelKec('kec')" class="px-4 py-3 bg-blue-50 border-r border-blue-100 hover:bg-blue-100 transition cursor-pointer">Kecamatan ↕</th>
-                 <th onclick="sortTabelKec('pj')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition cursor-pointer">PJ Kuda ↕</th>
-                 <th onclick="sortTabelKec('o')" class="px-4 py-3 text-center bg-blue-50 border-l border-blue-100 text-blue-800 hover:bg-blue-100 transition cursor-pointer">Open ↕</th>
-                 <th onclick="sortTabelKec('d')" class="px-4 py-3 text-center bg-amber-50 border-l border-amber-100 text-amber-800 hover:bg-amber-100 transition cursor-pointer">Draft ↕</th>
-                 <th onclick="sortTabelKec('s')" class="px-4 py-3 text-center bg-purple-50 border-l border-purple-100 text-purple-800 hover:bg-purple-100 transition cursor-pointer">Submit ↕</th>
-                 <th onclick="sortTabelKec('rej')" class="px-4 py-3 text-center bg-red-50 border-l border-red-100 text-red-800 hover:bg-red-100 transition cursor-pointer">Reject ↕</th>
-                 <th onclick="sortTabelKec('app')" class="px-4 py-3 text-center bg-green-50 border-l border-green-100 text-green-800 hover:bg-green-100 transition cursor-pointer">Approve ↕</th>
-                 <th onclick="sortTabelKec('t')" class="px-4 py-3 text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200 hover:bg-indigo-200 transition cursor-pointer">Total ↕</th>
-                 <th onclick="sortTabelKec('pct_pendataan')" class="px-4 py-3 text-center bg-fuchsia-50 border-l border-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-100 transition cursor-pointer whitespace-nowrap">% Pendataan ↕</th>
-                 <th onclick="sortTabelKec('pct_submit')" class="px-4 py-3 text-center bg-sky-50 border-l border-sky-100 text-sky-800 hover:bg-sky-100 transition cursor-pointer whitespace-nowrap">% Submit ↕</th>
-                 <th onclick="sortTabelKec('pct_approve')" class="px-4 py-3 text-center bg-emerald-50 border-l border-emerald-100 text-emerald-800 hover:bg-emerald-100 transition cursor-pointer rounded-tr-2xl whitespace-nowrap">% Approved ↕</th>
-               </tr>
-             </thead>
+           <table class="w-full text-left border-collapse min-w-[1250px]">
+             <thead id="headTab4" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead>
              <tbody id="tableKecamatan" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
            </table>
          </div>
@@ -297,71 +213,32 @@
          </div>
 
          <!-- TAB 6: ANALISA KELUARGA -->
-         <div id="tab6-content" class="hidden flex-1 w-full dashboard-table block">
-           <table class="w-full text-left border-collapse min-w-[1200px]">
-             <thead class="text-[10px] uppercase text-amber-900 font-bold tracking-wider bg-amber-100 border-b border-amber-300 sticky top-0 z-10">
-               <tr>
-                 <th class="px-4 py-3 bg-amber-100 border-r border-amber-200 w-12 text-center rounded-tl-2xl">No</th>
-                 <th onclick="sortTabAnalis('idSls')" class="px-4 py-3 bg-amber-100 border-r border-amber-200 hover:bg-amber-200 transition cursor-pointer">ID SLS ↕</th>
-                 <th onclick="sortTabAnalis('nmsls')" class="px-4 py-3 bg-amber-100 hover:bg-amber-200 transition cursor-pointer">Wilayah ↕</th>
-                 <th onclick="sortTabAnalis('ppl')" class="px-4 py-3 bg-amber-100 hover:bg-amber-200 transition cursor-pointer">Petugas (PPL/PML) ↕</th>
-                 <th onclick="sortTabAnalis('pj')" class="px-4 py-3 bg-amber-100 hover:bg-amber-200 transition cursor-pointer">PJ Kuda ↕</th>
-                 <th class="px-4 py-3 bg-amber-100 text-center border-l border-amber-200 text-slate-800">Prelist Awal</th>
-                 <th class="px-4 py-3 bg-amber-100 text-center border-l border-amber-200 text-green-700">Ditemukan</th>
-                 <th class="px-4 py-3 bg-amber-100 text-center border-l border-amber-200 text-blue-700">Kel. Baru</th>
-                 <th class="px-4 py-3 bg-amber-100 text-center border-l border-amber-200 text-gray-700">Meninggal</th>
-                 <th class="px-4 py-3 bg-amber-100 text-center border-l border-amber-200 text-red-700 rounded-tr-2xl">Tdk Ditemukan</th>
-               </tr>
-             </thead>
+         <div id="tab6-content" class="hidden flex-1 w-full dashboard-table">
+           <table class="w-full text-left border-collapse min-w-[1350px]">
+             <thead id="headTab6" class="text-[10px] uppercase text-amber-900 font-bold tracking-wider bg-amber-100"></thead>
              <tbody id="tableKeluarga" class="text-xs divide-y divide-amber-100 text-gray-700 tags-upper"></tbody>
            </table>
          </div>
 
          <!-- TAB 7: ANALISA BKU (USAHA PERUSAHAAN) -->
-         <div id="tab7-content" class="hidden flex-1 w-full dashboard-table block">
-           <table class="w-full text-left border-collapse min-w-[1200px]">
-             <thead class="text-[10px] uppercase text-purple-900 font-bold tracking-wider bg-purple-100 border-b border-purple-300 sticky top-0 z-10">
-               <tr>
-                 <th class="px-4 py-3 bg-purple-100 border-r border-purple-200 w-12 text-center rounded-tl-2xl">No</th>
-                 <th onclick="sortTabAnalis('idSls')" class="px-4 py-3 bg-purple-100 border-r border-purple-200 hover:bg-purple-200 transition cursor-pointer">ID SLS ↕</th>
-                 <th onclick="sortTabAnalis('nmsls')" class="px-4 py-3 bg-purple-100 hover:bg-purple-200 transition cursor-pointer">Wilayah ↕</th>
-                 <th onclick="sortTabAnalis('ppl')" class="px-4 py-3 bg-purple-100 hover:bg-purple-200 transition cursor-pointer">Petugas (PPL/PML) ↕</th>
-                 <th onclick="sortTabAnalis('pj')" class="px-4 py-3 bg-purple-100 hover:bg-purple-200 transition cursor-pointer">PJ Kuda ↕</th>
-                 <th class="px-4 py-3 bg-purple-100 text-center border-l border-purple-200 text-slate-800">Prelist Usaha</th>
-                 <th class="px-4 py-3 bg-purple-100 text-center border-l border-purple-200 text-green-700">Ditemukan</th>
-                 <th class="px-4 py-3 bg-purple-100 text-center border-l border-purple-200 text-blue-700">Baru</th>
-                 <th class="px-4 py-3 bg-purple-100 text-center border-l border-purple-200 text-gray-700">Tutup</th>
-                 <th class="px-4 py-3 bg-purple-100 text-center border-l border-purple-200 text-amber-700">Ganda</th>
-                 <th class="px-4 py-3 bg-purple-100 text-center border-l border-purple-200 text-red-700 rounded-tr-2xl">Tdk Ditemukan</th>
-               </tr>
-             </thead>
+         <div id="tab7-content" class="hidden flex-1 w-full dashboard-table">
+           <table class="w-full text-left border-collapse min-w-[1450px]">
+             <thead id="headTab7" class="text-[10px] uppercase text-purple-900 font-bold tracking-wider bg-purple-100"></thead>
              <tbody id="tableUsaha" class="text-xs divide-y divide-purple-100 text-gray-700 tags-upper"></tbody>
            </table>
          </div>
 
          <!-- TAB 8: ANALISA USAHA KELUARGA -->
-         <div id="tab8-content" class="hidden flex-1 w-full dashboard-table block">
-           <table class="w-full text-left border-collapse min-w-[1200px]">
-             <thead class="text-[10px] uppercase text-emerald-900 font-bold tracking-wider bg-emerald-100 border-b border-emerald-300 sticky top-0 z-10">
-               <tr>
-                 <th class="px-4 py-3 bg-emerald-100 border-r border-emerald-200 w-12 text-center rounded-tl-2xl">No</th>
-                 <th onclick="sortTabAnalis('idSls')" class="px-4 py-3 bg-emerald-100 border-r border-emerald-200 hover:bg-emerald-200 transition cursor-pointer">ID SLS ↕</th>
-                 <th onclick="sortTabAnalis('nmsls')" class="px-4 py-3 bg-emerald-100 hover:bg-emerald-200 transition cursor-pointer">Wilayah ↕</th>
-                 <th onclick="sortTabAnalis('ppl')" class="px-4 py-3 bg-emerald-100 hover:bg-emerald-200 transition cursor-pointer">Petugas (PPL/PML) ↕</th>
-                 <th onclick="sortTabAnalis('pj')" class="px-4 py-3 bg-emerald-100 hover:bg-emerald-200 transition cursor-pointer">PJ Kuda ↕</th>
-                 <th class="px-4 py-3 bg-emerald-100 text-center border-l border-emerald-200 text-green-700">Ditemukan</th>
-                 <th class="px-4 py-3 bg-emerald-100 text-center border-l border-emerald-200 text-blue-700">Baru</th>
-                 <th class="px-4 py-3 bg-emerald-100 text-center border-l border-emerald-200 text-gray-700">Tutup</th>
-                 <th class="px-4 py-3 bg-emerald-100 text-center border-l border-emerald-200 text-amber-700">Ganda</th>
-                 <th class="px-4 py-3 bg-emerald-100 text-center border-l border-emerald-200 text-red-700 rounded-tr-2xl">Tdk Ditemukan</th>
-               </tr>
-             </thead>
+         <div id="tab8-content" class="hidden flex-1 w-full dashboard-table">
+           <table class="w-full text-left border-collapse min-w-[1350px]">
+             <thead id="headTab8" class="text-[10px] uppercase text-emerald-900 font-bold tracking-wider bg-emerald-100"></thead>
              <tbody id="tableUsahaKeluarga" class="text-xs divide-y divide-emerald-100 text-gray-700 tags-upper"></tbody>
            </table>
          </div>
 
       </div> 
       
+      <!-- AREA PAGINASI -->
       <div id="paginasiArea" class="bg-white border border-gray-200 px-5 py-3 rounded-xl mt-3 shadow-sm flex justify-between items-center shrink-0">
          <div class="flex items-center gap-3">
             <select id="perPageSelect" onchange="changePerPage()" class="text-xs font-bold text-gray-600 bg-gray-50 border border-gray-300 rounded-md px-2 py-1.5 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer shadow-sm">
@@ -385,23 +262,22 @@
   // =========================================================================
   const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxSfOmssbzxzyoNXRdRtFFkXLxyFNJc7KNdPpL8h63H2p-7htGTtj7L7EXZ8QzhnUSP/exec";
 
+  // State Variables
   let DASH_DATA = [];
   let dashFilteredData = [];
+  let TAB_STATE = { 1:[], 2:[], 3:[], 4:[], 6:[], 7:[], 8:[] }; 
   let dashCurrentPage = 1;
   let dashRowsPerPage = 10; 
-  
-  let sortCol = ''; let sortAsc = true;
-  let sortColKec = 'agg_sra'; let sortAscKec = false; 
-  let sortColPpl = 'pct_submit'; let sortAscPpl = false; 
-  let sortColPml = 'pct_app'; let sortAscPml = false; 
+  let activeTabId = 1;
+  let sortCol = '', sortAsc = true;
   
   let tsKec, tsPml, tsPpl, tsPj, tsPrio, tsStatusPetugas; 
   let chartKecObj;
-  let activeTabId = 1;
   let kecChartMapGlobal = {};
-  
+  let timingConfig = {};
+
   // =========================================================================
-  // HOTKEYS NINJA ADMIN UPLOAD (Ketik 'f' 4 kali)
+  // HOTKEYS NINJA ADMIN UPLOAD (Ketik 'f' 4 kali berurutan)
   // =========================================================================
   let keyStrokes = '';
   document.addEventListener('keydown', (e) => {
@@ -412,7 +288,7 @@
               btn.classList.toggle('hidden');
               btn.classList.toggle('flex');
               keyStrokes = '';
-              Swal.fire({toast: true, position: 'top-end', icon: 'success', title: 'Panel Admin Aktif!', showConfirmButton: false, timer: 1500});
+              Swal.fire({toast: true, position: 'top-end', icon: 'success', title: 'Panel Admin Diaktifkan!', showConfirmButton: false, timer: 1500});
           }
       } else {
           keyStrokes = '';
@@ -425,7 +301,9 @@
 
   function toProperCase(str) {
       if (!str) return '';
-      return str.toLowerCase().replace(/(^|\s)\S/g, function(s) { return s.toUpperCase(); }).trim();
+      return str.toLowerCase().replace(/(^|\s)\S/g, function(s) {
+          return s.toUpperCase();
+      }).trim();
   }
 
   function getHariPendataan() {
@@ -435,7 +313,9 @@
 
       let actualDate = new Date(wib);
       let effectiveDate = new Date(wib);
-      if (wib.getHours() < 21) { effectiveDate.setDate(effectiveDate.getDate() - 1); }
+      if (wib.getHours() < 21) {
+          effectiveDate.setDate(effectiveDate.getDate() - 1);
+      }
 
       const startYear = 2026; const startMonth = 5; const startDateDate = 15;
       const endYear = 2026; const endMonth = 7; const endDateDate = 31;
@@ -465,12 +345,10 @@
 
   function initDashboard() {
       const globalLoader = document.getElementById('globalLoading');
-      const timing = getHariPendataan();
+      timingConfig = getHariPendataan();
       
-      const badgeHari = document.getElementById('badgeHari');
-      if (badgeHari) badgeHari.innerText = `PENDATAAN HARI KE - ${timing.x}`;
-      const badgeTarget = document.getElementById('badgeTarget');
-      if (badgeTarget) badgeTarget.innerText = `TARGET PROGRESS : ${timing.y.toFixed(2)}%`;
+      if (document.getElementById('badgeHari')) document.getElementById('badgeHari').innerText = `PENDATAAN HARI KE - ${timingConfig.x}`;
+      if (document.getElementById('badgeTarget')) document.getElementById('badgeTarget').innerText = `TARGET PROGRESS : ${timingConfig.y.toFixed(2)}%`;
 
       fetch(GAS_API_URL)
         .then(response => {
@@ -488,58 +366,33 @@
           DASH_DATA = res.data;
           if(globalLoader) globalLoader.classList.add('hidden');
           
-          let warningHTML = "";
           if (res.integrityErrorCount > 0) {
-              warningHTML = `
-                <div class="bg-red-50 border border-red-300 text-red-800 p-3.5 rounded-xl mb-4 text-xs shadow-sm text-left animate-pulse">
-                    <b class="flex items-center gap-1.5 mb-1 text-[13px]">
-                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
-                       WARNING: Integritas Data Pusat
-                    </b>
-                    Sistem mendeteksi ada <b>${res.integrityErrorCount} Assignment</b> yang jumlah laporannya <i>(Open/Draft/Submit/dkk)</i> tidak sinkron dengan kolom <b>'Total Target'</b>.
-                    <br><br><span class="italic text-red-600 opacity-90">Sistem otomatis menggunakan <b>Total Target Absolut</b> untuk mengunci persentase pencapaian agar performa petugas tetap akurat.</span>
-                </div>
-              `;
+              Swal.fire({
+                  title: '<span class="text-lg font-black text-gray-800 tracking-wide uppercase">Info Target Pendataan</span>',
+                  html: `
+                    <div class="bg-red-50 border border-red-300 text-red-800 p-3.5 rounded-xl mb-4 text-xs shadow-sm text-left animate-pulse">
+                        <b class="flex items-center gap-1.5 mb-1 text-[13px]">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                           WARNING: Integritas Data Pusat
+                        </b>
+                        Sistem mendeteksi ada <b>${res.integrityErrorCount} Assignment</b> yang jumlah laporannya <i>(Open/Draft/Submit/dkk)</i> tidak sinkron dengan kolom <b>'Total Target'</b>.
+                        <br><br><span class="italic text-red-600 opacity-90">Sistem otomatis menggunakan <b>Total Target Absolut</b> untuk mengunci persentase pencapaian agar performa petugas tetap akurat.</span>
+                    </div>
+                    <div class="text-sm text-gray-700 text-left space-y-3 mt-2 font-medium">
+                        <p>Saat ini Pendataan SE memasuki <b class="text-blue-600">Hari ke-${timingConfig.x}</b>.</p>
+                        <p>Batas target proporsional saat ini adalah <b class="text-purple-600">${timingConfig.y.toFixed(2)}% dari total assignment tiap petugas</b> <span class="text-gray-500 italic text-xs">(akumulasi target harian Hari ke-${timingConfig.effDay})</span>.</p>
+                    </div>
+                  `,
+                  icon: 'warning', confirmButtonText: 'OKE, SIAP!', buttonsStyling: false,
+                  customClass: { popup: 'rounded-[2rem] border border-gray-100 shadow-2xl', confirmButton: 'bg-blue-600 text-white px-8 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition w-full mt-2 shadow-sm text-xs tracking-wide uppercase' }
+              });
           }
-
-          Swal.fire({
-              title: '<span class="text-lg font-black text-gray-800 tracking-wide uppercase">Info Target Pendataan</span>',
-              html: `
-                  ${warningHTML}
-                  <div class="text-sm text-gray-700 text-left space-y-3 mt-2 font-medium">
-                      <p>Saat ini Pendataan SE memasuki <b class="text-blue-600">Hari ke-${timing.x}</b>.</p>
-                      <p>Batas target proporsional saat ini adalah <b class="text-purple-600">${timing.y.toFixed(2)}% dari total assignment tiap petugas</b> <span class="text-gray-500 italic text-xs">(akumulasi target harian Hari ke-${timing.effDay})</span>.</p>
-                      
-                      <div class="bg-blue-50/50 p-3 rounded-xl border border-blue-100 text-xs mt-3">
-                          <b class="text-blue-800 flex items-center gap-1 mb-1.5">⏰ Mekanisme Update Target:</b>
-                          <ul class="list-disc pl-4 space-y-1 mb-2 text-gray-700">
-                             <li>Target persentase otomatis bertambah (+1,34% per hari) setiap pukul <b>21:00 WIB</b>.</li>
-                             <li>Target kemajuan <b>PPL</b> dinilai berdasarkan capaian <b>Total Submit</b> <i class="text-[10px]">(Submit + Reject + Approve)</i>.</li>
-                             <li>Target kemajuan <b>PML</b> dinilai murni berdasarkan capaian dokumen <b>Approved</b>.</li>
-                          </ul>
-                          
-                          <div class="mt-3 p-2.5 bg-amber-100 text-amber-900 border border-amber-300 rounded-lg shadow-sm">
-                             <b class="flex items-center gap-1 text-[13px] mb-1">💰 Syarat Pencairan Termin 1:</b>
-                             Sebagai informasi, per tanggal <b>15 Juli 2026</b> minimal capaian persentase <b>APPROVED</b> harus menyentuh angka <b>40%</b> agar dapat dilakukan pencairan termin 1.
-                          </div>
-                      </div>
-                  </div>
-              `,
-              icon: res.integrityErrorCount > 0 ? 'warning' : 'info',
-              confirmButtonText: 'OKE, SIAP!',
-              buttonsStyling: false,
-              customClass: {
-                  popup: 'rounded-[2rem] border border-gray-100 shadow-2xl',
-                  confirmButton: 'bg-blue-600 text-white px-8 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition w-full mt-2 shadow-sm text-xs tracking-wide uppercase'
-              }
-          });
           
-          if(document.getElementById('txtLastUpdate')) {
-              document.getElementById('txtLastUpdate').innerText = res.lastUpdate;
-          }
+          if(document.getElementById('txtLastUpdate')) document.getElementById('txtLastUpdate').innerText = res.lastUpdate;
 
           initSearchableDropdowns();
-          filterTabel();
+          buildTableHeaders(); 
+          handleGlobalFilter(); 
         })
         .catch(err => {
           if(globalLoader) globalLoader.classList.add('hidden');
@@ -575,542 +428,509 @@
     if(document.getElementById('fPj')) tsPj = new TomSelect('#fPj', tsConfig);
     if(document.getElementById('fStatusPetugas')) tsStatusPetugas = new TomSelect('#fStatusPetugas', tsConfig);
 
-    if(tsPrio) tsPrio.setValue(''); 
-    if(tsKec) tsKec.setValue(''); 
-    if(tsPml) tsPml.setValue(''); 
-    if(tsPpl) tsPpl.setValue(''); 
-    if(tsPj) tsPj.setValue('');
-    if(tsStatusPetugas) tsStatusPetugas.setValue('');
-
-    if(tsPrio) tsPrio.on('change', filterTabel); 
-    if(tsKec) tsKec.on('change', filterTabel); 
-    if(tsPml) tsPml.on('change', filterTabel); 
-    if(tsPpl) tsPpl.on('change', filterTabel); 
-    if(tsPj) tsPj.on('change', filterTabel);
-    if(tsStatusPetugas) tsStatusPetugas.on('change', filterTabel);
+    [tsPrio, tsKec, tsPml, tsPpl, tsPj, tsStatusPetugas].forEach(t => { if(t) { t.setValue(''); t.on('change', handleGlobalFilter); } });
   }
 
-  function renderCurrentTab() {
-      if(activeTabId === 1) renderTabelPaginasi();
-      if(activeTabId === 2) renderLeaderboard();
-      if(activeTabId === 3) renderProgressPml();
-      if(activeTabId === 4) renderProgressKecamatan();
-      if(activeTabId === 5) renderVisualisasi();
-      if(activeTabId === 6) renderTab6Keluarga();
-      if(activeTabId === 7) renderTab7Bku();
-      if(activeTabId === 8) renderTab8UsahaKel();
+  // =========================================================================
+  // KONFIGURASI KOLOM & FILTER DROPDOWN HEADER
+  // =========================================================================
+  const TABS_CONFIG = {
+      1: [
+         { k:'idSls', n:'ID SLS', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'150px' },
+         { k:'nmsls', n:'Wilayah', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'200px' },
+         { k:'ppl', n:'Petugas PPL', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'150px' },
+         { k:'pml', n:'Petugas PML', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'150px' },
+         { k:'pj', n:'PJ Kuda', c:'bg-blue-50 text-gray-700', w:'100px' },
+         { k:'open', n:'Open', c:'bg-blue-100 text-blue-800 text-center border-l border-blue-200' },
+         { k:'draft', n:'Draft', c:'bg-amber-100 text-amber-800 text-center border-l border-amber-200' },
+         { k:'agg_submit', n:'Submit', c:'bg-purple-100 text-purple-800 text-center border-l border-purple-200' },
+         { k:'calcTotal', n:'Total', c:'bg-indigo-100 text-indigo-900 text-center border-l border-indigo-200' }
+      ],
+      2: [
+         { k:'ppl', n:'Nama PPL', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'200px' },
+         { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
+         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200' },
+         { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200' },
+         { k:'agg_s', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200' },
+         { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200' },
+         { k:'avg_raw', n:'Rata² Harian', c:'text-center bg-orange-100 text-orange-800 border-l border-orange-200' },
+         { k:'pct_pendataan', n:'% Pendataan', c:'text-center bg-fuchsia-100 text-fuchsia-800 border-l border-fuchsia-200' },
+         { k:'pct_submit', n:'% Submit', c:'text-center bg-sky-100 text-sky-800 border-l border-sky-200' },
+         { k:'pct_approve', n:'% Approved', c:'text-center bg-emerald-100 text-emerald-800 border-l border-emerald-200' },
+         { k:'kekurangan', n:'Kekurangan', c:'text-center bg-rose-100 text-rose-800 border-l border-rose-200' },
+         { k:'statusTarget', n:'Status Capaian', c:'text-center bg-gray-100 text-gray-800 border-l border-gray-300' }
+      ],
+      3: [
+         { k:'pml', n:'Nama PML', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'200px' },
+         { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
+         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200' },
+         { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200' },
+         { k:'sub', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200' },
+         { k:'rej', n:'Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200' },
+         { k:'app', n:'Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200' },
+         { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200' },
+         { k:'pct_open', n:'% Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200' },
+         { k:'pct_draft', n:'% Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200' },
+         { k:'pct_sub', n:'% Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200' },
+         { k:'pct_rej', n:'% Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200' },
+         { k:'pct_app', n:'% Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200' },
+         { k:'kekurangan', n:'Kekurangan', c:'text-center bg-rose-100 text-rose-800 border-l border-rose-200' },
+         { k:'statusTarget', n:'Status Capaian', c:'text-center bg-gray-100 text-gray-800 border-l border-gray-300' }
+      ],
+      4: [
+         { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-blue-900' },
+         { k:'pj', n:'PJ Kuda', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
+         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200' },
+         { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200' },
+         { k:'s', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200' },
+         { k:'rej', n:'Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200' },
+         { k:'app', n:'Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200' },
+         { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200' },
+         { k:'pct_pendataan', n:'% Pendataan', c:'text-center bg-fuchsia-100 text-fuchsia-800 border-l border-fuchsia-200' },
+         { k:'pct_submit', n:'% Submit', c:'text-center bg-sky-100 text-sky-800 border-l border-sky-200' },
+         { k:'pct_approve', n:'% Approve', c:'text-center bg-emerald-100 text-emerald-800 border-l border-emerald-200' }
+      ],
+      6: [
+         { k:'idSls', n:'ID SLS', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'150px' },
+         { k:'nmsls', n:'Wilayah', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'200px' },
+         { k:'ppl', n:'Petugas PPL', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'150px' },
+         { k:'pml', n:'Petugas PML', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'150px' },
+         { k:'pj', n:'PJ Kuda', c:'bg-amber-100 text-amber-900', w:'100px' },
+         { k:'prelist', n:'Prelist Awal', c:'text-center border-l border-amber-200 bg-amber-50 text-slate-800' },
+         { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-amber-200 bg-amber-50 text-green-700' },
+         { k:'baru', n:'Kel. Baru', c:'text-center border-l border-amber-200 bg-amber-50 text-blue-700' },
+         { k:'meninggal', n:'Meninggal', c:'text-center border-l border-amber-200 bg-amber-50 text-gray-700' },
+         { k:'tdk', n:'Tdk Temu', c:'text-center border-l border-amber-200 bg-red-50 text-red-700' }
+      ],
+      7: [
+         { k:'idSls', n:'ID SLS', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'150px' },
+         { k:'nmsls', n:'Wilayah', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'200px' },
+         { k:'ppl', n:'Petugas PPL', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'150px' },
+         { k:'pml', n:'Petugas PML', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'150px' },
+         { k:'pj', n:'PJ Kuda', c:'bg-purple-100 text-purple-900', w:'100px' },
+         { k:'prelist', n:'Pre Usaha', c:'text-center border-l border-purple-200 bg-purple-50 text-slate-800' },
+         { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-purple-200 bg-purple-50 text-green-700' },
+         { k:'baru', n:'Usaha Baru', c:'text-center border-l border-purple-200 bg-purple-50 text-blue-700' },
+         { k:'tutup', n:'Tutup', c:'text-center border-l border-purple-200 bg-purple-50 text-gray-700' },
+         { k:'ganda', n:'Ganda', c:'text-center border-l border-purple-200 bg-amber-50 text-amber-700' },
+         { k:'tdk', n:'Tdk Temu', c:'text-center border-l border-purple-200 bg-red-50 text-red-700' }
+      ],
+      8: [
+         { k:'idSls', n:'ID SLS', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'150px' },
+         { k:'nmsls', n:'Wilayah', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'200px' },
+         { k:'ppl', n:'Petugas PPL', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'150px' },
+         { k:'pml', n:'Petugas PML', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'150px' },
+         { k:'pj', n:'PJ Kuda', c:'bg-emerald-100 text-emerald-900', w:'100px' },
+         { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-emerald-200 bg-emerald-50 text-green-700' },
+         { k:'baru', n:'Usaha Baru', c:'text-center border-l border-emerald-200 bg-emerald-50 text-blue-700' },
+         { k:'tutup', n:'Tutup', c:'text-center border-l border-emerald-200 bg-emerald-50 text-gray-700' },
+         { k:'ganda', n:'Ganda', c:'text-center border-l border-emerald-200 bg-amber-50 text-amber-700' },
+         { k:'tdk', n:'Tdk Temu', c:'text-center border-l border-emerald-200 bg-red-50 text-red-700' }
+      ]
+  };
+
+  function buildTableHeaders() {
+      Object.keys(TABS_CONFIG).forEach(tId => {
+          let headHtml = `<tr><th class="px-4 py-2 text-center align-top bg-gray-100 border-r border-gray-200 w-12 sticky top-0 z-20 shadow-sm">No</th>`;
+          TABS_CONFIG[tId].forEach(col => {
+              let wStyle = col.w ? `style="min-width:${col.w};"` : '';
+              headHtml += `
+                 <th class="px-3 py-2 align-top transition hover:opacity-90 sticky top-0 z-20 shadow-sm ${col.c}" ${wStyle}>
+                    <div class="flex justify-between items-center whitespace-nowrap gap-1 cursor-pointer" onclick="applySort('${col.k}')">
+                        <span>${col.n}</span>
+                        <span class="text-[9px] opacity-60">↕</span>
+                    </div>
+                    <select class="filter-select filter-sel-${tId}" data-col="${col.k}" onchange="renderCurrentTab()" onclick="event.stopPropagation()">
+                        <option value="">Semua</option>
+                    </select>
+                 </th>`;
+          });
+          headHtml += `</tr>`;
+          if(document.getElementById(`headTab${tId}`)) {
+              document.getElementById(`headTab${tId}`).innerHTML = headHtml;
+          }
+      });
+  }
+
+  function populateHeaderFilters(dataArr, tId) {
+      const selects = document.querySelectorAll(`.filter-sel-${tId}`);
+      selects.forEach(sel => {
+          let col = sel.getAttribute('data-col');
+          let currentVal = sel.value;
+          let uniqueVals = [...new Set(dataArr.map(x => String(x[col] || '')))];
+          uniqueVals.sort((a,b) => !isNaN(a) && !isNaN(b) ? Number(a) - Number(b) : a.localeCompare(b));
+          
+          let html = '<option value="">Semua</option>';
+          uniqueVals.forEach(v => { if(v !== '') html += `<option value="${v}">${v}</option>`; });
+          sel.innerHTML = html;
+          sel.value = currentVal; 
+      });
+  }
+
+  function applyHeaderFilters(dataArr, tId) {
+      const selects = document.querySelectorAll(`.filter-sel-${tId}`);
+      let filtered = dataArr;
+      selects.forEach(sel => {
+          let col = sel.getAttribute('data-col');
+          let val = sel.value;
+          if(val !== "") {
+              filtered = filtered.filter(x => String(x[col] || '') === val);
+          }
+      });
+      return filtered;
+  }
+
+  function applySort(col) {
+      if(sortCol === col) {
+          sortAsc = !sortAsc;
+      } else {
+          sortCol = col; sortAsc = true;
+      }
+      renderCurrentTab();
+  }
+
+  // =========================================================================
+  // DATA PIPELINE & RENDERING UTAMA
+  // =========================================================================
+  function handleGlobalFilter() {
+      const search = document.getElementById('dashSearch').value.toLowerCase();
+      const fp = document.getElementById('fPrio').value; const fk = document.getElementById('fKec').value;
+      const fpm = document.getElementById('fPml').value; const fpp = document.getElementById('fPpl').value;
+      const fpj = document.getElementById('fPj').value;
+      
+      dashFilteredData = DASH_DATA.filter(r => {
+          let mS = search === '' || `${r.idSls} ${r.nmsls} ${r.desa} ${r.ppl} ${r.pml}`.toLowerCase().includes(search);
+          return mS && (fp===''||String(r.prioritas)===fp) && (fk===''||r.kec===fk) && (fpm===''||r.pml===fpm) && (fpp===''||r.ppl===fpp) && (fpj===''||r.pj===fpj);
+      });
+
+      let tSls=0, tOpen=0, tDraft=0, tSub=0, tRej=0, tApp=0, tTot=0;
+      dashFilteredData.forEach(r => {
+          r.calcTotal = r.totalAbsolut || (r.open + r.draft + r.submit + r.reject + r.approve);
+          r.agg_submit = r.submit + r.reject + r.approve;
+          tSls++; tOpen+=r.open; tDraft+=r.draft; tSub+=r.submit; tRej+=r.reject; tApp+=r.approve; tTot+=r.calcTotal;
+      });
+
+      let pPend = tTot>0 ? (((tDraft+tSub+tRej+tApp)/tTot)*100).toFixed(1)+'%' : '0%';
+      let pSubm = tTot>0 ? (((tSub+tRej+tApp)/tTot)*100).toFixed(1)+'%' : '0%';
+
+      document.getElementById('dashTotSls').innerText = tSls.toLocaleString('id-ID');
+      document.getElementById('dashTotTarget').innerText = tTot.toLocaleString('id-ID');
+      document.getElementById('dashProgPendataan').innerHTML = `${(tDraft+tSub+tRej+tApp).toLocaleString('id-ID')} <span class="text-xs">(${pPend})</span>`;
+      document.getElementById('dashProgSubmit').innerHTML = `${(tSub+tRej+tApp).toLocaleString('id-ID')} <span class="text-xs">(${pSubm})</span>`;
+      document.getElementById('dashTotOpen').innerText = tOpen.toLocaleString('id-ID'); document.getElementById('dashTotDraft').innerText = tDraft.toLocaleString('id-ID');
+      document.getElementById('dashTotSubmit').innerText = tSub.toLocaleString('id-ID'); document.getElementById('dashTotReject').innerText = tRej.toLocaleString('id-ID');
+      document.getElementById('dashTotApprove').innerText = tApp.toLocaleString('id-ID');
+
+      buildTabStates();
+      dashCurrentPage = 1;
+      renderCurrentTab();
+  }
+
+  function buildTabStates() {
+      // Build flattened objects for all tabs
+      TAB_STATE[1] = dashFilteredData.map(r => ({ ...r, desaKec: r.desa + ' - ' + r.kec }));
+      
+      let pplM={}, pmlM={}, kecM={};
+      dashFilteredData.forEach(r => {
+          let kPpl = r.ppl+"_"+r.kec; if(!pplM[kPpl]) pplM[kPpl]={ppl:r.ppl, kec:r.kec, email:r.emailPpl, o:0, d:0, agg_s:0, t:0, app:0};
+          pplM[kPpl].o+=r.open; pplM[kPpl].d+=r.draft; pplM[kPpl].agg_s+=r.agg_submit; pplM[kPpl].t+=r.calcTotal; pplM[kPpl].app+=r.approve;
+          
+          let kPml = r.pml+"_"+r.kec; if(!pmlM[kPml]) pmlM[kPml]={pml:r.pml, kec:r.kec, email:r.emailPml, o:0, d:0, sub:0, rej:0, app:0, t:0};
+          pmlM[kPml].o+=r.open; pmlM[kPml].d+=r.draft; pmlM[kPml].sub+=r.submit; pmlM[kPml].rej+=r.reject; pmlM[kPml].app+=r.approve; pmlM[kPml].t+=r.calcTotal;
+          
+          let kKec = r.kec+"_"+r.pj; if(!kecM[kKec]) kecM[kKec]={kec:r.kec, pj:r.pj, o:0, d:0, s:0, rej:0, app:0, t:0, agg_sra:0};
+          kecM[kKec].o+=r.open; kecM[kKec].d+=r.draft; kecM[kKec].s+=r.submit; kecM[kKec].rej+=r.reject; kecM[kKec].app+=r.approve; kecM[kKec].agg_sra+=r.agg_submit; kecM[kKec].t+=r.calcTotal;
+      });
+
+      TAB_STATE[2] = Object.values(pplM).map(p => {
+          p.target_absolut = Math.ceil((timingConfig.y/100)*p.t); p.kekurangan = Math.max(0, p.target_absolut-p.agg_s);
+          p.statusTarget = p.kekurangan<=0 ? 'Tercapai' : 'Belum Tercapai'; p.avg_raw = Math.round((timingConfig.x>0 ? p.agg_s/timingConfig.x : 0)*100)/100;
+          p.pct_pendataan = p.t>0 ? (((p.d+p.agg_s)/p.t)*100).toFixed(1) : '0.0'; 
+          p.pct_submit = p.t>0 ? ((p.agg_s/p.t)*100).toFixed(1) : '0.0'; 
+          p.pct_approve = p.t>0 ? ((p.app/p.t)*100).toFixed(1) : '0.0';
+          return p;
+      });
+
+      TAB_STATE[3] = Object.values(pmlM).map(p => {
+          p.target_absolut = Math.ceil((timingConfig.y/100)*p.t); p.kekurangan = Math.max(0, p.target_absolut-p.app);
+          p.statusTarget = p.kekurangan<=0 ? 'Tercapai' : 'Belum Tercapai'; 
+          p.pct_open = p.t>0 ? ((p.o/p.t)*100).toFixed(1) : '0.0'; 
+          p.pct_draft = p.t>0 ? ((p.d/p.t)*100).toFixed(1) : '0.0'; 
+          p.pct_sub = p.t>0 ? ((p.sub/p.t)*100).toFixed(1) : '0.0'; 
+          p.pct_rej = p.t>0 ? ((p.rej/p.t)*100).toFixed(1) : '0.0'; 
+          p.pct_app = p.t>0 ? ((p.app/p.t)*100).toFixed(1) : '0.0';
+          return p;
+      });
+
+      TAB_STATE[4] = Object.values(kecM).map(p => {
+          p.pct_pendataan = p.t>0 ? (((p.d+p.agg_sra)/p.t)*100).toFixed(1) : '0.0'; 
+          p.pct_submit = p.t>0 ? ((p.agg_sra/p.t)*100).toFixed(1) : '0.0'; 
+          p.pct_approve = p.t>0 ? ((p.app/p.t)*100).toFixed(1) : '0.0';
+          return p;
+      });
+
+      TAB_STATE[6] = dashFilteredData.map(r => { let e = r.extKel||{}; return { idSls:r.idSls, nmsls:r.nmsls, desaKec:r.desa+' - '+r.kec, ppl:r.ppl, pml:r.pml, pj:r.pj, prelist:e.prelist||0, ditemukan:e.ditemukan||0, baru:e.baru||0, meninggal:e.meninggal||0, tdk:e.tdk||0, isMismatch:r.isMismatch }; });
+      TAB_STATE[7] = dashFilteredData.map(r => { let e = r.extBku||{}; return { idSls:r.idSls, nmsls:r.nmsls, desaKec:r.desa+' - '+r.kec, ppl:r.ppl, pml:r.pml, pj:r.pj, prelist:e.prelist||0, ditemukan:e.ditemukan||0, baru:e.baru||0, tutup:e.tutup||0, ganda:e.ganda||0, tdk:e.tdk||0, isMismatch:r.isMismatch }; });
+      TAB_STATE[8] = dashFilteredData.map(r => { let e = r.extUsKel||{}; return { idSls:r.idSls, nmsls:r.nmsls, desaKec:r.desa+' - '+r.kec, ppl:r.ppl, pml:r.pml, pj:r.pj, ditemukan:e.ditemukan||0, baru:e.baru||0, tutup:e.tutup||0, ganda:e.ganda||0, tdk:e.tdk||0, isMismatch:r.isMismatch }; });
   }
 
   function switchTab(tabId) {
-     if(activeTabId !== tabId) dashCurrentPage = 1; // Reset halaman ke 1 hanya saat pindah tab
+     if(activeTabId !== tabId) dashCurrentPage = 1; 
      activeTabId = tabId;
      
-     // 1. Ganti Default Pagination (PPL, PML, KECAMATAN = Semua. Sisanya = 10)
+     // Dinamis Pagination Default
      if ([2, 3, 4].includes(tabId)) {
         dashRowsPerPage = 999999;
         if(document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "999999";
      } else {
         dashRowsPerPage = parseInt(document.getElementById('perPageSelect').value) || 10;
-        if (dashRowsPerPage === 999999) { // Kembalikan ke 10 jika sebelumnya "Semua"
+        if (dashRowsPerPage === 999999) { 
             dashRowsPerPage = 10;
             if(document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "10";
         }
      }
      
-     // 2. Reset Button Styles
-     for(let i=1; i<=8; i++) {
+     // Styling Buttons
+     [1,2,3,4,5,6,7,8].forEach(i => {
         let btn = document.getElementById('btnTab'+i);
-        if(btn) {
-           btn.className = btn.className.replace(/border-blue-500|border-amber-500|border-purple-500|border-emerald-500|text-blue-700|text-amber-600|text-purple-600|text-emerald-600/g, "border-transparent text-gray-500");
-        }
-        let tabC = document.getElementById('tab'+i+'-content');
-        if(tabC) { tabC.classList.add('hidden'); tabC.classList.remove('block'); }
-     }
+        if(btn) btn.className = btn.className.replace(/border-blue-500|border-amber-500|border-purple-500|border-emerald-500|text-blue-700|text-amber-600|text-purple-600|text-emerald-600/g, "border-transparent text-gray-500");
+        let tc = document.getElementById('tab'+i+'-content'); if(tc) { tc.classList.add('hidden'); tc.classList.remove('block'); }
+     });
      
-     // 3. Set Active Button Style
      let btnAct = document.getElementById('btnTab'+tabId);
      if(btnAct) {
         btnAct.classList.remove("border-transparent", "text-gray-500");
-        if(tabId === 6) btnAct.classList.add("border-amber-500", "text-amber-600");
-        else if(tabId === 7) btnAct.classList.add("border-purple-500", "text-purple-600");
-        else if(tabId === 8) btnAct.classList.add("border-emerald-500", "text-emerald-600");
+        if(tabId===6) btnAct.classList.add("border-amber-500", "text-amber-600");
+        else if(tabId===7) btnAct.classList.add("border-purple-500", "text-purple-600");
+        else if(tabId===8) btnAct.classList.add("border-emerald-500", "text-emerald-600");
         else btnAct.classList.add("border-blue-500", "text-blue-700");
      }
      
-     let tabAct = document.getElementById('tab'+tabId+'-content');
-     if(tabAct) { tabAct.classList.remove('hidden'); tabAct.classList.add('block'); }
-     
-     if(document.getElementById('paginasiArea')) document.getElementById('paginasiArea').style.display = ([1,2,3,4,6,7,8].includes(tabId)) ? 'flex' : 'none';
+     if(document.getElementById('tab'+tabId+'-content')) document.getElementById('tab'+tabId+'-content').classList.remove('hidden');
+     document.getElementById('paginasiArea').style.display = ([1,2,3,4,6,7,8].includes(tabId)) ? 'flex' : 'none';
      
      renderCurrentTab();
   }
 
-  function sortLogic(arr, col, isAsc) {
-     arr.sort((a, b) => {
-        let valA = a[col]; let valB = b[col];
-        if (typeof valA === 'number' && typeof valB === 'number') {
-           return isAsc ? valA - valB : valB - valA;
-        }
-        valA = String(valA).toLowerCase(); valB = String(valB).toLowerCase();
-        if (valA < valB) return isAsc ? -1 : 1;
-        if (valA > valB) return isAsc ? 1 : -1;
-        return 0;
-     });
-  }
-
-  function filterTabel() {
-    const search = document.getElementById('dashSearch') ? document.getElementById('dashSearch').value.toLowerCase() : '';
-    const fPrio = document.getElementById('fPrio') ? document.getElementById('fPrio').value : '';
-    const fkec = document.getElementById('fKec') ? document.getElementById('fKec').value : '';
-    const fpml = document.getElementById('fPml') ? document.getElementById('fPml').value : '';
-    const fppl = document.getElementById('fPpl') ? document.getElementById('fPpl').value : '';
-    const fpj = document.getElementById('fPj') ? document.getElementById('fPj').value : '';
-    
-    let tSls = 0, tOpen = 0, tDraft = 0, tSubmit = 0, tReject = 0, tApprove = 0, tTotal = 0;
-
-    dashFilteredData = DASH_DATA.filter(row => {
-      let mSearch = search === '' || `${row.idSls} ${row.nmsls} ${row.desa} ${row.ppl} ${row.pml} ${row.emailPpl}`.toLowerCase().includes(search);
-      let mPrio = fPrio === '' || String(row.prioritas) === fPrio;
-      let mKec = fkec === '' || String(row.kec || '').toUpperCase() === fkec.toUpperCase();
-      let mPml = fpml === '' || String(row.pml || '').toUpperCase() === fpml.toUpperCase();
-      let mPpl = fppl === '' || String(row.ppl || '').toUpperCase() === fppl.toUpperCase();
-      let mPj = fpj === '' || String(row.pj || '').toUpperCase() === fpj.toUpperCase();
-      return mSearch && mPrio && mKec && mPml && mPpl && mPj;
-    });
-
-    dashFilteredData.forEach(row => {
-      row.calcTotal = row.totalAbsolut || (row.open + row.draft + row.submit + row.reject + row.approve);
-      row.agg_submit = row.submit + row.reject + row.approve; 
-      
-      tSls++; tOpen += row.open; tDraft += row.draft; tSubmit += row.submit; tReject += row.reject; tApprove += row.approve; tTotal += row.calcTotal;
-    });
-
-    if(sortCol !== '') { sortLogic(dashFilteredData, sortCol, sortAsc); }
-
-    let tProgPendataan = tDraft + tSubmit + tReject + tApprove;
-    let tProgSubmit = tSubmit + tReject + tApprove;
-
-    let pProgPendataan = tTotal > 0 ? ((tProgPendataan / tTotal) * 100).toFixed(1) + '%' : '0%';
-    let pProgSubmit = tTotal > 0 ? ((tProgSubmit / tTotal) * 100).toFixed(1) + '%' : '0%';
-    let pOpen = tTotal > 0 ? ((tOpen / tTotal) * 100).toFixed(1) + '%' : '0%';
-    let pDraft = tTotal > 0 ? ((tDraft / tTotal) * 100).toFixed(1) + '%' : '0%';
-    let pSubmit = tTotal > 0 ? ((tSubmit / tTotal) * 100).toFixed(1) + '%' : '0%';
-    let pReject = tTotal > 0 ? ((tReject / tTotal) * 100).toFixed(1) + '%' : '0%';
-    let pApprove = tTotal > 0 ? ((tApprove / tTotal) * 100).toFixed(1) + '%' : '0%';
-
-    if(document.getElementById('dashTotSls')) document.getElementById('dashTotSls').innerText = tSls.toLocaleString('id-ID');
-    if(document.getElementById('dashTotTarget')) document.getElementById('dashTotTarget').innerText = tTotal.toLocaleString('id-ID');
-    
-    if(document.getElementById('dashProgPendataan')) document.getElementById('dashProgPendataan').innerHTML = `${tProgPendataan.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pProgPendataan})</span>`;
-    if(document.getElementById('dashProgSubmit')) document.getElementById('dashProgSubmit').innerHTML = `${tProgSubmit.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pProgSubmit})</span>`;
-    
-    if(document.getElementById('dashTotOpen')) document.getElementById('dashTotOpen').innerHTML = `${tOpen.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pOpen})</span>`;
-    if(document.getElementById('dashTotDraft')) document.getElementById('dashTotDraft').innerHTML = `${tDraft.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pDraft})</span>`;
-    if(document.getElementById('dashTotSubmit')) document.getElementById('dashTotSubmit').innerHTML = `${tSubmit.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pSubmit})</span>`;
-    if(document.getElementById('dashTotReject')) document.getElementById('dashTotReject').innerHTML = `${tReject.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pReject})</span>`;
-    if(document.getElementById('dashTotApprove')) document.getElementById('dashTotApprove').innerHTML = `${tApprove.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pApprove})</span>`;
-
-    dashCurrentPage = 1;
-    renderCurrentTab();
-  }
-
-  function sortTabel(colName) { if(sortCol === colName) sortAsc = !sortAsc; else { sortCol = colName; sortAsc = true; } filterTabel(); }
-  function sortTabelKec(colName) { if(sortColKec === colName) sortAscKec = !sortAscKec; else { sortColKec = colName; sortAscKec = (colName === 'kec' || colName === 'pj') ? true : false; } renderProgressKecamatan(); }
-  function sortTabelPpl(colName) { if(sortColPpl === colName) sortAscPpl = !sortAscPpl; else { sortColPpl = colName; sortAscPpl = (colName === 'ppl' || colName === 'kec' || colName === 'statusTarget') ? true : false; } renderLeaderboard(); }
-  function sortTabelPml(colName) { if(sortColPml === colName) sortAscPml = !sortAscPml; else { sortColPml = colName; sortAscPml = (colName === 'pml' || colName === 'kec') ? true : false; } renderProgressPml(); }
-  function sortTabAnalis(colName) { sortTabel(colName); }
-
-  function changePerPage() {
-    let sel = document.getElementById('perPageSelect');
-    if(sel) { dashRowsPerPage = parseInt(sel.value); dashCurrentPage = 1; renderCurrentTab(); }
-  }
-
-  function getPaginatedData(dataArray) {
-    const startIdx = (dashCurrentPage - 1) * dashRowsPerPage;
-    const endIdx = Math.min(startIdx + dashRowsPerPage, dataArray.length);
-    if(document.getElementById("pageInfoDash")) document.getElementById("pageInfoDash").innerText = `Menampilkan ${dataArray.length > 0 ? startIdx + 1 : 0} - ${endIdx} dari ${dataArray.length} Baris`;
-    if(document.getElementById("paginationDashContainer")) document.getElementById("paginationDashContainer").innerHTML = generatePaginationHTML(dataArray.length, dashCurrentPage, dashRowsPerPage, 'goDashPage');
-    return { data: dataArray.slice(startIdx, endIdx), startIdx: startIdx };
-  }
-
-  // --- RENDERER TAB 1 (DETAIL SLS) ---
-  function renderTabelPaginasi() {
-    const tbody = document.getElementById('tableBodyDash');
-    if(!tbody) return;
-    const {data, startIdx} = getPaginatedData(dashFilteredData);
-
-    if(data.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="9" class="text-center py-10 text-slate-400 font-medium italic">Tidak ada data ditemukan</td></tr>';
-      return;
-    }
-
-    let htmlContent = '';
-    data.forEach((row, index) => {
-      let prioBadge = row.prioritas === 1 ? `<span class="ml-1 bg-amber-100 text-amber-700 border border-amber-300 px-1.5 py-0.5 rounded text-[8px] font-black tracking-wider shadow-sm">PRIORITAS</span>` : '';
-      htmlContent += `
-        <tr class="even:bg-blue-50/20 odd:bg-white hover:bg-blue-100/30 transition border-b border-blue-100 ${row.isMismatch ? 'bg-red-50/30' : ''}">
-          <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-blue-100">${startIdx + index + 1}${row.isMismatch ? '<br><span title="Target Mismatch" class="text-red-500 text-[10px]">⚠️</span>' : ''}</td>
-          <td class="px-4 py-3 font-mono text-[11px] text-blue-800 font-bold align-middle border-r border-blue-100">${row.idSls}</td>
-          <td class="px-4 py-3 leading-tight align-middle"><span class="font-bold text-gray-800 text-xs">${row.nmsls}</span> ${prioBadge}<br><span class="text-[9px] text-gray-500 uppercase font-bold">${row.desa} - Kec. ${row.kec}</span></td>
-          <td class="px-4 py-3 leading-tight align-middle">
-            <span class="text-blue-600 font-bold text-[10px] uppercase">PPL: ${row.ppl || '-'}</span>
-            ${row.emailPpl ? `<br><a href="mailto:${row.emailPpl}" class="text-[9px] text-gray-800 font-medium lowercase hover:text-blue-600 block">✉️ ${row.emailPpl}</a>` : '<br><span class="text-[9px] text-gray-400 italic">Email Belum Ada</span>'}
-            <span class="text-indigo-600 font-bold text-[10px] uppercase mt-2 block">PML: ${row.pml || '-'}</span>
-            ${row.emailPml ? `<a href="mailto:${row.emailPml}" class="text-[9px] text-gray-800 font-medium lowercase hover:text-blue-600 block">✉️ ${row.emailPml}</a>` : '<span class="text-[9px] text-gray-400 italic">Email Belum Ada</span>'}
-          </td>
-          <td class="px-4 py-3 font-bold text-gray-700 text-[11px] align-middle uppercase">${row.pj}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-blue-600 align-middle border-l border-blue-100 bg-blue-50/10">${row.open !== '' ? row.open : '-'}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-amber-600 align-middle border-l border-amber-100 bg-amber-50/10">${row.draft !== '' ? row.draft : '-'}</td>
-          <td class="px-4 py-3 text-center font-mono font-black text-purple-700 align-middle border-l border-purple-100 bg-purple-50/30">${row.agg_submit !== '' ? row.agg_submit : '-'}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-indigo-900 align-middle border-l border-indigo-200 bg-indigo-50/30">${row.calcTotal !== '' ? row.calcTotal : '-'}</td>
-        </tr>
-      `;
-    });
-    tbody.innerHTML = htmlContent;
-  }
-
-  // --- RENDERER TAB 2 (PPL) ---
-  function renderLeaderboard() {
-     let pplData = {};
-     const timing = getHariPendataan(); const targetPct = timing.y;
-     const filterStatus = document.getElementById('fStatusPetugas') ? document.getElementById('fStatusPetugas').value : '';
-
-     dashFilteredData.forEach(row => {
-        let key = row.ppl + "_" + row.kec;
-        if(!pplData[key]) pplData[key] = { ppl: row.ppl, kec: row.kec, email: row.emailPpl, o:0, d:0, agg_s:0, t:0, app:0 };
-        pplData[key].o += row.open; pplData[key].d += row.draft; pplData[key].agg_s += row.agg_submit; pplData[key].t += row.calcTotal; pplData[key].app += row.approve;
-     });
+  function renderCurrentTab() {
+     if(activeTabId === 5) return renderVisualisasi();
      
-     let arr = Object.values(pplData);
-     arr.forEach(p => {
-        p.target_absolut = Math.ceil((targetPct / 100) * p.t); 
-        p.kekurangan = p.target_absolut - p.agg_s;
-        if (p.kekurangan < 0) p.kekurangan = 0; 
-        p.statusTarget = p.kekurangan <= 0 ? 'Tercapai' : 'Belum Tercapai';
-        let avg = timing.x > 0 ? (p.agg_s / timing.x) : 0;
-        avg = Math.round(avg * 100) / 100;
-        p.avg_raw = avg; 
-        p.avg_submit_harian = (avg % 1 === 0) ? avg.toString() : `${Math.floor(avg)}-${Math.ceil(avg)}`;
-        p.pct_pendataan = p.t > 0 ? ((p.d + p.agg_s) / p.t) * 100 : 0;
-        p.pct_submit = p.t > 0 ? (p.agg_s / p.t) * 100 : 0;
-        p.pct_approve = p.t > 0 ? (p.app / p.t) * 100 : 0; 
-     });
-
-     if (filterStatus) arr = arr.filter(p => p.statusTarget === filterStatus);
-     sortLogic(arr, sortColPpl, sortAscPpl);
+     const fStatus = document.getElementById('fStatusPetugas') ? document.getElementById('fStatusPetugas').value : '';
+     let rawData = TAB_STATE[activeTabId];
      
-     const {data, startIdx} = getPaginatedData(arr);
-     let html = '';
-     data.forEach((p, idx) => {
-        const isMencapai = p.statusTarget === 'Tercapai';
-        const rowClass = isMencapai ? 'even:bg-blue-50/20 odd:bg-white hover:bg-blue-100/30 transition border-b border-blue-100' : 'bg-red-50/40 hover:bg-red-100/50 text-red-950 transition border-b border-red-200 font-medium';
-        const badgeLabel = isMencapai ? `<span style="display:inline-flex; align-items:center; justify-content:center; height:24px; padding:0 12px; font-weight:800; font-size:10px; text-transform:uppercase; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,0.05);" class="bg-green-50 text-green-700 border border-green-300">Tercapai</span>` : `<span style="display:inline-flex; align-items:center; justify-content:center; height:24px; padding:0 12px; font-weight:800; font-size:10px; text-transform:uppercase; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,0.05);" class="bg-red-50 text-red-700 border border-red-300">Belum Tercapai</span>`;
-
-        html += `<tr class="${rowClass}">
-          <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-blue-100 align-middle">${startIdx+idx+1}</td>
-          <td class="px-4 py-3 font-bold align-middle ${isMencapai ? 'text-blue-700' : 'text-red-900'}"><span>${p.ppl || '-'}</span>${p.email ? `<br><a href="mailto:${p.email}" class="text-[9px] text-gray-800 font-normal lowercase hover:text-blue-600 block">✉ ${p.email}</a>` : ''}</td>
-          <td class="px-4 py-3 font-bold align-middle ${isMencapai ? 'text-gray-600' : 'text-red-900'}">${p.kec}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-blue-600 border-l border-blue-100 bg-blue-50/10 align-middle">${p.o}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-amber-600 border-l border-amber-100 bg-amber-50/10 align-middle">${p.d}</td>
-          <td class="px-4 py-3 text-center font-mono font-black text-purple-700 border-l border-purple-100 bg-purple-50/30 align-middle">${p.agg_s}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-indigo-900 border-l border-indigo-200 bg-indigo-100/30 align-middle">${p.t}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-orange-700 border-l border-orange-100 bg-orange-50/50 align-middle">${p.avg_submit_harian}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-fuchsia-700 border-l border-fuchsia-100 bg-fuchsia-50/10 align-middle">${p.pct_pendataan.toFixed(1)}%</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-sky-700 border-l border-sky-100 bg-sky-50/10 align-middle">${p.pct_submit.toFixed(1)}%</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-emerald-700 border-l border-emerald-100 bg-emerald-50/10 align-middle">${p.pct_approve.toFixed(1)}%</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-rose-700 border-l border-rose-100 bg-rose-50/20 align-middle">${p.kekurangan}</td>
-          <td class="px-4 py-3 text-center border-l border-gray-200 align-middle whitespace-nowrap">${badgeLabel}</td>
-        </tr>`;
-     });
-     document.getElementById('tableLeaderboard').innerHTML = html || '<tr><td colspan="13" class="text-center py-5 italic text-gray-400">Belum ada data</td></tr>';
-  }
-
-  // --- RENDERER TAB 3 (PML) ---
-  function renderProgressPml() {
-     let pmlData = {};
-     const timing = getHariPendataan(); const targetPct = timing.y;
-     const filterStatus = document.getElementById('fStatusPetugas') ? document.getElementById('fStatusPetugas').value : '';
-
-     dashFilteredData.forEach(row => {
-        let key = row.pml + "_" + row.kec;
-        if(!pmlData[key]) pmlData[key] = { pml: row.pml, kec: row.kec, email: row.emailPml, o:0, d:0, sub:0, rej:0, app:0, app_rej:0, t:0 };
-        pmlData[key].o += row.open; pmlData[key].d += row.draft; pmlData[key].sub += row.submit; pmlData[key].rej += row.reject; pmlData[key].app += row.approve; pmlData[key].app_rej += (row.approve + row.reject); pmlData[key].t += row.calcTotal; 
-     });
-     
-     let arr = Object.values(pmlData);
-     arr.forEach(p => {
-         p.pct_open = p.t > 0 ? (p.o / p.t) * 100 : 0; p.pct_draft = p.t > 0 ? (p.d / p.t) * 100 : 0; p.pct_sub = p.t > 0 ? (p.sub / p.t) * 100 : 0; p.pct_rej = p.t > 0 ? (p.rej / p.t) * 100 : 0; p.pct_app = p.t > 0 ? (p.app / p.t) * 100 : 0;
-         p.target_absolut = Math.ceil((targetPct / 100) * p.t); p.kekurangan = p.target_absolut - p.app;
-         if (p.kekurangan < 0) p.kekurangan = 0; 
-         p.statusTarget = p.kekurangan <= 0 ? 'Tercapai' : 'Belum Tercapai';
-     });
-     
-     if (filterStatus) arr = arr.filter(p => p.statusTarget === filterStatus);
-     sortLogic(arr, sortColPml, sortAscPml);
-     
-     const {data, startIdx} = getPaginatedData(arr);
-     let html = '';
-     data.forEach((p, idx) => {
-        const isMencapai = p.statusTarget === 'Tercapai';
-        const rowClass = isMencapai ? 'even:bg-blue-50/20 odd:bg-white hover:bg-blue-100/30 transition border-b border-blue-100' : 'bg-red-50/40 hover:bg-red-100/50 text-red-950 transition border-b border-red-200 font-medium';
-        const badgeLabel = isMencapai ? `<span style="display:inline-flex; align-items:center; justify-content:center; height:24px; padding:0 12px; font-weight:800; font-size:10px; text-transform:uppercase; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,0.05);" class="bg-green-50 text-green-700 border border-green-300">Tercapai</span>` : `<span style="display:inline-flex; align-items:center; justify-content:center; height:24px; padding:0 12px; font-weight:800; font-size:10px; text-transform:uppercase; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,0.05);" class="bg-red-50 text-red-700 border border-red-300">Belum Tercapai</span>`;
-
-        html += `<tr class="${rowClass}">
-          <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-blue-100 align-middle">${startIdx+idx+1}</td>
-          <td class="px-4 py-3 font-bold align-middle ${isMencapai ? 'text-indigo-700' : 'text-red-900'}"><span>${p.pml || '-'}</span>${p.email ? `<br><a href="mailto:${p.email}" class="text-[9px] text-gray-800 font-normal lowercase hover:text-blue-600 block">✉ ${p.email}</a>` : ''}</td>
-          <td class="px-4 py-3 font-bold align-middle ${isMencapai ? 'text-gray-600' : 'text-red-900'}">${p.kec}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-blue-600 border-l border-blue-100 bg-blue-50/10 align-middle">${p.o}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-amber-600 border-l border-amber-100 bg-amber-50/10 align-middle">${p.d}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-purple-600 border-l border-purple-100 bg-purple-50/10 align-middle">${p.sub}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-red-600 border-l border-red-100 bg-red-50/10 align-middle">${p.rej}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-green-600 border-l border-green-100 bg-green-50/10 align-middle">${p.app}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-indigo-900 border-l border-indigo-200 bg-indigo-100/30 align-middle">${p.t}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 border-l border-blue-100 bg-blue-50/10 align-middle">${p.pct_open.toFixed(1)}%</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-amber-700 border-l border-amber-100 bg-amber-50/10 align-middle">${p.pct_draft.toFixed(1)}%</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-purple-700 border-l border-purple-100 bg-purple-50/10 align-middle">${p.pct_sub.toFixed(1)}%</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-rose-700 border-l border-rose-100 bg-rose-50/10 align-middle">${p.pct_rej.toFixed(1)}%</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-emerald-700 border-l border-emerald-100 bg-emerald-50/10 align-middle">${p.pct_app.toFixed(1)}%</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-rose-700 border-l border-rose-100 bg-rose-50/20 align-middle">${p.kekurangan}</td>
-          <td class="px-4 py-3 text-center border-l border-gray-200 align-middle whitespace-nowrap">${badgeLabel}</td>
-        </tr>`;
-     });
-     document.getElementById('tablePml').innerHTML = html || '<tr><td colspan="16" class="text-center py-5 italic text-gray-400">Belum ada data</td></tr>';
-  }
-
-  // --- RENDERER TAB 4 (KECAMATAN) ---
-  function renderProgressKecamatan() {
-     let kecData = {};
-     dashFilteredData.forEach(row => {
-        let key = row.kec + "_" + row.pj;
-        if(!kecData[key]) kecData[key] = { kec: row.kec, pj: row.pj, o:0, d:0, s:0, rej:0, app:0, t:0, agg_sra:0 };
-        kecData[key].o += row.open; kecData[key].d += row.draft; kecData[key].s += row.submit; kecData[key].rej += row.reject; kecData[key].app += row.approve; kecData[key].agg_sra += row.agg_submit; kecData[key].t += row.calcTotal;
-     });
-     
-     let arr = Object.values(kecData);
-     arr.forEach(p => {
-        p.pct_pendataan = p.t > 0 ? ((p.d + p.agg_sra) / p.t) * 100 : 0;
-        p.pct_submit = p.t > 0 ? (p.agg_sra / p.t) * 100 : 0;
-        p.pct_approve = p.t > 0 ? (p.app / p.t) * 100 : 0;
-     });
-     
-     if (sortColKec === 'agg_sra') sortLogic(arr, 'pct_submit', false); else sortLogic(arr, sortColKec, sortAscKec);
-     
-     const {data, startIdx} = getPaginatedData(arr);
-     let html = '';
-     data.forEach((p, idx) => {
-        html += `<tr class="even:bg-blue-50/20 odd:bg-white hover:bg-blue-100/30 transition border-b border-blue-100">
-          <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-blue-100">${startIdx+idx+1}</td>
-          <td class="px-4 py-3 font-black text-gray-700 border-r border-blue-100">${p.kec}</td>
-          <td class="px-4 py-3 font-bold text-gray-600">${p.pj}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-blue-600 border-l border-blue-100 bg-blue-50/10">${p.o}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-amber-600 border-l border-amber-100 bg-amber-50/10">${p.d}</td>
-          <td class="px-4 py-3 text-center font-mono font-black text-purple-700 border-l border-purple-100 bg-purple-50/30">${p.s}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-red-600 border-l border-red-100 bg-red-50/10">${p.rej}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-green-600 border-l border-green-100 bg-green-50/10">${p.app}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-indigo-900 border-l border-indigo-200 bg-indigo-100/30">${p.t}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-fuchsia-700 border-l border-fuchsia-100 bg-fuchsia-50/10">${p.pct_pendataan.toFixed(1)}%</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-sky-700 border-l border-sky-100 bg-sky-50/10">${p.pct_submit.toFixed(1)}%</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-emerald-700 border-l border-emerald-100 bg-emerald-50/10">${p.pct_approve.toFixed(1)}%</td>
-        </tr>`;
-     });
-     document.getElementById('tableKecamatan').innerHTML = html || '<tr><td colspan="12" class="text-center py-5 italic text-gray-400">Belum ada data</td></tr>';
-  }
-
-  // --- RENDERER TAB 5 (CHART VISUALISASI) ---
-  function renderVisualisasi() {
-     let kecChartMap = {}; 
-     dashFilteredData.forEach(r => {
-        let k = r.kec || 'Tanpa Kecamatan';
-        if(!kecChartMap[k]) kecChartMap[k] = {o:0, d:0, s:0, rej:0, a:0, tot:0};
-        kecChartMap[k].o += r.open; kecChartMap[k].d += r.draft; kecChartMap[k].s += r.submit; kecChartMap[k].a += r.approve; kecChartMap[k].rej += r.reject; kecChartMap[k].tot += r.calcTotal;
-     });
-
-     kecChartMapGlobal = kecChartMap;
-     let sortedKec = Object.entries(kecChartMap).sort((a, b) => {
-         let pctSubmitA = a[1].tot > 0 ? ((a[1].s + a[1].rej + a[1].a) / a[1].tot) : 0;
-         let pctSubmitB = b[1].tot > 0 ? ((b[1].s + b[1].rej + b[1].a) / b[1].tot) : 0;
-         return pctSubmitB - pctSubmitA; 
-     });
-     
-     let labelsKec = sortedKec.map(x => x[0]);
-     let dO = sortedKec.map(x => x[1].tot > 0 ? ((x[1].o / x[1].tot) * 100).toFixed(2) : 0);
-     let dD = sortedKec.map(x => x[1].tot > 0 ? ((x[1].d / x[1].tot) * 100).toFixed(2) : 0);
-     let dS = sortedKec.map(x => x[1].tot > 0 ? ((x[1].s / x[1].tot) * 100).toFixed(2) : 0);
-     let dR = sortedKec.map(x => x[1].tot > 0 ? ((x[1].rej / x[1].tot) * 100).toFixed(2) : 0);
-     let dA = sortedKec.map(x => x[1].tot > 0 ? ((x[1].a / x[1].tot) * 100).toFixed(2) : 0);
-
-     if(chartKecObj) chartKecObj.destroy();
-     let cvKecamatan = document.getElementById('chartKecamatan');
-     if(cvKecamatan) {
-         let requiredHeight = Math.max(400, labelsKec.length * 40);
-         document.getElementById('chartInner').style.height = requiredHeight + 'px';
-         chartKecObj = new Chart(cvKecamatan, {
-             type: 'bar',
-             data: { 
-                labels: labelsKec, 
-                datasets: [
-                    { label: 'Open', data: dO, backgroundColor: '#3b82f6', borderRadius: 2 },
-                    { label: 'Draft', data: dD, backgroundColor: '#f59e0b', borderRadius: 2 },
-                    { label: 'Submit', data: dS, backgroundColor: '#9333ea', borderRadius: 2 },
-                    { label: 'Reject', data: dR, backgroundColor: '#dc2626', borderRadius: 2 },
-                    { label: 'Approved', data: dA, backgroundColor: '#16a34a', borderRadius: 2 }
-                ] 
-             },
-             options: { 
-                 indexAxis: 'y', maintainAspectRatio: false, responsive: true, interaction: { mode: 'y', intersect: true }, 
-                 scales: { x: { stacked: true, beginAtZero: true, max: 100, grid: { display: false }, ticks: { callback: function(value) { return value + '%'; } } }, y: { stacked: true } }, 
-                 plugins: { 
-                    legend: { display: true, position: 'top', labels: {font:{family:'Montserrat', weight:'bold'}} },
-                    datalabels: { display: false }, 
-                    tooltip: {
-                       enabled: true, position: 'nearest', 
-                       callbacks: {
-                          label: function(context) { return (context.dataset.label || '') + ': ' + (context.parsed.x || 0) + '%'; },
-                          footer: (items) => {
-                             let kecName = items[0].label;
-                             let sum = kecChartMapGlobal[kecName] ? kecChartMapGlobal[kecName].tot : 0;
-                             let absSubmit = kecChartMapGlobal[kecName] ? (kecChartMapGlobal[kecName].s + kecChartMapGlobal[kecName].rej + kecChartMapGlobal[kecName].a) : 0;
-                             return `Total Assignment: ${sum.toLocaleString('id-ID')}\nTotal Submit (Sub+Rej+App): ${absSubmit.toLocaleString('id-ID')}`;
-                          }
-                       }
-                    }
-                 },
-                 layout: { padding: { left: 120, right: 40, top: 10, bottom: 10 } } 
-             }
-         });
+     if (fStatus && [2,3].includes(activeTabId)) {
+        rawData = rawData.filter(r => r.statusTarget === fStatus);
      }
+
+     populateHeaderFilters(rawData, activeTabId);
+     let processedData = applyHeaderFilters(rawData, activeTabId);
+     if(sortCol) sortLogic(processedData, sortCol, sortAsc);
+
+     const s = (dashCurrentPage - 1) * dashRowsPerPage;
+     const e = Math.min(s + dashRowsPerPage, processedData.length);
+     let pageData = processedData.slice(s, e);
+
+     if(document.getElementById("pageInfoDash")) document.getElementById("pageInfoDash").innerText = `Menampilkan ${processedData.length>0?s+1:0} - ${e} dari ${processedData.length} Baris`;
+     if(document.getElementById("paginationDashContainer")) document.getElementById("paginationDashContainer").innerHTML = generatePaginationHTML(processedData.length, dashCurrentPage, dashRowsPerPage, 'goDashPage');
+
+     let html = '';
+     if (pageData.length === 0) {
+        html = `<tr><td colspan="15" class="text-center py-10 italic text-gray-400">Data tidak ditemukan.</td></tr>`;
+     } else {
+        pageData.forEach((r, i) => {
+           let n = s + i + 1;
+           if(activeTabId === 1) {
+              html += `
+                <tr class="border-b transition hover:bg-blue-50/50 ${r.isMismatch?'bg-red-50/30':''}">
+                  <td class="px-4 py-3 text-center border-r border-blue-100 font-bold text-gray-500">${n}${r.isMismatch?'<br>⚠️':''}</td>
+                  <td class="px-4 py-3 font-mono text-[11px] font-bold text-blue-900 border-r border-blue-100 align-middle">${r.idSls}</td>
+                  <td class="px-4 py-3 leading-tight border-r border-blue-100 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500">${r.desaKec}</span></td>
+                  <td class="px-4 py-3 leading-tight border-r border-blue-100 align-middle">
+                     <span class="text-[10px] font-bold text-blue-700">PPL: ${r.ppl}</span><br>
+                     <span class="text-[9px] font-bold text-indigo-700">PML: ${r.pml}</span>
+                  </td>
+                  <td class="px-4 py-3 font-bold text-[10px] align-middle">${r.pj}</td>
+                  <td class="px-4 py-3 text-center font-bold text-blue-600 border-l border-blue-100 bg-blue-50/10 align-middle">${r.open}</td>
+                  <td class="px-4 py-3 text-center font-bold text-amber-600 border-l border-amber-100 bg-amber-50/10 align-middle">${r.draft}</td>
+                  <td class="px-4 py-3 text-center font-black text-purple-700 border-l border-purple-100 bg-purple-50/30 align-middle">${r.agg_submit}</td>
+                  <td class="px-4 py-3 text-center font-bold text-indigo-900 border-l border-indigo-200 bg-indigo-50/30 align-middle">${r.calcTotal}</td>
+                </tr>`;
+           }
+           else if(activeTabId === 2) {
+              let cl = r.statusTarget === 'Tercapai' ? 'hover:bg-blue-50/50' : 'bg-red-50/40 text-red-900 font-medium hover:bg-red-100/50';
+              let bd = r.statusTarget === 'Tercapai' ? '<span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[9px] font-bold">TERCAPAI</span>' : '<span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[9px] font-bold">BELUM</span>';
+              html += `
+                <tr class="border-b transition ${cl}">
+                  <td class="px-4 py-3 text-center border-r border-blue-100 align-middle">${n}</td>
+                  <td class="px-4 py-3 font-bold border-r border-blue-100 align-middle">${r.ppl}</td>
+                  <td class="px-4 py-3 border-r border-blue-100 align-middle">${r.kec}</td>
+                  <td class="px-4 py-3 text-center font-bold text-blue-600 border-l border-blue-100 bg-blue-50/10 align-middle">${r.o}</td>
+                  <td class="px-4 py-3 text-center font-bold text-amber-600 border-l border-amber-100 bg-amber-50/10 align-middle">${r.d}</td>
+                  <td class="px-4 py-3 text-center font-black text-purple-700 border-l border-purple-100 bg-purple-50/20 align-middle">${r.agg_s}</td>
+                  <td class="px-4 py-3 text-center font-bold text-indigo-900 border-l border-indigo-200 bg-indigo-50/20 align-middle">${r.t}</td>
+                  <td class="px-4 py-3 text-center font-bold text-orange-700 border-l border-orange-100 bg-orange-50/20 align-middle">${r.avg_raw}</td>
+                  <td class="px-4 py-3 text-center font-bold text-fuchsia-700 border-l border-fuchsia-100 bg-fuchsia-50/10 align-middle">${r.pct_pendataan}%</td>
+                  <td class="px-4 py-3 text-center font-bold text-sky-700 border-l border-sky-100 bg-sky-50/10 align-middle">${r.pct_submit}%</td>
+                  <td class="px-4 py-3 text-center font-bold text-emerald-700 border-l border-emerald-100 bg-emerald-50/10 align-middle">${r.pct_approve}%</td>
+                  <td class="px-4 py-3 text-center font-bold text-rose-700 border-l border-rose-100 bg-rose-50/20 align-middle">${r.kekurangan}</td>
+                  <td class="px-4 py-3 text-center border-l border-gray-200 align-middle whitespace-nowrap">${bd}</td>
+                </tr>`;
+           }
+           else if(activeTabId === 3) {
+              let cl = r.statusTarget === 'Tercapai' ? 'hover:bg-blue-50/50' : 'bg-red-50/40 text-red-900 font-medium hover:bg-red-100/50';
+              let bd = r.statusTarget === 'Tercapai' ? '<span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[9px] font-bold">TERCAPAI</span>' : '<span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[9px] font-bold">BELUM</span>';
+              html += `
+                <tr class="border-b transition ${cl}">
+                  <td class="px-4 py-3 text-center border-r border-blue-100 align-middle">${n}</td>
+                  <td class="px-4 py-3 font-bold border-r border-blue-100 text-indigo-700 align-middle">${r.pml}</td>
+                  <td class="px-4 py-3 border-r border-blue-100 align-middle">${r.kec}</td>
+                  <td class="px-4 py-3 text-center font-bold border-l border-blue-100 align-middle">${r.o}</td>
+                  <td class="px-4 py-3 text-center font-bold border-l border-amber-100 align-middle">${r.d}</td>
+                  <td class="px-4 py-3 text-center font-bold border-l border-purple-100 align-middle">${r.sub}</td>
+                  <td class="px-4 py-3 text-center font-bold border-l border-red-100 align-middle">${r.rej}</td>
+                  <td class="px-4 py-3 text-center font-bold border-l border-green-100 align-middle">${r.app}</td>
+                  <td class="px-4 py-3 text-center font-bold border-l border-indigo-200 align-middle">${r.t}</td>
+                  <td class="px-4 py-3 text-center border-l border-blue-100 align-middle">${r.pct_open}%</td>
+                  <td class="px-4 py-3 text-center border-l border-amber-100 align-middle">${r.pct_draft}%</td>
+                  <td class="px-4 py-3 text-center border-l border-purple-100 align-middle">${r.pct_sub}%</td>
+                  <td class="px-4 py-3 text-center border-l border-red-100 align-middle">${r.pct_rej}%</td>
+                  <td class="px-4 py-3 text-center font-bold text-emerald-700 border-l border-emerald-100 align-middle">${r.pct_app}%</td>
+                  <td class="px-4 py-3 text-center font-bold text-rose-700 border-l border-rose-100 bg-rose-50/20 align-middle">${r.kekurangan}</td>
+                  <td class="px-4 py-3 text-center border-l border-gray-200 align-middle whitespace-nowrap">${bd}</td>
+                </tr>`;
+           }
+           else if(activeTabId === 4) {
+              html += `
+                <tr class="border-b hover:bg-blue-50/50 transition">
+                  <td class="px-4 py-3 text-center border-r border-blue-100 align-middle">${n}</td>
+                  <td class="px-4 py-3 font-bold border-r border-blue-100 text-gray-800 align-middle">${r.kec}</td>
+                  <td class="px-4 py-3 font-bold border-r border-blue-100 align-middle">${r.pj}</td>
+                  <td class="px-4 py-3 text-center font-bold border-l border-blue-100 align-middle">${r.o}</td>
+                  <td class="px-4 py-3 text-center font-bold border-l border-amber-100 align-middle">${r.d}</td>
+                  <td class="px-4 py-3 text-center font-black border-l border-purple-100 align-middle">${r.s}</td>
+                  <td class="px-4 py-3 text-center font-bold border-l border-red-100 align-middle">${r.rej}</td>
+                  <td class="px-4 py-3 text-center font-bold border-l border-green-100 align-middle">${r.app}</td>
+                  <td class="px-4 py-3 text-center font-bold border-l border-indigo-200 align-middle">${r.t}</td>
+                  <td class="px-4 py-3 text-center font-bold border-l border-fuchsia-100 text-fuchsia-700 align-middle">${r.pct_pendataan}%</td>
+                  <td class="px-4 py-3 text-center font-bold border-l border-sky-100 text-sky-700 align-middle">${r.pct_submit}%</td>
+                  <td class="px-4 py-3 text-center font-bold border-l border-emerald-100 text-emerald-700 align-middle">${r.pct_approve}%</td>
+                </tr>`;
+           }
+           else if(activeTabId === 6) {
+              let al = r.tdk > (r.prelist*0.2) ? 'bg-red-50/50 hover:bg-red-100/50' : 'even:bg-amber-50/20 odd:bg-white hover:bg-amber-100/30';
+              html += `
+                <tr class="border-b border-amber-100 transition ${al}">
+                  <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-amber-200 align-middle">${n}</td>
+                  <td class="px-4 py-3 font-mono text-[11px] font-bold text-amber-900 border-r border-amber-200 align-middle">${r.idSls}</td>
+                  <td class="px-4 py-3 leading-tight border-r border-amber-200 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 uppercase">${r.desaKec}</span></td>
+                  <td class="px-4 py-3 leading-tight border-r border-amber-200 align-middle">
+                    <span class="text-[10px] font-bold text-blue-700">PPL: ${r.ppl}</span><br>
+                    <span class="text-[9px] font-bold text-indigo-700">PML: ${r.pml}</span>
+                  </td>
+                  <td class="px-4 py-3 font-bold text-[10px] text-amber-900 align-middle">${r.pj}</td>
+                  <td class="px-4 py-3 text-center font-mono font-bold text-slate-800 border-l border-amber-200 bg-amber-50/10 align-middle">${r.prelist}</td>
+                  <td class="px-4 py-3 text-center font-mono font-bold text-green-700 border-l border-amber-200 align-middle">${r.ditemukan}</td>
+                  <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 border-l border-amber-200 align-middle">${r.baru}</td>
+                  <td class="px-4 py-3 text-center font-mono font-bold text-gray-700 border-l border-amber-200 align-middle">${r.meninggal}</td>
+                  <td class="px-4 py-3 text-center font-mono font-black text-red-700 border-l border-amber-200 ${r.tdk>0?'bg-red-50/80':''} align-middle">${r.tdk}</td>
+                </tr>`;
+           }
+           else if(activeTabId === 7) {
+              let al = r.tdk > (r.prelist*0.2) ? 'bg-red-50/50 hover:bg-red-100/50' : 'even:bg-purple-50/20 odd:bg-white hover:bg-purple-100/30';
+              html += `
+                <tr class="border-b border-purple-100 transition ${al}">
+                  <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-purple-200 align-middle">${n}</td>
+                  <td class="px-4 py-3 font-mono text-[11px] font-bold text-purple-900 border-r border-purple-200 align-middle">${r.idSls}</td>
+                  <td class="px-4 py-3 leading-tight border-r border-purple-200 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 uppercase">${r.desaKec}</span></td>
+                  <td class="px-4 py-3 leading-tight border-r border-purple-200 align-middle">
+                    <span class="text-[10px] font-bold text-blue-700">PPL: ${r.ppl}</span><br>
+                    <span class="text-[9px] font-bold text-indigo-700">PML: ${r.pml}</span>
+                  </td>
+                  <td class="px-4 py-3 font-bold text-[10px] text-purple-900 align-middle">${r.pj}</td>
+                  <td class="px-4 py-3 text-center font-mono font-bold text-slate-800 border-l border-purple-200 bg-purple-50/10 align-middle">${r.prelist}</td>
+                  <td class="px-4 py-3 text-center font-mono font-bold text-green-700 border-l border-purple-200 align-middle">${r.ditemukan}</td>
+                  <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 border-l border-purple-200 align-middle">${r.baru}</td>
+                  <td class="px-4 py-3 text-center font-mono font-bold text-gray-700 border-l border-purple-200 align-middle">${r.tutup}</td>
+                  <td class="px-4 py-3 text-center font-mono font-bold text-amber-700 border-l border-purple-200 align-middle">${r.ganda}</td>
+                  <td class="px-4 py-3 text-center font-mono font-black text-red-700 border-l border-purple-200 ${r.tdk>0?'bg-red-50/80':''} align-middle">${r.tdk}</td>
+                </tr>`;
+           }
+           else if(activeTabId === 8) {
+              let al = r.tdk > 0 ? 'bg-red-50/50 hover:bg-red-100/50' : 'even:bg-emerald-50/20 odd:bg-white hover:bg-emerald-100/30';
+              html += `
+                <tr class="border-b border-emerald-100 transition ${al}">
+                  <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-emerald-200 align-middle">${n}</td>
+                  <td class="px-4 py-3 font-mono text-[11px] font-bold text-emerald-900 border-r border-emerald-200 align-middle">${r.idSls}</td>
+                  <td class="px-4 py-3 leading-tight border-r border-emerald-200 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 uppercase">${r.desaKec}</span></td>
+                  <td class="px-4 py-3 leading-tight border-r border-emerald-200 align-middle">
+                    <span class="text-[10px] font-bold text-blue-700">PPL: ${r.ppl}</span><br>
+                    <span class="text-[9px] font-bold text-indigo-700">PML: ${r.pml}</span>
+                  </td>
+                  <td class="px-4 py-3 font-bold text-[10px] text-emerald-900 align-middle">${r.pj}</td>
+                  <td class="px-4 py-3 text-center font-mono font-bold text-green-700 border-l border-emerald-200 align-middle">${r.ditemukan}</td>
+                  <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 border-l border-emerald-200 align-middle">${r.baru}</td>
+                  <td class="px-4 py-3 text-center font-mono font-bold text-gray-700 border-l border-emerald-200 align-middle">${r.tutup}</td>
+                  <td class="px-4 py-3 text-center font-mono font-bold text-amber-700 border-l border-emerald-200 align-middle">${r.ganda}</td>
+                  <td class="px-4 py-3 text-center font-mono font-black text-red-700 border-l border-emerald-200 ${r.tdk>0?'bg-red-50/80':''} align-middle">${r.tdk}</td>
+                </tr>`;
+           }
+        });
+     }
+     
+     let bodyId = {1:'tableBodyDash', 2:'tableLeaderboard', 3:'tablePml', 4:'tableKecamatan', 6:'tableKeluarga', 7:'tableUsaha', 8:'tableUsahaKeluarga'};
+     if(document.getElementById(bodyId[activeTabId])) document.getElementById(bodyId[activeTabId]).innerHTML = html;
   }
 
-  // --- RENDERER TAB 6 (ANALISA KELUARGA) ---
-  function renderTab6Keluarga() {
-    const tbody = document.getElementById('tableKeluarga');
-    if(!tbody) return;
-    const {data, startIdx} = getPaginatedData(dashFilteredData);
-
-    let htmlContent = '';
-    data.forEach((row, index) => {
-      let ext = row.extKel || {prelist:0, ditemukan:0, baru:0, meninggal:0, tdk:0};
-      let alertClass = (ext.tdk > (ext.prelist * 0.2)) ? 'bg-red-50/50 hover:bg-red-100/50' : 'even:bg-amber-50/20 odd:bg-white hover:bg-amber-100/30';
-      
-      htmlContent += `
-        <tr class="transition border-b border-amber-100 ${alertClass}">
-          <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-amber-200">${startIdx + index + 1}</td>
-          <td class="px-4 py-3 font-mono text-[11px] text-amber-900 font-bold align-middle border-r border-amber-200">${row.idSls}</td>
-          <td class="px-4 py-3 leading-tight align-middle"><span class="font-bold text-gray-800 text-xs">${row.nmsls}</span><br><span class="text-[9px] text-gray-500 uppercase font-bold">${row.desa} - Kec. ${row.kec}</span></td>
-          <td class="px-4 py-3 leading-tight align-middle">
-            <span class="text-blue-600 font-bold text-[10px] uppercase">PPL: ${row.ppl || '-'}</span>
-            <span class="text-indigo-600 font-bold text-[10px] uppercase mt-1 block">PML: ${row.pml || '-'}</span>
-          </td>
-          <td class="px-4 py-3 font-bold text-gray-700 text-[11px] align-middle uppercase">${row.pj}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-slate-800 align-middle border-l border-amber-200">${ext.prelist}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-green-700 align-middle border-l border-amber-200">${ext.ditemukan}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 align-middle border-l border-amber-200">${ext.baru}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-gray-700 align-middle border-l border-amber-200">${ext.meninggal}</td>
-          <td class="px-4 py-3 text-center font-mono font-black text-red-700 align-middle border-l border-amber-200">${ext.tdk}</td>
-        </tr>
-      `;
-    });
-    tbody.innerHTML = htmlContent || '<tr><td colspan="10" class="text-center py-10 italic text-gray-400">Data Eksternal Keluarga Belum Diupload atau Data Tidak Ditemukan.</td></tr>';
+  function changePerPage() { 
+      dashCurrentPage = 1; 
+      renderCurrentTab(); 
   }
-
-  // --- RENDERER TAB 7 (ANALISA BKU) ---
-  function renderTab7Bku() {
-    const tbody = document.getElementById('tableUsaha');
-    if(!tbody) return;
-    const {data, startIdx} = getPaginatedData(dashFilteredData);
-
-    let htmlContent = '';
-    data.forEach((row, index) => {
-      let ext = row.extBku || {prelist:0, ditemukan:0, baru:0, tutup:0, ganda:0, tdk:0};
-      let alertClass = (ext.tdk > (ext.prelist * 0.2)) ? 'bg-red-50/50 hover:bg-red-100/50' : 'even:bg-purple-50/20 odd:bg-white hover:bg-purple-100/30';
-      
-      htmlContent += `
-        <tr class="transition border-b border-purple-100 ${alertClass}">
-          <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-purple-200">${startIdx + index + 1}</td>
-          <td class="px-4 py-3 font-mono text-[11px] text-purple-900 font-bold align-middle border-r border-purple-200">${row.idSls}</td>
-          <td class="px-4 py-3 leading-tight align-middle"><span class="font-bold text-gray-800 text-xs">${row.nmsls}</span><br><span class="text-[9px] text-gray-500 uppercase font-bold">${row.desa} - Kec. ${row.kec}</span></td>
-          <td class="px-4 py-3 leading-tight align-middle">
-            <span class="text-blue-600 font-bold text-[10px] uppercase">PPL: ${row.ppl || '-'}</span>
-            <span class="text-indigo-600 font-bold text-[10px] uppercase mt-1 block">PML: ${row.pml || '-'}</span>
-          </td>
-          <td class="px-4 py-3 font-bold text-gray-700 text-[11px] align-middle uppercase">${row.pj}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-slate-800 align-middle border-l border-purple-200">${ext.prelist}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-green-700 align-middle border-l border-purple-200">${ext.ditemukan}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 align-middle border-l border-purple-200">${ext.baru}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-gray-700 align-middle border-l border-purple-200">${ext.tutup}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-amber-700 align-middle border-l border-purple-200">${ext.ganda}</td>
-          <td class="px-4 py-3 text-center font-mono font-black text-red-700 align-middle border-l border-purple-200">${ext.tdk}</td>
-        </tr>
-      `;
-    });
-    tbody.innerHTML = htmlContent || '<tr><td colspan="11" class="text-center py-10 italic text-gray-400">Data Eksternal Usaha Belum Diupload atau Data Tidak Ditemukan.</td></tr>';
-  }
-
-  // --- RENDERER TAB 8 (ANALISA USAHA KELUARGA) ---
-  function renderTab8UsahaKel() {
-    const tbody = document.getElementById('tableUsahaKeluarga');
-    if(!tbody) return;
-    const {data, startIdx} = getPaginatedData(dashFilteredData);
-
-    let htmlContent = '';
-    data.forEach((row, index) => {
-      let ext = row.extUsKel || {ditemukan:0, baru:0, tutup:0, ganda:0, tdk:0};
-      
-      htmlContent += `
-        <tr class="transition border-b border-emerald-100 even:bg-emerald-50/20 odd:bg-white hover:bg-emerald-100/30">
-          <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-emerald-200">${startIdx + index + 1}</td>
-          <td class="px-4 py-3 font-mono text-[11px] text-emerald-900 font-bold align-middle border-r border-emerald-200">${row.idSls}</td>
-          <td class="px-4 py-3 leading-tight align-middle"><span class="font-bold text-gray-800 text-xs">${row.nmsls}</span><br><span class="text-[9px] text-gray-500 uppercase font-bold">${row.desa} - Kec. ${row.kec}</span></td>
-          <td class="px-4 py-3 leading-tight align-middle">
-            <span class="text-blue-600 font-bold text-[10px] uppercase">PPL: ${row.ppl || '-'}</span>
-            <span class="text-indigo-600 font-bold text-[10px] uppercase mt-1 block">PML: ${row.pml || '-'}</span>
-          </td>
-          <td class="px-4 py-3 font-bold text-gray-700 text-[11px] align-middle uppercase">${row.pj}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-green-700 align-middle border-l border-emerald-200">${ext.ditemukan}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 align-middle border-l border-emerald-200">${ext.baru}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-gray-700 align-middle border-l border-emerald-200">${ext.tutup}</td>
-          <td class="px-4 py-3 text-center font-mono font-bold text-amber-700 align-middle border-l border-emerald-200">${ext.ganda}</td>
-          <td class="px-4 py-3 text-center font-mono font-black text-red-700 align-middle border-l border-emerald-200">${ext.tdk}</td>
-        </tr>
-      `;
-    });
-    tbody.innerHTML = htmlContent || '<tr><td colspan="10" class="text-center py-10 italic text-gray-400">Data Eksternal Usaha Keluarga Belum Diupload atau Data Tidak Ditemukan.</td></tr>';
-  }
-
+  
   function goDashPage(pageNum) { 
       dashCurrentPage = pageNum; 
       renderCurrentTab(); 
   }
-  
-  function generatePaginationHTML(totalItems, currentPage, rowsPerPage, callbackName) {
-       const totalPages = Math.ceil(totalItems / rowsPerPage);
-       if (totalPages <= 1) return '';
-       let html = '<div class="flex flex-wrap gap-1">';
-       html += `<button onclick="${callbackName}(${currentPage - 1})" class="px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-bold text-gray-600 hover:bg-gray-100 disabled:opacity-50 transition shadow-sm" ${currentPage === 1 ? 'disabled' : ''}>&laquo;</button>`;
-       let startPage = Math.max(1, currentPage - 2);
-       let endPage = Math.min(totalPages, currentPage + 2);
-       for (let i = startPage; i <= endPage; i++) {
-           let activeClass = i === currentPage ? 'bg-blue-600 text-white border-blue-600 shadow-md' : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-100 shadow-sm';
-           html += `<button onclick="${callbackName}(${i})" class="px-3 py-1.5 rounded-lg border ${activeClass} text-xs font-bold transition">${i}</button>`;
-       }
-       html += `<button onclick="${callbackName}(${currentPage + 1})" class="px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-bold text-gray-600 hover:bg-gray-100 disabled:opacity-50 transition shadow-sm" ${currentPage === totalPages ? 'disabled' : ''}>&raquo;</button>`;
-       return html + '</div>';
+
+  // --- RENDERER TAB 5 (CHART VISUALISASI) ---
+  function renderVisualisasi() {
+     let kecM = {}; 
+     dashFilteredData.forEach(r => {
+        let k = r.kec || 'Tanpa Kecamatan';
+        if(!kecM[k]) kecM[k] = {o:0, d:0, s:0, rej:0, a:0, tot:0};
+        kecM[k].o += r.open; kecM[k].d += r.draft; kecM[k].s += r.submit; kecM[k].a += r.approve; kecM[k].rej += r.reject; kecM[k].tot += r.calcTotal;
+     });
+     kecChartMapGlobal = kecM;
+     let sortK = Object.entries(kecM).sort((a, b) => {
+         let pA = a[1].tot>0 ? ((a[1].s+a[1].rej+a[1].a)/a[1].tot) : 0; let pB = b[1].tot>0 ? ((b[1].s+b[1].rej+b[1].a)/b[1].tot) : 0;
+         return pB - pA; 
+     });
+     
+     let lbls = sortK.map(x => x[0]);
+     let dO = sortK.map(x => x[1].tot>0 ? ((x[1].o/x[1].tot)*100).toFixed(2) : 0); let dD = sortK.map(x => x[1].tot>0 ? ((x[1].d/x[1].tot)*100).toFixed(2) : 0);
+     let dS = sortK.map(x => x[1].tot>0 ? ((x[1].s/x[1].tot)*100).toFixed(2) : 0); let dR = sortK.map(x => x[1].tot>0 ? ((x[1].rej/x[1].tot)*100).toFixed(2) : 0);
+     let dA = sortK.map(x => x[1].tot>0 ? ((x[1].a/x[1].tot)*100).toFixed(2) : 0);
+
+     if(chartKecObj) chartKecObj.destroy();
+     let cv = document.getElementById('chartKecamatan');
+     if(cv) {
+         document.getElementById('chartInner').style.height = Math.max(400, lbls.length*40) + 'px';
+         chartKecObj = new Chart(cv, {
+             type: 'bar', data: { labels: lbls, datasets: [ { label: 'Open', data: dO, backgroundColor: '#3b82f6', borderRadius: 2 }, { label: 'Draft', data: dD, backgroundColor: '#f59e0b', borderRadius: 2 }, { label: 'Submit', data: dS, backgroundColor: '#9333ea', borderRadius: 2 }, { label: 'Reject', data: dR, backgroundColor: '#dc2626', borderRadius: 2 }, { label: 'Approved', data: dA, backgroundColor: '#16a34a', borderRadius: 2 } ] },
+             options: { 
+                 indexAxis: 'y', maintainAspectRatio: false, responsive: true, interaction: { mode: 'y', intersect: true }, 
+                 scales: { x: { stacked: true, max: 100, ticks: { callback: v => v+'%' } }, y: { stacked: true } }, 
+                 plugins: { tooltip: { callbacks: { label: c => (c.dataset.label||'') + ': ' + (c.parsed.x||0) + '%', footer: (i) => `Total Target: ${kecChartMapGlobal[i[0].label].tot}\nTotal Submit Absolut: ${kecChartMapGlobal[i[0].label].s+kecChartMapGlobal[i[0].label].rej+kecChartMapGlobal[i[0].label].a}` } } }
+             }
+         });
+     }
   }
 
   // ====================================================================
   // ADMIN PANEL: UPLOAD DATA EKSTERNAL VIA SHEETJS
   // ====================================================================
   function authAdminPanel() {
-    Swal.fire({
-      title: '<span class="text-xl font-black text-indigo-900">OTORISASI ADMIN</span>', 
-      text: 'Masukkan PIN rahasia untuk mengakses Panel Integrasi.', 
-      input: 'password',
-      showCancelButton: true, confirmButtonText: 'Buka Panel', cancelButtonText: 'Batal',
-      customClass: { confirmButton: 'bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold', popup: 'rounded-2xl' }
-    }).then((res) => {
-      if(res.isConfirmed && res.value === 'fasih2026') { showUploadModal(); } 
-      else if(res.isConfirmed) { Swal.fire('Akses Ditolak', 'PIN yang Anda masukkan salah.', 'error'); }
-    });
+    Swal.fire({ title: '<span class="text-xl font-black text-indigo-900">OTORISASI ADMIN</span>', input: 'password', showCancelButton: true, confirmButtonText: 'Buka Panel', customClass: { confirmButton: 'bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold', popup: 'rounded-2xl' }
+    }).then(res => { if(res.isConfirmed && res.value === 'fasih2026') showUploadModal(); else if(res.isConfirmed) Swal.fire('Ditolak', 'PIN Salah.', 'error'); });
   }
 
   function showUploadModal() {
@@ -1118,304 +938,51 @@
       title: '<span class="text-xl font-black uppercase text-indigo-800">INTEGRASI DATA LAPANGAN</span>',
       html: `
         <div class="text-left text-sm mt-4 space-y-4">
-          <div class="p-4 border border-amber-300 bg-amber-50 rounded-xl shadow-sm">
-             <label class="font-black text-amber-800 block mb-2">1. Upload Pemutakhiran Keluarga (.xlsx)</label>
-             <input type="file" id="fileKel" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-amber-600 file:text-white file:font-bold hover:file:bg-amber-700 transition">
-          </div>
-          <div class="p-4 border border-purple-300 bg-purple-50 rounded-xl shadow-sm">
-             <label class="font-black text-purple-800 block mb-2">2. Upload Pendataan Usaha (.xlsx)</label>
-             <input type="file" id="fileUsa" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-purple-600 file:text-white file:font-bold hover:file:bg-purple-700 transition">
-          </div>
-          <p class="text-[10px] text-gray-500 font-medium italic mt-2 text-center">Pilih file yang ingin diperbarui (bisa salah satu atau keduanya sekaligus). Sistem otomatis memecah file Usaha menjadi BKU & Usaha Keluarga.</p>
+          <div class="p-4 border border-amber-300 bg-amber-50 rounded-xl shadow-sm"><label class="font-black text-amber-800 block mb-2">1. Upload Pemutakhiran Keluarga (.xlsx)</label><input type="file" id="fileKel" accept=".xlsx" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-amber-600 file:text-white file:font-bold"></div>
+          <div class="p-4 border border-purple-300 bg-purple-50 rounded-xl shadow-sm"><label class="font-black text-purple-800 block mb-2">2. Upload Pendataan Usaha (.xlsx)</label><input type="file" id="fileUsa" accept=".xlsx" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-purple-600 file:text-white file:font-bold"></div>
         </div>
       `,
       confirmButtonText: 'SINKRONISASI SEKARANG', showCancelButton: true, allowOutsideClick: false,
-      customClass: { confirmButton: 'bg-indigo-600 w-full mt-2 text-white font-bold tracking-wider rounded-xl py-3', popup: 'rounded-2xl' },
       preConfirm: () => {
-        let fKel = document.getElementById('fileKel').files[0];
-        let fUsa = document.getElementById('fileUsa').files[0];
-        if(!fKel && !fUsa) { Swal.showValidationMessage('Anda belum memilih file apapun!'); return false; }
-        return {kel: fKel, usa: fUsa};
+        let fk = document.getElementById('fileKel').files[0]; let fu = document.getElementById('fileUsa').files[0];
+        if(!fk && !fu) { Swal.showValidationMessage('Pilih minimal 1 file!'); return false; }
+        return {kel: fk, usa: fu};
       }
-    }).then(result => {
-       if(result.isConfirmed) { processUploads(result.value.kel, result.value.usa); }
-    });
+    }).then(r => { if(r.isConfirmed) processUploads(r.value.kel, r.value.usa); });
   }
 
   async function processUploads(fKel, fUsa) {
-     Swal.fire({title: 'Memproses Data...', html: '<b>Sistem</b> sedang mengekstrak ribuan baris Excel Anda di belakang layar...<br><span class="text-xs text-red-500 italic mt-2 block">Dilarang menutup atau merefresh browser!</span>', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
+     Swal.fire({title: 'Memproses Data...', html: '<b>Sistem</b> sedang mengekstrak ribuan baris Excel Anda di belakang layar...<br><span class="text-xs text-red-500 italic mt-2 block">Dilarang menutup browser!</span>', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
      try {
-       if(fKel) {
-          let dataKel = await parseExcelKeluarga(fKel);
-          await sendToGAS('keluarga', dataKel);
-       }
-       if(fUsa) {
-          let dataUsa = await parseExcelUsahaAll(fUsa);
-          if(dataUsa.bku && dataUsa.bku.length > 1) await sendToGAS('usaha_bku', dataUsa.bku);
-          if(dataUsa.kel && dataUsa.kel.length > 1) await sendToGAS('usaha_kel', dataUsa.kel);
-       }
-       Swal.fire('Integrasi Berhasil!', 'Data Eksternal telah tersimpan ke dalam Database dan siap dianalisa.', 'success').then(()=>{ location.reload(); });
-     } catch (err) {
-       Swal.fire('Gagal Ekstrak', 'Terjadi kesalahan format Excel: ' + String(err), 'error');
-     }
+       if(fKel) { let dataKel = await parseExcelKeluarga(fKel); await sendToGAS('keluarga', dataKel); }
+       if(fUsa) { let dataUsa = await parseExcelUsahaAll(fUsa); if(dataUsa.bku && dataUsa.bku.length > 1) await sendToGAS('usaha_bku', dataUsa.bku); if(dataUsa.kel && dataUsa.kel.length > 1) await sendToGAS('usaha_kel', dataUsa.kel); }
+       Swal.fire('Integrasi Berhasil!', 'Data Eksternal telah tersimpan ke Database.', 'success').then(()=>location.reload());
+     } catch (err) { Swal.fire('Gagal Ekstrak', 'Error format Excel: ' + String(err), 'error'); }
   }
 
   function sendToGAS(tipe, dataArray) {
-     // PERBAIKAN CORS: Menambahkan headers Content-Type text/plain agar tidak diblokir fetch
-     return fetch(GAS_API_URL, { 
-         method: 'POST', 
-         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-         body: JSON.stringify({ type: tipe, data: dataArray }) 
-     }).then(r => r.json());
+     return fetch(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ type: tipe, data: dataArray }) }).then(r => r.json());
   }
 
-  // --- ENGINE PARSING KELUARGA ---
-  function parseExcelKeluarga(file) {
-    return new Promise((resolve, reject) => {
-      let reader = new FileReader();
-      reader.onload = e => {
-        try {
-          let wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
-          let sName = wb.SheetNames.find(s => s.toUpperCase() === 'KELUARGA');
-          if(!sName) return reject("Sheet bernama 'KELUARGA' tidak ditemukan dalam file.");
-          let rows = XLSX.utils.sheet_to_json(wb.Sheets[sName], {header: 1});
-          
-          let res = [["KODE_16", "PRELIST", "DITEMUKAN", "BARU", "MENINGGAL", "TIDAK_DITEMUKAN"]];
-          let cIdx = {p:-1, d:-1, b:-1, m:-1, t:-1}; let start = false;
-
-          rows.forEach(r => {
-            if(!r || !r.length) return;
-            if(!start) {
-               if(String(r[0]).trim().toUpperCase() === 'KODE') {
-                  start = true;
-                  for(let c=0; c<r.length; c++){
-                     let h = String(r[c]||'').toUpperCase().trim();
-                     if(h.includes('PRELIST')) cIdx.p = c; else if(h==='DITEMUKAN') cIdx.d = c; else if(h.includes('KELUARGA BARU')) cIdx.b = c; else if(h==='MENINGGAL') cIdx.m = c; else if(h==='TIDAK DITEMUKAN') cIdx.t = c;
-                  }
-               } return;
-            }
-            let kd = String(r[0]||'').trim();
-            if(kd.length === 16) { res.push([ kd, Number(r[cIdx.p]||0), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.m]||0), Number(r[cIdx.t]||0) ]); }
-          });
-          resolve(res);
-        } catch(err) { reject(err); }
-      };
-      reader.readAsArrayBuffer(file);
-    });
+  function parseExcelKeluarga(f) {
+    return new Promise((res, rej) => { let r = new FileReader(); r.onload = e => { try {
+          let wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'}); let sName = wb.SheetNames.find(s => s.toUpperCase() === 'KELUARGA');
+          if(!sName) return rej("Sheet 'KELUARGA' tidak ditemukan.");
+          let rows = XLSX.utils.sheet_to_json(wb.Sheets[sName], {header: 1}); let out = [["KODE_16", "PRELIST", "DITEMUKAN", "BARU", "MENINGGAL", "TIDAK_DITEMUKAN"]]; let cIdx = {p:-1, d:-1, b:-1, m:-1, t:-1}; let start = false;
+          rows.forEach(r => { if(!r || !r.length) return; if(!start) { if(String(r[0]).trim().toUpperCase() === 'KODE') { start = true; for(let c=0; c<r.length; c++){ let h = String(r[c]||'').toUpperCase().trim(); if(h.includes('PRELIST')) cIdx.p=c; else if(h==='DITEMUKAN') cIdx.d=c; else if(h.includes('KELUARGA BARU')) cIdx.b=c; else if(h==='MENINGGAL') cIdx.m=c; else if(h==='TIDAK DITEMUKAN') cIdx.t=c; } } return; }
+            if(String(r[0]||'').trim().length === 16) out.push([ String(r[0]).trim(), Number(r[cIdx.p]||0), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.m]||0), Number(r[cIdx.t]||0) ]); }); res(out); } catch(err) { rej(err); }
+      }; r.readAsArrayBuffer(f); });
   }
 
-  // --- ENGINE PARSING USAHA (BKU & KELUARGA) SEKALIGUS ---
-  function parseExcelUsahaAll(file) {
-    return new Promise((resolve, reject) => {
-      let reader = new FileReader();
-      reader.onload = e => {
-        try {
-          let wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
-          let resBKU = [["KODE_16", "PRELIST", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]];
-          let resKel = [["KODE_16", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]];
-          
+  function parseExcelUsahaAll(f) {
+    return new Promise((res, rej) => { let r = new FileReader(); r.onload = e => { try {
+          let wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'}); let rB = [["KODE_16", "PRELIST", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]]; let rK = [["KODE_16", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]];
           let sUP = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA PERUSAHAAN'));
-          if(sUP) {
-             let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUP], {header: 1});
-             let cIdx = {p:-1, d:-1, b:-1, tu:-1, g:-1, t:-1}; let start = false;
-             rows.forEach(r => {
-                if(!r || !r.length) return;
-                if(!start) {
-                   if(String(r[0]).trim().toUpperCase() === 'KODE') {
-                      start = true;
-                      for(let c=0; c<r.length; c++){
-                         let h = String(r[c]||'').toUpperCase().trim();
-                         if(h.includes('PRELIST')) cIdx.p=c; else if(h==='DITEMUKAN') cIdx.d=c; else if(h==='BARU') cIdx.b=c; else if(h==='TUTUP') cIdx.tu=c; else if(h==='GANDA') cIdx.g=c; else if(h==='TIDAK DITEMUKAN') cIdx.t=c;
-                      }
-                   } return;
-                }
-                let kd = String(r[0]||'').trim();
-                if(kd.length === 16) {
-                    resBKU.push([kd, Number(r[cIdx.p]||0), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.tu]||0), Number(r[cIdx.g]||0), Number(r[cIdx.t]||0)]);
-                }
-             });
-          }
-
+          if(sUP) { let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUP], {header: 1}); let cIdx = {p:-1, d:-1, b:-1, tu:-1, g:-1, t:-1}; let start = false; rows.forEach(r => { if(!r || !r.length) return; if(!start) { if(String(r[0]).trim().toUpperCase() === 'KODE') { start = true; for(let c=0; c<r.length; c++){ let h = String(r[c]||'').toUpperCase().trim(); if(h.includes('PRELIST')) cIdx.p=c; else if(h==='DITEMUKAN') cIdx.d=c; else if(h==='BARU') cIdx.b=c; else if(h==='TUTUP') cIdx.tu=c; else if(h==='GANDA') cIdx.g=c; else if(h==='TIDAK DITEMUKAN') cIdx.t=c; } } return; } if(String(r[0]||'').trim().length === 16) rB.push([String(r[0]).trim(), Number(r[cIdx.p]||0), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.tu]||0), Number(r[cIdx.g]||0), Number(r[cIdx.t]||0)]); }); }
           let sUK = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA KELUARGA'));
-          if(sUK) {
-             let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUK], {header: 1});
-             let cIdx = {d:-1, b:-1, tu:-1, g:-1, t:-1}; let start = false;
-             rows.forEach(r => {
-                if(!r || !r.length) return;
-                if(!start) {
-                   if(String(r[0]).trim().toUpperCase() === 'KODE') {
-                      start = true;
-                      for(let c=0; c<r.length; c++){
-                         let h = String(r[c]||'').toUpperCase().trim();
-                         if(h==='DITEMUKAN') cIdx.d=c; else if(h==='BARU') cIdx.b=c; else if(h==='TUTUP') cIdx.tu=c; else if(h==='GANDA') cIdx.g=c; else if(h==='TIDAK DITEMUKAN') cIdx.t=c;
-                      }
-                   } return;
-                }
-                let kd = String(r[0]||'').trim();
-                if(kd.length === 16) {
-                    resKel.push([kd, Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.tu]||0), Number(r[cIdx.g]||0), Number(r[cIdx.t]||0)]);
-                }
-             });
-          }
-
-          resolve({bku: resBKU, kel: resKel});
-        } catch(err) { reject(err); }
-      };
-      reader.readAsArrayBuffer(file);
-    });
-  }
-
-  // ====================================================================
-  // EXPORT & DOWNLOAD UTILS
-  // ====================================================================
-  function exportDashboardExcel() {
-    if(dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong', 'info');
-    const exportData = dashFilteredData.map((row, idx) => ({
-      "No": idx + 1, "ID SLS": row.idSls, "Kecamatan": row.kec, "Desa": row.desa, "Nama SLS": row.nmsls, "Prioritas": row.prioritas === 1 ? "Ya" : "Tidak", 
-      "PJ Kuda": row.pj, "PML": row.pml, "Email PML": row.emailPml, "PPL": row.ppl, "Email PPL": row.emailPpl,
-      "Open": row.open, "Draft": row.draft, "Submit": row.submit, "Reject": row.reject, "Approve": row.approve, "Total Target": row.calcTotal
-    }));
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Progress_FASIH");
-    XLSX.writeFile(workbook, `Rekap_Monitoring_FASIH_${new Date().toISOString().slice(0,10)}.xlsx`);
-  }
-
-  function downloadImage() {
-       if(dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
-       const btn = document.getElementById('btnImage');
-       const originalText = btn.innerHTML;
-       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROSES...';
-       btn.disabled = true;
-
-       const element = document.getElementById('captureArea');
-       const watermarkHeader = document.getElementById('watermarkHeader');
-       const watermarkText = document.getElementById('watermarkText');
-
-       const timing = getHariPendataan();
-       const currentSync = document.getElementById('txtLastUpdate') ? document.getElementById('txtLastUpdate').innerText : '-';
-       
-       watermarkText.innerHTML = `<span style="color: #ffffff; font-weight: bold;">PENDATAAN HARI KE - ${timing.x}</span> &nbsp;|&nbsp; <span style="color: #FFFF00; font-weight: bold;">TARGET PROGRESS : ${timing.y.toFixed(2)}%</span> &nbsp;|&nbsp; <span style="color: #ffffff; font-weight: bold;">TERAKHIR SINKRONISASI: ${currentSync}</span>`;
-       
-       watermarkHeader.classList.remove('hidden'); watermarkHeader.classList.add('flex');
-       
-       const originalWidth = element.style.width;
-       const originalOverflow = element.style.overflow;
-       
-       window.scrollTo(0,0);
-       document.documentElement.scrollLeft = 0;
-       document.body.scrollLeft = 0;
-       element.scrollLeft = 0; 
-       
-       element.classList.remove('overflow-auto', 'flex-1', 'min-h-0');
-       element.classList.add('h-max');
-       element.style.overflow = 'visible'; 
-       
-       const fullWidth = element.scrollWidth;
-       element.style.width = fullWidth + 'px'; 
-       element.style.maxWidth = 'none';
-
-       html2canvas(element, { 
-           scale: 2, 
-           useCORS: true, 
-           scrollX: 0, 
-           scrollY: 0,
-           windowWidth: fullWidth,
-           width: fullWidth
-       }).then(canvas => {
-           watermarkHeader.classList.add('hidden'); watermarkHeader.classList.remove('flex');
-           element.style.width = originalWidth;
-           element.style.overflow = originalOverflow;
-           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); 
-           element.classList.remove('h-max');
-           
-           let link = document.createElement('a');
-           link.download = `Dashboard_FASIH_${new Date().toISOString().slice(0,10)}.png`;
-           link.href = canvas.toDataURL('image/png');
-           link.click();
-
-           btn.innerHTML = originalText; btn.disabled = false;
-       }).catch(err => {
-           watermarkHeader.classList.add('hidden'); watermarkHeader.classList.remove('flex');
-           element.style.width = originalWidth;
-           element.style.overflow = originalOverflow;
-           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); 
-           element.classList.remove('h-max');
-           btn.innerHTML = originalText; btn.disabled = false;
-           Swal.fire('Error', 'Gagal memproses Gambar.', 'error');
-       });
-  }
-
-  function downloadPDF() {
-       if(dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
-       const btn = document.getElementById('btnScreenshot');
-       const originalText = btn.innerHTML;
-       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROSES...';
-       btn.disabled = true;
-
-       const element = document.getElementById('captureArea');
-       const watermarkHeader = document.getElementById('watermarkHeader');
-       const watermarkText = document.getElementById('watermarkText');
-
-       const timing = getHariPendataan();
-       const currentSync = document.getElementById('txtLastUpdate') ? document.getElementById('txtLastUpdate').innerText : '-';
-       
-       watermarkText.innerHTML = `<span style="color: #ffffff; font-weight: bold;">PENDATAAN HARI KE - ${timing.x}</span> &nbsp;|&nbsp; <span style="color: #FFFF00; font-weight: bold;">TARGET PROGRESS : ${timing.y.toFixed(2)}%</span> &nbsp;|&nbsp; <span style="color: #ffffff; font-weight: bold;">TERAKHIR SINKRONISASI: ${currentSync}</span>`;
-       
-       watermarkHeader.classList.remove('hidden'); watermarkHeader.classList.add('flex');
-       
-       const originalWidth = element.style.width;
-       const originalOverflow = element.style.overflow;
-       
-       window.scrollTo(0,0);
-       document.documentElement.scrollLeft = 0;
-       document.body.scrollLeft = 0;
-       element.scrollLeft = 0; 
-       
-       element.classList.remove('overflow-auto', 'flex-1', 'min-h-0');
-       element.classList.add('h-max');
-       element.style.overflow = 'visible';
-       
-       const table = element.querySelector('.block table');
-       const fullWidth = table ? table.scrollWidth : element.scrollWidth;
-       
-       element.style.width = fullWidth + 'px'; 
-       element.style.maxWidth = 'none';
-
-       let optOpt = {
-          margin:        [0.3, 0.2, 0.3, 0.3], 
-          filename:      `Laporan_Monitoring_FASIH_${new Date().toISOString().slice(0,10)}.pdf`,
-          image:         { type: 'jpeg', quality: 0.98 },
-          html2canvas:   { 
-              scale: 2, 
-              useCORS: true, 
-              scrollX: 0, 
-              scrollY: 0,
-              x: 0,
-              y: 0,
-              windowWidth: fullWidth,
-              width: fullWidth
-          },
-          jsPDF:         { unit: 'in', format: 'a3', orientation: 'landscape' }, 
-          pagebreak:     { mode: ['css', 'legacy'], avoid: ['tr', 'td', 'th'] } 
-       };
-
-       html2pdf().set(optOpt).from(element).save().then(() => {
-           watermarkHeader.classList.add('hidden'); watermarkHeader.classList.remove('flex');
-           element.style.width = originalWidth;
-           element.style.overflow = originalOverflow;
-           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); 
-           element.classList.remove('h-max');
-           btn.innerHTML = originalText; btn.disabled = false;
-       }).catch(err => {
-           watermarkHeader.classList.add('hidden'); watermarkHeader.classList.remove('flex');
-           element.style.width = originalWidth;
-           element.style.overflow = originalOverflow;
-           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); 
-           element.classList.remove('h-max');
-           btn.innerHTML = originalText; btn.disabled = false;
-           Swal.fire('Error', 'Gagal memproses PDF.', 'error');
-       });
+          if(sUK) { let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUK], {header: 1}); let cIdx = {d:-1, b:-1, tu:-1, g:-1, t:-1}; let start = false; rows.forEach(r => { if(!r || !r.length) return; if(!start) { if(String(r[0]).trim().toUpperCase() === 'KODE') { start = true; for(let c=0; c<r.length; c++){ let h = String(r[c]||'').toUpperCase().trim(); if(h==='DITEMUKAN') cIdx.d=c; else if(h==='BARU') cIdx.b=c; else if(h==='TUTUP') cIdx.tu=c; else if(h==='GANDA') cIdx.g=c; else if(h==='TIDAK DITEMUKAN') cIdx.t=c; } } return; } if(String(r[0]||'').trim().length === 16) rK.push([String(r[0]).trim(), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.tu]||0), Number(r[cIdx.g]||0), Number(r[cIdx.t]||0)]); }); }
+          res({bku: rB, kel: rK}); } catch(err) { rej(err); }
+      }; r.readAsArrayBuffer(f); });
   }
 </script>
 </body>
