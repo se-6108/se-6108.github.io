@@ -590,7 +590,19 @@
     if(tsStatusPetugas) tsStatusPetugas.on('change', filterTabel);
   }
 
+  function renderCurrentTab() {
+      if(activeTabId === 1) renderTabelPaginasi();
+      if(activeTabId === 2) renderLeaderboard();
+      if(activeTabId === 3) renderProgressPml();
+      if(activeTabId === 4) renderProgressKecamatan();
+      if(activeTabId === 5) renderVisualisasi();
+      if(activeTabId === 6) renderTab6Keluarga();
+      if(activeTabId === 7) renderTab7Bku();
+      if(activeTabId === 8) renderTab8UsahaKel();
+  }
+
   function switchTab(tabId) {
+     if(activeTabId !== tabId) dashCurrentPage = 1; // Reset halaman ke 1 hanya saat pindah tab
      activeTabId = tabId;
      
      // 1. Ganti Default Pagination (PPL, PML, KECAMATAN = Semua. Sisanya = 10)
@@ -598,11 +610,13 @@
         dashRowsPerPage = 999999;
         if(document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "999999";
      } else {
-        dashRowsPerPage = 10;
-        if(document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "10";
+        dashRowsPerPage = parseInt(document.getElementById('perPageSelect').value) || 10;
+        if (dashRowsPerPage === 999999) { // Kembalikan ke 10 jika sebelumnya "Semua"
+            dashRowsPerPage = 10;
+            if(document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "10";
+        }
      }
-     dashCurrentPage = 1;
-
+     
      // 2. Reset Button Styles
      for(let i=1; i<=8; i++) {
         let btn = document.getElementById('btnTab'+i);
@@ -628,14 +642,7 @@
      
      if(document.getElementById('paginasiArea')) document.getElementById('paginasiArea').style.display = ([1,2,3,4,6,7,8].includes(tabId)) ? 'flex' : 'none';
      
-     if(tabId === 1) renderTabelPaginasi();
-     if(tabId === 2) renderLeaderboard();
-     if(tabId === 3) renderProgressPml();
-     if(tabId === 4) renderProgressKecamatan();
-     if(tabId === 5) renderVisualisasi();
-     if(tabId === 6) renderTab6Keluarga();
-     if(tabId === 7) renderTab7Bku();
-     if(tabId === 8) renderTab8UsahaKel();
+     renderCurrentTab();
   }
 
   function sortLogic(arr, col, isAsc) {
@@ -704,14 +711,7 @@
     if(document.getElementById('dashTotApprove')) document.getElementById('dashTotApprove').innerHTML = `${tApprove.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pApprove})</span>`;
 
     dashCurrentPage = 1;
-    if(activeTabId === 1) renderTabelPaginasi();
-    if(activeTabId === 2) renderLeaderboard();
-    if(activeTabId === 3) renderProgressPml();
-    if(activeTabId === 4) renderProgressKecamatan();
-    if(activeTabId === 5) renderVisualisasi();
-    if(activeTabId === 6) renderTab6Keluarga();
-    if(activeTabId === 7) renderTab7Bku();
-    if(activeTabId === 8) renderTab8UsahaKel();
+    renderCurrentTab();
   }
 
   function sortTabel(colName) { if(sortCol === colName) sortAsc = !sortAsc; else { sortCol = colName; sortAsc = true; } filterTabel(); }
@@ -722,7 +722,7 @@
 
   function changePerPage() {
     let sel = document.getElementById('perPageSelect');
-    if(sel) { dashRowsPerPage = parseInt(sel.value); dashCurrentPage = 1; filterTabel(); }
+    if(sel) { dashRowsPerPage = parseInt(sel.value); dashCurrentPage = 1; renderCurrentTab(); }
   }
 
   function getPaginatedData(dataArray) {
@@ -1077,7 +1077,10 @@
     tbody.innerHTML = htmlContent || '<tr><td colspan="10" class="text-center py-10 italic text-gray-400">Data Eksternal Usaha Keluarga Belum Diupload atau Data Tidak Ditemukan.</td></tr>';
   }
 
-  function goDashPage(pageNum) { dashCurrentPage = pageNum; switchTab(activeTabId); }
+  function goDashPage(pageNum) { 
+      dashCurrentPage = pageNum; 
+      renderCurrentTab(); 
+  }
   
   function generatePaginationHTML(totalItems, currentPage, rowsPerPage, callbackName) {
        const totalPages = Math.ceil(totalItems / rowsPerPage);
@@ -1158,7 +1161,12 @@
   }
 
   function sendToGAS(tipe, dataArray) {
-     return fetch(GAS_API_URL, { method: 'POST', body: JSON.stringify({ type: tipe, data: dataArray }) }).then(r => r.json());
+     // PERBAIKAN CORS: Menambahkan headers Content-Type text/plain agar tidak diblokir fetch
+     return fetch(GAS_API_URL, { 
+         method: 'POST', 
+         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+         body: JSON.stringify({ type: tipe, data: dataArray }) 
+     }).then(r => r.json());
   }
 
   // --- ENGINE PARSING KELUARGA ---
