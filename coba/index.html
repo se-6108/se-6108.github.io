@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=1400"> 
+  
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -19,6 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -27,12 +29,33 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <style>
-    body { font-family: 'Montserrat', sans-serif; background-color: #f0fdf4; } 
-    .smooth-shadow { box-shadow: 0 20px 50px -12px rgba(37, 99, 235, 0.15); }
-    .swal2-popup { border-radius: 1.5rem !important; font-family: 'Montserrat', sans-serif !important; }
-    .swal2-html-container { overflow: hidden !important; text-align: left !important; } 
-    .custom-spinner { width: 3.5rem; height: 3.5rem; border: 4px solid #bfdbfe; border-top-color: #2563eb; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    body { 
+      font-family: 'Montserrat', sans-serif; 
+      background-color: #f0fdf4; 
+    } 
+    .smooth-shadow { 
+      box-shadow: 0 20px 50px -12px rgba(37, 99, 235, 0.15); 
+    }
+    .swal2-popup { 
+      border-radius: 1.5rem !important; 
+      font-family: 'Montserrat', sans-serif !important; 
+    }
+    .swal2-html-container { 
+      overflow: hidden !important; 
+      text-align: left !important; 
+    } 
+    .custom-spinner { 
+      width: 3.5rem; 
+      height: 3.5rem; 
+      border: 4px solid #bfdbfe; 
+      border-top-color: #2563eb; 
+      border-radius: 50%; 
+      animation: spin 1s linear infinite; 
+      margin: 0 auto; 
+    }
+    @keyframes spin { 
+      to { transform: rotate(360deg); } 
+    }
     
     /* STICKY HEADER & FUNNEL ICON PADA TABEL */
     .dashboard-table th { 
@@ -43,14 +66,43 @@
       box-shadow: 0 1px 2px rgba(0,0,0,0.1); 
       cursor: pointer;
     }
-    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide::-webkit-scrollbar { 
+      display: none; 
+    }
     
     /* TOM SELECT MULTI-SELECT CHIPS */
-    .ts-control { border-radius: 0.75rem !important; border-color: #e2e8f0 !important; padding: 0.5rem 1rem !important; min-height: 38px; font-size: 0.75rem !important; font-family: 'Montserrat', sans-serif !important; background-color: #ffffff !important; font-weight: 700; text-transform: uppercase; color: #1e293b !important;}
-    .ts-control.focus { border-color: #2563eb !important; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important; }
-    .ts-wrapper.multi .ts-control > div { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 4px; padding: 2px 6px; font-size: 10px; margin-right: 4px; }
-    .teks-upper { text-transform: uppercase !important; }
-    tr, .group, .flex-col { page-break-inside: avoid !important; break-inside: avoid-page !important; }
+    .ts-control { 
+      border-radius: 0.75rem !important; 
+      border-color: #e2e8f0 !important; 
+      padding: 0.5rem 1rem !important; 
+      min-height: 38px; 
+      font-size: 0.75rem !important; 
+      font-family: 'Montserrat', sans-serif !important; 
+      background-color: #ffffff !important; 
+      font-weight: 700; 
+      text-transform: uppercase; 
+      color: #1e293b !important;
+    }
+    .ts-control.focus { 
+      border-color: #2563eb !important; 
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important; 
+    }
+    .ts-wrapper.multi .ts-control > div { 
+      background: #eff6ff; 
+      color: #1d4ed8; 
+      border: 1px solid #bfdbfe; 
+      border-radius: 4px; 
+      padding: 2px 6px; 
+      font-size: 10px; 
+      margin-right: 4px; 
+    }
+    .teks-upper { 
+      text-transform: uppercase !important; 
+    }
+    tr, .group, .flex-col { 
+      page-break-inside: avoid !important; 
+      break-inside: avoid-page !important; 
+    }
   </style>
 </head>
 <body class="h-screen overflow-hidden bg-blue-50/30 flex flex-col text-gray-800">
@@ -81,39 +133,84 @@
                  </div>
               </div>
               <div class="flex items-center mt-1">
-                 <span class="relative flex h-2.5 w-2.5 mr-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400"></span></span>
+                 <span class="relative flex h-2.5 w-2.5 mr-2">
+                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                     <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400"></span>
+                 </span>
                  <span class="text-[10px] text-blue-100 font-bold uppercase tracking-wider mr-1.5">TERAKHIR SINKRONISASI:</span>
                  <span id="txtLastUpdate" class="text-white text-[10px] font-bold tracking-wider uppercase">-</span>
               </div>
            </div>
         </div>
+        
         <div class="flex gap-2 relative z-10 overflow-x-auto pb-1">
-           <!-- TOMBOL NINJA ADMIN (Hidden by default) -->
+           <!-- TOMBOL NINJA ADMIN (Disembunyikan default) -->
            <button id="btnAdminUpload" onclick="authAdminPanel()" class="hidden bg-indigo-900 hover:bg-black text-white px-4 py-2.5 rounded-lg text-xs font-bold transition items-center gap-2 shadow-md border border-indigo-700 uppercase tracking-wide mr-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg> Admin Upload
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg> 
+              Admin Upload
            </button>
            <button onclick="downloadImage()" id="btnImage" class="bg-blue-50 hover:bg-white text-blue-700 px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-sm border border-blue-200 uppercase tracking-wide">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> Export Image
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> 
+              Export Image
            </button>
            <button onclick="downloadPDF()" id="btnScreenshot" class="bg-white/20 hover:bg-white/30 text-white border border-white/40 px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center gap-2 backdrop-blur-sm uppercase tracking-wide shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> Export PDF
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> 
+              Export PDF
            </button>
            <button onclick="exportDashboardExcel()" class="bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-md border border-green-400 uppercase tracking-wide">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg> Export Excel
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg> 
+              Export Excel
            </button>
         </div>
       </div>
 
+      <!-- CARD METRIK STATIS -->
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 gap-3 px-6 py-4 bg-blue-50/40 border-b border-blue-100">
-        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-1 relative z-10">Beban SLS</p><h3 id="dashTotSls" class="text-2xl font-black text-slate-800 relative z-10">-</h3></div>
-        <div class="bg-gradient-to-br from-indigo-50 to-white p-3 rounded-xl border border-indigo-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-indigo-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Target</p><h3 id="dashTotTarget" class="text-2xl font-black text-indigo-700 relative z-10">-</h3></div>
-        <div class="bg-gradient-to-br from-fuchsia-50 to-white p-3 rounded-xl border border-fuchsia-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-fuchsia-600 font-bold uppercase tracking-wider mb-1 relative z-10">Prog Pendataan</p><h3 id="dashProgPendataan" class="text-2xl font-black text-fuchsia-700 relative z-10">-</h3></div>
-        <div class="bg-gradient-to-br from-sky-50 to-white p-3 rounded-xl border border-sky-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-sky-600 font-bold uppercase tracking-wider mb-1 relative z-10">Prog Submit</p><h3 id="dashProgSubmit" class="text-2xl font-black text-sky-700 relative z-10">-</h3></div>
-        <div class="bg-gradient-to-br from-blue-50 to-white p-3 rounded-xl border border-blue-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-blue-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Open</p><h3 id="dashTotOpen" class="text-2xl font-black text-blue-700 relative z-10">-</h3></div>
-        <div class="bg-gradient-to-br from-amber-50 to-white p-3 rounded-xl border border-amber-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-amber-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Draft</p><h3 id="dashTotDraft" class="text-2xl font-black text-amber-700 relative z-10">-</h3></div>
-        <div class="bg-gradient-to-br from-purple-50 to-white p-3 rounded-xl border border-purple-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-purple-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Submit</p><h3 id="dashTotSubmit" class="text-2xl font-black text-purple-700 relative z-10">-</h3></div>
-        <div class="bg-gradient-to-br from-red-50 to-white p-3 rounded-xl border border-red-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-red-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Reject</p><h3 id="dashTotReject" class="text-2xl font-black text-red-700 relative z-10">-</h3></div>
-        <div class="bg-gradient-to-br from-green-50 to-white p-3 rounded-xl border border-green-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-green-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Approve</p><h3 id="dashTotApprove" class="text-2xl font-black text-green-700 relative z-10">-</h3></div>
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-slate-200 opacity-[0.25] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-1 relative z-10">Beban SLS</p>
+            <h3 id="dashTotSls" class="text-2xl font-black text-slate-800 relative z-10">-</h3>
+        </div>
+        <div class="bg-gradient-to-br from-indigo-50 to-white p-3 rounded-xl border border-indigo-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-indigo-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            <p class="text-[9px] text-indigo-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Assignment</p>
+            <h3 id="dashTotTarget" class="text-2xl font-black text-indigo-700 relative z-10">-</h3>
+        </div>
+        <div class="bg-gradient-to-br from-fuchsia-50 to-white p-3 rounded-xl border border-fuchsia-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-fuchsia-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+            <p class="text-[9px] text-fuchsia-600 font-bold uppercase tracking-wider mb-1 relative z-10">Progress Pendataan</p>
+            <h3 id="dashProgPendataan" class="text-2xl font-black text-fuchsia-700 relative z-10">-</h3>
+        </div>
+        <div class="bg-gradient-to-br from-sky-50 to-white p-3 rounded-xl border border-sky-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-sky-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <p class="text-[9px] text-sky-600 font-bold uppercase tracking-wider mb-1 relative z-10">Progress Submit</p>
+            <h3 id="dashProgSubmit" class="text-2xl font-black text-sky-700 relative z-10">-</h3>
+        </div>
+        <div class="bg-gradient-to-br from-blue-50 to-white p-3 rounded-xl border border-blue-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-blue-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
+            <p class="text-[9px] text-blue-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Open</p>
+            <h3 id="dashTotOpen" class="text-2xl font-black text-blue-700 relative z-10">-</h3>
+        </div>
+        <div class="bg-gradient-to-br from-amber-50 to-white p-3 rounded-xl border border-amber-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-amber-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+            <p class="text-[9px] text-amber-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Draft</p>
+            <h3 id="dashTotDraft" class="text-2xl font-black text-amber-700 relative z-10">-</h3>
+        </div>
+        <div class="bg-gradient-to-br from-purple-50 to-white p-3 rounded-xl border border-purple-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-purple-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            <p class="text-[9px] text-purple-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Submit</p>
+            <h3 id="dashTotSubmit" class="text-2xl font-black text-purple-700 relative z-10">-</h3>
+        </div>
+        <div class="bg-gradient-to-br from-red-50 to-white p-3 rounded-xl border border-red-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-red-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            <p class="text-[9px] text-red-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Reject</p>
+            <h3 id="dashTotReject" class="text-2xl font-black text-red-700 relative z-10">-</h3>
+        </div>
+        <div class="bg-gradient-to-br from-green-50 to-white p-3 rounded-xl border border-green-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-green-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.41-1.4L9 16.2z"/></svg>
+            <p class="text-[9px] text-green-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Approve</p>
+            <h3 id="dashTotApprove" class="text-2xl font-black text-green-700 relative z-10">-</h3>
+        </div>
       </div>
       
       <!-- NAVIGASI TAB MENU -->
@@ -123,20 +220,42 @@
          <button id="btnTab3" onclick="switchTab(3)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Progress PML</button>
          <button id="btnTab4" onclick="switchTab(4)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Progress Kecamatan</button>
          <button id="btnTab5" onclick="switchTab(5)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Visualisasi Data</button>
+         <!-- TIGA TAB BARU ANALISA -->
          <button id="btnTab6" onclick="switchTab(6)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-amber-500 hover:text-amber-600 transition flex gap-1 items-center">📊 Analisa Keluarga</button>
          <button id="btnTab7" onclick="switchTab(7)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-purple-500 hover:text-purple-600 transition flex gap-1 items-center">📈 Analisa BKU</button>
-         <button id="btnTab8" onclick="switchTab(8)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-emerald-500 hover:text-emerald-600 transition flex gap-1 items-center">🏡 Analisa Usaha Kel</button>
+         <button id="btnTab8" onclick="switchTab(8)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-emerald-500 hover:text-emerald-600 transition flex gap-1 items-center">🏡 Analisa Usaha Keluarga</button>
       </div>
 
       <!-- GLOBAL FILTER MULTI-SELECT -->
       <div class="px-6 py-3 bg-gray-50/50 flex gap-2 items-center border-b border-blue-100 flex-wrap" id="filterArea">
-         <div class="flex-none w-44"><input type="text" id="dashSearch" onkeyup="handleGlobalFilter()" placeholder="PENCARIAN..." class="w-full px-3 py-1 border border-gray-300 rounded-lg text-xs font-bold focus:border-blue-500 outline-none h-[38px] teks-upper shadow-sm"></div>
-         <div class="flex-1 min-w-[120px]"><select id="fPrio" placeholder="STATUS PRIORITAS"><option value="">STATUS PRIORITAS</option><option value="1">YA</option><option value="0">TIDAK</option></select></div>
-         <div class="flex-1 min-w-[120px]"><select id="fKec" multiple placeholder="KECAMATAN"></select></div>
-         <div class="flex-1 min-w-[120px]"><select id="fPml" multiple placeholder="PML"></select></div>
-         <div class="flex-1 min-w-[120px]"><select id="fPpl" multiple placeholder="PPL"></select></div>
-         <div class="flex-1 min-w-[120px]"><select id="fPj" multiple placeholder="PJ KUDA"></select></div>
-         <div class="flex-1 min-w-[130px]"><select id="fStatusPetugas" multiple placeholder="STATUS TARGET"><option value="Tercapai">TERCAPAI</option><option value="Belum Tercapai">BELUM TERCAPAI</option></select></div>
+         <div class="flex-none w-44">
+             <input type="text" id="dashSearch" onkeyup="handleGlobalFilter()" placeholder="PENCARIAN..." class="w-full px-3 py-1 border border-gray-300 rounded-lg text-xs font-bold focus:border-blue-500 outline-none h-[38px] teks-upper shadow-sm">
+         </div>
+         <div class="flex-1 min-w-[120px]">
+             <select id="fPrio" placeholder="STATUS PRIORITAS">
+                 <option value="">STATUS PRIORITAS</option>
+                 <option value="1">YA</option>
+                 <option value="0">TIDAK</option>
+             </select>
+         </div>
+         <div class="flex-1 min-w-[120px]">
+             <select id="fKec" multiple placeholder="KECAMATAN"></select>
+         </div>
+         <div class="flex-1 min-w-[120px]">
+             <select id="fPml" multiple placeholder="PML"></select>
+         </div>
+         <div class="flex-1 min-w-[120px]">
+             <select id="fPpl" multiple placeholder="PPL"></select>
+         </div>
+         <div class="flex-1 min-w-[120px]">
+             <select id="fPj" multiple placeholder="PJ KUDA"></select>
+         </div>
+         <div class="flex-1 min-w-[130px]">
+             <select id="fStatusPetugas" multiple placeholder="STATUS TARGET">
+                 <option value="Tercapai">TERCAPAI</option>
+                 <option value="Belum Tercapai">BELUM TERCAPAI</option>
+             </select>
+         </div>
          <button onclick="resetGlobalFilters()" class="bg-gray-200 text-gray-700 px-3 h-[38px] rounded-lg text-xs font-bold hover:bg-gray-300 transition shadow-sm" title="Reset Semua Filter">Reset</button>
       </div>
     </div>
@@ -154,29 +273,77 @@
          </div>
          
          <!-- TABEL-TABEL UTAMA DI-RENDER VIA JAVASCRIPT -->
-         <div id="tab1-content" class="flex-1 w-full dashboard-table block"><table class="w-full text-left border-collapse min-w-[1350px]"><thead id="headTab1" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead><tbody id="tableBodyDash" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody></table></div>
-         <div id="tab2-content" class="hidden flex-1 w-full dashboard-table"><table class="w-full text-left border-collapse min-w-[1600px]"><thead id="headTab2" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead><tbody id="tableLeaderboard" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody></table></div>
-         <div id="tab3-content" class="hidden flex-1 w-full dashboard-table"><table class="w-full text-left border-collapse min-w-[1700px]"><thead id="headTab3" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead><tbody id="tablePml" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody></table></div>
-         <div id="tab4-content" class="hidden flex-1 w-full dashboard-table"><table class="w-full text-left border-collapse min-w-[1250px]"><thead id="headTab4" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead><tbody id="tableKecamatan" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody></table></div>
+         <div id="tab1-content" class="flex-1 w-full dashboard-table block">
+             <table class="w-full text-left border-collapse min-w-[1350px]">
+                 <thead id="headTab1" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead>
+                 <tbody id="tableBodyDash" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
+             </table>
+         </div>
+
+         <div id="tab2-content" class="hidden flex-1 w-full dashboard-table">
+             <table class="w-full text-left border-collapse min-w-[1600px]">
+                 <thead id="headTab2" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead>
+                 <tbody id="tableLeaderboard" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
+             </table>
+         </div>
+
+         <div id="tab3-content" class="hidden flex-1 w-full dashboard-table">
+             <table class="w-full text-left border-collapse min-w-[1700px]">
+                 <thead id="headTab3" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead>
+                 <tbody id="tablePml" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
+             </table>
+         </div>
+
+         <div id="tab4-content" class="hidden flex-1 w-full dashboard-table">
+             <table class="w-full text-left border-collapse min-w-[1250px]">
+                 <thead id="headTab4" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead>
+                 <tbody id="tableKecamatan" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
+             </table>
+         </div>
          
          <div id="tab5-content" class="hidden flex-1 w-full p-6 bg-white overflow-hidden">
            <div class="flex flex-col border border-gray-100 p-4 rounded-2xl shadow-sm bg-gray-50/50 h-full">
               <h3 class="font-bold text-gray-700 text-center uppercase tracking-wide mb-4 text-xs shrink-0">Status Assignment Berdasarkan Kecamatan</h3>
-              <div id="chartContainerWrapper" class="flex-1 relative w-full overflow-y-auto"><div id="chartInner" style="position: relative; width: 100%;"><canvas id="chartKecamatan"></canvas></div></div>
+              <div id="chartContainerWrapper" class="flex-1 relative w-full overflow-y-auto">
+                  <div id="chartInner" style="position: relative; width: 100%;">
+                      <canvas id="chartKecamatan"></canvas>
+                  </div>
+              </div>
            </div>
          </div>
 
-         <div id="tab6-content" class="hidden flex-1 w-full dashboard-table"><table class="w-full text-left border-collapse min-w-[1350px]"><thead id="headTab6" class="text-[10px] uppercase text-amber-900 font-bold tracking-wider bg-amber-100"></thead><tbody id="tableKeluarga" class="text-xs divide-y divide-amber-100 text-gray-700 tags-upper"></tbody></table></div>
-         <div id="tab7-content" class="hidden flex-1 w-full dashboard-table"><table class="w-full text-left border-collapse min-w-[1450px]"><thead id="headTab7" class="text-[10px] uppercase text-purple-900 font-bold tracking-wider bg-purple-100"></thead><tbody id="tableUsaha" class="text-xs divide-y divide-purple-100 text-gray-700 tags-upper"></tbody></table></div>
-         <div id="tab8-content" class="hidden flex-1 w-full dashboard-table"><table class="w-full text-left border-collapse min-w-[1350px]"><thead id="headTab8" class="text-[10px] uppercase text-emerald-900 font-bold tracking-wider bg-emerald-100"></thead><tbody id="tableUsahaKeluarga" class="text-xs divide-y divide-emerald-100 text-gray-700 tags-upper"></tbody></table></div>
+         <div id="tab6-content" class="hidden flex-1 w-full dashboard-table">
+             <table class="w-full text-left border-collapse min-w-[1350px]">
+                 <thead id="headTab6" class="text-[10px] uppercase text-amber-900 font-bold tracking-wider bg-amber-100"></thead>
+                 <tbody id="tableKeluarga" class="text-xs divide-y divide-amber-100 text-gray-700 tags-upper"></tbody>
+             </table>
+         </div>
+
+         <div id="tab7-content" class="hidden flex-1 w-full dashboard-table">
+             <table class="w-full text-left border-collapse min-w-[1450px]">
+                 <thead id="headTab7" class="text-[10px] uppercase text-purple-900 font-bold tracking-wider bg-purple-100"></thead>
+                 <tbody id="tableUsaha" class="text-xs divide-y divide-purple-100 text-gray-700 tags-upper"></tbody>
+             </table>
+         </div>
+
+         <div id="tab8-content" class="hidden flex-1 w-full dashboard-table">
+             <table class="w-full text-left border-collapse min-w-[1350px]">
+                 <thead id="headTab8" class="text-[10px] uppercase text-emerald-900 font-bold tracking-wider bg-emerald-100"></thead>
+                 <tbody id="tableUsahaKeluarga" class="text-xs divide-y divide-emerald-100 text-gray-700 tags-upper"></tbody>
+             </table>
+         </div>
       </div> 
       
       <!-- AREA PAGINASI -->
       <div id="paginasiArea" class="bg-white border border-gray-200 px-5 py-3 rounded-xl mt-3 shadow-sm flex justify-between items-center shrink-0">
          <div class="flex items-center gap-3">
             <select id="perPageSelect" onchange="changePerPage()" class="text-xs font-bold text-gray-600 bg-gray-50 border border-gray-300 rounded-md px-2 py-1.5 outline-none cursor-pointer shadow-sm">
-               <option value="10">10 Baris</option><option value="15">15 Baris</option><option value="20">20 Baris</option>
-               <option value="50">50 Baris</option><option value="100">100 Baris</option><option value="999999">Semua Baris</option>
+               <option value="10">10 Baris</option>
+               <option value="15">15 Baris</option>
+               <option value="20">20 Baris</option>
+               <option value="50">50 Baris</option>
+               <option value="100">100 Baris</option>
+               <option value="999999">Semua Baris</option>
             </select>
             <span class="text-xs text-gray-500 font-bold bg-gray-100 px-2.5 py-1.5 rounded-md uppercase tracking-wider" id="pageInfoDash">Menampilkan 0 Data</span>
          </div>
@@ -215,58 +382,125 @@
           keyStrokes += 'f';
           if(keyStrokes.includes('ffff')) {
               const btn = document.getElementById('btnAdminUpload');
-              btn.classList.toggle('hidden'); btn.classList.toggle('flex');
+              btn.classList.toggle('hidden');
+              btn.classList.toggle('flex');
               keyStrokes = '';
-              Swal.fire({toast: true, position: 'top-end', icon: 'success', title: 'Panel Admin Aktif!', showConfirmButton: false, timer: 1500});
+              Swal.fire({
+                  toast: true, 
+                  position: 'top-end', 
+                  icon: 'success', 
+                  title: 'Panel Admin Aktif!', 
+                  showConfirmButton: false, 
+                  timer: 1500
+              });
           }
-      } else { keyStrokes = ''; }
+      } else {
+          keyStrokes = '';
+      }
   });
 
-  window.onload = function() { initDashboard(); };
+  window.onload = function() {
+      initDashboard();
+  };
 
   function toProperCase(str) {
       if (!str) return '';
-      return str.toLowerCase().replace(/(^|\s)\S/g, function(s) { return s.toUpperCase(); }).trim();
+      return str.toLowerCase().replace(/(^|\s)\S/g, function(s) {
+          return s.toUpperCase();
+      }).trim();
   }
 
   function getHariPendataan() {
-      const now = new Date(); const utc = now.getTime() + (now.getTimezoneOffset() * 60000); const wib = new Date(utc + (3600000 * 7));
-      let eff = new Date(wib); if (wib.getHours() < 21) { eff.setDate(eff.getDate() - 1); }
+      const now = new Date();
+      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+      const wib = new Date(utc + (3600000 * 7));
+
+      let actualDate = new Date(wib);
+      let effectiveDate = new Date(wib);
+      if (wib.getHours() < 21) {
+          effectiveDate.setDate(effectiveDate.getDate() - 1);
+      }
+
       const startYear = 2026; const startMonth = 5; const startDateDate = 15;
       const endYear = 2026; const endMonth = 7; const endDateDate = 31;
-      const startDateUTC = Date.UTC(startYear, startMonth, startDateDate); const endDateUTC = Date.UTC(endYear, endMonth, endDateDate);
+
+      const startDateUTC = Date.UTC(startYear, startMonth, startDateDate);
+      const endDateUTC = Date.UTC(endYear, endMonth, endDateDate);
+
       const actualDateUTC = Date.UTC(wib.getFullYear(), wib.getMonth(), wib.getDate());
       let actualDiffDays = Math.floor((actualDateUTC - startDateUTC) / (1000 * 60 * 60 * 24)) + 1;
+
       const effectiveDateUTC = Date.UTC(eff.getFullYear(), eff.getMonth(), eff.getDate());
       let effectiveDiffDays = Math.floor((effectiveDateUTC - startDateUTC) / (1000 * 60 * 60 * 24)) + 1;
+
       const maxDays = Math.floor((endDateUTC - startDateUTC) / (1000 * 60 * 60 * 24)) + 1;
 
-      if (actualDiffDays < 1) actualDiffDays = 1; if (actualDiffDays > maxDays) actualDiffDays = maxDays;
-      if (effectiveDiffDays < 1) effectiveDiffDays = 1; if (effectiveDiffDays > maxDays) effectiveDiffDays = maxDays;
+      if (actualDiffDays < 1) actualDiffDays = 1;
+      if (actualDiffDays > maxDays) actualDiffDays = maxDays;
+
+      if (effectiveDiffDays < 1) effectiveDiffDays = 1;
+      if (effectiveDiffDays > maxDays) effectiveDiffDays = maxDays;
+
       let targetPercentage = Math.min(effectiveDiffDays * 1.34, 100);
       return { x: actualDiffDays, y: targetPercentage, effDay: effectiveDiffDays };
   }
 
   function initDashboard() {
+      const globalLoader = document.getElementById('globalLoading');
       timingConfig = getHariPendataan();
-      if (document.getElementById('badgeHari')) document.getElementById('badgeHari').innerText = `PENDATAAN HARI KE - ${timingConfig.x}`;
-      if (document.getElementById('badgeTarget')) document.getElementById('badgeTarget').innerText = `TARGET PROGRESS : ${timingConfig.y.toFixed(2)}%`;
+      
+      if (document.getElementById('badgeHari')) {
+          document.getElementById('badgeHari').innerText = `PENDATAAN HARI KE - ${timingConfig.x}`;
+      }
+      if (document.getElementById('badgeTarget')) {
+          document.getElementById('badgeTarget').innerText = `TARGET PROGRESS : ${timingConfig.y.toFixed(2)}%`;
+      }
 
-      fetch(GAS_API_URL).then(res => { if(!res.ok) throw new Error("API Gagal"); return res.json(); }).then(res => {
-          res.data.forEach(row => { row.pml = toProperCase(row.pml); row.ppl = toProperCase(row.ppl); row.pj = toProperCase(row.pj); row.kec = toProperCase(row.kec); });
-          DASH_DATA = res.data; document.getElementById('globalLoading').classList.add('hidden');
+      fetch(GAS_API_URL)
+        .then(response => {
+           if (!response.ok) throw new Error("Jaringan bermasalah atau URL API salah.");
+           return response.json();
+        })
+        .then(res => {
+          res.data.forEach(row => {
+              row.pml = toProperCase(row.pml);
+              row.ppl = toProperCase(row.ppl);
+              row.pj = toProperCase(row.pj);
+              row.kec = toProperCase(row.kec);
+          });
+
+          DASH_DATA = res.data;
+          if(globalLoader) globalLoader.classList.add('hidden');
           
           if (res.integrityErrorCount > 0) {
               Swal.fire({
                   title: '<span class="text-lg font-black uppercase">Info Target Pendataan</span>',
-                  html: `<div class="bg-red-50 text-red-800 p-3.5 rounded-xl mb-4 text-xs shadow-sm text-left animate-pulse"><b>WARNING: Integritas Data Pusat</b><br>Ditemukan <b>${res.integrityErrorCount} Assignment</b> tidak sinkron dengan kolom Total Target. Sistem memakai Target Absolut.</div>`,
-                  icon: 'warning', confirmButtonText: 'SIAP!'
+                  html: `
+                    <div class="bg-red-50 border border-red-300 text-red-800 p-3.5 rounded-xl mb-4 text-xs shadow-sm text-left animate-pulse">
+                        <b class="flex items-center gap-1.5 mb-1 text-[13px]">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                           WARNING: Integritas Data Pusat
+                        </b>
+                        Ditemukan <b>${res.integrityErrorCount} Assignment</b> tidak sinkron. Sistem memakai Target Absolut.
+                    </div>
+                  `,
+                  icon: 'warning', 
+                  confirmButtonText: 'SIAP!',
+                  customClass: { popup: 'rounded-[2rem]', confirmButton: 'bg-blue-600 text-white px-8 py-2.5 rounded-xl font-bold' }
               });
           }
-          if(document.getElementById('txtLastUpdate')) document.getElementById('txtLastUpdate').innerText = res.lastUpdate;
+          if(document.getElementById('txtLastUpdate')) {
+              document.getElementById('txtLastUpdate').innerText = res.lastUpdate;
+          }
 
-          initSearchableDropdowns(); buildTableHeaders(); handleGlobalFilter(); 
-      }).catch(err => { document.getElementById('globalLoading').classList.add('hidden'); Swal.fire("Gagal Memuat Data", err.message, "error"); });
+          initSearchableDropdowns();
+          buildTableHeaders(); 
+          handleGlobalFilter(); 
+        })
+        .catch(err => {
+          if(globalLoader) globalLoader.classList.add('hidden');
+          Swal.fire("Gagal Memuat Data", err.message, "error");
+        });
   }
 
   function initSearchableDropdowns() {
@@ -274,28 +508,52 @@
     let pm = [...new Set(DASH_DATA.map(d=>d.pml ? String(d.pml) : ''))].sort();
     let pp = [...new Set(DASH_DATA.map(d=>d.ppl ? String(d.ppl) : ''))].sort();
     let pj = [...new Set(DASH_DATA.map(d=>d.pj ? String(d.pj) : ''))].sort();
-    const fillOpts = (id, dataArr) => { let sel = document.getElementById(id); if(sel) dataArr.forEach(x => { if(x) sel.innerHTML += `<option value="${x}">${x}</option>`; }); };
-    fillOpts('fKec', k); fillOpts('fPml', pm); fillOpts('fPpl', pp); fillOpts('fPj', pj);
+    
+    const fillOpts = (id, dataArr) => {
+      let sel = document.getElementById(id);
+      if(!sel) return;
+      dataArr.forEach(x => { 
+          if(x) sel.innerHTML += `<option value="${x}">${x}</option>`; 
+      });
+    };
 
-    let tsConfig = { create: false, plugins: ['clear_button', 'remove_button'], sortField: {field: "text", direction: "asc"} };
+    fillOpts('fKec', k); 
+    fillOpts('fPml', pm); 
+    fillOpts('fPpl', pp); 
+    fillOpts('fPj', pj);
+
+    let tsConfig = { 
+       create: false, 
+       plugins: ['clear_button', 'remove_button'], 
+       sortField: {field: "text", direction: "asc"} 
+    };
+
     if(document.getElementById('fKec')) tsKec = new TomSelect('#fKec', tsConfig);
     if(document.getElementById('fPml')) tsPml = new TomSelect('#fPml', tsConfig);
     if(document.getElementById('fPpl')) tsPpl = new TomSelect('#fPpl', tsConfig);
     if(document.getElementById('fPj')) tsPj = new TomSelect('#fPj', tsConfig);
     if(document.getElementById('fStatusPetugas')) tsStatusPetugas = new TomSelect('#fStatusPetugas', tsConfig);
     
-    // Status Prioritas tetap single dropdown
     let tsConfigSingle = { create: false, maxItems: 1, plugins: ['clear_button'] };
     if(document.getElementById('fPrio')) tsPrio = new TomSelect('#fPrio', tsConfigSingle); 
 
-    [tsPrio, tsKec, tsPml, tsPpl, tsPj, tsStatusPetugas].forEach(t => { if(t) { t.setValue(''); t.on('change', handleGlobalFilter); } });
+    [tsPrio, tsKec, tsPml, tsPpl, tsPj, tsStatusPetugas].forEach(t => { 
+        if(t) { 
+            t.setValue(''); 
+            t.on('change', handleGlobalFilter); 
+        } 
+    });
   }
 
   function resetGlobalFilters() {
       document.getElementById('dashSearch').value = '';
-      if(tsPrio) tsPrio.clear(); if(tsKec) tsKec.clear(); if(tsPml) tsPml.clear(); 
-      if(tsPpl) tsPpl.clear(); if(tsPj) tsPj.clear(); if(tsStatusPetugas) tsStatusPetugas.clear();
-      // Reset Column Filter Funnels
+      if(tsPrio) tsPrio.clear(); 
+      if(tsKec) tsKec.clear(); 
+      if(tsPml) tsPml.clear(); 
+      if(tsPpl) tsPpl.clear(); 
+      if(tsPj) tsPj.clear(); 
+      if(tsStatusPetugas) tsStatusPetugas.clear();
+      
       COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{} };
       handleGlobalFilter();
   }
@@ -303,63 +561,97 @@
   // =========================================================================
   // KONFIGURASI KOLOM & FILTER FUNNEL HEADER
   // =========================================================================
-  // f: true menandakan kolom tersebut memunculkan ikon Funnel (Saringan)
   const TABS_CONFIG = {
       1: [
-         { k:'idSls', n:'ID SLS', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'150px' }, { k:'nmsls', n:'Wilayah', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'200px' },
-         { k:'ppl', n:'Petugas PPL', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'150px' }, { k:'pml', n:'Petugas PML', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'150px' },
+         { k:'idSls', n:'ID SLS', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'150px' },
+         { k:'nmsls', n:'Wilayah', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'200px' },
+         { k:'ppl', n:'Petugas PPL', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'150px' },
+         { k:'pml', n:'Petugas PML', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'150px' },
          { k:'pj', n:'PJ Kuda', c:'bg-blue-50 text-gray-700', w:'100px' },
-         { k:'open', n:'Open', c:'bg-blue-100 text-blue-800 text-center border-l border-blue-200', f:true }, { k:'draft', n:'Draft', c:'bg-amber-100 text-amber-800 text-center border-l border-amber-200', f:true },
-         { k:'agg_submit', n:'Submit', c:'bg-purple-100 text-purple-800 text-center border-l border-purple-200', f:true }, { k:'calcTotal', n:'Total', c:'bg-indigo-100 text-indigo-900 text-center border-l border-indigo-200', f:true }
+         { k:'open', n:'Open', c:'bg-blue-100 text-blue-800 text-center border-l border-blue-200', f:true },
+         { k:'draft', n:'Draft', c:'bg-amber-100 text-amber-800 text-center border-l border-amber-200', f:true },
+         { k:'agg_submit', n:'Submit', c:'bg-purple-100 text-purple-800 text-center border-l border-purple-200', f:true },
+         { k:'calcTotal', n:'Total', c:'bg-indigo-100 text-indigo-900 text-center border-l border-indigo-200', f:true }
       ],
       2: [
-         { k:'ppl', n:'Nama PPL', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'200px' }, { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
-         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true }, { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200', f:true },
-         { k:'agg_s', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true }, { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200', f:true },
-         { k:'avg_raw', n:'Rata² Harian', c:'text-center bg-orange-100 text-orange-800 border-l border-orange-200', f:true }, { k:'pct_pendataan', n:'% Pendataan', c:'text-center bg-fuchsia-100 text-fuchsia-800 border-l border-fuchsia-200', f:true },
-         { k:'pct_submit', n:'% Submit', c:'text-center bg-sky-100 text-sky-800 border-l border-sky-200', f:true }, { k:'pct_approve', n:'% Approved', c:'text-center bg-emerald-100 text-emerald-800 border-l border-emerald-200', f:true },
-         { k:'kekurangan', n:'Kekurangan', c:'text-center bg-rose-100 text-rose-800 border-l border-rose-200', f:true }, { k:'statusTarget', n:'Status Capaian', c:'text-center bg-gray-100 text-gray-800 border-l border-gray-300' }
+         { k:'ppl', n:'Nama PPL', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'200px' },
+         { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
+         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true },
+         { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200', f:true },
+         { k:'agg_s', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true },
+         { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200', f:true },
+         { k:'avg_raw', n:'Rata² Harian', c:'text-center bg-orange-100 text-orange-800 border-l border-orange-200', f:true },
+         { k:'pct_pendataan', n:'% Pendataan', c:'text-center bg-fuchsia-100 text-fuchsia-800 border-l border-fuchsia-200', f:true },
+         { k:'pct_submit', n:'% Submit', c:'text-center bg-sky-100 text-sky-800 border-l border-sky-200', f:true },
+         { k:'pct_approve', n:'% Approved', c:'text-center bg-emerald-100 text-emerald-800 border-l border-emerald-200', f:true },
+         { k:'kekurangan', n:'Kekurangan', c:'text-center bg-rose-100 text-rose-800 border-l border-rose-200', f:true },
+         { k:'statusTarget', n:'Status Capaian', c:'text-center bg-gray-100 text-gray-800 border-l border-gray-300' }
       ],
       3: [
-         { k:'pml', n:'Nama PML', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'200px' }, { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
-         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true }, { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200', f:true },
-         { k:'sub', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true }, { k:'rej', n:'Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200', f:true },
-         { k:'app', n:'Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200', f:true }, { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200', f:true },
-         { k:'pct_open', n:'% Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true }, { k:'pct_draft', n:'% Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200', f:true },
-         { k:'pct_sub', n:'% Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true }, { k:'pct_rej', n:'% Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200', f:true },
-         { k:'pct_app', n:'% Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200', f:true }, { k:'kekurangan', n:'Kekurangan', c:'text-center bg-rose-100 text-rose-800 border-l border-rose-200', f:true },
+         { k:'pml', n:'Nama PML', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'200px' },
+         { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
+         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true },
+         { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200', f:true },
+         { k:'sub', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true },
+         { k:'rej', n:'Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200', f:true },
+         { k:'app', n:'Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200', f:true },
+         { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200', f:true },
+         { k:'pct_open', n:'% Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true },
+         { k:'pct_draft', n:'% Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200', f:true },
+         { k:'pct_sub', n:'% Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true },
+         { k:'pct_rej', n:'% Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200', f:true },
+         { k:'pct_app', n:'% Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200', f:true },
+         { k:'kekurangan', n:'Kekurangan', c:'text-center bg-rose-100 text-rose-800 border-l border-rose-200', f:true },
          { k:'statusTarget', n:'Status Capaian', c:'text-center bg-gray-100 text-gray-800 border-l border-gray-300' }
       ],
       4: [
-         { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-blue-900' }, { k:'pj', n:'PJ Kuda', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
-         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true }, { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200', f:true },
-         { k:'s', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true }, { k:'rej', n:'Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200', f:true },
-         { k:'app', n:'Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200', f:true }, { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200', f:true },
-         { k:'pct_pendataan', n:'% Pendataan', c:'text-center bg-fuchsia-100 text-fuchsia-800 border-l border-fuchsia-200', f:true }, { k:'pct_submit', n:'% Submit', c:'text-center bg-sky-100 text-sky-800 border-l border-sky-200', f:true },
+         { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-blue-900' },
+         { k:'pj', n:'PJ Kuda', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
+         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true },
+         { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200', f:true },
+         { k:'s', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true },
+         { k:'rej', n:'Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200', f:true },
+         { k:'app', n:'Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200', f:true },
+         { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200', f:true },
+         { k:'pct_pendataan', n:'% Pendataan', c:'text-center bg-fuchsia-100 text-fuchsia-800 border-l border-fuchsia-200', f:true },
+         { k:'pct_submit', n:'% Submit', c:'text-center bg-sky-100 text-sky-800 border-l border-sky-200', f:true },
          { k:'pct_approve', n:'% Approve', c:'text-center bg-emerald-100 text-emerald-800 border-l border-emerald-200', f:true }
       ],
       6: [
-         { k:'idSls', n:'ID SLS', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'150px' }, { k:'nmsls', n:'Wilayah', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'200px' },
-         { k:'ppl', n:'Petugas PPL', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'150px' }, { k:'pml', n:'Petugas PML', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'150px' },
+         { k:'idSls', n:'ID SLS', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'150px' },
+         { k:'nmsls', n:'Wilayah', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'200px' },
+         { k:'ppl', n:'Petugas PPL', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'150px' },
+         { k:'pml', n:'Petugas PML', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'150px' },
          { k:'pj', n:'PJ Kuda', c:'bg-amber-100 text-amber-900', w:'100px' },
-         { k:'prelist', n:'Prelist', c:'text-center border-l border-amber-200 bg-amber-50 text-slate-800', f:true }, { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-amber-200 bg-amber-50 text-green-700', f:true },
-         { k:'baru', n:'Kel. Baru', c:'text-center border-l border-amber-200 bg-amber-50 text-blue-700', f:true }, { k:'meninggal', n:'Meninggal', c:'text-center border-l border-amber-200 bg-amber-50 text-gray-700', f:true },
+         { k:'prelist', n:'Prelist Awal', c:'text-center border-l border-amber-200 bg-amber-50 text-slate-800', f:true },
+         { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-amber-200 bg-amber-50 text-green-700', f:true },
+         { k:'baru', n:'Kel. Baru', c:'text-center border-l border-amber-200 bg-amber-50 text-blue-700', f:true },
+         { k:'meninggal', n:'Meninggal', c:'text-center border-l border-amber-200 bg-amber-50 text-gray-700', f:true },
          { k:'tdk', n:'Tdk Temu', c:'text-center border-l border-amber-200 bg-red-50 text-red-700', f:true }
       ],
       7: [
-         { k:'idSls', n:'ID SLS', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'150px' }, { k:'nmsls', n:'Wilayah', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'200px' },
-         { k:'ppl', n:'Petugas PPL', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'150px' }, { k:'pml', n:'Petugas PML', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'150px' },
+         { k:'idSls', n:'ID SLS', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'150px' },
+         { k:'nmsls', n:'Wilayah', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'200px' },
+         { k:'ppl', n:'Petugas PPL', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'150px' },
+         { k:'pml', n:'Petugas PML', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'150px' },
          { k:'pj', n:'PJ Kuda', c:'bg-purple-100 text-purple-900', w:'100px' },
-         { k:'prelist', n:'Pre Usaha', c:'text-center border-l border-purple-200 bg-purple-50 text-slate-800', f:true }, { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-purple-200 bg-purple-50 text-green-700', f:true },
-         { k:'baru', n:'Usaha Baru', c:'text-center border-l border-purple-200 bg-purple-50 text-blue-700', f:true }, { k:'tutup', n:'Tutup', c:'text-center border-l border-purple-200 bg-purple-50 text-gray-700', f:true },
-         { k:'ganda', n:'Ganda', c:'text-center border-l border-purple-200 bg-amber-50 text-amber-700', f:true }, { k:'tdk', n:'Tdk Temu', c:'text-center border-l border-purple-200 bg-red-50 text-red-700', f:true }
+         { k:'prelist', n:'Pre Usaha', c:'text-center border-l border-purple-200 bg-purple-50 text-slate-800', f:true },
+         { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-purple-200 bg-purple-50 text-green-700', f:true },
+         { k:'baru', n:'Usaha Baru', c:'text-center border-l border-purple-200 bg-purple-50 text-blue-700', f:true },
+         { k:'tutup', n:'Tutup', c:'text-center border-l border-purple-200 bg-purple-50 text-gray-700', f:true },
+         { k:'ganda', n:'Ganda', c:'text-center border-l border-purple-200 bg-amber-50 text-amber-700', f:true },
+         { k:'tdk', n:'Tdk Temu', c:'text-center border-l border-purple-200 bg-red-50 text-red-700', f:true }
       ],
       8: [
-         { k:'idSls', n:'ID SLS', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'150px' }, { k:'nmsls', n:'Wilayah', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'200px' },
-         { k:'ppl', n:'Petugas PPL', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'150px' }, { k:'pml', n:'Petugas PML', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'150px' },
+         { k:'idSls', n:'ID SLS', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'150px' },
+         { k:'nmsls', n:'Wilayah', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'200px' },
+         { k:'ppl', n:'Petugas PPL', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'150px' },
+         { k:'pml', n:'Petugas PML', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'150px' },
          { k:'pj', n:'PJ Kuda', c:'bg-emerald-100 text-emerald-900', w:'100px' },
-         { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-emerald-200 bg-emerald-50 text-green-700', f:true }, { k:'baru', n:'Usaha Baru', c:'text-center border-l border-emerald-200 bg-emerald-50 text-blue-700', f:true },
-         { k:'tutup', n:'Tutup', c:'text-center border-l border-emerald-200 bg-emerald-50 text-gray-700', f:true }, { k:'ganda', n:'Ganda', c:'text-center border-l border-emerald-200 bg-amber-50 text-amber-700', f:true },
+         { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-emerald-200 bg-emerald-50 text-green-700', f:true },
+         { k:'baru', n:'Usaha Baru', c:'text-center border-l border-emerald-200 bg-emerald-50 text-blue-700', f:true },
+         { k:'tutup', n:'Tutup', c:'text-center border-l border-emerald-200 bg-emerald-50 text-gray-700', f:true },
+         { k:'ganda', n:'Ganda', c:'text-center border-l border-emerald-200 bg-amber-50 text-amber-700', f:true },
          { k:'tdk', n:'Tdk Temu', c:'text-center border-l border-emerald-200 bg-red-50 text-red-700', f:true }
       ]
   };
@@ -369,7 +661,12 @@
           let headHtml = `<tr><th class="px-4 py-3 text-center align-middle bg-gray-100 border-r border-gray-200 w-12 sticky top-0 z-20 shadow-sm">No</th>`;
           TABS_CONFIG[tId].forEach(col => {
               let wStyle = col.w ? `style="min-width:${col.w};"` : '';
-              let funnelIcon = col.f ? `<div onclick="openFilterModal('${tId}', '${col.k}', '${col.n}')" class="p-1 hover:bg-white/50 rounded-full transition" title="Saring Data"><svg class="w-3.5 h-3.5 opacity-70 hover:opacity-100" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"></path></svg></div>` : '';
+              let funnelIcon = col.f ? `
+                  <div onclick="openFilterModal('${tId}', '${col.k}', '${col.n}')" class="p-1 hover:bg-white/50 rounded-full transition" title="Saring Data">
+                      <svg class="w-3.5 h-3.5 opacity-70 hover:opacity-100" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"></path>
+                      </svg>
+                  </div>` : '';
               
               headHtml += `
                  <th class="px-3 py-3 align-middle transition hover:opacity-90 sticky top-0 z-20 shadow-sm ${col.c}" ${wStyle}>
@@ -383,7 +680,9 @@
                  </th>`;
           });
           headHtml += `</tr>`;
-          if(document.getElementById(`headTab${tId}`)) document.getElementById(`headTab${tId}`).innerHTML = headHtml;
+          if(document.getElementById(`headTab${tId}`)) {
+              document.getElementById(`headTab${tId}`).innerHTML = headHtml;
+          }
       });
   }
 
@@ -408,24 +707,41 @@
               </div>
           `,
           showCancelButton: true, confirmButtonText: 'Terapkan Filter', cancelButtonText: 'Batal',
-          customClass: { popup: 'rounded-2xl', confirmButton: 'bg-indigo-600 text-white font-bold px-6 py-2 rounded-xl', cancelButton: 'bg-gray-200 text-gray-800 font-bold px-6 py-2 rounded-xl' },
+          customClass: { 
+              popup: 'rounded-2xl', 
+              confirmButton: 'bg-indigo-600 text-white font-bold px-6 py-2 rounded-xl', 
+              cancelButton: 'bg-gray-200 text-gray-800 font-bold px-6 py-2 rounded-xl' 
+          },
           didOpen: () => {
               let mode = document.getElementById('swal-filter-mode');
               let valCont = document.getElementById('swal-filter-val-container');
               let valInput = document.getElementById('swal-filter-val');
-              mode.value = currentFilter.mode; valInput.value = currentFilter.val;
+              
+              mode.value = currentFilter.mode; 
+              valInput.value = currentFilter.val;
+              
               if(currentFilter.mode !== 'all') valCont.classList.remove('hidden');
-              mode.onchange = () => { if(mode.value === 'all') valCont.classList.add('hidden'); else valCont.classList.remove('hidden'); };
+              mode.onchange = () => { 
+                  if(mode.value === 'all') valCont.classList.add('hidden'); 
+                  else valCont.classList.remove('hidden'); 
+              };
           },
           preConfirm: () => {
-              let m = document.getElementById('swal-filter-mode').value; let v = document.getElementById('swal-filter-val').value;
-              if(m !== 'all' && v === '') { Swal.showValidationMessage('Nilai angka tidak boleh kosong!'); return false; }
+              let m = document.getElementById('swal-filter-mode').value; 
+              let v = document.getElementById('swal-filter-val').value;
+              if(m !== 'all' && v === '') { 
+                  Swal.showValidationMessage('Nilai angka tidak boleh kosong!'); 
+                  return false; 
+              }
               return { mode: m, val: v };
           }
       }).then(res => {
           if(res.isConfirmed) {
-              if(res.value.mode === 'all') delete COLUMN_FILTERS[tId][colKey];
-              else COLUMN_FILTERS[tId][colKey] = res.value;
+              if(res.value.mode === 'all') {
+                  delete COLUMN_FILTERS[tId][colKey];
+              } else {
+                  COLUMN_FILTERS[tId][colKey] = res.value;
+              }
               dashCurrentPage = 1;
               renderCurrentTab();
           }
@@ -435,19 +751,19 @@
   function applyHeaderFilters(dataArr, tId) {
       let filtered = dataArr;
       let colFilters = COLUMN_FILTERS[tId] || {};
+      
       Object.keys(colFilters).forEach(k => {
           let f = colFilters[k];
           let fv = Number(f.val);
-          if(f.mode === 'gt') filtered = filtered.filter(r => Number(r[k]||0) > fv);
-          else if(f.mode === 'lt') filtered = filtered.filter(r => Number(r[k]||0) < fv);
-          else if(f.mode === 'eq') filtered = filtered.filter(r => Number(r[k]||0) === fv);
+          if(f.mode === 'gt') {
+              filtered = filtered.filter(r => Number(r[k]||0) > fv);
+          } else if(f.mode === 'lt') {
+              filtered = filtered.filter(r => Number(r[k]||0) < fv);
+          } else if(f.mode === 'eq') {
+              filtered = filtered.filter(r => Number(r[k]||0) === fv);
+          }
       });
       return filtered;
-  }
-
-  function applySort(col) {
-      if(sortCol === col) sortAsc = !sortAsc; else { sortCol = col; sortAsc = true; }
-      renderCurrentTab();
   }
 
   // =========================================================================
@@ -455,7 +771,7 @@
   // =========================================================================
   function handleGlobalFilter() {
       const search = document.getElementById('dashSearch').value.toLowerCase();
-      // Mengambil Array dari Multi-Select
+      
       const fkec = tsKec ? tsKec.getValue() : [];
       const fpml = tsPml ? tsPml.getValue() : [];
       const fppl = tsPpl ? tsPpl.getValue() : [];
@@ -486,8 +802,10 @@
       document.getElementById('dashTotTarget').innerText = tTot.toLocaleString('id-ID');
       document.getElementById('dashProgPendataan').innerHTML = `${(tDraft+tSub+tRej+tApp).toLocaleString('id-ID')} <span class="text-xs font-bold opacity-80">(${pPend})</span>`;
       document.getElementById('dashProgSubmit').innerHTML = `${(tSub+tRej+tApp).toLocaleString('id-ID')} <span class="text-xs font-bold opacity-80">(${pSubm})</span>`;
-      document.getElementById('dashTotOpen').innerText = tOpen.toLocaleString('id-ID'); document.getElementById('dashTotDraft').innerText = tDraft.toLocaleString('id-ID');
-      document.getElementById('dashTotSubmit').innerText = tSub.toLocaleString('id-ID'); document.getElementById('dashTotReject').innerText = tRej.toLocaleString('id-ID');
+      document.getElementById('dashTotOpen').innerText = tOpen.toLocaleString('id-ID'); 
+      document.getElementById('dashTotDraft').innerText = tDraft.toLocaleString('id-ID');
+      document.getElementById('dashTotSubmit').innerText = tSub.toLocaleString('id-ID'); 
+      document.getElementById('dashTotReject').innerText = tRej.toLocaleString('id-ID');
       document.getElementById('dashTotApprove').innerText = tApp.toLocaleString('id-ID');
 
       buildTabStates();
@@ -500,19 +818,24 @@
       
       let pplM={}, pmlM={}, kecM={};
       dashFilteredData.forEach(r => {
-          let kPpl = r.ppl+"_"+r.kec; if(!pplM[kPpl]) pplM[kPpl]={ppl:r.ppl, kec:r.kec, email:r.emailPpl, o:0, d:0, agg_s:0, t:0, app:0};
+          let kPpl = r.ppl+"_"+r.kec; 
+          if(!pplM[kPpl]) pplM[kPpl]={ppl:r.ppl, kec:r.kec, email:r.emailPpl, o:0, d:0, agg_s:0, t:0, app:0};
           pplM[kPpl].o+=r.open; pplM[kPpl].d+=r.draft; pplM[kPpl].agg_s+=r.agg_submit; pplM[kPpl].t+=r.calcTotal; pplM[kPpl].app+=r.approve;
           
-          let kPml = r.pml+"_"+r.kec; if(!pmlM[kPml]) pmlM[kPml]={pml:r.pml, kec:r.kec, email:r.emailPml, o:0, d:0, sub:0, rej:0, app:0, t:0};
+          let kPml = r.pml+"_"+r.kec; 
+          if(!pmlM[kPml]) pmlM[kPml]={pml:r.pml, kec:r.kec, email:r.emailPml, o:0, d:0, sub:0, rej:0, app:0, t:0};
           pmlM[kPml].o+=r.open; pmlM[kPml].d+=r.draft; pmlM[kPml].sub+=r.submit; pmlM[kPml].rej+=r.reject; pmlM[kPml].app+=r.approve; pmlM[kPml].t+=r.calcTotal;
           
-          let kKec = r.kec+"_"+r.pj; if(!kecM[kKec]) kecM[kKec]={kec:r.kec, pj:r.pj, o:0, d:0, s:0, rej:0, app:0, t:0, agg_sra:0};
+          let kKec = r.kec+"_"+r.pj; 
+          if(!kecM[kKec]) kecM[kKec]={kec:r.kec, pj:r.pj, o:0, d:0, s:0, rej:0, app:0, t:0, agg_sra:0};
           kecM[kKec].o+=r.open; kecM[kKec].d+=r.draft; kecM[kKec].s+=r.submit; kecM[kKec].rej+=r.reject; kecM[kKec].app+=r.approve; kecM[kKec].agg_sra+=r.agg_submit; kecM[kKec].t+=r.calcTotal;
       });
 
       TAB_STATE[2] = Object.values(pplM).map(p => {
-          p.target_absolut = Math.ceil((timingConfig.y/100)*p.t); p.kekurangan = Math.max(0, p.target_absolut-p.agg_s);
-          p.statusTarget = p.kekurangan<=0 ? 'Tercapai' : 'Belum Tercapai'; p.avg_raw = Math.round((timingConfig.x>0 ? p.agg_s/timingConfig.x : 0)*100)/100;
+          p.target_absolut = Math.ceil((timingConfig.y/100)*p.t); 
+          p.kekurangan = Math.max(0, p.target_absolut-p.agg_s);
+          p.statusTarget = p.kekurangan<=0 ? 'Tercapai' : 'Belum Tercapai'; 
+          p.avg_raw = Math.round((timingConfig.x>0 ? p.agg_s/timingConfig.x : 0)*100)/100;
           p.pct_pendataan = p.t>0 ? (((p.d+p.agg_s)/p.t)*100).toFixed(1) : '0.0'; 
           p.pct_submit = p.t>0 ? ((p.agg_s/p.t)*100).toFixed(1) : '0.0'; 
           p.pct_approve = p.t>0 ? ((p.app/p.t)*100).toFixed(1) : '0.0';
@@ -520,7 +843,8 @@
       });
 
       TAB_STATE[3] = Object.values(pmlM).map(p => {
-          p.target_absolut = Math.ceil((timingConfig.y/100)*p.t); p.kekurangan = Math.max(0, p.target_absolut-p.app);
+          p.target_absolut = Math.ceil((timingConfig.y/100)*p.t); 
+          p.kekurangan = Math.max(0, p.target_absolut-p.app);
           p.statusTarget = p.kekurangan<=0 ? 'Tercapai' : 'Belum Tercapai'; 
           p.pct_open = p.t>0 ? ((p.o/p.t)*100).toFixed(1) : '0.0'; 
           p.pct_draft = p.t>0 ? ((p.d/p.t)*100).toFixed(1) : '0.0'; 
@@ -542,70 +866,36 @@
       TAB_STATE[8] = dashFilteredData.map(r => { let e = r.extUsKel||{}; return { idSls:r.idSls, nmsls:r.nmsls, desaKec:r.desa+' - '+r.kec, ppl:r.ppl, pml:r.pml, pj:r.pj, ditemukan:e.ditemukan||0, baru:e.baru||0, tutup:e.tutup||0, ganda:e.ganda||0, tdk:e.tdk||0, isMismatch:r.isMismatch }; });
   }
 
-  function switchTab(tabId) {
-     if(activeTabId !== tabId) dashCurrentPage = 1; 
-     activeTabId = tabId;
-     
-     if ([2, 3, 4].includes(tabId)) {
-        dashRowsPerPage = 999999;
-        if(document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "999999";
-     } else {
-        dashRowsPerPage = parseInt(document.getElementById('perPageSelect').value) || 10;
-        if (dashRowsPerPage === 999999) { 
-            dashRowsPerPage = 10;
-            if(document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "10";
-        }
-     }
-     
-     [1,2,3,4,5,6,7,8].forEach(i => {
-        let btn = document.getElementById('btnTab'+i);
-        if(btn) btn.className = btn.className.replace(/border-blue-500|border-amber-500|border-purple-500|border-emerald-500|text-blue-700|text-amber-600|text-purple-600|text-emerald-600/g, "border-transparent text-gray-500");
-        let tc = document.getElementById('tab'+i+'-content'); if(tc) { tc.classList.add('hidden'); tc.classList.remove('block'); }
-     });
-     
-     let btnAct = document.getElementById('btnTab'+tabId);
-     if(btnAct) {
-        btnAct.classList.remove("border-transparent", "text-gray-500");
-        if(tabId === 6) btnAct.classList.add("border-amber-500", "text-amber-600");
-        else if(tabId === 7) btnAct.classList.add("border-purple-500", "text-purple-600");
-        else if(tabId === 8) btnAct.classList.add("border-emerald-500", "text-emerald-600");
-        else btnAct.classList.add("border-blue-500", "text-blue-700");
-     }
-     
-     let tabAct = document.getElementById('tab'+tabId+'-content');
-     if(tabAct) { tabAct.classList.remove('hidden'); tabAct.classList.add('block'); }
-     if(document.getElementById('paginasiArea')) document.getElementById('paginasiArea').style.display = ([1,2,3,4,6,7,8].includes(tabId)) ? 'flex' : 'none';
-     
-     renderCurrentTab();
-  }
-
   function renderCurrentTab() {
      if(activeTabId === 5) return renderVisualisasi();
      
      let rawData = TAB_STATE[activeTabId];
      
-     // Global Status Filter Overlay
      const fStatus = tsStatusPetugas ? tsStatusPetugas.getValue() : [];
      if (fStatus.length > 0 && [2,3].includes(activeTabId)) {
         rawData = rawData.filter(r => fStatus.includes(r.statusTarget));
      }
 
-     // Apply Modal Funnel Filters
      let processedData = applyHeaderFilters(rawData, activeTabId);
      
-     // Apply Sort
-     if(sortCol) sortLogic(processedData, sortCol, sortAsc);
+     if(sortCol) {
+         sortLogic(processedData, sortCol, sortAsc);
+     }
 
      const s = (dashCurrentPage - 1) * dashRowsPerPage;
      const e = Math.min(s + dashRowsPerPage, processedData.length);
      let pageData = processedData.slice(s, e);
 
-     if(document.getElementById("pageInfoDash")) document.getElementById("pageInfoDash").innerText = `Menampilkan ${processedData.length>0?s+1:0} - ${e} dari ${processedData.length} Baris`;
-     if(document.getElementById("paginationDashContainer")) document.getElementById("paginationDashContainer").innerHTML = generatePaginationHTML(processedData.length, dashCurrentPage, dashRowsPerPage, 'goDashPage');
+     if(document.getElementById("pageInfoDash")) {
+         document.getElementById("pageInfoDash").innerText = `Menampilkan ${processedData.length>0?s+1:0} - ${e} dari ${processedData.length} Baris`;
+     }
+     if(document.getElementById("paginationDashContainer")) {
+         document.getElementById("paginationDashContainer").innerHTML = generatePaginationHTML(processedData.length, dashCurrentPage, dashRowsPerPage, 'goDashPage');
+     }
 
      let html = '';
      if (pageData.length === 0) {
-        html = `<tr><td colspan="15" class="text-center py-10 italic text-gray-400">Data tidak ditemukan.</td></tr>`;
+        html = `<tr><td colspan="16" class="text-center py-10 italic text-gray-400">Data tidak ditemukan.</td></tr>`;
      } else {
         pageData.forEach((r, i) => {
            let n = s + i + 1;
@@ -748,11 +1038,20 @@
      }
      
      let bodyId = {1:'tableBodyDash', 2:'tableLeaderboard', 3:'tablePml', 4:'tableKecamatan', 6:'tableKeluarga', 7:'tableUsaha', 8:'tableUsahaKeluarga'};
-     if(document.getElementById(bodyId[activeTabId])) document.getElementById(bodyId[activeTabId]).innerHTML = html;
+     if(document.getElementById(bodyId[activeTabId])) {
+         document.getElementById(bodyId[activeTabId]).innerHTML = html;
+     }
   }
 
-  function changePerPage() { dashCurrentPage = 1; renderCurrentTab(); }
-  function goDashPage(pageNum) { dashCurrentPage = pageNum; renderCurrentTab(); }
+  function changePerPage() { 
+      dashCurrentPage = 1; 
+      renderCurrentTab(); 
+  }
+  
+  function goDashPage(pageNum) { 
+      dashCurrentPage = pageNum; 
+      renderCurrentTab(); 
+  }
   
   function generatePaginationHTML(totalItems, currentPage, rowsPerPage, callbackName) {
        const totalPages = Math.ceil(totalItems / rowsPerPage);
@@ -779,13 +1078,16 @@
      });
      kecChartMapGlobal = kecM;
      let sortK = Object.entries(kecM).sort((a, b) => {
-         let pA = a[1].tot>0 ? ((a[1].s+a[1].rej+a[1].a)/a[1].tot) : 0; let pB = b[1].tot>0 ? ((b[1].s+b[1].rej+b[1].a)/b[1].tot) : 0;
+         let pA = a[1].tot>0 ? ((a[1].s+a[1].rej+a[1].a)/a[1].tot) : 0; 
+         let pB = b[1].tot>0 ? ((b[1].s+b[1].rej+b[1].a)/b[1].tot) : 0;
          return pB - pA; 
      });
      
      let lbls = sortK.map(x => x[0]);
-     let dO = sortK.map(x => x[1].tot>0 ? ((x[1].o/x[1].tot)*100).toFixed(2) : 0); let dD = sortK.map(x => x[1].tot>0 ? ((x[1].d/x[1].tot)*100).toFixed(2) : 0);
-     let dS = sortK.map(x => x[1].tot>0 ? ((x[1].s/x[1].tot)*100).toFixed(2) : 0); let dR = sortK.map(x => x[1].tot>0 ? ((x[1].rej/x[1].tot)*100).toFixed(2) : 0);
+     let dO = sortK.map(x => x[1].tot>0 ? ((x[1].o/x[1].tot)*100).toFixed(2) : 0); 
+     let dD = sortK.map(x => x[1].tot>0 ? ((x[1].d/x[1].tot)*100).toFixed(2) : 0);
+     let dS = sortK.map(x => x[1].tot>0 ? ((x[1].s/x[1].tot)*100).toFixed(2) : 0); 
+     let dR = sortK.map(x => x[1].tot>0 ? ((x[1].rej/x[1].tot)*100).toFixed(2) : 0);
      let dA = sortK.map(x => x[1].tot>0 ? ((x[1].a/x[1].tot)*100).toFixed(2) : 0);
 
      if(chartKecObj) chartKecObj.destroy();
@@ -793,11 +1095,38 @@
      if(cv) {
          document.getElementById('chartInner').style.height = Math.max(400, lbls.length*40) + 'px';
          chartKecObj = new Chart(cv, {
-             type: 'bar', data: { labels: lbls, datasets: [ { label: 'Open', data: dO, backgroundColor: '#3b82f6', borderRadius: 2 }, { label: 'Draft', data: dD, backgroundColor: '#f59e0b', borderRadius: 2 }, { label: 'Submit', data: dS, backgroundColor: '#9333ea', borderRadius: 2 }, { label: 'Reject', data: dR, backgroundColor: '#dc2626', borderRadius: 2 }, { label: 'Approved', data: dA, backgroundColor: '#16a34a', borderRadius: 2 } ] },
+             type: 'bar', 
+             data: { 
+                 labels: lbls, 
+                 datasets: [ 
+                     { label: 'Open', data: dO, backgroundColor: '#3b82f6', borderRadius: 2 }, 
+                     { label: 'Draft', data: dD, backgroundColor: '#f59e0b', borderRadius: 2 }, 
+                     { label: 'Submit', data: dS, backgroundColor: '#9333ea', borderRadius: 2 }, 
+                     { label: 'Reject', data: dR, backgroundColor: '#dc2626', borderRadius: 2 }, 
+                     { label: 'Approved', data: dA, backgroundColor: '#16a34a', borderRadius: 2 } 
+                 ] 
+             },
              options: { 
-                 indexAxis: 'y', maintainAspectRatio: false, responsive: true, interaction: { mode: 'y', intersect: true }, 
-                 scales: { x: { stacked: true, max: 100, grid: { display: false }, ticks: { callback: v => v+'%' } }, y: { stacked: true } }, 
-                 plugins: { legend: { display: true, position: 'top', labels: {font:{family:'Montserrat', weight:'bold'}} }, datalabels: { display: false }, tooltip: { enabled: true, position: 'nearest', callbacks: { label: c => (c.dataset.label||'') + ': ' + (c.parsed.x||0) + '%', footer: (i) => `Total Target: ${kecChartMapGlobal[i[0].label].tot}\nTotal Submit Absolut: ${kecChartMapGlobal[i[0].label].s+kecChartMapGlobal[i[0].label].rej+kecChartMapGlobal[i[0].label].a}` } } },
+                 indexAxis: 'y', 
+                 maintainAspectRatio: false, 
+                 responsive: true, 
+                 interaction: { mode: 'y', intersect: true }, 
+                 scales: { 
+                     x: { stacked: true, max: 100, grid: { display: false }, ticks: { callback: v => v+'%' } }, 
+                     y: { stacked: true } 
+                 }, 
+                 plugins: { 
+                     legend: { display: true, position: 'top', labels: {font:{family:'Montserrat', weight:'bold'}} }, 
+                     datalabels: { display: false }, 
+                     tooltip: { 
+                         enabled: true, 
+                         position: 'nearest', 
+                         callbacks: { 
+                             label: c => (c.dataset.label||'') + ': ' + (c.parsed.x||0) + '%', 
+                             footer: (i) => `Total Target: ${kecChartMapGlobal[i[0].label].tot}\nTotal Submit Absolut: ${kecChartMapGlobal[i[0].label].s+kecChartMapGlobal[i[0].label].rej+kecChartMapGlobal[i[0].label].a}` 
+                         } 
+                     } 
+                 },
                  layout: { padding: { left: 120, right: 40, top: 10, bottom: 10 } } 
              }
          });
@@ -808,8 +1137,17 @@
   // ADMIN PANEL: UPLOAD DATA EKSTERNAL VIA SHEETJS
   // ====================================================================
   function authAdminPanel() {
-    Swal.fire({ title: '<span class="text-xl font-black text-indigo-900">OTORISASI ADMIN</span>', input: 'password', showCancelButton: true, confirmButtonText: 'Buka Panel', cancelButtonText: 'Batal', customClass: { confirmButton: 'bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold', popup: 'rounded-2xl' }
-    }).then(res => { if(res.isConfirmed && res.value === 'fasih2026') showUploadModal(); else if(res.isConfirmed) Swal.fire('Akses Ditolak', 'PIN Salah.', 'error'); });
+    Swal.fire({ 
+        title: '<span class="text-xl font-black text-indigo-900">OTORISASI ADMIN</span>', 
+        input: 'password', 
+        showCancelButton: true, 
+        confirmButtonText: 'Buka Panel', 
+        cancelButtonText: 'Batal', 
+        customClass: { confirmButton: 'bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold', popup: 'rounded-2xl' }
+    }).then(res => { 
+        if(res.isConfirmed && res.value === 'fasih2026') showUploadModal(); 
+        else if(res.isConfirmed) Swal.fire('Akses Ditolak', 'PIN Salah.', 'error'); 
+    });
   }
 
   function showUploadModal() {
@@ -817,59 +1155,178 @@
       title: '<span class="text-xl font-black uppercase text-indigo-800">INTEGRASI DATA LAPANGAN</span>',
       html: `
         <div class="text-left text-sm mt-4 space-y-4">
-          <div class="p-4 border border-amber-300 bg-amber-50 rounded-xl shadow-sm"><label class="font-black text-amber-800 block mb-2">1. Upload Pemutakhiran Keluarga (.xlsx)</label><input type="file" id="fileKel" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-amber-600 file:text-white file:font-bold hover:file:bg-amber-700 transition"></div>
-          <div class="p-4 border border-purple-300 bg-purple-50 rounded-xl shadow-sm"><label class="font-black text-purple-800 block mb-2">2. Upload Pendataan Usaha (.xlsx)</label><input type="file" id="fileUsa" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-purple-600 file:text-white file:font-bold hover:file:bg-purple-700 transition"></div>
+          <div class="p-4 border border-amber-300 bg-amber-50 rounded-xl shadow-sm">
+              <label class="font-black text-amber-800 block mb-2">1. Upload Pemutakhiran Keluarga (.xlsx)</label>
+              <input type="file" id="fileKel" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-amber-600 file:text-white file:font-bold hover:file:bg-amber-700 transition">
+          </div>
+          <div class="p-4 border border-purple-300 bg-purple-50 rounded-xl shadow-sm">
+              <label class="font-black text-purple-800 block mb-2">2. Upload Pendataan Usaha (.xlsx)</label>
+              <input type="file" id="fileUsa" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-purple-600 file:text-white file:font-bold hover:file:bg-purple-700 transition">
+          </div>
           <p class="text-[10px] text-gray-500 font-medium italic mt-2 text-center">Pilih file yang ingin diperbarui (bisa salah satu). Sistem otomatis memecah file Usaha menjadi BKU & Usaha Keluarga.</p>
         </div>
       `,
-      confirmButtonText: 'SINKRONISASI SEKARANG', showCancelButton: true, allowOutsideClick: false,
+      confirmButtonText: 'SINKRONISASI SEKARANG', 
+      showCancelButton: true, 
+      allowOutsideClick: false,
       customClass: { confirmButton: 'bg-indigo-600 w-full mt-2 text-white font-bold tracking-wider rounded-xl py-3', popup: 'rounded-2xl' },
       preConfirm: () => {
-        let fk = document.getElementById('fileKel').files[0]; let fu = document.getElementById('fileUsa').files[0];
+        let fk = document.getElementById('fileKel').files[0]; 
+        let fu = document.getElementById('fileUsa').files[0];
         if(!fk && !fu) { Swal.showValidationMessage('Pilih minimal 1 file!'); return false; }
         return {kel: fk, usa: fu};
       }
-    }).then(r => { if(r.isConfirmed) processUploads(r.value.kel, r.value.usa); });
+    }).then(r => { 
+        if(r.isConfirmed) processUploads(r.value.kel, r.value.usa); 
+    });
   }
 
   async function processUploads(fKel, fUsa) {
-     Swal.fire({title: 'Memproses Data...', html: '<b>Sistem</b> mengekstrak ribuan baris Excel Anda di belakang layar...<br><span class="text-xs text-red-500 italic mt-2 block">Dilarang menutup browser!</span>', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
+     Swal.fire({
+         title: 'Memproses Data...', 
+         html: '<b>Sistem</b> sedang mengekstrak ribuan baris Excel Anda di belakang layar...<br><span class="text-xs text-red-500 italic mt-2 block">Dilarang menutup browser!</span>', 
+         allowOutsideClick: false, 
+         didOpen: () => Swal.showLoading()
+     });
      try {
-       if(fKel) { let dataKel = await parseExcelKeluarga(fKel); await sendToGAS('keluarga', dataKel); }
+       if(fKel) { 
+           let dataKel = await parseExcelKeluarga(fKel); 
+           await sendToGAS('keluarga', dataKel); 
+       }
        if(fUsa) { 
            let dataUsa = await parseExcelUsahaAll(fUsa); 
            if(dataUsa.bku && dataUsa.bku.length > 1) await sendToGAS('usaha_bku', dataUsa.bku); 
            if(dataUsa.kel && dataUsa.kel.length > 1) await sendToGAS('usaha_kel', dataUsa.kel); 
        }
-       Swal.fire('Integrasi Berhasil!', 'Data telah tersimpan ke Database.', 'success').then(()=>location.reload());
-     } catch (err) { Swal.fire('Gagal Ekstrak', String(err), 'error'); }
+       Swal.fire('Integrasi Berhasil!', 'Data Eksternal telah tersimpan ke Database dan siap dianalisa.', 'success').then(()=>{ location.reload(); });
+     } catch (err) { 
+         Swal.fire('Gagal Ekstrak', 'Terjadi kesalahan format Excel: ' + String(err), 'error'); 
+     }
   }
 
   function sendToGAS(tipe, dataArray) {
-     return fetch(GAS_API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ type: tipe, data: dataArray }) }).then(r => r.json());
+     return fetch(GAS_API_URL, { 
+         method: 'POST', 
+         headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+         body: JSON.stringify({ type: tipe, data: dataArray }) 
+     }).then(r => r.json());
   }
 
   function parseExcelKeluarga(f) {
-    return new Promise((res, rej) => { let r = new FileReader(); r.onload = e => { try {
-          let wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'}); let sName = wb.SheetNames.find(s => s.toUpperCase() === 'KELUARGA');
-          if(!sName) return rej("Sheet 'KELUARGA' tidak ditemukan.");
-          let rows = XLSX.utils.sheet_to_json(wb.Sheets[sName], {header: 1}); let out = [["KODE_16", "PRELIST", "DITEMUKAN", "BARU", "MENINGGAL", "TIDAK_DITEMUKAN"]]; let cIdx = {p:-1, d:-1, b:-1, m:-1, t:-1}; let start = false;
-          rows.forEach(r => { if(!r || !r.length) return; if(!start) { if(String(r[0]).trim().toUpperCase() === 'KODE') { start = true; for(let c=0; c<r.length; c++){ let h = String(r[c]||'').toUpperCase().trim(); if(h.includes('PRELIST')) cIdx.p=c; else if(h==='DITEMUKAN') cIdx.d=c; else if(h.includes('KELUARGA BARU')) cIdx.b=c; else if(h==='MENINGGAL') cIdx.m=c; else if(h==='TIDAK DITEMUKAN') cIdx.t=c; } } return; }
-            if(String(r[0]||'').trim().length === 16) out.push([ String(r[0]).trim(), Number(r[cIdx.p]||0), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.m]||0), Number(r[cIdx.t]||0) ]); }); res(out); } catch(err) { rej(err); }
-      }; r.readAsArrayBuffer(f); });
+    return new Promise((res, rej) => { 
+        let r = new FileReader(); 
+        r.onload = e => { 
+            try {
+                let wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'}); 
+                let sName = wb.SheetNames.find(s => s.toUpperCase() === 'KELUARGA');
+                if(!sName) return rej("Sheet bernama 'KELUARGA' tidak ditemukan dalam file.");
+                
+                let rows = XLSX.utils.sheet_to_json(wb.Sheets[sName], {header: 1}); 
+                let out = [["KODE_16", "PRELIST", "DITEMUKAN", "BARU", "MENINGGAL", "TIDAK_DITEMUKAN"]]; 
+                let cIdx = {p:-1, d:-1, b:-1, m:-1, t:-1}; 
+                let start = false;
+
+                rows.forEach(r => { 
+                    if(!r || !r.length) return; 
+                    if(!start) { 
+                        if(String(r[0]).trim().toUpperCase() === 'KODE') { 
+                            start = true; 
+                            for(let c=0; c<r.length; c++){ 
+                                let h = String(r[c]||'').toUpperCase().trim(); 
+                                if(h.includes('PRELIST')) cIdx.p=c; 
+                                else if(h==='DITEMUKAN') cIdx.d=c; 
+                                else if(h.includes('KELUARGA BARU')) cIdx.b=c; 
+                                else if(h==='MENINGGAL') cIdx.m=c; 
+                                else if(h==='TIDAK DITEMUKAN') cIdx.t=c; 
+                            } 
+                        } 
+                        return; 
+                    }
+                    if(String(r[0]||'').trim().length === 16) {
+                        out.push([ String(r[0]).trim(), Number(r[cIdx.p]||0), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.m]||0), Number(r[cIdx.t]||0) ]); 
+                    }
+                }); 
+                res(out); 
+            } catch(err) { rej(err); }
+        }; 
+        r.readAsArrayBuffer(f); 
+    });
   }
 
   function parseExcelUsahaAll(f) {
-    return new Promise((res, rej) => { let r = new FileReader(); r.onload = e => { try {
-          let wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'}); let rB = [["KODE_16", "PRELIST", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]]; let rK = [["KODE_16", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]];
-          let sUP = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA PERUSAHAAN'));
-          if(sUP) { let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUP], {header: 1}); let cIdx = {p:-1, d:-1, b:-1, tu:-1, g:-1, t:-1}; let start = false; rows.forEach(r => { if(!r || !r.length) return; if(!start) { if(String(r[0]).trim().toUpperCase() === 'KODE') { start = true; for(let c=0; c<r.length; c++){ let h = String(r[c]||'').toUpperCase().trim(); if(h.includes('PRELIST')) cIdx.p=c; else if(h==='DITEMUKAN') cIdx.d=c; else if(h==='BARU') cIdx.b=c; else if(h==='TUTUP') cIdx.tu=c; else if(h==='GANDA') cIdx.g=c; else if(h==='TIDAK DITEMUKAN') cIdx.t=c; } } return; } if(String(r[0]||'').trim().length === 16) rB.push([String(r[0]).trim(), Number(r[cIdx.p]||0), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.tu]||0), Number(r[cIdx.g]||0), Number(r[cIdx.t]||0)]); }); }
-          let sUK = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA KELUARGA'));
-          if(sUK) { let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUK], {header: 1}); let cIdx = {d:-1, b:-1, tu:-1, g:-1, t:-1}; let start = false; rows.forEach(r => { if(!r || !r.length) return; if(!start) { if(String(r[0]).trim().toUpperCase() === 'KODE') { start = true; for(let c=0; c<r.length; c++){ let h = String(r[c]||'').toUpperCase().trim(); if(h==='DITEMUKAN') cIdx.d=c; else if(h==='BARU') cIdx.b=c; else if(h==='TUTUP') cIdx.tu=c; else if(h==='GANDA') cIdx.g=c; else if(h==='TIDAK DITEMUKAN') cIdx.t=c; } } return; } if(String(r[0]||'').trim().length === 16) rK.push([String(r[0]).trim(), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.tu]||0), Number(r[cIdx.g]||0), Number(r[cIdx.t]||0)]); }); }
-          res({bku: rB, kel: rK}); } catch(err) { rej(err); }
-      }; r.readAsArrayBuffer(f); });
+    return new Promise((res, rej) => { 
+        let r = new FileReader(); 
+        r.onload = e => { 
+            try {
+                let wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'}); 
+                let resBKU = [["KODE_16", "PRELIST", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]]; 
+                let resKel = [["KODE_16", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]];
+                
+                let sUP = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA PERUSAHAAN'));
+                if(sUP) { 
+                    let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUP], {header: 1}); 
+                    let cIdx = {p:-1, d:-1, b:-1, tu:-1, g:-1, t:-1}; 
+                    let start = false; 
+                    rows.forEach(r => { 
+                        if(!r || !r.length) return; 
+                        if(!start) { 
+                            if(String(r[0]).trim().toUpperCase() === 'KODE') { 
+                                start = true; 
+                                for(let c=0; c<r.length; c++){ 
+                                    let h = String(r[c]||'').toUpperCase().trim(); 
+                                    if(h.includes('PRELIST')) cIdx.p=c; 
+                                    else if(h==='DITEMUKAN') cIdx.d=c; 
+                                    else if(h==='BARU') cIdx.b=c; 
+                                    else if(h==='TUTUP') cIdx.tu=c; 
+                                    else if(h==='GANDA') cIdx.g=c; 
+                                    else if(h==='TIDAK DITEMUKAN') cIdx.t=c; 
+                                } 
+                            } 
+                            return; 
+                        } 
+                        if(String(r[0]||'').trim().length === 16) {
+                            resBKU.push([String(r[0]).trim(), Number(r[cIdx.p]||0), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.tu]||0), Number(r[cIdx.g]||0), Number(r[cIdx.t]||0)]); 
+                        }
+                    }); 
+                }
+
+                let sUK = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA KELUARGA'));
+                if(sUK) { 
+                    let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUK], {header: 1}); 
+                    let cIdx = {d:-1, b:-1, tu:-1, g:-1, t:-1}; 
+                    let start = false; 
+                    rows.forEach(r => { 
+                        if(!r || !r.length) return; 
+                        if(!start) { 
+                            if(String(r[0]).trim().toUpperCase() === 'KODE') { 
+                                start = true; 
+                                for(let c=0; c<r.length; c++){ 
+                                    let h = String(r[c]||'').toUpperCase().trim(); 
+                                    if(h==='DITEMUKAN') cIdx.d=c; 
+                                    else if(h==='BARU') cIdx.b=c; 
+                                    else if(h==='TUTUP') cIdx.tu=c; 
+                                    else if(h==='GANDA') cIdx.g=c; 
+                                    else if(h==='TIDAK DITEMUKAN') cIdx.t=c; 
+                                } 
+                            } 
+                            return; 
+                        } 
+                        if(String(r[0]||'').trim().length === 16) {
+                            resKel.push([String(r[0]).trim(), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.tu]||0), Number(r[cIdx.g]||0), Number(r[cIdx.t]||0)]); 
+                        }
+                    }); 
+                }
+
+                resolve({bku: resBKU, kel: resKel}); 
+            } catch(err) { rej(err); }
+        }; 
+        r.readAsArrayBuffer(f); 
+    });
   }
 
+  // ====================================================================
+  // EXPORT & DOWNLOAD UTILS
+  // ====================================================================
   function exportDashboardExcel() {
     if(dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong', 'info');
     const exportData = dashFilteredData.map((row, idx) => ({
@@ -877,42 +1334,145 @@
       "PJ Kuda": row.pj, "PML": row.pml, "Email PML": row.emailPml, "PPL": row.ppl, "Email PPL": row.emailPpl,
       "Open": row.open, "Draft": row.draft, "Submit": row.submit, "Reject": row.reject, "Approve": row.approve, "Total Target": row.calcTotal
     }));
-    const worksheet = XLSX.utils.json_to_sheet(exportData); const workbook = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(workbook, worksheet, "Progress_FASIH");
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new(); 
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Progress_FASIH");
     XLSX.writeFile(workbook, `Rekap_Monitoring_FASIH_${new Date().toISOString().slice(0,10)}.xlsx`);
   }
 
   function downloadImage() {
-       if(dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong', 'info');
-       const btn = document.getElementById('btnImage'); const originalText = btn.innerHTML; btn.innerHTML = 'PROSES...'; btn.disabled = true;
-       const element = document.getElementById('captureArea'); const watermarkHeader = document.getElementById('watermarkHeader');
-       watermarkHeader.classList.remove('hidden'); watermarkHeader.classList.add('flex');
+       if(dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
+       const btn = document.getElementById('btnImage'); 
+       const originalText = btn.innerHTML; 
+       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROSES...'; 
+       btn.disabled = true;
+
+       const element = document.getElementById('captureArea'); 
+       const watermarkHeader = document.getElementById('watermarkHeader');
+       
        document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - ${timingConfig.x} | TARGET PROGRESS : ${timingConfig.y.toFixed(2)}% | TERAKHIR SINKRONISASI: ${document.getElementById('txtLastUpdate').innerText}`;
-       const originalWidth = element.style.width; const originalOverflow = element.style.overflow;
-       window.scrollTo(0,0); document.documentElement.scrollLeft = 0; document.body.scrollLeft = 0; element.scrollLeft = 0; 
-       element.classList.remove('overflow-auto', 'flex-1', 'min-h-0'); element.classList.add('h-max'); element.style.overflow = 'visible'; 
-       const fullWidth = element.scrollWidth; element.style.width = fullWidth + 'px'; element.style.maxWidth = 'none';
-       html2canvas(element, { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: fullWidth, width: fullWidth }).then(canvas => {
-           watermarkHeader.classList.add('hidden'); watermarkHeader.classList.remove('flex'); element.style.width = originalWidth; element.style.overflow = originalOverflow;
-           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); element.classList.remove('h-max');
-           let link = document.createElement('a'); link.download = `Dashboard_FASIH_${new Date().toISOString().slice(0,10)}.png`; link.href = canvas.toDataURL('image/png'); link.click();
-           btn.innerHTML = originalText; btn.disabled = false;
+       watermarkHeader.classList.remove('hidden'); 
+       watermarkHeader.classList.add('flex');
+       
+       const originalWidth = element.style.width; 
+       const originalOverflow = element.style.overflow;
+       
+       window.scrollTo(0,0); 
+       document.documentElement.scrollLeft = 0; 
+       document.body.scrollLeft = 0; 
+       element.scrollLeft = 0; 
+       
+       element.classList.remove('overflow-auto', 'flex-1', 'min-h-0'); 
+       element.classList.add('h-max'); 
+       element.style.overflow = 'visible'; 
+       
+       const fullWidth = element.scrollWidth; 
+       element.style.width = fullWidth + 'px'; 
+       element.style.maxWidth = 'none';
+
+       html2canvas(element, { 
+           scale: 2, 
+           useCORS: true, 
+           scrollX: 0, 
+           scrollY: 0,
+           windowWidth: fullWidth,
+           width: fullWidth
+       }).then(canvas => {
+           watermarkHeader.classList.add('hidden'); 
+           watermarkHeader.classList.remove('flex'); 
+           element.style.width = originalWidth; 
+           element.style.overflow = originalOverflow;
+           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); 
+           element.classList.remove('h-max');
+           
+           let link = document.createElement('a'); 
+           link.download = `Dashboard_FASIH_${new Date().toISOString().slice(0,10)}.png`; 
+           link.href = canvas.toDataURL('image/png'); 
+           link.click();
+
+           btn.innerHTML = originalText; 
+           btn.disabled = false;
+       }).catch(err => {
+           watermarkHeader.classList.add('hidden'); 
+           watermarkHeader.classList.remove('flex');
+           element.style.width = originalWidth; 
+           element.style.overflow = originalOverflow;
+           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); 
+           element.classList.remove('h-max');
+           btn.innerHTML = originalText; 
+           btn.disabled = false;
+           Swal.fire('Error', 'Gagal memproses Gambar.', 'error');
        });
   }
 
   function downloadPDF() {
-       if(dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong', 'info');
-       const btn = document.getElementById('btnScreenshot'); const originalText = btn.innerHTML; btn.innerHTML = 'PROSES...'; btn.disabled = true;
-       const element = document.getElementById('captureArea'); const watermarkHeader = document.getElementById('watermarkHeader');
-       watermarkHeader.classList.remove('hidden'); watermarkHeader.classList.add('flex');
+       if(dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
+       const btn = document.getElementById('btnScreenshot'); 
+       const originalText = btn.innerHTML; 
+       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROSES...'; 
+       btn.disabled = true;
+
+       const element = document.getElementById('captureArea'); 
+       const watermarkHeader = document.getElementById('watermarkHeader');
+       
        document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - ${timingConfig.x} | TARGET PROGRESS : ${timingConfig.y.toFixed(2)}% | TERAKHIR SINKRONISASI: ${document.getElementById('txtLastUpdate').innerText}`;
-       const originalWidth = element.style.width; const originalOverflow = element.style.overflow;
-       window.scrollTo(0,0); document.documentElement.scrollLeft = 0; document.body.scrollLeft = 0; element.scrollLeft = 0; 
-       element.classList.remove('overflow-auto', 'flex-1', 'min-h-0'); element.classList.add('h-max'); element.style.overflow = 'visible';
-       const table = element.querySelector('.block table'); const fullWidth = table ? table.scrollWidth : element.scrollWidth; element.style.width = fullWidth + 'px'; element.style.maxWidth = 'none';
-       let optOpt = { margin: [0.3, 0.2, 0.3, 0.3], filename: `Laporan_Monitoring_FASIH_${new Date().toISOString().slice(0,10)}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, x: 0, y: 0, windowWidth: fullWidth, width: fullWidth }, jsPDF: { unit: 'in', format: 'a3', orientation: 'landscape' }, pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'td', 'th'] } };
+       watermarkHeader.classList.remove('hidden'); 
+       watermarkHeader.classList.add('flex');
+       
+       const originalWidth = element.style.width; 
+       const originalOverflow = element.style.overflow;
+       
+       window.scrollTo(0,0); 
+       document.documentElement.scrollLeft = 0; 
+       document.body.scrollLeft = 0; 
+       element.scrollLeft = 0; 
+       
+       element.classList.remove('overflow-auto', 'flex-1', 'min-h-0'); 
+       element.classList.add('h-max'); 
+       element.style.overflow = 'visible';
+       
+       const table = element.querySelector('.block table'); 
+       const fullWidth = table ? table.scrollWidth : element.scrollWidth;
+       element.style.width = fullWidth + 'px'; 
+       element.style.maxWidth = 'none';
+
+       let optOpt = {
+          margin:        [0.3, 0.2, 0.3, 0.3], 
+          filename:      `Laporan_Monitoring_FASIH_${new Date().toISOString().slice(0,10)}.pdf`,
+          image:         { type: 'jpeg', quality: 0.98 },
+          html2canvas:   { 
+              scale: 2, 
+              useCORS: true, 
+              scrollX: 0, 
+              scrollY: 0,
+              x: 0,
+              y: 0,
+              windowWidth: fullWidth,
+              width: fullWidth
+          },
+          jsPDF:         { unit: 'in', format: 'a3', orientation: 'landscape' }, 
+          pagebreak:     { mode: ['css', 'legacy'], avoid: ['tr', 'td', 'th'] } 
+       };
+
        html2pdf().set(optOpt).from(element).save().then(() => {
-           watermarkHeader.classList.add('hidden'); watermarkHeader.classList.remove('flex'); element.style.width = originalWidth; element.style.overflow = originalOverflow;
-           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); element.classList.remove('h-max'); btn.innerHTML = originalText; btn.disabled = false;
+           watermarkHeader.classList.add('hidden'); 
+           watermarkHeader.classList.remove('flex'); 
+           element.style.width = originalWidth; 
+           element.style.overflow = originalOverflow;
+           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); 
+           element.classList.remove('h-max'); 
+           btn.innerHTML = originalText; 
+           btn.disabled = false;
+       }).catch(err => {
+           watermarkHeader.classList.add('hidden'); 
+           watermarkHeader.classList.remove('flex');
+           element.style.width = originalWidth; 
+           element.style.overflow = originalOverflow;
+           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); 
+           element.classList.remove('h-max');
+           btn.innerHTML = originalText; 
+           btn.disabled = false;
+           Swal.fire('Error', 'Gagal memproses PDF.', 'error');
        });
   }
 </script>
