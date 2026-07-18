@@ -17,8 +17,8 @@
   <meta property="og:image" content="https://se-6108.github.io/fasih/icon.png">
   <title>Dashboard Monitoring FASIH</title>
 
-  <!-- Google Fonts: Inter untuk kesan clean spreadsheet -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- FONT ASLI DIPERTAHANKAN -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
@@ -28,13 +28,17 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <style>
+    /* STYLING ASLI DIPERTAHANKAN */
     body { 
-      font-family: 'Inter', sans-serif; 
-      background-color: #f8f9fa; 
+      font-family: 'Montserrat', sans-serif; 
+      background-color: #f0fdf4; 
     } 
+    .smooth-shadow { 
+      box-shadow: 0 20px 50px -12px rgba(37, 99, 235, 0.15); 
+    }
     .swal2-popup { 
-      border-radius: 1rem !important; 
-      font-family: 'Inter', sans-serif !important; 
+      border-radius: 1.5rem !important; 
+      font-family: 'Montserrat', sans-serif !important; 
     }
     .swal2-html-container { 
       overflow: hidden !important; 
@@ -42,197 +46,246 @@
     } 
     .custom-spinner { 
       width: 3.5rem; height: 3.5rem; 
-      border: 4px solid #e2e8f0; border-top-color: #2563eb; 
+      border: 4px solid #bfdbfe; border-top-color: #2563eb; 
       border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; 
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     
-    /* STICKY HEADER & DESIGN TABEL */
+    /* STICKY HEADER FIXED: Mencegah tembus saat scroll */
     .dashboard-table th { 
       position: sticky; top: 0; z-index: 20; 
-      background-clip: padding-box; /* Hindari background bleed */
+      background-clip: padding-box; /* Fix transparansi bocor */
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
     }
-    /* Memastikan custom filter menu tampil di atas segalanya */
-    .filter-menu { z-index: 9999; }
-    
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     
-    /* CSS Print/Capture */
+    /* CUSTOM MENU FILTER ALA SPREADSHEET */
+    .filter-menu { z-index: 9999; }
+    
+    .teks-upper { text-transform: uppercase !important; }
     tr, .group, .flex-col { page-break-inside: avoid !important; break-inside: avoid-page !important; }
   </style>
 </head>
-<body class="h-screen overflow-hidden flex flex-col text-slate-800">
+<body class="h-screen overflow-hidden bg-blue-50/30 flex flex-col text-gray-800">
 
-  <!-- LOADING SPINNER -->
-  <div id="globalLoading" class="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center transition-opacity duration-300">
+  <div id="globalLoading" class="fixed inset-0 z-[100] bg-white/95 flex flex-col items-center justify-center transition-opacity duration-300">
       <div class="custom-spinner"></div>
-      <span class="text-sm text-blue-600 mt-4 font-bold tracking-widest animate-pulse">MEMUAT DATA FASIH...</span>
+      <span class="text-sm text-blue-600 mt-4 font-black tracking-widest animate-pulse">MEMUAT DASHBOARD FASIH...</span>
   </div>
 
   <div id="halaman-dashboard" class="flex flex-col h-full w-full relative z-10">
-    <!-- HEADER -->
-    <div class="bg-white border-b border-gray-200 flex-none z-40 relative flex flex-col">
-      <div class="px-6 py-4 flex justify-between items-center bg-[#0f9d58] relative overflow-hidden flex-wrap gap-4">
+    <div class="bg-white border-b border-blue-200 shadow-sm flex-none z-40 relative flex flex-col">
+      <!-- HEADER ASLI DIPERTAHANKAN -->
+      <div class="px-6 py-4 flex justify-between items-center bg-gradient-to-r from-[#2563eb] to-[#1e3a8a] relative overflow-hidden flex-wrap gap-4">
+        <div class="absolute -top-4 -left-4 w-20 h-20 rounded-full bg-white opacity-10"></div>
+        <div class="absolute -bottom-10 right-20 w-32 h-32 rounded-full bg-white opacity-10"></div>
+
         <div class="flex items-center gap-4 relative z-10">
-           <img src="https://i.ibb.co.com/jv8y1FSq/unnamed.png" class="w-12 h-12 bg-white rounded-full p-1 shadow-sm">
+           <img src="https://i.ibb.co.com/jv8y1FSq/unnamed.png" class="w-12 h-12 drop-shadow-md bg-white rounded-full p-1 border-2 border-blue-200">
            <div>
-              <div class="flex items-center gap-2 mb-1">
-                 <h1 class="font-bold text-xl text-white leading-tight uppercase tracking-wide">Monitoring FASIH</h1>
-                 <span class="bg-black/10 px-2 py-0.5 rounded text-[10px] font-bold text-white border border-white/20 uppercase" id="badgeHari">-</span>
-                 <span class="bg-black/10 px-2 py-0.5 rounded text-[10px] font-bold text-yellow-300 border border-white/20 uppercase" id="badgeTarget">-</span>
+              <div class="flex items-center gap-2 mb-1" id="headerBadges">
+                 <h1 class="font-black text-xl text-white leading-tight uppercase tracking-wide">Dashboard Monitoring FASIH</h1>
+                 <span class="bg-white/20 px-2.5 py-0.5 rounded text-[10px] font-bold text-white border border-white/30 shadow-sm backdrop-blur-sm tracking-wide uppercase" id="badgeHari">-</span>
+                 <div class="bg-white/20 px-2.5 py-1 rounded flex items-center gap-2 border border-white/30 shadow-sm backdrop-blur-sm">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-400"></span>
+                    </span>
+                    <span class="text-[10px] font-bold text-white tracking-wide uppercase" id="badgeTarget">-</span>
+                 </div>
               </div>
-              <div class="flex items-center text-[10px] text-green-50 uppercase tracking-wider font-medium">
-                 <span>Terakhir Sinkronisasi:</span>
-                 <span id="txtLastUpdate" class="font-bold ml-1 text-white">-</span>
+              <div class="flex items-center mt-1">
+                 <span class="relative flex h-2.5 w-2.5 mr-2">
+                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                     <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400"></span>
+                 </span>
+                 <span class="text-[10px] text-blue-100 font-bold uppercase tracking-wider mr-1.5">TERAKHIR SINKRONISASI:</span>
+                 <span id="txtLastUpdate" class="text-white text-[10px] font-bold tracking-wider uppercase">-</span>
               </div>
            </div>
         </div>
         
+        <!-- BUTTONS ASLI DIPERTAHANKAN -->
         <div class="flex gap-2 relative z-10 overflow-x-auto pb-1">
-           <button id="btnAdminUpload" onclick="authAdminPanel()" class="hidden bg-slate-900 hover:bg-black text-white px-4 py-2 rounded text-xs font-semibold transition items-center gap-2 uppercase tracking-wide shadow-sm">
-              Admin Panel
+           <button id="btnAdminUpload" onclick="authAdminPanel()" class="hidden bg-indigo-900 hover:bg-black text-white px-4 py-2.5 rounded-lg text-xs font-bold transition items-center gap-2 shadow-md border border-indigo-700 uppercase tracking-wide mr-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg> 
+              Admin Upload
            </button>
-           <button onclick="downloadImage()" id="btnImage" class="bg-white/10 hover:bg-white/20 text-white border border-white/30 px-4 py-2 rounded text-xs font-semibold transition flex items-center gap-2 uppercase">
+           <button onclick="downloadImage()" id="btnImage" class="bg-blue-50 hover:bg-white text-blue-700 px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-sm border border-blue-200 uppercase tracking-wide">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> 
               Export Image
            </button>
-           <button onclick="downloadPDF()" id="btnScreenshot" class="bg-white/10 hover:bg-white/20 text-white border border-white/30 px-4 py-2 rounded text-xs font-semibold transition flex items-center gap-2 uppercase">
+           <button onclick="downloadPDF()" id="btnScreenshot" class="bg-white/20 hover:bg-white/30 text-white border border-white/40 px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center gap-2 backdrop-blur-sm uppercase tracking-wide shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> 
               Export PDF
            </button>
-           <button onclick="exportDashboardExcel()" class="bg-white text-green-700 px-4 py-2 rounded text-xs font-bold transition flex items-center gap-2 hover:bg-gray-50 shadow-sm uppercase">
+           <button onclick="exportDashboardExcel()" class="bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-md border border-green-400 uppercase tracking-wide">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg> 
               Export Excel
            </button>
         </div>
       </div>
 
-      <!-- CARD METRIK STATIS (CLEAN DESIGN) -->
-      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 px-6 py-3 bg-slate-50 border-b border-gray-200">
-        <div class="bg-white p-3 rounded border border-gray-200 shadow-sm flex flex-col justify-between">
-            <p class="text-[10px] text-gray-500 font-semibold uppercase mb-1">Beban SLS</p>
-            <h3 id="dashTotSls" class="text-xl font-bold text-slate-800">-</h3>
+      <!-- CARD METRIK STATIS ASLI DIPERTAHANKAN -->
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 gap-3 px-6 py-4 bg-blue-50/40 border-b border-blue-100">
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-slate-200 opacity-[0.25] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-1 relative z-10">Beban SLS</p>
+            <h3 id="dashTotSls" class="text-2xl font-black text-slate-800 relative z-10">-</h3>
         </div>
-        <div class="bg-white p-3 rounded border border-gray-200 shadow-sm flex flex-col justify-between">
-            <p class="text-[10px] text-indigo-500 font-semibold uppercase mb-1">Total Target</p>
-            <h3 id="dashTotTarget" class="text-xl font-bold text-indigo-700">-</h3>
+        <div class="bg-gradient-to-br from-indigo-50 to-white p-3 rounded-xl border border-indigo-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-indigo-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            <p class="text-[9px] text-indigo-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Target</p>
+            <h3 id="dashTotTarget" class="text-2xl font-black text-indigo-700 relative z-10">-</h3>
         </div>
-        <div class="bg-white p-3 rounded border border-gray-200 shadow-sm flex flex-col justify-between">
-            <p class="text-[10px] text-fuchsia-500 font-semibold uppercase mb-1">Prog Pendataan</p>
-            <h3 id="dashProgPendataan" class="text-xl font-bold text-fuchsia-700">-</h3>
+        <div class="bg-gradient-to-br from-fuchsia-50 to-white p-3 rounded-xl border border-fuchsia-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-fuchsia-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+            <p class="text-[9px] text-fuchsia-600 font-bold uppercase tracking-wider mb-1 relative z-10">Progress Pendataan</p>
+            <h3 id="dashProgPendataan" class="text-2xl font-black text-fuchsia-700 relative z-10">-</h3>
         </div>
-        <div class="bg-white p-3 rounded border border-gray-200 shadow-sm flex flex-col justify-between">
-            <p class="text-[10px] text-sky-500 font-semibold uppercase mb-1">Prog Submit</p>
-            <h3 id="dashProgSubmit" class="text-xl font-bold text-sky-700">-</h3>
+        <div class="bg-gradient-to-br from-sky-50 to-white p-3 rounded-xl border border-sky-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-sky-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <p class="text-[9px] text-sky-600 font-bold uppercase tracking-wider mb-1 relative z-10">Progress Submit</p>
+            <h3 id="dashProgSubmit" class="text-2xl font-black text-sky-700 relative z-10">-</h3>
         </div>
-        <div class="bg-white p-3 rounded border border-gray-200 shadow-sm flex flex-col justify-between">
-            <p class="text-[10px] text-blue-500 font-semibold uppercase mb-1">Total Open</p>
-            <h3 id="dashTotOpen" class="text-xl font-bold text-blue-700">-</h3>
+        <div class="bg-gradient-to-br from-blue-50 to-white p-3 rounded-xl border border-blue-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-blue-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
+            <p class="text-[9px] text-blue-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Open</p>
+            <h3 id="dashTotOpen" class="text-2xl font-black text-blue-700 relative z-10">-</h3>
         </div>
-        <div class="bg-white p-3 rounded border border-gray-200 shadow-sm flex flex-col justify-between">
-            <p class="text-[10px] text-amber-500 font-semibold uppercase mb-1">Total Draft</p>
-            <h3 id="dashTotDraft" class="text-xl font-bold text-amber-700">-</h3>
+        <div class="bg-gradient-to-br from-amber-50 to-white p-3 rounded-xl border border-amber-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-amber-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+            <p class="text-[9px] text-amber-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Draft</p>
+            <h3 id="dashTotDraft" class="text-2xl font-black text-amber-700 relative z-10">-</h3>
         </div>
-        <div class="bg-white p-3 rounded border border-gray-200 shadow-sm flex flex-col justify-between">
-            <p class="text-[10px] text-purple-500 font-semibold uppercase mb-1">Total Submit</p>
-            <h3 id="dashTotSubmit" class="text-xl font-bold text-purple-700">-</h3>
+        <div class="bg-gradient-to-br from-purple-50 to-white p-3 rounded-xl border border-purple-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-purple-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            <p class="text-[9px] text-purple-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Submit</p>
+            <h3 id="dashTotSubmit" class="text-2xl font-black text-purple-700 relative z-10">-</h3>
         </div>
-        <div class="bg-white p-3 rounded border border-gray-200 shadow-sm flex flex-col justify-between">
-            <p class="text-[10px] text-green-500 font-semibold uppercase mb-1">Total Approve</p>
-            <h3 id="dashTotApprove" class="text-xl font-bold text-green-700">-</h3>
+        <div class="bg-gradient-to-br from-red-50 to-white p-3 rounded-xl border border-red-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-red-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            <p class="text-[9px] text-red-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Reject</p>
+            <h3 id="dashTotReject" class="text-2xl font-black text-red-700 relative z-10">-</h3>
+        </div>
+        <div class="bg-gradient-to-br from-green-50 to-white p-3 rounded-xl border border-green-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-green-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.41-1.4L9 16.2z"/></svg>
+            <p class="text-[9px] text-green-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Approve</p>
+            <h3 id="dashTotApprove" class="text-2xl font-black text-green-700 relative z-10">-</h3>
         </div>
       </div>
       
-      <!-- NAVIGASI TAB MENU -->
-      <div class="px-6 pt-2 bg-white flex gap-6 border-b border-gray-200 overflow-x-auto scrollbar-hide">
-         <button id="btnTab1" onclick="switchTab(1)" class="whitespace-nowrap pb-2 text-xs font-semibold uppercase tracking-wide border-b-[3px] border-blue-600 text-blue-700 transition">Detail SLS</button>
-         <button id="btnTab2" onclick="switchTab(2)" class="whitespace-nowrap pb-2 text-xs font-semibold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-600 transition">Progres PPL</button>
-         <button id="btnTab3" onclick="switchTab(3)" class="whitespace-nowrap pb-2 text-xs font-semibold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-600 transition">Progres PML</button>
-         <button id="btnTab4" onclick="switchTab(4)" class="whitespace-nowrap pb-2 text-xs font-semibold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-600 transition">Progres Kec</button>
-         <button id="btnTab5" onclick="switchTab(5)" class="whitespace-nowrap pb-2 text-xs font-semibold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-600 transition">Visualisasi</button>
-         <button id="btnTab6" onclick="switchTab(6)" class="whitespace-nowrap pb-2 text-xs font-semibold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-amber-600 transition">Analisa Kel</button>
-         <button id="btnTab7" onclick="switchTab(7)" class="whitespace-nowrap pb-2 text-xs font-semibold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-purple-600 transition">Analisa BKU</button>
-         <button id="btnTab8" onclick="switchTab(8)" class="whitespace-nowrap pb-2 text-xs font-semibold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-emerald-600 transition">Analisa Usaha Kel</button>
+      <!-- NAVIGASI TAB MENU ASLI DIPERTAHANKAN -->
+      <div class="px-6 pt-3 bg-white flex gap-6 border-b border-gray-200 overflow-x-auto scrollbar-hide">
+         <button id="btnTab1" onclick="switchTab(1)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-blue-500 text-blue-700 transition">Detail SLS</button>
+         <button id="btnTab2" onclick="switchTab(2)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Progress PPL</button>
+         <button id="btnTab3" onclick="switchTab(3)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Progress PML</button>
+         <button id="btnTab4" onclick="switchTab(4)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Progress Kecamatan</button>
+         <button id="btnTab5" onclick="switchTab(5)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Visualisasi Data</button>
+         <button id="btnTab6" onclick="switchTab(6)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-amber-500 hover:text-amber-600 transition flex gap-1 items-center">📊 Analisa Keluarga</button>
+         <button id="btnTab7" onclick="switchTab(7)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-purple-500 hover:text-purple-600 transition flex gap-1 items-center">📈 Analisa BKU</button>
+         <button id="btnTab8" onclick="switchTab(8)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-emerald-500 hover:text-emerald-600 transition flex gap-1 items-center">🏡 Analisa Usaha Keluarga</button>
       </div>
 
-      <!-- FILTER GLOBAL (CUSTOM CHECKBOX DROPDOWN) -->
-      <div class="px-6 py-2 bg-white flex gap-2 items-center border-b border-gray-200 flex-wrap text-xs shadow-sm" id="filterArea">
-         <input type="text" id="dashSearch" onkeyup="handleGlobalFilter()" placeholder="PENCARIAN CEPAT..." class="w-48 px-3 py-1.5 border border-gray-300 rounded font-medium focus:border-green-500 outline-none uppercase">
+      <!-- FILTER GLOBAL BARU (DROPDOWN CHECKLIST KUSTOM - MENGGANTIKAN TOMSELECT TAPI TETAP SESUAI DESAIN LAMA) -->
+      <div class="px-6 py-3 bg-gray-50/50 flex gap-2 items-center border-b border-blue-100 flex-wrap" id="filterArea">
+         <div class="flex-none w-44">
+             <input type="text" id="dashSearch" onkeyup="handleGlobalFilter()" placeholder="PENCARIAN..." class="w-full px-3 py-1 border border-gray-300 rounded-lg text-xs font-bold focus:border-blue-500 outline-none h-[38px] teks-upper shadow-sm">
+         </div>
+         <div class="flex-1 min-w-[120px]">
+             <select id="fPrio" onchange="updateSingleFilter('prio', this.value)" class="w-full px-3 py-1 border border-gray-300 rounded-lg text-xs font-bold focus:border-blue-500 outline-none h-[38px] teks-upper shadow-sm bg-white text-gray-700 cursor-pointer">
+                 <option value="">STATUS PRIORITAS</option>
+                 <option value="1">YA</option>
+                 <option value="0">TIDAK</option>
+             </select>
+         </div>
          
-         <select id="fPrio" onchange="updateSingleFilter('prio', this.value)" class="px-3 py-1.5 border border-gray-300 rounded font-medium bg-white outline-none cursor-pointer hover:bg-gray-50 text-gray-700">
-            <option value="">Semua Prioritas</option>
-            <option value="1">Prioritas: YA</option>
-            <option value="0">Prioritas: TIDAK</option>
-         </select>
-
-         <div class="relative filter-dropdown">
-            <button onclick="toggleDropdown('dropKec')" class="px-3 py-1.5 border border-gray-300 rounded font-medium bg-white flex items-center gap-2 hover:bg-gray-50 text-gray-700">Kecamatan <span class="text-[9px]">▼</span></button>
-            <div id="dropKec" class="filter-menu hidden absolute left-0 mt-1 w-56 bg-white border border-gray-200 rounded shadow-xl max-h-60 overflow-y-auto"></div>
+         <!-- DROPDOWN CHECKLISTS -->
+         <div class="flex-1 min-w-[120px] relative filter-dropdown">
+            <button onclick="toggleDropdown('dropKec')" class="w-full px-3 py-1 border border-gray-300 rounded-lg text-xs font-bold focus:border-blue-500 outline-none h-[38px] teks-upper shadow-sm bg-white text-gray-700 flex justify-between items-center transition hover:border-blue-400">
+                KECAMATAN <span>▼</span>
+            </button>
+            <div id="dropKec" class="filter-menu hidden absolute left-0 mt-1 w-56 bg-white border border-gray-200 rounded-xl shadow-xl max-h-60 overflow-y-auto"></div>
          </div>
-         <div class="relative filter-dropdown">
-            <button onclick="toggleDropdown('dropPml')" class="px-3 py-1.5 border border-gray-300 rounded font-medium bg-white flex items-center gap-2 hover:bg-gray-50 text-gray-700">PML <span class="text-[9px]">▼</span></button>
-            <div id="dropPml" class="filter-menu hidden absolute left-0 mt-1 w-64 bg-white border border-gray-200 rounded shadow-xl max-h-60 overflow-y-auto"></div>
+         
+         <div class="flex-1 min-w-[120px] relative filter-dropdown">
+            <button onclick="toggleDropdown('dropPml')" class="w-full px-3 py-1 border border-gray-300 rounded-lg text-xs font-bold focus:border-blue-500 outline-none h-[38px] teks-upper shadow-sm bg-white text-gray-700 flex justify-between items-center transition hover:border-blue-400">
+                PML <span>▼</span>
+            </button>
+            <div id="dropPml" class="filter-menu hidden absolute left-0 mt-1 w-64 bg-white border border-gray-200 rounded-xl shadow-xl max-h-60 overflow-y-auto"></div>
          </div>
-         <div class="relative filter-dropdown">
-            <button onclick="toggleDropdown('dropPpl')" class="px-3 py-1.5 border border-gray-300 rounded font-medium bg-white flex items-center gap-2 hover:bg-gray-50 text-gray-700">PPL <span class="text-[9px]">▼</span></button>
-            <div id="dropPpl" class="filter-menu hidden absolute left-0 mt-1 w-64 bg-white border border-gray-200 rounded shadow-xl max-h-60 overflow-y-auto"></div>
+         
+         <div class="flex-1 min-w-[120px] relative filter-dropdown">
+            <button onclick="toggleDropdown('dropPpl')" class="w-full px-3 py-1 border border-gray-300 rounded-lg text-xs font-bold focus:border-blue-500 outline-none h-[38px] teks-upper shadow-sm bg-white text-gray-700 flex justify-between items-center transition hover:border-blue-400">
+                PPL <span>▼</span>
+            </button>
+            <div id="dropPpl" class="filter-menu hidden absolute left-0 mt-1 w-64 bg-white border border-gray-200 rounded-xl shadow-xl max-h-60 overflow-y-auto"></div>
          </div>
-         <div class="relative filter-dropdown">
-            <button onclick="toggleDropdown('dropPj')" class="px-3 py-1.5 border border-gray-300 rounded font-medium bg-white flex items-center gap-2 hover:bg-gray-50 text-gray-700">PJ Kuda <span class="text-[9px]">▼</span></button>
-            <div id="dropPj" class="filter-menu hidden absolute left-0 mt-1 w-48 bg-white border border-gray-200 rounded shadow-xl max-h-60 overflow-y-auto"></div>
+         
+         <div class="flex-1 min-w-[120px] relative filter-dropdown">
+            <button onclick="toggleDropdown('dropPj')" class="w-full px-3 py-1 border border-gray-300 rounded-lg text-xs font-bold focus:border-blue-500 outline-none h-[38px] teks-upper shadow-sm bg-white text-gray-700 flex justify-between items-center transition hover:border-blue-400">
+                PJ KUDA <span>▼</span>
+            </button>
+            <div id="dropPj" class="filter-menu hidden absolute left-0 mt-1 w-48 bg-white border border-gray-200 rounded-xl shadow-xl max-h-60 overflow-y-auto"></div>
          </div>
-         <div class="relative filter-dropdown">
-            <button onclick="toggleDropdown('dropStatus')" class="px-3 py-1.5 border border-gray-300 rounded font-medium bg-white flex items-center gap-2 hover:bg-gray-50 text-gray-700">Status Capaian <span class="text-[9px]">▼</span></button>
-            <div id="dropStatus" class="filter-menu hidden absolute left-0 mt-1 w-48 bg-white border border-gray-200 rounded shadow-xl max-h-60 overflow-y-auto">
-                <label class="flex items-center px-3 py-2 hover:bg-slate-50 cursor-pointer border-b border-gray-100 font-medium text-slate-700"><input type="checkbox" class="mr-2 rounded" value="Tercapai" onchange="updateFilter('statusPetugas', this)"> TERCAPAI</label>
-                <label class="flex items-center px-3 py-2 hover:bg-slate-50 cursor-pointer font-medium text-slate-700"><input type="checkbox" class="mr-2 rounded" value="Belum Tercapai" onchange="updateFilter('statusPetugas', this)"> BELUM TERCAPAI</label>
+         
+         <div class="flex-1 min-w-[130px] relative filter-dropdown">
+            <button onclick="toggleDropdown('dropStatus')" class="w-full px-3 py-1 border border-gray-300 rounded-lg text-xs font-bold focus:border-blue-500 outline-none h-[38px] teks-upper shadow-sm bg-white text-gray-700 flex justify-between items-center transition hover:border-blue-400">
+                STATUS TARGET <span>▼</span>
+            </button>
+            <div id="dropStatus" class="filter-menu hidden absolute left-0 mt-1 w-48 bg-white border border-gray-200 rounded-xl shadow-xl max-h-60 overflow-y-auto">
+                <label class="flex items-center px-4 py-2 hover:bg-slate-50 cursor-pointer border-b border-gray-100 font-bold text-slate-700 text-xs uppercase"><input type="checkbox" class="mr-2 rounded" value="Tercapai" onchange="updateFilter('statusPetugas', this)"> TERCAPAI</label>
+                <label class="flex items-center px-4 py-2 hover:bg-slate-50 cursor-pointer font-bold text-slate-700 text-xs uppercase"><input type="checkbox" class="mr-2 rounded" value="Belum Tercapai" onchange="updateFilter('statusPetugas', this)"> BELUM TERCAPAI</label>
             </div>
          </div>
 
-         <button onclick="resetGlobalFilters()" class="bg-gray-200 text-gray-700 px-3 py-1.5 rounded font-bold hover:bg-gray-300 transition ml-auto">Reset Filter</button>
+         <button onclick="resetGlobalFilters()" class="bg-gray-200 text-gray-700 px-3 h-[38px] rounded-lg text-xs font-bold hover:bg-gray-300 transition shadow-sm" title="Reset Semua Filter">Reset</button>
       </div>
     </div>
 
-    <!-- MAIN DASHBOARD AREA -->
-    <div class="flex-1 bg-white relative p-4 flex flex-col min-h-0">
-      <div id="captureArea" class="flex-1 flex flex-col min-h-0 bg-white border border-gray-200 rounded-lg shadow-sm overflow-auto transition-all">
+    <!-- MAIN DASHBOARD AREA (TABEL DENGAN FONT CLEAN & PPL PML DIGABUNG) -->
+    <div class="flex-1 bg-blue-50/20 relative p-4 flex flex-col min-h-0">
+      <div id="captureArea" class="flex-1 flex flex-col min-h-0 bg-white border border-gray-200 rounded-2xl shadow-sm overflow-auto transition-all">
          
-         <div id="watermarkHeader" class="hidden w-full p-4 bg-[#0f9d58] border-b border-green-200 items-center justify-between mb-2 shrink-0">
+         <div id="watermarkHeader" class="hidden w-full p-5 bg-gradient-to-r from-[#2563eb] to-[#1e3a8a] border-b-2 border-blue-200 items-center justify-between mb-2 rounded-t-2xl shrink-0">
             <div>
-               <h2 class="text-xl font-bold text-white uppercase tracking-tight mb-1">Laporan Progress Pendataan FASIH</h2>
-               <p class="text-[10px] font-semibold text-white uppercase block" id="watermarkText"></p>
+               <h2 class="text-2xl font-black text-white uppercase tracking-tight mb-2">Laporan Progress Pendataan FASIH</h2>
+               <p class="text-xs font-bold text-white mt-1 uppercase block" id="watermarkText"></p>
             </div>
+            <img src="https://i.ibb.co.com/jv8y1FSq/unnamed.png" class="h-16 w-16 drop-shadow-md bg-white rounded-full p-1 border">
          </div>
          
-         <!-- TABEL -->
          <div id="tab1-content" class="flex-1 w-full dashboard-table block">
-             <table class="w-full text-left border-collapse min-w-[1250px]">
-                 <thead id="headTab1" class="text-[10px] uppercase text-slate-600 font-bold tracking-wider"></thead>
-                 <tbody id="tableBodyDash" class="text-xs divide-y divide-gray-200 text-slate-700"></tbody>
+             <table class="w-full text-left border-collapse min-w-[1300px]">
+                 <thead id="headTab1" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead>
+                 <tbody id="tableBodyDash" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
              </table>
          </div>
 
          <div id="tab2-content" class="hidden flex-1 w-full dashboard-table">
-             <table class="w-full text-left border-collapse min-w-[1400px]">
-                 <thead id="headTab2" class="text-[10px] uppercase text-slate-600 font-bold tracking-wider"></thead>
-                 <tbody id="tableLeaderboard" class="text-xs divide-y divide-gray-200 text-slate-700"></tbody>
+             <table class="w-full text-left border-collapse min-w-[1600px]">
+                 <thead id="headTab2" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead>
+                 <tbody id="tableLeaderboard" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
              </table>
          </div>
 
          <div id="tab3-content" class="hidden flex-1 w-full dashboard-table">
-             <table class="w-full text-left border-collapse min-w-[1500px]">
-                 <thead id="headTab3" class="text-[10px] uppercase text-slate-600 font-bold tracking-wider"></thead>
-                 <tbody id="tablePml" class="text-xs divide-y divide-gray-200 text-slate-700"></tbody>
+             <table class="w-full text-left border-collapse min-w-[1700px]">
+                 <thead id="headTab3" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead>
+                 <tbody id="tablePml" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
              </table>
          </div>
 
          <div id="tab4-content" class="hidden flex-1 w-full dashboard-table">
-             <table class="w-full text-left border-collapse min-w-[1200px]">
-                 <thead id="headTab4" class="text-[10px] uppercase text-slate-600 font-bold tracking-wider"></thead>
-                 <tbody id="tableKecamatan" class="text-xs divide-y divide-gray-200 text-slate-700"></tbody>
+             <table class="w-full text-left border-collapse min-w-[1250px]">
+                 <thead id="headTab4" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead>
+                 <tbody id="tableKecamatan" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
              </table>
          </div>
          
-         <div id="tab5-content" class="hidden flex-1 w-full p-4 bg-white overflow-hidden">
-           <div class="flex flex-col border border-gray-200 p-4 rounded bg-slate-50 h-full">
-              <h3 class="font-bold text-slate-700 text-center uppercase mb-4 text-xs shrink-0">Status Assignment Berdasarkan Kecamatan</h3>
+         <div id="tab5-content" class="hidden flex-1 w-full p-6 bg-white overflow-hidden">
+           <div class="flex flex-col border border-gray-100 p-4 rounded-2xl shadow-sm bg-gray-50/50 h-full">
+              <h3 class="font-bold text-gray-700 text-center uppercase tracking-wide mb-4 text-xs shrink-0">Status Assignment Berdasarkan Kecamatan</h3>
               <div id="chartContainerWrapper" class="flex-1 relative w-full overflow-y-auto">
                   <div id="chartInner" style="position: relative; width: 100%;">
                       <canvas id="chartKecamatan"></canvas>
@@ -243,37 +296,38 @@
 
          <div id="tab6-content" class="hidden flex-1 w-full dashboard-table">
              <table class="w-full text-left border-collapse min-w-[1250px]">
-                 <thead id="headTab6" class="text-[10px] uppercase text-slate-600 font-bold tracking-wider"></thead>
-                 <tbody id="tableKeluarga" class="text-xs divide-y divide-gray-200 text-slate-700"></tbody>
+                 <thead id="headTab6" class="text-[10px] uppercase text-amber-900 font-bold tracking-wider bg-amber-100"></thead>
+                 <tbody id="tableKeluarga" class="text-xs divide-y divide-amber-100 text-gray-700 tags-upper"></tbody>
              </table>
          </div>
 
          <div id="tab7-content" class="hidden flex-1 w-full dashboard-table">
              <table class="w-full text-left border-collapse min-w-[1300px]">
-                 <thead id="headTab7" class="text-[10px] uppercase text-slate-600 font-bold tracking-wider"></thead>
-                 <tbody id="tableUsaha" class="text-xs divide-y divide-gray-200 text-slate-700"></tbody>
+                 <thead id="headTab7" class="text-[10px] uppercase text-purple-900 font-bold tracking-wider bg-purple-100"></thead>
+                 <tbody id="tableUsaha" class="text-xs divide-y divide-purple-100 text-gray-700 tags-upper"></tbody>
              </table>
          </div>
 
          <div id="tab8-content" class="hidden flex-1 w-full dashboard-table">
              <table class="w-full text-left border-collapse min-w-[1250px]">
-                 <thead id="headTab8" class="text-[10px] uppercase text-slate-600 font-bold tracking-wider"></thead>
-                 <tbody id="tableUsahaKeluarga" class="text-xs divide-y divide-gray-200 text-slate-700"></tbody>
+                 <thead id="headTab8" class="text-[10px] uppercase text-emerald-900 font-bold tracking-wider bg-emerald-100"></thead>
+                 <tbody id="tableUsahaKeluarga" class="text-xs divide-y divide-emerald-100 text-gray-700 tags-upper"></tbody>
              </table>
          </div>
       </div> 
       
       <!-- AREA PAGINASI -->
-      <div id="paginasiArea" class="bg-white border border-gray-200 px-4 py-2 rounded mt-3 shadow-sm flex justify-between items-center shrink-0">
+      <div id="paginasiArea" class="bg-white border border-gray-200 px-5 py-3 rounded-xl mt-3 shadow-sm flex justify-between items-center shrink-0">
          <div class="flex items-center gap-3">
-            <select id="perPageSelect" onchange="changePerPage()" class="text-xs font-semibold text-slate-700 bg-white border border-gray-300 rounded px-2 py-1 outline-none cursor-pointer shadow-sm">
+            <select id="perPageSelect" onchange="changePerPage()" class="text-xs font-bold text-gray-600 bg-gray-50 border border-gray-300 rounded-md px-2 py-1.5 outline-none cursor-pointer shadow-sm">
                <option value="10">10 Baris</option>
-               <option value="25">25 Baris</option>
+               <option value="15">15 Baris</option>
+               <option value="20">20 Baris</option>
                <option value="50">50 Baris</option>
                <option value="100">100 Baris</option>
-               <option value="999999">Semua</option>
+               <option value="999999">Semua Baris</option>
             </select>
-            <span class="text-[11px] text-gray-500 font-medium" id="pageInfoDash">Menampilkan 0 Data</span>
+            <span class="text-xs text-gray-500 font-bold bg-gray-100 px-2.5 py-1.5 rounded-md uppercase tracking-wider" id="pageInfoDash">Menampilkan 0 Data</span>
          </div>
          <div id="paginationDashContainer"></div>
       </div>
@@ -296,14 +350,14 @@
   let activeTabId = 1;
   let sortCol = '', sortAsc = true;
   
-  // Custom Filter State
+  // State Custom Filters
   let activeFilters = { kec: [], pml: [], ppl: [], pj: [], statusPetugas: [], prio: '' };
   
   let chartKecObj;
   let kecChartMapGlobal = {};
   let timingConfig = {};
 
-  // Hotkeys Ninja
+  // Hotkeys Ninja Admin
   let keyStrokes = '';
   document.addEventListener('keydown', (e) => {
       if(e.key.toLowerCase() === 'f') {
@@ -315,10 +369,12 @@
               keyStrokes = '';
               Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Panel Admin Aktif!', showConfirmButton: false, timer: 1500 });
           }
-      } else { keyStrokes = ''; }
+      } else {
+          keyStrokes = '';
+      }
   });
 
-  // Dropdown Logic (Menutup dropdown jika klik di luar)
+  // Dropdown Checklist Listener (Klik di luar menu untuk menutup)
   document.addEventListener('click', (e) => {
       if(!e.target.closest('.filter-dropdown')) {
           document.querySelectorAll('.filter-menu').forEach(menu => menu.classList.add('hidden'));
@@ -341,10 +397,12 @@
 
       let actualDate = new Date(wib);
       let effectiveDate = new Date(wib);
-      if (wib.getHours() < 21) { effectiveDate.setDate(effectiveDate.getDate() - 1); }
+      if (wib.getHours() < 21) {
+          effectiveDate.setDate(effectiveDate.getDate() - 1);
+      }
 
-      const startYear = 2026; const startMonth = 5; const startDateDate = 15; // Juni (Bulan 5)
-      const endYear = 2026; const endMonth = 7; const endDateDate = 31; // Agustus
+      const startYear = 2026; const startMonth = 5; const startDateDate = 15;
+      const endYear = 2026; const endMonth = 7; const endDateDate = 31;
 
       const startDateUTC = Date.UTC(startYear, startMonth, startDateDate);
       const endDateUTC = Date.UTC(endYear, endMonth, endDateDate);
@@ -354,10 +412,12 @@
 
       const effectiveDateUTC = Date.UTC(effectiveDate.getFullYear(), effectiveDate.getMonth(), effectiveDate.getDate());
       let effectiveDiffDays = Math.floor((effectiveDateUTC - startDateUTC) / (1000 * 60 * 60 * 24)) + 1;
+
       const maxDays = Math.floor((endDateUTC - startDateUTC) / (1000 * 60 * 60 * 24)) + 1;
 
       if (actualDiffDays < 1) actualDiffDays = 1;
       if (actualDiffDays > maxDays) actualDiffDays = maxDays;
+
       if (effectiveDiffDays < 1) effectiveDiffDays = 1;
       if (effectiveDiffDays > maxDays) effectiveDiffDays = maxDays;
 
@@ -369,8 +429,12 @@
       const globalLoader = document.getElementById('globalLoading');
       timingConfig = getHariPendataan();
       
-      if (document.getElementById('badgeHari')) document.getElementById('badgeHari').innerText = `HARI KE - ${timingConfig.x}`;
-      if (document.getElementById('badgeTarget')) document.getElementById('badgeTarget').innerText = `TARGET : ${timingConfig.y.toFixed(2)}%`;
+      if (document.getElementById('badgeHari')) {
+          document.getElementById('badgeHari').innerText = `PENDATAAN HARI KE - ${timingConfig.x}`;
+      }
+      if (document.getElementById('badgeTarget')) {
+          document.getElementById('badgeTarget').innerText = `TARGET PROGRESS : ${timingConfig.y.toFixed(2)}%`;
+      }
 
       fetch(GAS_API_URL)
         .then(response => {
@@ -388,6 +452,21 @@
           DASH_DATA = res.data;
           if(globalLoader) globalLoader.classList.add('hidden');
           
+          if (res.integrityErrorCount > 0) {
+              Swal.fire({
+                  title: '<span class="text-lg font-black uppercase">Info Target Pendataan</span>',
+                  html: `
+                    <div class="bg-red-50 border border-red-300 text-red-800 p-3.5 rounded-xl mb-4 text-xs shadow-sm text-left animate-pulse">
+                        <b class="flex items-center gap-1.5 mb-1 text-[13px]">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                           WARNING: Integritas Data Pusat
+                        </b>
+                        Ditemukan <b>${res.integrityErrorCount} Assignment</b> tidak sinkron. Sistem memakai Target Absolut.
+                    </div>
+                  `,
+                  icon: 'warning', confirmButtonText: 'SIAP!', customClass: { popup: 'rounded-[2rem]', confirmButton: 'bg-blue-600 text-white px-8 py-2.5 rounded-xl font-bold' }
+              });
+          }
           if(document.getElementById('txtLastUpdate')) {
               document.getElementById('txtLastUpdate').innerText = res.lastUpdate;
           }
@@ -403,7 +482,7 @@
   }
 
   // =========================================================================
-  // CUSTOM DROPDOWN CHECKBOX (MENGGANTIKAN TOMSELECT)
+  // INIT CUSTOM DROPDOWN (MENGGANTI TOMSELECT)
   // =========================================================================
   function initCustomDropdowns() {
     let k = [...new Set(DASH_DATA.map(d=>d.kec ? String(d.kec) : ''))].sort();
@@ -423,8 +502,8 @@
       let html = '';
       dataArr.forEach(x => {
           if(!x) return;
-          html += `<label class="flex items-center px-3 py-2 hover:bg-slate-50 border-b border-gray-100 text-xs font-medium text-slate-700 cursor-pointer">
-                      <input type="checkbox" class="mr-2 rounded border-gray-300 custom-chk-${filterKey}" value="${x}" onchange="updateFilter('${filterKey}', this)">
+          html += `<label class="flex items-center px-4 py-2 hover:bg-slate-50 border-b border-gray-100 text-[11px] font-bold text-slate-700 cursor-pointer uppercase">
+                      <input type="checkbox" class="mr-2 rounded" value="${x}" onchange="updateFilter('${filterKey}', this)">
                       ${x}
                    </label>`;
       });
@@ -465,116 +544,119 @@
   }
 
   // =========================================================================
-  // KONFIGURASI KOLOM (GABUNG PPL/PML) & FILTER FUNNEL HEADER
+  // KONFIGURASI KOLOM (GABUNG PPL/PML + WARNA ASLI + STICKY)
   // =========================================================================
   const TABS_CONFIG = {
       1: [
-         { k:'idSls', n:'ID SLS', c:'bg-slate-100 border-r border-gray-200', w:'130px' },
-         { k:'nmsls', n:'Wilayah', c:'bg-slate-100 border-r border-gray-200', w:'200px' },
-         { k:'petugas', n:'Petugas (PPL / PML)', c:'bg-slate-100 border-r border-gray-200', w:'250px' },
-         { k:'pj', n:'PJ Kuda', c:'bg-slate-100 border-r border-gray-200', w:'100px' },
-         { k:'open', n:'Open', c:'bg-blue-50 text-blue-800 text-center border-l border-gray-200', f:true },
-         { k:'draft', n:'Draft', c:'bg-amber-50 text-amber-800 text-center border-l border-gray-200', f:true },
-         { k:'agg_submit', n:'Submit', c:'bg-purple-50 text-purple-800 text-center border-l border-gray-200', f:true },
-         { k:'calcTotal', n:'Total', c:'bg-slate-100 text-slate-800 text-center border-l border-gray-200', f:true }
+         { k:'idSls', n:'ID SLS', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'140px' },
+         { k:'nmsls', n:'Wilayah', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'200px' },
+         { k:'petugas', n:'Petugas (PPL / PML)', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'250px' }, // GABUNGAN
+         { k:'pj', n:'PJ Kuda', c:'bg-blue-50 text-gray-700', w:'100px' },
+         { k:'open', n:'Open', c:'bg-blue-100 text-blue-800 text-center border-l border-blue-200', f:true },
+         { k:'draft', n:'Draft', c:'bg-amber-100 text-amber-800 text-center border-l border-amber-200', f:true },
+         { k:'agg_submit', n:'Submit', c:'bg-purple-100 text-purple-800 text-center border-l border-purple-200', f:true },
+         { k:'calcTotal', n:'Total', c:'bg-indigo-100 text-indigo-900 text-center border-l border-indigo-200', f:true }
       ],
       2: [
-         { k:'ppl', n:'Nama PPL', c:'bg-slate-100 border-r border-gray-200', w:'200px' },
-         { k:'kec', n:'Kecamatan', c:'bg-slate-100 border-r border-gray-200' },
-         { k:'o', n:'Open', c:'text-center bg-blue-50 text-blue-800 border-l border-gray-200', f:true },
-         { k:'d', n:'Draft', c:'text-center bg-amber-50 text-amber-800 border-l border-gray-200', f:true },
-         { k:'agg_s', n:'Submit', c:'text-center bg-purple-50 text-purple-800 border-l border-gray-200', f:true },
-         { k:'t', n:'Total', c:'text-center bg-slate-100 text-slate-800 border-l border-gray-200', f:true },
-         { k:'avg_raw', n:'Rata Harian', c:'text-center bg-slate-50 text-slate-700 border-l border-gray-200', f:true },
-         { k:'pct_pendataan', n:'% Pendataan', c:'text-center bg-slate-50 text-slate-700 border-l border-gray-200', f:true },
-         { k:'pct_submit', n:'% Submit', c:'text-center bg-slate-50 text-slate-700 border-l border-gray-200', f:true },
-         { k:'pct_approve', n:'% Approved', c:'text-center bg-green-50 text-green-700 border-l border-gray-200', f:true },
-         { k:'kekurangan', n:'Kekurangan', c:'text-center bg-red-50 text-red-700 border-l border-gray-200', f:true },
-         { k:'statusTarget', n:'Status Capaian', c:'text-center bg-slate-100 border-l border-gray-200' }
+         { k:'ppl', n:'Nama PPL', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'200px' },
+         { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
+         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true },
+         { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200', f:true },
+         { k:'agg_s', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true },
+         { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200', f:true },
+         { k:'avg_raw', n:'Rata² Harian', c:'text-center bg-orange-100 text-orange-800 border-l border-orange-200', f:true },
+         { k:'pct_pendataan', n:'% Pendataan', c:'text-center bg-fuchsia-100 text-fuchsia-800 border-l border-fuchsia-200', f:true },
+         { k:'pct_submit', n:'% Submit', c:'text-center bg-sky-100 text-sky-800 border-l border-sky-200', f:true },
+         { k:'pct_approve', n:'% Approved', c:'text-center bg-emerald-100 text-emerald-800 border-l border-emerald-200', f:true },
+         { k:'kekurangan', n:'Kekurangan', c:'text-center bg-rose-100 text-rose-800 border-l border-rose-200', f:true },
+         { k:'statusTarget', n:'Status Capaian', c:'text-center bg-gray-100 text-gray-800 border-l border-gray-300' }
       ],
       3: [
-         { k:'pml', n:'Nama PML', c:'bg-slate-100 border-r border-gray-200', w:'200px' },
-         { k:'kec', n:'Kecamatan', c:'bg-slate-100 border-r border-gray-200' },
-         { k:'o', n:'Open', c:'text-center bg-blue-50 text-blue-800 border-l border-gray-200', f:true },
-         { k:'d', n:'Draft', c:'text-center bg-amber-50 text-amber-800 border-l border-gray-200', f:true },
-         { k:'sub', n:'Submit', c:'text-center bg-purple-50 text-purple-800 border-l border-gray-200', f:true },
-         { k:'rej', n:'Reject', c:'text-center bg-red-50 text-red-800 border-l border-gray-200', f:true },
-         { k:'app', n:'Approve', c:'text-center bg-green-50 text-green-800 border-l border-gray-200', f:true },
-         { k:'t', n:'Total', c:'text-center bg-slate-100 text-slate-800 border-l border-gray-200', f:true },
-         { k:'pct_open', n:'% Open', c:'text-center bg-slate-50 text-slate-700 border-l border-gray-200', f:true },
-         { k:'pct_draft', n:'% Draft', c:'text-center bg-slate-50 text-slate-700 border-l border-gray-200', f:true },
-         { k:'pct_sub', n:'% Submit', c:'text-center bg-slate-50 text-slate-700 border-l border-gray-200', f:true },
-         { k:'pct_rej', n:'% Reject', c:'text-center bg-slate-50 text-slate-700 border-l border-gray-200', f:true },
-         { k:'pct_app', n:'% Approve', c:'text-center bg-slate-50 text-slate-700 border-l border-gray-200', f:true },
-         { k:'kekurangan', n:'Kekurangan', c:'text-center bg-red-50 text-red-700 border-l border-gray-200', f:true },
-         { k:'statusTarget', n:'Status Capaian', c:'text-center bg-slate-100 border-l border-gray-200' }
+         { k:'pml', n:'Nama PML', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'200px' },
+         { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
+         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true },
+         { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200', f:true },
+         { k:'sub', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true },
+         { k:'rej', n:'Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200', f:true },
+         { k:'app', n:'Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200', f:true },
+         { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200', f:true },
+         { k:'pct_open', n:'% Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true },
+         { k:'pct_draft', n:'% Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200', f:true },
+         { k:'pct_sub', n:'% Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true },
+         { k:'pct_rej', n:'% Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200', f:true },
+         { k:'pct_app', n:'% Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200', f:true },
+         { k:'kekurangan', n:'Kekurangan', c:'text-center bg-rose-100 text-rose-800 border-l border-rose-200', f:true },
+         { k:'statusTarget', n:'Status Capaian', c:'text-center bg-gray-100 text-gray-800 border-l border-gray-300' }
       ],
       4: [
-         { k:'kec', n:'Kecamatan', c:'bg-slate-100 border-r border-gray-200' },
-         { k:'pj', n:'PJ Kuda', c:'bg-slate-100 border-r border-gray-200' },
-         { k:'o', n:'Open', c:'text-center bg-blue-50 text-blue-800 border-l border-gray-200', f:true },
-         { k:'d', n:'Draft', c:'text-center bg-amber-50 text-amber-800 border-l border-gray-200', f:true },
-         { k:'s', n:'Submit', c:'text-center bg-purple-50 text-purple-800 border-l border-gray-200', f:true },
-         { k:'rej', n:'Reject', c:'text-center bg-red-50 text-red-800 border-l border-gray-200', f:true },
-         { k:'app', n:'Approve', c:'text-center bg-green-50 text-green-800 border-l border-gray-200', f:true },
-         { k:'t', n:'Total', c:'text-center bg-slate-100 text-slate-800 border-l border-gray-200', f:true },
-         { k:'pct_pendataan', n:'% Pendataan', c:'text-center bg-slate-50 text-slate-700 border-l border-gray-200', f:true },
-         { k:'pct_submit', n:'% Submit', c:'text-center bg-slate-50 text-slate-700 border-l border-gray-200', f:true },
-         { k:'pct_approve', n:'% Approve', c:'text-center bg-slate-50 text-slate-700 border-l border-gray-200', f:true }
+         { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-blue-900' },
+         { k:'pj', n:'PJ Kuda', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
+         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true },
+         { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200', f:true },
+         { k:'s', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true },
+         { k:'rej', n:'Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200', f:true },
+         { k:'app', n:'Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200', f:true },
+         { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200', f:true },
+         { k:'pct_pendataan', n:'% Pendataan', c:'text-center bg-fuchsia-100 text-fuchsia-800 border-l border-fuchsia-200', f:true },
+         { k:'pct_submit', n:'% Submit', c:'text-center bg-sky-100 text-sky-800 border-l border-sky-200', f:true },
+         { k:'pct_approve', n:'% Approve', c:'text-center bg-emerald-100 text-emerald-800 border-l border-emerald-200', f:true }
       ],
       6: [
-         { k:'idSls', n:'ID SLS', c:'bg-slate-100 border-r border-gray-200', w:'130px' },
-         { k:'nmsls', n:'Wilayah', c:'bg-slate-100 border-r border-gray-200', w:'200px' },
-         { k:'petugas', n:'Petugas (PPL / PML)', c:'bg-slate-100 border-r border-gray-200', w:'250px' },
-         { k:'pj', n:'PJ Kuda', c:'bg-slate-100 border-r border-gray-200', w:'100px' },
-         { k:'prelist', n:'Prelist', c:'text-center bg-slate-50 border-l border-gray-200', f:true },
-         { k:'ditemukan', n:'Ditemukan', c:'text-center bg-green-50 text-green-700 border-l border-gray-200', f:true },
-         { k:'baru', n:'Kel Baru', c:'text-center bg-blue-50 text-blue-700 border-l border-gray-200', f:true },
-         { k:'meninggal', n:'Meninggal', c:'text-center bg-slate-50 border-l border-gray-200', f:true },
-         { k:'tdk', n:'Tdk Temu', c:'text-center bg-red-50 text-red-700 border-l border-gray-200', f:true }
+         { k:'idSls', n:'ID SLS', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'140px' },
+         { k:'nmsls', n:'Wilayah', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'200px' },
+         { k:'petugas', n:'Petugas (PPL / PML)', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'250px' }, // GABUNGAN
+         { k:'pj', n:'PJ Kuda', c:'bg-amber-100 text-amber-900', w:'100px' },
+         { k:'prelist', n:'Prelist Awal', c:'text-center border-l border-amber-200 bg-amber-100 text-slate-800', f:true },
+         { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-amber-200 bg-amber-100 text-green-700', f:true },
+         { k:'baru', n:'Kel. Baru', c:'text-center border-l border-amber-200 bg-amber-100 text-blue-700', f:true },
+         { k:'meninggal', n:'Meninggal', c:'text-center border-l border-amber-200 bg-amber-100 text-gray-700', f:true },
+         { k:'tdk', n:'Tdk Temu', c:'text-center border-l border-amber-200 bg-red-100 text-red-700', f:true }
       ],
       7: [
-         { k:'idSls', n:'ID SLS', c:'bg-slate-100 border-r border-gray-200', w:'130px' },
-         { k:'nmsls', n:'Wilayah', c:'bg-slate-100 border-r border-gray-200', w:'200px' },
-         { k:'petugas', n:'Petugas (PPL / PML)', c:'bg-slate-100 border-r border-gray-200', w:'250px' },
-         { k:'pj', n:'PJ Kuda', c:'bg-slate-100 border-r border-gray-200', w:'100px' },
-         { k:'prelist', n:'Pre Usaha', c:'text-center bg-slate-50 border-l border-gray-200', f:true },
-         { k:'ditemukan', n:'Ditemukan', c:'text-center bg-green-50 text-green-700 border-l border-gray-200', f:true },
-         { k:'baru', n:'Usaha Baru', c:'text-center bg-blue-50 text-blue-700 border-l border-gray-200', f:true },
-         { k:'tutup', n:'Tutup', c:'text-center bg-slate-50 border-l border-gray-200', f:true },
-         { k:'ganda', n:'Ganda', c:'text-center bg-amber-50 text-amber-700 border-l border-gray-200', f:true },
-         { k:'tdk', n:'Tdk Temu', c:'text-center bg-red-50 text-red-700 border-l border-gray-200', f:true }
+         { k:'idSls', n:'ID SLS', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'140px' },
+         { k:'nmsls', n:'Wilayah', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'200px' },
+         { k:'petugas', n:'Petugas (PPL / PML)', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'250px' }, // GABUNGAN
+         { k:'pj', n:'PJ Kuda', c:'bg-purple-100 text-purple-900', w:'100px' },
+         { k:'prelist', n:'Pre Usaha', c:'text-center border-l border-purple-200 bg-purple-100 text-slate-800', f:true },
+         { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-purple-200 bg-purple-100 text-green-700', f:true },
+         { k:'baru', n:'Usaha Baru', c:'text-center border-l border-purple-200 bg-purple-100 text-blue-700', f:true },
+         { k:'tutup', n:'Tutup', c:'text-center border-l border-purple-200 bg-purple-100 text-gray-700', f:true },
+         { k:'ganda', n:'Ganda', c:'text-center border-l border-purple-200 bg-amber-100 text-amber-700', f:true },
+         { k:'tdk', n:'Tdk Temu', c:'text-center border-l border-purple-200 bg-red-100 text-red-700', f:true }
       ],
       8: [
-         { k:'idSls', n:'ID SLS', c:'bg-slate-100 border-r border-gray-200', w:'130px' },
-         { k:'nmsls', n:'Wilayah', c:'bg-slate-100 border-r border-gray-200', w:'200px' },
-         { k:'petugas', n:'Petugas (PPL / PML)', c:'bg-slate-100 border-r border-gray-200', w:'250px' },
-         { k:'pj', n:'PJ Kuda', c:'bg-slate-100 border-r border-gray-200', w:'100px' },
-         { k:'ditemukan', n:'Ditemukan', c:'text-center bg-green-50 text-green-700 border-l border-gray-200', f:true },
-         { k:'baru', n:'Usaha Baru', c:'text-center bg-blue-50 text-blue-700 border-l border-gray-200', f:true },
-         { k:'tutup', n:'Tutup', c:'text-center bg-slate-50 border-l border-gray-200', f:true },
-         { k:'ganda', n:'Ganda', c:'text-center bg-amber-50 text-amber-700 border-l border-gray-200', f:true },
-         { k:'tdk', n:'Tdk Temu', c:'text-center bg-red-50 text-red-700 border-l border-gray-200', f:true }
+         { k:'idSls', n:'ID SLS', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'140px' },
+         { k:'nmsls', n:'Wilayah', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'200px' },
+         { k:'petugas', n:'Petugas (PPL / PML)', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'250px' }, // GABUNGAN
+         { k:'pj', n:'PJ Kuda', c:'bg-emerald-100 text-emerald-900', w:'100px' },
+         { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-emerald-200 bg-emerald-100 text-green-700', f:true },
+         { k:'baru', n:'Usaha Baru', c:'text-center border-l border-emerald-200 bg-emerald-100 text-blue-700', f:true },
+         { k:'tutup', n:'Tutup', c:'text-center border-l border-emerald-200 bg-emerald-100 text-gray-700', f:true },
+         { k:'ganda', n:'Ganda', c:'text-center border-l border-emerald-200 bg-amber-100 text-amber-700', f:true },
+         { k:'tdk', n:'Tdk Temu', c:'text-center border-l border-emerald-200 bg-red-100 text-red-700', f:true }
       ]
   };
 
   function buildTableHeaders() {
       Object.keys(TABS_CONFIG).forEach(tId => {
-          let headHtml = `<tr><th class="px-3 py-2 text-center align-middle bg-slate-100 border-r border-gray-200 w-12 sticky top-0 z-20">No</th>`;
+          let headHtml = `<tr><th class="px-4 py-3 text-center align-middle bg-gray-100 border-r border-gray-200 w-12 sticky top-0 z-20 shadow-sm bg-clip-padding">No</th>`;
           TABS_CONFIG[tId].forEach(col => {
               let wStyle = col.w ? `style="min-width:${col.w};"` : '';
+              // IKON FUNNEL DIPERKECIL (w-3 h-3)
               let funnelIcon = col.f ? `
-                  <div onclick="openFilterModal('${tId}', '${col.k}', '${col.n}')" class="p-0.5 hover:bg-black/10 rounded transition cursor-pointer" title="Saring Data">
-                      <svg class="w-3 h-3 text-slate-400 hover:text-slate-700" fill="currentColor" viewBox="0 0 20 20">
+                  <div onclick="openFilterModal('${tId}', '${col.k}', '${col.n}')" class="p-1 hover:bg-black/10 rounded-full transition cursor-pointer" title="Saring Data">
+                      <svg class="w-3 h-3 opacity-70 hover:opacity-100" fill="currentColor" viewBox="0 0 20 20">
                           <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"></path>
                       </svg>
                   </div>` : '';
               
+              // Tambahkan class bg-clip-padding agar warna background sticky tidak tembus
               headHtml += `
-                 <th class="px-3 py-2 align-middle sticky top-0 z-20 ${col.c}" ${wStyle}>
-                    <div class="flex justify-between items-center gap-1">
-                        <div class="flex-1 flex items-center cursor-pointer hover:opacity-70 transition" onclick="applySort('${col.k}')">
+                 <th class="px-3 py-3 align-middle transition hover:opacity-90 sticky top-0 z-20 shadow-sm bg-clip-padding ${col.c}" ${wStyle}>
+                    <div class="flex justify-between items-center gap-2">
+                        <div class="flex-1 flex justify-between items-center cursor-pointer" onclick="applySort('${col.k}')">
                            <span>${col.n}</span>
+                           <span class="text-[9px] opacity-40 ml-1">↕</span>
                         </div>
                         ${funnelIcon}
                     </div>
@@ -591,24 +673,24 @@
       let currentFilter = COLUMN_FILTERS[tId][colKey] || { mode: 'all', val: '' };
       
       Swal.fire({
-          title: '<span class="text-lg font-bold text-slate-800">Saring: ' + colName + '</span>',
+          title: '<span class="text-lg font-black uppercase text-indigo-900">Saring: ' + colName + '</span>',
           html: `
               <div class="text-left text-sm mt-2">
-                  <label class="block mb-1 font-semibold text-gray-700">Pilih Mode Saringan:</label>
-                  <select id="swal-filter-mode" class="w-full border border-gray-300 p-2 rounded mb-3 bg-gray-50 outline-none font-medium text-gray-700">
+                  <label class="block mb-1.5 font-bold text-gray-700">Pilih Mode Saringan:</label>
+                  <select id="swal-filter-mode" class="w-full border border-gray-300 p-2.5 rounded-xl mb-4 bg-gray-50 focus:border-indigo-500 outline-none font-bold text-gray-700">
                       <option value="all">Menampilkan Semua Data</option>
                       <option value="gt">Lebih Dari ( > )</option>
                       <option value="lt">Kurang Dari ( < )</option>
                       <option value="eq">Spesifik Sama Dengan ( = )</option>
                   </select>
                   <div id="swal-filter-val-container" class="hidden">
-                      <label class="block mb-1 font-semibold text-gray-700">Masukkan Angka:</label>
-                      <input type="number" id="swal-filter-val" class="w-full border border-gray-300 p-2 rounded bg-gray-50 outline-none font-medium text-slate-800" placeholder="0">
+                      <label class="block mb-1.5 font-bold text-gray-700">Masukkan Angka/Nilai:</label>
+                      <input type="number" id="swal-filter-val" class="w-full border border-gray-300 p-2.5 rounded-xl bg-gray-50 focus:border-indigo-500 outline-none font-bold text-indigo-700 text-lg" placeholder="Contoh: 0">
                   </div>
               </div>
           `,
-          showCancelButton: true, confirmButtonText: 'Terapkan', cancelButtonText: 'Batal',
-          customClass: { confirmButton: 'bg-blue-600 text-white px-4 py-2 rounded font-semibold', cancelButton: 'bg-gray-200 text-gray-800 px-4 py-2 rounded font-semibold' },
+          showCancelButton: true, confirmButtonText: 'Terapkan Filter', cancelButtonText: 'Batal',
+          customClass: { popup: 'rounded-2xl', confirmButton: 'bg-indigo-600 text-white font-bold px-6 py-2 rounded-xl', cancelButton: 'bg-gray-200 text-gray-800 font-bold px-6 py-2 rounded-xl' },
           didOpen: () => {
               let mode = document.getElementById('swal-filter-mode');
               let valCont = document.getElementById('swal-filter-val-container');
@@ -652,8 +734,9 @@
       return filtered;
   }
 
+  // BUG FIX: SWITCH TAB DEFENSIVE PROGRAMMING
   function switchTab(tabId) {
-     if (!DASH_DATA || DASH_DATA.length === 0) return; // Defensive jika belum load
+     if (!DASH_DATA || DASH_DATA.length === 0) return; // Cegah error klik saat data belum load
 
      if(activeTabId !== tabId) dashCurrentPage = 1; 
      activeTabId = tabId;
@@ -671,17 +754,17 @@
      
      [1,2,3,4,5,6,7,8].forEach(i => {
         let btn = document.getElementById('btnTab'+i);
-        if(btn) btn.className = btn.className.replace(/border-blue-600|border-amber-600|border-purple-600|border-emerald-600|text-blue-700|text-amber-600|text-purple-600|text-emerald-600/g, "border-transparent text-gray-500");
+        if(btn) btn.className = btn.className.replace(/border-blue-500|border-amber-500|border-purple-500|border-emerald-500|text-blue-700|text-amber-600|text-purple-600|text-emerald-600/g, "border-transparent text-gray-500");
         let tc = document.getElementById('tab'+i+'-content'); if(tc) { tc.classList.add('hidden'); tc.classList.remove('block'); }
      });
      
      let btnAct = document.getElementById('btnTab'+tabId);
      if(btnAct) {
         btnAct.classList.remove("border-transparent", "text-gray-500");
-        if(tabId===6) btnAct.classList.add("border-amber-600", "text-amber-600");
-        else if(tabId===7) btnAct.classList.add("border-purple-600", "text-purple-600");
-        else if(tabId===8) btnAct.classList.add("border-emerald-600", "text-emerald-600");
-        else btnAct.classList.add("border-blue-600", "text-blue-700");
+        if(tabId===6) btnAct.classList.add("border-amber-500", "text-amber-600");
+        else if(tabId===7) btnAct.classList.add("border-purple-500", "text-purple-600");
+        else if(tabId===8) btnAct.classList.add("border-emerald-500", "text-emerald-600");
+        else btnAct.classList.add("border-blue-500", "text-blue-700");
      }
      
      if(document.getElementById('tab'+tabId+'-content')) document.getElementById('tab'+tabId+'-content').classList.remove('hidden');
@@ -699,9 +782,7 @@
   function sortLogic(arr, col, isAsc) {
      arr.sort((a, b) => {
         let valA = a[col]; let valB = b[col];
-        if (typeof valA === 'number' && typeof valB === 'number') {
-           return isAsc ? valA - valB : valB - valA;
-        }
+        if (typeof valA === 'number' && typeof valB === 'number') return isAsc ? valA - valB : valB - valA;
         valA = String(valA).toLowerCase(); valB = String(valB).toLowerCase();
         if (valA < valB) return isAsc ? -1 : 1;
         if (valA > valB) return isAsc ? 1 : -1;
@@ -743,8 +824,8 @@
 
       document.getElementById('dashTotSls').innerText = tSls.toLocaleString('id-ID');
       document.getElementById('dashTotTarget').innerText = tTot.toLocaleString('id-ID');
-      document.getElementById('dashProgPendataan').innerHTML = `${(tDraft+tSub+tRej+tApp).toLocaleString('id-ID')} <span class="text-xs font-semibold opacity-70">(${pPend})</span>`;
-      document.getElementById('dashProgSubmit').innerHTML = `${(tSub+tRej+tApp).toLocaleString('id-ID')} <span class="text-xs font-semibold opacity-70">(${pSubm})</span>`;
+      document.getElementById('dashProgPendataan').innerHTML = `${(tDraft+tSub+tRej+tApp).toLocaleString('id-ID')} <span class="text-xs font-bold opacity-80">(${pPend})</span>`;
+      document.getElementById('dashProgSubmit').innerHTML = `${(tSub+tRej+tApp).toLocaleString('id-ID')} <span class="text-xs font-bold opacity-80">(${pSubm})</span>`;
       document.getElementById('dashTotOpen').innerText = tOpen.toLocaleString('id-ID'); 
       document.getElementById('dashTotDraft').innerText = tDraft.toLocaleString('id-ID');
       document.getElementById('dashTotSubmit').innerText = tSub.toLocaleString('id-ID'); 
@@ -804,6 +885,7 @@
           return p;
       });
 
+      // Meneruskan emailPpl & emailPml ke State
       TAB_STATE[6] = dashFilteredData.map(r => { let e = r.extKel||{}; return { idSls:r.idSls, nmsls:r.nmsls, desaKec:r.desa+' - '+r.kec, ppl:r.ppl, pml:r.pml, emailPpl:r.emailPpl, emailPml:r.emailPml, pj:r.pj, prelist:e.prelist||0, ditemukan:e.ditemukan||0, baru:e.baru||0, meninggal:e.meninggal||0, tdk:e.tdk||0, isMismatch:r.isMismatch }; });
       TAB_STATE[7] = dashFilteredData.map(r => { let e = r.extBku||{}; return { idSls:r.idSls, nmsls:r.nmsls, desaKec:r.desa+' - '+r.kec, ppl:r.ppl, pml:r.pml, emailPpl:r.emailPpl, emailPml:r.emailPml, pj:r.pj, prelist:e.prelist||0, ditemukan:e.ditemukan||0, baru:e.baru||0, tutup:e.tutup||0, ganda:e.ganda||0, tdk:e.tdk||0, isMismatch:r.isMismatch }; });
       TAB_STATE[8] = dashFilteredData.map(r => { let e = r.extUsKel||{}; return { idSls:r.idSls, nmsls:r.nmsls, desaKec:r.desa+' - '+r.kec, ppl:r.ppl, pml:r.pml, emailPpl:r.emailPpl, emailPml:r.emailPml, pj:r.pj, ditemukan:e.ditemukan||0, baru:e.baru||0, tutup:e.tutup||0, ganda:e.ganda||0, tdk:e.tdk||0, isMismatch:r.isMismatch }; });
@@ -820,7 +902,6 @@
       }
 
       let processedData = applyHeaderFilters(rawData, activeTabId);
-      
       if(sortCol) { sortLogic(processedData, sortCol, sortAsc); }
 
       const s = (dashCurrentPage - 1) * dashRowsPerPage;
@@ -828,7 +909,7 @@
       let pageData = processedData.slice(s, e);
 
       if(document.getElementById("pageInfoDash")) {
-          document.getElementById("pageInfoDash").innerText = `Menampilkan ${processedData.length>0?s+1:0} - ${e} dari ${processedData.length}`;
+          document.getElementById("pageInfoDash").innerText = `Menampilkan ${processedData.length>0?s+1:0} - ${e} dari ${processedData.length} Baris`;
       }
       if(document.getElementById("paginationDashContainer")) {
           document.getElementById("paginationDashContainer").innerHTML = generatePaginationHTML(processedData.length, dashCurrentPage, dashRowsPerPage, 'goDashPage');
@@ -836,150 +917,148 @@
 
       let html = '';
       if (pageData.length === 0) {
-         html = `<tr><td colspan="16" class="text-center py-8 italic text-gray-400">Data tidak ditemukan.</td></tr>`;
+         html = `<tr><td colspan="16" class="text-center py-10 italic text-gray-400">Data tidak ditemukan.</td></tr>`;
       } else {
          pageData.forEach((r, i) => {
             let n = s + i + 1;
             
-            // Reusable block untuk Gabung PPL/PML (Digunakan di Tab 1, 6, 7, 8)
+            // BLOK GABUNGAN PETUGAS (PPL & PML)
             let petugasHtml = `
-               <div class="mb-1">
-                   <span class="text-[10px] font-bold text-slate-700 uppercase">PPL: ${r.ppl}</span>
-                   ${r.emailPpl ? `<br><span class="text-[9px] text-gray-500 lowercase">${r.emailPpl}</span>` : ''}
-               </div>
-               <div>
-                   <span class="text-[10px] font-bold text-slate-700 uppercase">PML: ${r.pml}</span>
-                   ${r.emailPml ? `<br><span class="text-[9px] text-gray-500 lowercase">${r.emailPml}</span>` : ''}
-               </div>
+               <span class="text-[10px] font-bold text-blue-700 uppercase">PPL: ${r.ppl}</span>
+               ${r.emailPpl ? `<br><span class="text-[9px] font-medium text-gray-500 lowercase">${r.emailPpl}</span>` : ''}
+               <div class="mt-1"></div>
+               <span class="text-[10px] font-bold text-indigo-700 uppercase">PML: ${r.pml}</span>
+               ${r.emailPml ? `<br><span class="text-[9px] font-medium text-gray-500 lowercase">${r.emailPml}</span>` : ''}
             `;
 
+            // CLEAN FONT PADA TABEL (Menghilangkan font-black diganti font-bold/font-medium)
             if(activeTabId === 1) {
                html += `
-                 <tr class="border-b transition hover:bg-slate-50 ${r.isMismatch?'bg-red-50/50':''}">
-                   <td class="px-3 py-2 text-center border-r border-gray-200 font-medium text-slate-500 align-top">${n}${r.isMismatch?'<br><span class="text-red-500 text-[10px]">⚠️</span>':''}</td>
-                   <td class="px-3 py-2 font-mono text-[11px] font-medium text-slate-700 border-r border-gray-200 align-top">${r.idSls}</td>
-                   <td class="px-3 py-2 leading-tight border-r border-gray-200 align-top"><span class="font-semibold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 uppercase">${r.desaKec}</span></td>
-                   <td class="px-3 py-2 leading-tight border-r border-gray-200 align-top">${petugasHtml}</td>
-                   <td class="px-3 py-2 font-medium text-[10px] uppercase align-top border-r border-gray-200">${r.pj}</td>
-                   <td class="px-3 py-2 text-center font-medium text-slate-700 border-l border-gray-200 align-top">${r.open}</td>
-                   <td class="px-3 py-2 text-center font-medium text-slate-700 border-l border-gray-200 align-top">${r.draft}</td>
-                   <td class="px-3 py-2 text-center font-medium text-slate-700 border-l border-gray-200 align-top">${r.agg_submit}</td>
-                   <td class="px-3 py-2 text-center font-bold text-slate-800 border-l border-gray-200 bg-slate-50 align-top">${r.calcTotal}</td>
+                 <tr class="border-b transition hover:bg-blue-50/50 ${r.isMismatch?'bg-red-50/30':''}">
+                   <td class="px-4 py-3 text-center border-r border-blue-100 font-bold text-gray-500 align-middle">${n}${r.isMismatch?'<br><span class="text-red-500 text-[10px]">⚠️</span>':''}</td>
+                   <td class="px-4 py-3 font-mono text-[11px] font-semibold text-blue-900 border-r border-blue-100 align-middle">${r.idSls}</td>
+                   <td class="px-4 py-3 leading-tight border-r border-blue-100 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 font-medium uppercase">${r.desaKec}</span></td>
+                   <td class="px-4 py-3 leading-tight border-r border-blue-100 align-middle">${petugasHtml}</td>
+                   <td class="px-4 py-3 font-semibold text-[10px] uppercase align-middle">${r.pj}</td>
+                   <td class="px-4 py-3 text-center font-semibold text-blue-700 border-l border-blue-100 bg-blue-50/10 align-middle">${r.open}</td>
+                   <td class="px-4 py-3 text-center font-semibold text-amber-700 border-l border-amber-100 bg-amber-50/10 align-middle">${r.draft}</td>
+                   <td class="px-4 py-3 text-center font-bold text-purple-700 border-l border-purple-100 bg-purple-50/30 align-middle">${r.agg_submit}</td>
+                   <td class="px-4 py-3 text-center font-bold text-indigo-900 border-l border-indigo-200 bg-indigo-50/30 align-middle">${r.calcTotal}</td>
                  </tr>`;
             }
             else if(activeTabId === 2) {
-               let cl = r.statusTarget === 'Tercapai' ? 'hover:bg-slate-50' : 'bg-red-50/40 text-red-900 hover:bg-red-50';
+               let cl = r.statusTarget === 'Tercapai' ? 'hover:bg-blue-50/50' : 'bg-red-50/40 text-red-900 font-medium hover:bg-red-100/50';
                let bd = r.statusTarget === 'Tercapai' ? '<span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[9px] font-bold">TERCAPAI</span>' : '<span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[9px] font-bold">BELUM</span>';
                html += `
                  <tr class="border-b transition ${cl}">
-                   <td class="px-3 py-2 text-center border-r border-gray-200 align-middle">${n}</td>
-                   <td class="px-3 py-2 font-medium border-r border-gray-200 align-middle">
-                       <span class="text-xs uppercase">${r.ppl}</span>
-                       ${r.email ? `<br><span class="text-[9px] text-gray-500 lowercase">${r.email}</span>` : ''}
+                   <td class="px-4 py-3 text-center border-r border-blue-100 align-middle font-medium">${n}</td>
+                   <td class="px-4 py-3 font-semibold border-r border-blue-100 align-middle">
+                       ${r.ppl}
+                       ${r.email ? `<br><span class="text-[9px] font-medium text-gray-500 lowercase">${r.email}</span>` : ''}
                    </td>
-                   <td class="px-3 py-2 border-r border-gray-200 align-middle">${r.kec}</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.o}</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.d}</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.agg_s}</td>
-                   <td class="px-3 py-2 text-center font-bold bg-slate-50 border-l border-gray-200 align-middle">${r.t}</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.avg_raw}</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.pct_pendataan}%</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.pct_submit}%</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.pct_approve}%</td>
-                   <td class="px-3 py-2 text-center font-medium text-red-700 border-l border-gray-200 align-middle">${r.kekurangan}</td>
-                   <td class="px-3 py-2 text-center border-l border-gray-200 align-middle whitespace-nowrap">${bd}</td>
+                   <td class="px-4 py-3 border-r border-blue-100 align-middle font-medium">${r.kec}</td>
+                   <td class="px-4 py-3 text-center font-semibold text-blue-700 border-l border-blue-100 bg-blue-50/10 align-middle">${r.o}</td>
+                   <td class="px-4 py-3 text-center font-semibold text-amber-700 border-l border-amber-100 bg-amber-50/10 align-middle">${r.d}</td>
+                   <td class="px-4 py-3 text-center font-bold text-purple-700 border-l border-purple-100 bg-purple-50/20 align-middle">${r.agg_s}</td>
+                   <td class="px-4 py-3 text-center font-bold text-indigo-900 border-l border-indigo-200 bg-indigo-50/20 align-middle">${r.t}</td>
+                   <td class="px-4 py-3 text-center font-semibold text-orange-700 border-l border-orange-100 bg-orange-50/20 align-middle">${r.avg_raw}</td>
+                   <td class="px-4 py-3 text-center font-semibold text-fuchsia-700 border-l border-fuchsia-100 bg-fuchsia-50/10 align-middle">${r.pct_pendataan}%</td>
+                   <td class="px-4 py-3 text-center font-semibold text-sky-700 border-l border-sky-100 bg-sky-50/10 align-middle">${r.pct_submit}%</td>
+                   <td class="px-4 py-3 text-center font-semibold text-emerald-700 border-l border-emerald-100 bg-emerald-50/10 align-middle">${r.pct_approve}%</td>
+                   <td class="px-4 py-3 text-center font-semibold text-rose-700 border-l border-rose-100 bg-rose-50/20 align-middle">${r.kekurangan}</td>
+                   <td class="px-4 py-3 text-center border-l border-gray-200 align-middle whitespace-nowrap">${bd}</td>
                  </tr>`;
             }
             else if(activeTabId === 3) {
-               let cl = r.statusTarget === 'Tercapai' ? 'hover:bg-slate-50' : 'bg-red-50/40 text-red-900 hover:bg-red-50';
+               let cl = r.statusTarget === 'Tercapai' ? 'hover:bg-blue-50/50' : 'bg-red-50/40 text-red-900 font-medium hover:bg-red-100/50';
                let bd = r.statusTarget === 'Tercapai' ? '<span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[9px] font-bold">TERCAPAI</span>' : '<span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[9px] font-bold">BELUM</span>';
                html += `
                  <tr class="border-b transition ${cl}">
-                   <td class="px-3 py-2 text-center border-r border-gray-200 align-middle">${n}</td>
-                   <td class="px-3 py-2 font-medium border-r border-gray-200 align-middle">
-                       <span class="text-xs uppercase">${r.pml}</span>
-                       ${r.email ? `<br><span class="text-[9px] text-gray-500 lowercase">${r.email}</span>` : ''}
+                   <td class="px-4 py-3 text-center border-r border-blue-100 align-middle font-medium">${n}</td>
+                   <td class="px-4 py-3 font-semibold border-r border-blue-100 text-indigo-700 align-middle">
+                       ${r.pml}
+                       ${r.email ? `<br><span class="text-[9px] font-medium text-gray-500 lowercase">${r.email}</span>` : ''}
                    </td>
-                   <td class="px-3 py-2 border-r border-gray-200 align-middle">${r.kec}</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.o}</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.d}</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.sub}</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.rej}</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.app}</td>
-                   <td class="px-3 py-2 text-center font-bold bg-slate-50 border-l border-gray-200 align-middle">${r.t}</td>
-                   <td class="px-3 py-2 text-center border-l border-gray-200 align-middle">${r.pct_open}%</td>
-                   <td class="px-3 py-2 text-center border-l border-gray-200 align-middle">${r.pct_draft}%</td>
-                   <td class="px-3 py-2 text-center border-l border-gray-200 align-middle">${r.pct_sub}%</td>
-                   <td class="px-3 py-2 text-center border-l border-gray-200 align-middle">${r.pct_rej}%</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.pct_app}%</td>
-                   <td class="px-3 py-2 text-center font-medium text-red-700 border-l border-gray-200 align-middle">${r.kekurangan}</td>
-                   <td class="px-3 py-2 text-center border-l border-gray-200 align-middle whitespace-nowrap">${bd}</td>
+                   <td class="px-4 py-3 border-r border-blue-100 align-middle font-medium">${r.kec}</td>
+                   <td class="px-4 py-3 text-center font-semibold border-l border-blue-100 align-middle">${r.o}</td>
+                   <td class="px-4 py-3 text-center font-semibold border-l border-amber-100 align-middle">${r.d}</td>
+                   <td class="px-4 py-3 text-center font-bold text-purple-700 border-l border-purple-100 align-middle">${r.sub}</td>
+                   <td class="px-4 py-3 text-center font-semibold text-red-700 border-l border-red-100 align-middle">${r.rej}</td>
+                   <td class="px-4 py-3 text-center font-semibold text-green-700 border-l border-green-100 align-middle">${r.app}</td>
+                   <td class="px-4 py-3 text-center font-bold text-indigo-900 border-l border-indigo-200 align-middle">${r.t}</td>
+                   <td class="px-4 py-3 text-center font-medium border-l border-blue-100 align-middle">${r.pct_open}%</td>
+                   <td class="px-4 py-3 text-center font-medium border-l border-amber-100 align-middle">${r.pct_draft}%</td>
+                   <td class="px-4 py-3 text-center font-medium border-l border-purple-100 align-middle">${r.pct_sub}%</td>
+                   <td class="px-4 py-3 text-center font-medium border-l border-red-100 align-middle">${r.pct_rej}%</td>
+                   <td class="px-4 py-3 text-center font-semibold text-emerald-700 border-l border-emerald-100 align-middle">${r.pct_app}%</td>
+                   <td class="px-4 py-3 text-center font-semibold text-rose-700 border-l border-rose-100 bg-rose-50/20 align-middle">${r.kekurangan}</td>
+                   <td class="px-4 py-3 text-center border-l border-gray-200 align-middle whitespace-nowrap">${bd}</td>
                  </tr>`;
             }
             else if(activeTabId === 4) {
                html += `
-                 <tr class="border-b hover:bg-slate-50 transition">
-                   <td class="px-3 py-2 text-center border-r border-gray-200 align-middle">${n}</td>
-                   <td class="px-3 py-2 font-medium border-r border-gray-200 align-middle">${r.kec}</td>
-                   <td class="px-3 py-2 font-medium border-r border-gray-200 align-middle">${r.pj}</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.o}</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.d}</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.s}</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.rej}</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.app}</td>
-                   <td class="px-3 py-2 text-center font-bold bg-slate-50 border-l border-gray-200 align-middle">${r.t}</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.pct_pendataan}%</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.pct_submit}%</td>
-                   <td class="px-3 py-2 text-center font-medium border-l border-gray-200 align-middle">${r.pct_approve}%</td>
+                 <tr class="border-b hover:bg-blue-50/50 transition">
+                   <td class="px-4 py-3 text-center border-r border-blue-100 align-middle font-medium">${n}</td>
+                   <td class="px-4 py-3 font-semibold border-r border-blue-100 text-gray-800 align-middle">${r.kec}</td>
+                   <td class="px-4 py-3 font-medium border-r border-blue-100 align-middle">${r.pj}</td>
+                   <td class="px-4 py-3 text-center font-semibold border-l border-blue-100 align-middle">${r.o}</td>
+                   <td class="px-4 py-3 text-center font-semibold border-l border-amber-100 align-middle">${r.d}</td>
+                   <td class="px-4 py-3 text-center font-bold text-purple-700 border-l border-purple-100 align-middle">${r.s}</td>
+                   <td class="px-4 py-3 text-center font-semibold text-red-700 border-l border-red-100 align-middle">${r.rej}</td>
+                   <td class="px-4 py-3 text-center font-semibold text-green-700 border-l border-green-100 align-middle">${r.app}</td>
+                   <td class="px-4 py-3 text-center font-bold text-indigo-900 border-l border-indigo-200 align-middle">${r.t}</td>
+                   <td class="px-4 py-3 text-center font-semibold border-l border-fuchsia-100 text-fuchsia-700 align-middle">${r.pct_pendataan}%</td>
+                   <td class="px-4 py-3 text-center font-semibold border-l border-sky-100 text-sky-700 align-middle">${r.pct_submit}%</td>
+                   <td class="px-4 py-3 text-center font-semibold border-l border-emerald-100 text-emerald-700 align-middle">${r.pct_approve}%</td>
                  </tr>`;
             }
             else if(activeTabId === 6) {
-               let al = r.tdk > (r.prelist*0.2) ? 'bg-red-50/40 hover:bg-red-50' : 'hover:bg-slate-50';
+               let al = r.tdk > (r.prelist*0.2) ? 'bg-red-50/50 hover:bg-red-100/50' : 'even:bg-amber-50/20 odd:bg-white hover:bg-amber-100/30';
                html += `
-                 <tr class="border-b transition ${al}">
-                   <td class="px-3 py-2 text-center font-medium text-gray-500 border-r border-gray-200 align-top">${n}</td>
-                   <td class="px-3 py-2 font-mono text-[11px] font-medium text-slate-700 border-r border-gray-200 align-top">${r.idSls}</td>
-                   <td class="px-3 py-2 leading-tight border-r border-gray-200 align-top"><span class="font-semibold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 uppercase">${r.desaKec}</span></td>
-                   <td class="px-3 py-2 leading-tight border-r border-gray-200 align-top">${petugasHtml}</td>
-                   <td class="px-3 py-2 font-medium text-[10px] uppercase align-top border-r border-gray-200">${r.pj}</td>
-                   <td class="px-3 py-2 text-center font-mono font-medium text-slate-700 border-l border-gray-200 bg-slate-50 align-top">${r.prelist}</td>
-                   <td class="px-3 py-2 text-center font-mono font-medium border-l border-gray-200 align-top">${r.ditemukan}</td>
-                   <td class="px-3 py-2 text-center font-mono font-medium border-l border-gray-200 align-top">${r.baru}</td>
-                   <td class="px-3 py-2 text-center font-mono font-medium border-l border-gray-200 align-top">${r.meninggal}</td>
-                   <td class="px-3 py-2 text-center font-mono font-semibold ${r.tdk>0?'text-red-600':''} border-l border-gray-200 align-top">${r.tdk}</td>
+                 <tr class="border-b border-amber-100 transition ${al}">
+                   <td class="px-4 py-3 text-center font-bold text-gray-500 border-r border-amber-200 align-middle">${n}</td>
+                   <td class="px-4 py-3 font-mono text-[11px] font-semibold text-amber-900 border-r border-amber-200 align-middle">${r.idSls}</td>
+                   <td class="px-4 py-3 leading-tight border-r border-amber-200 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 font-medium uppercase">${r.desaKec}</span></td>
+                   <td class="px-4 py-3 leading-tight border-r border-amber-200 align-middle">${petugasHtml}</td>
+                   <td class="px-4 py-3 font-semibold text-[10px] text-amber-900 uppercase align-middle">${r.pj}</td>
+                   <td class="px-4 py-3 text-center font-mono font-semibold text-slate-800 border-l border-amber-200 bg-amber-50/10 align-middle">${r.prelist}</td>
+                   <td class="px-4 py-3 text-center font-mono font-semibold text-green-700 border-l border-amber-200 align-middle">${r.ditemukan}</td>
+                   <td class="px-4 py-3 text-center font-mono font-semibold text-blue-700 border-l border-amber-200 align-middle">${r.baru}</td>
+                   <td class="px-4 py-3 text-center font-mono font-semibold text-gray-700 border-l border-amber-200 align-middle">${r.meninggal}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-red-700 border-l border-amber-200 ${r.tdk>0?'bg-red-50/80':''} align-middle">${r.tdk}</td>
                  </tr>`;
             }
             else if(activeTabId === 7) {
-               let al = r.tdk > (r.prelist*0.2) ? 'bg-red-50/40 hover:bg-red-50' : 'hover:bg-slate-50';
+               let al = r.tdk > (r.prelist*0.2) ? 'bg-red-50/50 hover:bg-red-100/50' : 'even:bg-purple-50/20 odd:bg-white hover:bg-purple-100/30';
                html += `
-                 <tr class="border-b transition ${al}">
-                   <td class="px-3 py-2 text-center font-medium text-gray-500 border-r border-gray-200 align-top">${n}</td>
-                   <td class="px-3 py-2 font-mono text-[11px] font-medium text-slate-700 border-r border-gray-200 align-top">${r.idSls}</td>
-                   <td class="px-3 py-2 leading-tight border-r border-gray-200 align-top"><span class="font-semibold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 uppercase">${r.desaKec}</span></td>
-                   <td class="px-3 py-2 leading-tight border-r border-gray-200 align-top">${petugasHtml}</td>
-                   <td class="px-3 py-2 font-medium text-[10px] uppercase align-top border-r border-gray-200">${r.pj}</td>
-                   <td class="px-3 py-2 text-center font-mono font-medium text-slate-700 border-l border-gray-200 bg-slate-50 align-top">${r.prelist}</td>
-                   <td class="px-3 py-2 text-center font-mono font-medium border-l border-gray-200 align-top">${r.ditemukan}</td>
-                   <td class="px-3 py-2 text-center font-mono font-medium border-l border-gray-200 align-top">${r.baru}</td>
-                   <td class="px-3 py-2 text-center font-mono font-medium border-l border-gray-200 align-top">${r.tutup}</td>
-                   <td class="px-3 py-2 text-center font-mono font-medium border-l border-gray-200 align-top">${r.ganda}</td>
-                   <td class="px-3 py-2 text-center font-mono font-semibold ${r.tdk>0?'text-red-600':''} border-l border-gray-200 align-top">${r.tdk}</td>
+                 <tr class="border-b border-purple-100 transition ${al}">
+                   <td class="px-4 py-3 text-center font-bold text-gray-500 border-r border-purple-200 align-middle">${n}</td>
+                   <td class="px-4 py-3 font-mono text-[11px] font-semibold text-purple-900 border-r border-purple-200 align-middle">${r.idSls}</td>
+                   <td class="px-4 py-3 leading-tight border-r border-purple-200 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 font-medium uppercase">${r.desaKec}</span></td>
+                   <td class="px-4 py-3 leading-tight border-r border-purple-200 align-middle">${petugasHtml}</td>
+                   <td class="px-4 py-3 font-semibold text-[10px] text-purple-900 uppercase align-middle">${r.pj}</td>
+                   <td class="px-4 py-3 text-center font-mono font-semibold text-slate-800 border-l border-purple-200 bg-purple-50/10 align-middle">${r.prelist}</td>
+                   <td class="px-4 py-3 text-center font-mono font-semibold text-green-700 border-l border-purple-200 align-middle">${r.ditemukan}</td>
+                   <td class="px-4 py-3 text-center font-mono font-semibold text-blue-700 border-l border-purple-200 align-middle">${r.baru}</td>
+                   <td class="px-4 py-3 text-center font-mono font-semibold text-gray-700 border-l border-purple-200 align-middle">${r.tutup}</td>
+                   <td class="px-4 py-3 text-center font-mono font-semibold text-amber-700 border-l border-purple-200 align-middle">${r.ganda}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-red-700 border-l border-purple-200 ${r.tdk>0?'bg-red-50/80':''} align-middle">${r.tdk}</td>
                  </tr>`;
             }
             else if(activeTabId === 8) {
-               let al = r.tdk > 0 ? 'bg-red-50/40 hover:bg-red-50' : 'hover:bg-slate-50';
+               let al = r.tdk > 0 ? 'bg-red-50/50 hover:bg-red-100/50' : 'even:bg-emerald-50/20 odd:bg-white hover:bg-emerald-100/30';
                html += `
-                 <tr class="border-b transition ${al}">
-                   <td class="px-3 py-2 text-center font-medium text-gray-500 border-r border-gray-200 align-top">${n}</td>
-                   <td class="px-3 py-2 font-mono text-[11px] font-medium text-slate-700 border-r border-gray-200 align-top">${r.idSls}</td>
-                   <td class="px-3 py-2 leading-tight border-r border-gray-200 align-top"><span class="font-semibold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 uppercase">${r.desaKec}</span></td>
-                   <td class="px-3 py-2 leading-tight border-r border-gray-200 align-top">${petugasHtml}</td>
-                   <td class="px-3 py-2 font-medium text-[10px] uppercase align-top border-r border-gray-200">${r.pj}</td>
-                   <td class="px-3 py-2 text-center font-mono font-medium border-l border-gray-200 align-top">${r.ditemukan}</td>
-                   <td class="px-3 py-2 text-center font-mono font-medium border-l border-gray-200 align-top">${r.baru}</td>
-                   <td class="px-3 py-2 text-center font-mono font-medium border-l border-gray-200 align-top">${r.tutup}</td>
-                   <td class="px-3 py-2 text-center font-mono font-medium border-l border-gray-200 align-top">${r.ganda}</td>
-                   <td class="px-3 py-2 text-center font-mono font-semibold ${r.tdk>0?'text-red-600':''} border-l border-gray-200 align-top">${r.tdk}</td>
+                 <tr class="border-b border-emerald-100 transition ${al}">
+                   <td class="px-4 py-3 text-center font-bold text-gray-500 border-r border-emerald-200 align-middle">${n}</td>
+                   <td class="px-4 py-3 font-mono text-[11px] font-semibold text-emerald-900 border-r border-emerald-200 align-middle">${r.idSls}</td>
+                   <td class="px-4 py-3 leading-tight border-r border-emerald-200 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 font-medium uppercase">${r.desaKec}</span></td>
+                   <td class="px-4 py-3 leading-tight border-r border-emerald-200 align-middle">${petugasHtml}</td>
+                   <td class="px-4 py-3 font-semibold text-[10px] text-emerald-900 uppercase align-middle">${r.pj}</td>
+                   <td class="px-4 py-3 text-center font-mono font-semibold text-green-700 border-l border-emerald-200 bg-emerald-50/10 align-middle">${r.ditemukan}</td>
+                   <td class="px-4 py-3 text-center font-mono font-semibold text-blue-700 border-l border-emerald-200 bg-emerald-50/10 align-middle">${r.baru}</td>
+                   <td class="px-4 py-3 text-center font-mono font-semibold text-gray-700 border-l border-emerald-200 bg-emerald-50/10 align-middle">${r.tutup}</td>
+                   <td class="px-4 py-3 text-center font-mono font-semibold text-amber-700 border-l border-emerald-200 bg-emerald-50/10 align-middle">${r.ganda}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-red-700 border-l border-emerald-200 ${r.tdk>0?'bg-red-50/80':''} align-middle">${r.tdk}</td>
                  </tr>`;
             }
          });
@@ -1005,14 +1084,14 @@
        const totalPages = Math.ceil(totalItems / rowsPerPage);
        if (totalPages <= 1) return '';
        let html = '<div class="flex flex-wrap gap-1">';
-       html += `<button onclick="${callbackName}(${currentPage - 1})" class="px-2 py-1 rounded border border-gray-300 text-xs font-semibold text-gray-600 hover:bg-gray-100 disabled:opacity-50 transition" ${currentPage === 1 ? 'disabled' : ''}>&laquo;</button>`;
+       html += `<button onclick="${callbackName}(${currentPage - 1})" class="px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-bold text-gray-600 hover:bg-gray-100 disabled:opacity-50 transition shadow-sm" ${currentPage === 1 ? 'disabled' : ''}>&laquo;</button>`;
        let startPage = Math.max(1, currentPage - 2);
        let endPage = Math.min(totalPages, currentPage + 2);
        for (let i = startPage; i <= endPage; i++) {
-           let activeClass = i === currentPage ? 'bg-blue-600 text-white border-blue-600' : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-100';
-           html += `<button onclick="${callbackName}(${i})" class="px-3 py-1 rounded border ${activeClass} text-xs font-semibold transition">${i}</button>`;
+           let activeClass = i === currentPage ? 'bg-blue-600 text-white border-blue-600 shadow-md' : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-100 shadow-sm';
+           html += `<button onclick="${callbackName}(${i})" class="px-3 py-1.5 rounded-lg border ${activeClass} text-xs font-bold transition">${i}</button>`;
        }
-       html += `<button onclick="${callbackName}(${currentPage + 1})" class="px-2 py-1 rounded border border-gray-300 text-xs font-semibold text-gray-600 hover:bg-gray-100 disabled:opacity-50 transition" ${currentPage === totalPages ? 'disabled' : ''}>&raquo;</button>`;
+       html += `<button onclick="${callbackName}(${currentPage + 1})" class="px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-bold text-gray-600 hover:bg-gray-100 disabled:opacity-50 transition shadow-sm" ${currentPage === totalPages ? 'disabled' : ''}>&raquo;</button>`;
        return html + '</div>';
   }
 
@@ -1055,35 +1134,43 @@
                  ] 
              },
              options: { 
-                 indexAxis: 'y', maintainAspectRatio: false, responsive: true, interaction: { mode: 'y', intersect: true }, 
+                 indexAxis: 'y', 
+                 maintainAspectRatio: false, 
+                 responsive: true, 
+                 interaction: { mode: 'y', intersect: true }, 
                  scales: { 
                      x: { stacked: true, max: 100, grid: { display: false }, ticks: { callback: v => v+'%' } }, 
                      y: { stacked: true } 
                  }, 
                  plugins: { 
-                     legend: { display: true, position: 'top', labels: {font:{family:'Inter', weight:'600'}} }, 
+                     legend: { display: true, position: 'top', labels: {font:{family:'Montserrat', weight:'bold'}} }, 
+                     datalabels: { display: false }, 
                      tooltip: { 
-                         enabled: true, position: 'nearest', 
+                         enabled: true, 
+                         position: 'nearest', 
                          callbacks: { 
                              label: c => (c.dataset.label||'') + ': ' + (c.parsed.x||0) + '%', 
                              footer: (i) => `Total Target: ${kecChartMapGlobal[i[0].label].tot}\nTotal Submit Absolut: ${kecChartMapGlobal[i[0].label].s+kecChartMapGlobal[i[0].label].rej+kecChartMapGlobal[i[0].label].a}` 
                          } 
                      } 
                  },
-                 layout: { padding: { left: 10, right: 20, top: 10, bottom: 10 } } 
+                 layout: { padding: { left: 120, right: 40, top: 10, bottom: 10 } } 
              }
          });
      }
   }
 
   // ====================================================================
-  // ADMIN PANEL: UPLOAD DATA EKSTERNAL VIA SHEETJS (TERMASUK FIX BUG RESOLVE)
+  // ADMIN PANEL: UPLOAD DATA EKSTERNAL VIA SHEETJS (FIX BUG PROMISES)
   // ====================================================================
   function authAdminPanel() {
     Swal.fire({ 
-        title: '<span class="text-xl font-bold text-slate-800">OTORISASI ADMIN</span>', 
-        input: 'password', showCancelButton: true, confirmButtonText: 'Buka Panel', cancelButtonText: 'Batal', 
-        customClass: { confirmButton: 'bg-blue-600 text-white px-6 py-2 rounded font-semibold', cancelButton: 'bg-gray-200 text-gray-800 px-6 py-2 rounded font-semibold' }
+        title: '<span class="text-xl font-black text-indigo-900">OTORISASI ADMIN</span>', 
+        input: 'password', 
+        showCancelButton: true, 
+        confirmButtonText: 'Buka Panel', 
+        cancelButtonText: 'Batal', 
+        customClass: { confirmButton: 'bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold', popup: 'rounded-2xl' }
     }).then(res => { 
         if(res.isConfirmed && res.value === 'fasih2026') showUploadModal(); 
         else if(res.isConfirmed) Swal.fire('Akses Ditolak', 'PIN Salah.', 'error'); 
@@ -1092,22 +1179,24 @@
 
   function showUploadModal() {
     Swal.fire({
-      title: '<span class="text-xl font-bold text-slate-800 uppercase">Integrasi Data Lapangan</span>',
+      title: '<span class="text-xl font-black uppercase text-indigo-800">INTEGRASI DATA LAPANGAN</span>',
       html: `
         <div class="text-left text-sm mt-4 space-y-4">
-          <div class="p-4 border border-amber-200 bg-amber-50 rounded shadow-sm">
-              <label class="font-bold text-amber-800 block mb-2">1. Upload Pemutakhiran Keluarga (.xlsx)</label>
-              <input type="file" id="fileKel" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-amber-600 file:text-white file:font-semibold hover:file:bg-amber-700 transition">
+          <div class="p-4 border border-amber-300 bg-amber-50 rounded-xl shadow-sm">
+              <label class="font-black text-amber-800 block mb-2">1. Upload Pemutakhiran Keluarga (.xlsx)</label>
+              <input type="file" id="fileKel" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-amber-600 file:text-white file:font-bold hover:file:bg-amber-700 transition">
           </div>
-          <div class="p-4 border border-purple-200 bg-purple-50 rounded shadow-sm">
-              <label class="font-bold text-purple-800 block mb-2">2. Upload Pendataan Usaha (.xlsx)</label>
-              <input type="file" id="fileUsa" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-purple-600 file:text-white file:font-semibold hover:file:bg-purple-700 transition">
+          <div class="p-4 border border-purple-300 bg-purple-50 rounded-xl shadow-sm">
+              <label class="font-black text-purple-800 block mb-2">2. Upload Pendataan Usaha (.xlsx)</label>
+              <input type="file" id="fileUsa" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-purple-600 file:text-white file:font-bold hover:file:bg-purple-700 transition">
           </div>
           <p class="text-[10px] text-gray-500 font-medium italic mt-2 text-center">Pilih file yang ingin diperbarui (bisa salah satu). Sistem otomatis memecah file Usaha menjadi BKU & Usaha Keluarga.</p>
         </div>
       `,
-      confirmButtonText: 'SINKRONISASI SEKARANG', showCancelButton: true, allowOutsideClick: false,
-      customClass: { confirmButton: 'bg-blue-600 w-full mt-2 text-white font-bold tracking-wider rounded py-3', cancelButton: 'bg-gray-200 text-gray-800 px-6 py-2 rounded font-semibold w-full mt-2' },
+      confirmButtonText: 'SINKRONISASI SEKARANG', 
+      showCancelButton: true, 
+      allowOutsideClick: false,
+      customClass: { confirmButton: 'bg-indigo-600 w-full mt-2 text-white font-bold tracking-wider rounded-xl py-3', popup: 'rounded-2xl' },
       preConfirm: () => {
         let fk = document.getElementById('fileKel').files[0]; 
         let fu = document.getElementById('fileUsa').files[0];
@@ -1123,7 +1212,8 @@
      Swal.fire({
          title: 'Memproses Data...', 
          html: '<b>Sistem</b> sedang mengekstrak ribuan baris Excel Anda di belakang layar...<br><span class="text-xs text-red-500 italic mt-2 block">Dilarang menutup browser!</span>', 
-         allowOutsideClick: false, didOpen: () => Swal.showLoading()
+         allowOutsideClick: false, 
+         didOpen: () => Swal.showLoading()
      });
      try {
        if(fKel) { 
@@ -1149,7 +1239,7 @@
      }).then(r => r.json());
   }
 
-  // --- PERBAIKAN BUG PROMISES: res -> resolve, rej -> reject ---
+  // BUG FIX: res & rej diubah menjadi resolve & reject agar tidak bentrok dengan res milik SweetAlert.
   function parseExcelKeluarga(f) {
     return new Promise((resolve, reject) => { 
         let r = new FileReader(); 
@@ -1227,7 +1317,6 @@
                   }
               }); 
           }
-          
           let sUK = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA KELUARGA'));
           if(sUK) { 
               let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUK], {header: 1}); 
@@ -1281,37 +1370,63 @@
        if(dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
        const btn = document.getElementById('btnImage'); 
        const originalText = btn.innerHTML; 
-       btn.innerHTML = 'PROSES...'; 
+       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROSES...'; 
        btn.disabled = true;
 
        const element = document.getElementById('captureArea'); 
        const watermarkHeader = document.getElementById('watermarkHeader');
        
-       document.getElementById('watermarkText').innerHTML = `HARI KE - ${timingConfig.x} | TARGET PROGRESS : ${timingConfig.y.toFixed(2)}% | TERAKHIR SINKRONISASI: ${document.getElementById('txtLastUpdate').innerText}`;
-       watermarkHeader.classList.remove('hidden'); watermarkHeader.classList.add('flex');
+       document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - ${timingConfig.x} | TARGET PROGRESS : ${timingConfig.y.toFixed(2)}% | TERAKHIR SINKRONISASI: ${document.getElementById('txtLastUpdate').innerText}`;
+       watermarkHeader.classList.remove('hidden'); 
+       watermarkHeader.classList.add('flex');
        
-       const originalWidth = element.style.width; const originalOverflow = element.style.overflow;
-       window.scrollTo(0,0); document.documentElement.scrollLeft = 0; document.body.scrollLeft = 0; element.scrollLeft = 0; 
+       const originalWidth = element.style.width; 
+       const originalOverflow = element.style.overflow;
        
-       element.classList.remove('overflow-auto', 'flex-1', 'min-h-0'); element.classList.add('h-max'); element.style.overflow = 'visible'; 
-       const fullWidth = element.scrollWidth; element.style.width = fullWidth + 'px'; element.style.maxWidth = 'none';
+       window.scrollTo(0,0); 
+       document.documentElement.scrollLeft = 0; 
+       document.body.scrollLeft = 0; 
+       element.scrollLeft = 0; 
+       
+       element.classList.remove('overflow-auto', 'flex-1', 'min-h-0'); 
+       element.classList.add('h-max'); 
+       element.style.overflow = 'visible'; 
+       
+       const fullWidth = element.scrollWidth; 
+       element.style.width = fullWidth + 'px'; 
+       element.style.maxWidth = 'none';
 
-       html2canvas(element, { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: fullWidth, width: fullWidth }).then(canvas => {
-           watermarkHeader.classList.add('hidden'); watermarkHeader.classList.remove('flex'); 
-           element.style.width = originalWidth; element.style.overflow = originalOverflow;
-           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); element.classList.remove('h-max');
+       html2canvas(element, { 
+           scale: 2, 
+           useCORS: true, 
+           scrollX: 0, 
+           scrollY: 0,
+           windowWidth: fullWidth,
+           width: fullWidth
+       }).then(canvas => {
+           watermarkHeader.classList.add('hidden'); 
+           watermarkHeader.classList.remove('flex'); 
+           element.style.width = originalWidth; 
+           element.style.overflow = originalOverflow;
+           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); 
+           element.classList.remove('h-max');
            
            let link = document.createElement('a'); 
            link.download = `Dashboard_FASIH_${new Date().toISOString().slice(0,10)}.png`; 
            link.href = canvas.toDataURL('image/png'); 
            link.click();
 
-           btn.innerHTML = originalText; btn.disabled = false;
+           btn.innerHTML = originalText; 
+           btn.disabled = false;
        }).catch(err => {
-           watermarkHeader.classList.add('hidden'); watermarkHeader.classList.remove('flex');
-           element.style.width = originalWidth; element.style.overflow = originalOverflow;
-           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); element.classList.remove('h-max');
-           btn.innerHTML = originalText; btn.disabled = false;
+           watermarkHeader.classList.add('hidden'); 
+           watermarkHeader.classList.remove('flex');
+           element.style.width = originalWidth; 
+           element.style.overflow = originalOverflow;
+           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); 
+           element.classList.remove('h-max');
+           btn.innerHTML = originalText; 
+           btn.disabled = false;
            Swal.fire('Error', 'Gagal memproses Gambar.', 'error');
        });
   }
@@ -1320,42 +1435,69 @@
        if(dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
        const btn = document.getElementById('btnScreenshot'); 
        const originalText = btn.innerHTML; 
-       btn.innerHTML = 'PROSES...'; 
+       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROSES...'; 
        btn.disabled = true;
 
        const element = document.getElementById('captureArea'); 
        const watermarkHeader = document.getElementById('watermarkHeader');
        
-       document.getElementById('watermarkText').innerHTML = `HARI KE - ${timingConfig.x} | TARGET PROGRESS : ${timingConfig.y.toFixed(2)}% | TERAKHIR SINKRONISASI: ${document.getElementById('txtLastUpdate').innerText}`;
-       watermarkHeader.classList.remove('hidden'); watermarkHeader.classList.add('flex');
+       document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - ${timingConfig.x} | TARGET PROGRESS : ${timingConfig.y.toFixed(2)}% | TERAKHIR SINKRONISASI: ${document.getElementById('txtLastUpdate').innerText}`;
+       watermarkHeader.classList.remove('hidden'); 
+       watermarkHeader.classList.add('flex');
        
-       const originalWidth = element.style.width; const originalOverflow = element.style.overflow;
-       window.scrollTo(0,0); document.documentElement.scrollLeft = 0; document.body.scrollLeft = 0; element.scrollLeft = 0; 
+       const originalWidth = element.style.width; 
+       const originalOverflow = element.style.overflow;
        
-       element.classList.remove('overflow-auto', 'flex-1', 'min-h-0'); element.classList.add('h-max'); element.style.overflow = 'visible';
+       window.scrollTo(0,0); 
+       document.documentElement.scrollLeft = 0; 
+       document.body.scrollLeft = 0; 
+       element.scrollLeft = 0; 
+       
+       element.classList.remove('overflow-auto', 'flex-1', 'min-h-0'); 
+       element.classList.add('h-max'); 
+       element.style.overflow = 'visible';
+       
        const table = element.querySelector('.block table'); 
        const fullWidth = table ? table.scrollWidth : element.scrollWidth;
-       element.style.width = fullWidth + 'px'; element.style.maxWidth = 'none';
+       element.style.width = fullWidth + 'px'; 
+       element.style.maxWidth = 'none';
 
        let optOpt = {
-          margin: [0.3, 0.2, 0.3, 0.3], 
-          filename: `Laporan_Monitoring_FASIH_${new Date().toISOString().slice(0,10)}.pdf`,
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, x: 0, y: 0, windowWidth: fullWidth, width: fullWidth },
-          jsPDF: { unit: 'in', format: 'a3', orientation: 'landscape' }, 
-          pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'td', 'th'] } 
+          margin:        [0.3, 0.2, 0.3, 0.3], 
+          filename:      `Laporan_Monitoring_FASIH_${new Date().toISOString().slice(0,10)}.pdf`,
+          image:         { type: 'jpeg', quality: 0.98 },
+          html2canvas:   { 
+              scale: 2, 
+              useCORS: true, 
+              scrollX: 0, 
+              scrollY: 0,
+              x: 0,
+              y: 0,
+              windowWidth: fullWidth,
+              width: fullWidth
+          },
+          jsPDF:         { unit: 'in', format: 'a3', orientation: 'landscape' }, 
+          pagebreak:     { mode: ['css', 'legacy'], avoid: ['tr', 'td', 'th'] } 
        };
 
        html2pdf().set(optOpt).from(element).save().then(() => {
-           watermarkHeader.classList.add('hidden'); watermarkHeader.classList.remove('flex'); 
-           element.style.width = originalWidth; element.style.overflow = originalOverflow;
-           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); element.classList.remove('h-max'); 
-           btn.innerHTML = originalText; btn.disabled = false;
+           watermarkHeader.classList.add('hidden'); 
+           watermarkHeader.classList.remove('flex'); 
+           element.style.width = originalWidth; 
+           element.style.overflow = originalOverflow;
+           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); 
+           element.classList.remove('h-max'); 
+           btn.innerHTML = originalText; 
+           btn.disabled = false;
        }).catch(err => {
-           watermarkHeader.classList.add('hidden'); watermarkHeader.classList.remove('flex');
-           element.style.width = originalWidth; element.style.overflow = originalOverflow;
-           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); element.classList.remove('h-max');
-           btn.innerHTML = originalText; btn.disabled = false;
+           watermarkHeader.classList.add('hidden'); 
+           watermarkHeader.classList.remove('flex');
+           element.style.width = originalWidth; 
+           element.style.overflow = originalOverflow;
+           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); 
+           element.classList.remove('h-max');
+           btn.innerHTML = originalText; 
+           btn.disabled = false;
            Swal.fire('Error', 'Gagal memproses PDF.', 'error');
        });
   }
