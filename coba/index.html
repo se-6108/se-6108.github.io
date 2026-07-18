@@ -835,26 +835,26 @@
 
       let pPend = tTot>0 ? (((tDraft+tSub+tRej+tApp)/tTot)*100).toFixed(1)+'%' : '0%';
       let pSubm = tTot>0 ? (((tSub+tRej+tApp)/tTot)*100).toFixed(1)+'%' : '0%';
-// LOGIKA PERSENTASE BARU UNTUK CARD LAINNYA
-      let pOpen = tTot>0 ? ((tOpen/tTot)*100).toFixed(1)+'%' : '0%';
-      let pDraft = tTot>0 ? ((tDraft/tTot)*100).toFixed(1)+'%' : '0%';
-      let pSubPure = tTot>0 ? ((tSub/tTot)*100).toFixed(1)+'%' : '0%';
-      let pRej = tTot>0 ? ((tRej/tTot)*100).toFixed(1)+'%' : '0%';
-      let pApp = tTot>0 ? ((tApp/tTot)*100).toFixed(1)+'%' : '0%';
+// Menghitung persentase menggunakan variabel yang tepat (tTotal, tReject, tApprove, dll)
+      let pOpen = tTotal > 0 ? ((tOpen / tTotal) * 100).toFixed(1) + '%' : '0%';
+      let pDraft = tTotal > 0 ? ((tDraft / tTotal) * 100).toFixed(1) + '%' : '0%';
+      let pSubmit = tTotal > 0 ? ((tSubmit / tTotal) * 100).toFixed(1) + '%' : '0%';
+      let pReject = tTotal > 0 ? ((tReject / tTotal) * 100).toFixed(1) + '%' : '0%';
+      let pApprove = tTotal > 0 ? ((tApprove / tTotal) * 100).toFixed(1) + '%' : '0%';
 
-      document.getElementById('dashTotSls').innerText = tSls.toLocaleString('id-ID');
-      document.getElementById('dashTotTarget').innerText = tTot.toLocaleString('id-ID');
+      // Update angka absolut di card atas
+      if(document.getElementById('dashTotSls')) document.getElementById('dashTotSls').innerText = tSls.toLocaleString('id-ID');
+      if(document.getElementById('dashTotTarget')) document.getElementById('dashTotTarget').innerText = tTotal.toLocaleString('id-ID');
       
-      // IMPLEMENTASI HTML PERSENTASE (STYLE SAMA PERSIS)
-      document.getElementById('dashProgPendataan').innerHTML = `${(tDraft+tSub+tRej+tApp).toLocaleString('id-ID')} <span class="text-xs font-bold opacity-80">(${pPend})</span>`;
-      document.getElementById('dashProgSubmit').innerHTML = `${(tSub+tRej+tApp).toLocaleString('id-ID')} <span class="text-xs font-bold opacity-80">(${pSubm})</span>`;
+      // Implementasi HTML persentase menggunakan styling text-sm bawaan dari referensi
+      if(document.getElementById('dashProgPendataan')) document.getElementById('dashProgPendataan').innerHTML = `${tProgPendataan.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pProgPendataan})</span>`;
+      if(document.getElementById('dashProgSubmit')) document.getElementById('dashProgSubmit').innerHTML = `${tProgSubmit.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pProgSubmit})</span>`;
       
-      document.getElementById('dashTotOpen').innerHTML = `${tOpen.toLocaleString('id-ID')} <span class="text-xs font-bold opacity-80">(${pOpen})</span>`;
-      document.getElementById('dashTotDraft').innerHTML = `${tDraft.toLocaleString('id-ID')} <span class="text-xs font-bold opacity-80">(${pDraft})</span>`;
-      document.getElementById('dashTotSubmit').innerHTML = `${tSub.toLocaleString('id-ID')} <span class="text-xs font-bold opacity-80">(${pSubPure})</span>`;
-      document.getElementById('dashTotReject').innerHTML = `${tRej.toLocaleString('id-ID')} <span class="text-xs font-bold opacity-80">(${pRej})</span>`;
-      document.getElementById('dashTotApprove').innerHTML = `${tApp.toLocaleString('id-ID')} <span class="text-xs font-bold opacity-80">(${pApp})</span>`;
-
+      if(document.getElementById('dashTotOpen')) document.getElementById('dashTotOpen').innerHTML = `${tOpen.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pOpen})</span>`;
+      if(document.getElementById('dashTotDraft')) document.getElementById('dashTotDraft').innerHTML = `${tDraft.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pDraft})</span>`;
+      if(document.getElementById('dashTotSubmit')) document.getElementById('dashTotSubmit').innerHTML = `${tSubmit.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pSubmit})</span>`;
+      if(document.getElementById('dashTotReject')) document.getElementById('dashTotReject').innerHTML = `${tReject.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pReject})</span>`;
+      if(document.getElementById('dashTotApprove')) document.getElementById('dashTotApprove').innerHTML = `${tApprove.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pApprove})</span>`;
       buildTabStates();
       dashCurrentPage = 1;
       renderCurrentTab();
