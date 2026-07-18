@@ -30,38 +30,25 @@
     body { font-family: 'Montserrat', sans-serif; background-color: #f0fdf4; } 
     .smooth-shadow { box-shadow: 0 20px 50px -12px rgba(37, 99, 235, 0.15); }
     .swal2-popup { border-radius: 1.5rem !important; font-family: 'Montserrat', sans-serif !important; }
-    .swal2-html-container { overflow: hidden !important; } 
+    .swal2-html-container { overflow: hidden !important; text-align: left !important; } 
     .custom-spinner { width: 3.5rem; height: 3.5rem; border: 4px solid #bfdbfe; border-top-color: #2563eb; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
     @keyframes spin { to { transform: rotate(360deg); } }
     
-    /* PENGATURAN STICKY HEADER & FILTER DROPDOWN */
+    /* STICKY HEADER & FUNNEL ICON PADA TABEL */
     .dashboard-table th { 
       position: sticky; 
       top: 0; 
       z-index: 20; 
+      background-color: #f8fafc;
       box-shadow: 0 1px 2px rgba(0,0,0,0.1); 
       cursor: pointer;
     }
-    .dashboard-table th .filter-select {
-      margin-top: 4px;
-      width: 100%;
-      font-size: 9px;
-      padding: 2px 4px;
-      border: 1px solid #cbd5e1;
-      border-radius: 4px;
-      background-color: white;
-      color: #334155;
-      outline: none;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    .dashboard-table th .filter-select:hover { border-color: #3b82f6; }
-    
     .scrollbar-hide::-webkit-scrollbar { display: none; }
-    .ts-control { border-radius: 0.75rem !important; border-color: #e2e8f0 !important; padding: 0.75rem 1rem !important; font-size: 0.75rem !important; font-family: 'Montserrat', sans-serif !important; background-color: #ffffff !important; font-weight: 700; text-transform: uppercase; color: #1e293b !important;}
+    
+    /* TOM SELECT MULTI-SELECT CHIPS */
+    .ts-control { border-radius: 0.75rem !important; border-color: #e2e8f0 !important; padding: 0.5rem 1rem !important; min-height: 38px; font-size: 0.75rem !important; font-family: 'Montserrat', sans-serif !important; background-color: #ffffff !important; font-weight: 700; text-transform: uppercase; color: #1e293b !important;}
     .ts-control.focus { border-color: #2563eb !important; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important; }
-    .ts-control.single.has-items input { opacity: 0; width: 0; padding: 0; margin: 0; border: none; } 
-    .ts-wrapper.has-items .ts-control > input { display: none !important; }
+    .ts-wrapper.multi .ts-control > div { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 4px; padding: 2px 6px; font-size: 10px; margin-right: 4px; }
     .teks-upper { text-transform: uppercase !important; }
     tr, .group, .flex-col { page-break-inside: avoid !important; break-inside: avoid-page !important; }
   </style>
@@ -74,7 +61,6 @@
   </div>
 
   <div id="halaman-dashboard" class="flex flex-col h-full w-full relative z-10">
-    <!-- HEADER UTAMA -->
     <div class="bg-white border-b border-blue-200 shadow-sm flex-none z-40 relative flex flex-col">
       <div class="px-6 py-4 flex justify-between items-center bg-gradient-to-r from-[#2563eb] to-[#1e3a8a] relative overflow-hidden flex-wrap gap-4">
         <div class="absolute -top-4 -left-4 w-20 h-20 rounded-full bg-white opacity-10"></div>
@@ -102,7 +88,7 @@
            </div>
         </div>
         <div class="flex gap-2 relative z-10 overflow-x-auto pb-1">
-           <!-- TOMBOL NINJA ADMIN (Disembunyikan default) -->
+           <!-- TOMBOL NINJA ADMIN (Hidden by default) -->
            <button id="btnAdminUpload" onclick="authAdminPanel()" class="hidden bg-indigo-900 hover:bg-black text-white px-4 py-2.5 rounded-lg text-xs font-bold transition items-center gap-2 shadow-md border border-indigo-700 uppercase tracking-wide mr-2">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg> Admin Upload
            </button>
@@ -118,12 +104,11 @@
         </div>
       </div>
 
-      <!-- CARD METRIK STATIS -->
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 gap-3 px-6 py-4 bg-blue-50/40 border-b border-blue-100">
         <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-1 relative z-10">Beban SLS</p><h3 id="dashTotSls" class="text-2xl font-black text-slate-800 relative z-10">-</h3></div>
-        <div class="bg-gradient-to-br from-indigo-50 to-white p-3 rounded-xl border border-indigo-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-indigo-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Assignment</p><h3 id="dashTotTarget" class="text-2xl font-black text-indigo-700 relative z-10">-</h3></div>
-        <div class="bg-gradient-to-br from-fuchsia-50 to-white p-3 rounded-xl border border-fuchsia-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-fuchsia-600 font-bold uppercase tracking-wider mb-1 relative z-10">Progress Pendataan</p><h3 id="dashProgPendataan" class="text-2xl font-black text-fuchsia-700 relative z-10">-</h3></div>
-        <div class="bg-gradient-to-br from-sky-50 to-white p-3 rounded-xl border border-sky-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-sky-600 font-bold uppercase tracking-wider mb-1 relative z-10">Progress Submit</p><h3 id="dashProgSubmit" class="text-2xl font-black text-sky-700 relative z-10">-</h3></div>
+        <div class="bg-gradient-to-br from-indigo-50 to-white p-3 rounded-xl border border-indigo-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-indigo-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Target</p><h3 id="dashTotTarget" class="text-2xl font-black text-indigo-700 relative z-10">-</h3></div>
+        <div class="bg-gradient-to-br from-fuchsia-50 to-white p-3 rounded-xl border border-fuchsia-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-fuchsia-600 font-bold uppercase tracking-wider mb-1 relative z-10">Prog Pendataan</p><h3 id="dashProgPendataan" class="text-2xl font-black text-fuchsia-700 relative z-10">-</h3></div>
+        <div class="bg-gradient-to-br from-sky-50 to-white p-3 rounded-xl border border-sky-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-sky-600 font-bold uppercase tracking-wider mb-1 relative z-10">Prog Submit</p><h3 id="dashProgSubmit" class="text-2xl font-black text-sky-700 relative z-10">-</h3></div>
         <div class="bg-gradient-to-br from-blue-50 to-white p-3 rounded-xl border border-blue-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-blue-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Open</p><h3 id="dashTotOpen" class="text-2xl font-black text-blue-700 relative z-10">-</h3></div>
         <div class="bg-gradient-to-br from-amber-50 to-white p-3 rounded-xl border border-amber-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-amber-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Draft</p><h3 id="dashTotDraft" class="text-2xl font-black text-amber-700 relative z-10">-</h3></div>
         <div class="bg-gradient-to-br from-purple-50 to-white p-3 rounded-xl border border-purple-200 shadow-sm flex flex-col justify-between relative overflow-hidden group"><p class="text-[9px] text-purple-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Submit</p><h3 id="dashTotSubmit" class="text-2xl font-black text-purple-700 relative z-10">-</h3></div>
@@ -140,18 +125,19 @@
          <button id="btnTab5" onclick="switchTab(5)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Visualisasi Data</button>
          <button id="btnTab6" onclick="switchTab(6)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-amber-500 hover:text-amber-600 transition flex gap-1 items-center">📊 Analisa Keluarga</button>
          <button id="btnTab7" onclick="switchTab(7)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-purple-500 hover:text-purple-600 transition flex gap-1 items-center">📈 Analisa BKU</button>
-         <button id="btnTab8" onclick="switchTab(8)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-emerald-500 hover:text-emerald-600 transition flex gap-1 items-center">🏡 Analisa Usaha Keluarga</button>
+         <button id="btnTab8" onclick="switchTab(8)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-emerald-500 hover:text-emerald-600 transition flex gap-1 items-center">🏡 Analisa Usaha Kel</button>
       </div>
 
-      <!-- GLOBAL FILTER MENU -->
+      <!-- GLOBAL FILTER MULTI-SELECT -->
       <div class="px-6 py-3 bg-gray-50/50 flex gap-2 items-center border-b border-blue-100 flex-wrap" id="filterArea">
-         <div class="flex-none w-48"><input type="text" id="dashSearch" onkeyup="handleGlobalFilter()" placeholder="PENCARIAN DATA..." class="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-bold focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none h-[34px] teks-upper text-gray-700 shadow-sm"></div>
-         <div class="flex-1 min-w-[130px]"><select id="fPrio"><option value="">STATUS PRIORITAS</option><option value="1">YA</option><option value="0">TIDAK</option></select></div>
-         <div class="flex-1 min-w-[130px]"><select id="fKec"><option value="">KECAMATAN</option></select></div>
-         <div class="flex-1 min-w-[130px]"><select id="fPml"><option value="">PML</option></select></div>
-         <div class="flex-1 min-w-[130px]"><select id="fPpl"><option value="">PPL</option></select></div>
-         <div class="flex-1 min-w-[130px]"><select id="fPj"><option value="">PJ KUDA</option></select></div>
-         <div class="flex-1 min-w-[150px]"><select id="fStatusPetugas"><option value="">STATUS TARGET</option><option value="Tercapai">TERCAPAI</option><option value="Belum Tercapai">BELUM TERCAPAI</option></select></div>
+         <div class="flex-none w-44"><input type="text" id="dashSearch" onkeyup="handleGlobalFilter()" placeholder="PENCARIAN..." class="w-full px-3 py-1 border border-gray-300 rounded-lg text-xs font-bold focus:border-blue-500 outline-none h-[38px] teks-upper shadow-sm"></div>
+         <div class="flex-1 min-w-[120px]"><select id="fPrio" placeholder="STATUS PRIORITAS"><option value="">STATUS PRIORITAS</option><option value="1">YA</option><option value="0">TIDAK</option></select></div>
+         <div class="flex-1 min-w-[120px]"><select id="fKec" multiple placeholder="KECAMATAN"></select></div>
+         <div class="flex-1 min-w-[120px]"><select id="fPml" multiple placeholder="PML"></select></div>
+         <div class="flex-1 min-w-[120px]"><select id="fPpl" multiple placeholder="PPL"></select></div>
+         <div class="flex-1 min-w-[120px]"><select id="fPj" multiple placeholder="PJ KUDA"></select></div>
+         <div class="flex-1 min-w-[130px]"><select id="fStatusPetugas" multiple placeholder="STATUS TARGET"><option value="Tercapai">TERCAPAI</option><option value="Belum Tercapai">BELUM TERCAPAI</option></select></div>
+         <button onclick="resetGlobalFilters()" class="bg-gray-200 text-gray-700 px-3 h-[38px] rounded-lg text-xs font-bold hover:bg-gray-300 transition shadow-sm" title="Reset Semua Filter">Reset</button>
       </div>
     </div>
 
@@ -167,87 +153,30 @@
             <img src="https://i.ibb.co.com/jv8y1FSq/unnamed.png" class="h-16 w-16 drop-shadow-md bg-white rounded-full p-1 border">
          </div>
          
-         <!-- TAB 1: DETAIL SLS -->
-         <div id="tab1-content" class="flex-1 w-full dashboard-table block">
-           <table class="w-full text-left border-collapse min-w-[1350px]">
-             <!-- HEADER DI-RENDER DINAMIS MELALUI JAVASCRIPT AGAR FILTER DROPDOWN TERBENTUK -->
-             <thead id="headTab1" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead>
-             <tbody id="tableBodyDash" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
-           </table>
-         </div>
-
-         <!-- TAB 2: PPL -->
-         <div id="tab2-content" class="hidden flex-1 w-full dashboard-table">
-           <table class="w-full text-left border-collapse min-w-[1600px]"> 
-             <thead id="headTab2" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead>
-             <tbody id="tableLeaderboard" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
-           </table>
-         </div>
-
-         <!-- TAB 3: PML -->
-         <div id="tab3-content" class="hidden flex-1 w-full dashboard-table">
-           <table class="w-full text-left border-collapse min-w-[1700px]">
-             <thead id="headTab3" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead>
-             <tbody id="tablePml" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
-           </table>
-         </div>
-
-         <!-- TAB 4: KECAMATAN -->
-         <div id="tab4-content" class="hidden flex-1 w-full dashboard-table">
-           <table class="w-full text-left border-collapse min-w-[1250px]">
-             <thead id="headTab4" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead>
-             <tbody id="tableKecamatan" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
-           </table>
-         </div>
-
-         <!-- TAB 5: CHART VISUALISASI -->
+         <!-- TABEL-TABEL UTAMA DI-RENDER VIA JAVASCRIPT -->
+         <div id="tab1-content" class="flex-1 w-full dashboard-table block"><table class="w-full text-left border-collapse min-w-[1350px]"><thead id="headTab1" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead><tbody id="tableBodyDash" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody></table></div>
+         <div id="tab2-content" class="hidden flex-1 w-full dashboard-table"><table class="w-full text-left border-collapse min-w-[1600px]"><thead id="headTab2" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead><tbody id="tableLeaderboard" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody></table></div>
+         <div id="tab3-content" class="hidden flex-1 w-full dashboard-table"><table class="w-full text-left border-collapse min-w-[1700px]"><thead id="headTab3" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead><tbody id="tablePml" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody></table></div>
+         <div id="tab4-content" class="hidden flex-1 w-full dashboard-table"><table class="w-full text-left border-collapse min-w-[1250px]"><thead id="headTab4" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead><tbody id="tableKecamatan" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody></table></div>
+         
          <div id="tab5-content" class="hidden flex-1 w-full p-6 bg-white overflow-hidden">
            <div class="flex flex-col border border-gray-100 p-4 rounded-2xl shadow-sm bg-gray-50/50 h-full">
               <h3 class="font-bold text-gray-700 text-center uppercase tracking-wide mb-4 text-xs shrink-0">Status Assignment Berdasarkan Kecamatan</h3>
-              <div id="chartContainerWrapper" class="flex-1 relative w-full overflow-y-auto">
-                 <div id="chartInner" style="position: relative; width: 100%;">
-                    <canvas id="chartKecamatan"></canvas>
-                 </div>
-              </div>
+              <div id="chartContainerWrapper" class="flex-1 relative w-full overflow-y-auto"><div id="chartInner" style="position: relative; width: 100%;"><canvas id="chartKecamatan"></canvas></div></div>
            </div>
          </div>
 
-         <!-- TAB 6: ANALISA KELUARGA -->
-         <div id="tab6-content" class="hidden flex-1 w-full dashboard-table">
-           <table class="w-full text-left border-collapse min-w-[1350px]">
-             <thead id="headTab6" class="text-[10px] uppercase text-amber-900 font-bold tracking-wider bg-amber-100"></thead>
-             <tbody id="tableKeluarga" class="text-xs divide-y divide-amber-100 text-gray-700 tags-upper"></tbody>
-           </table>
-         </div>
-
-         <!-- TAB 7: ANALISA BKU (USAHA PERUSAHAAN) -->
-         <div id="tab7-content" class="hidden flex-1 w-full dashboard-table">
-           <table class="w-full text-left border-collapse min-w-[1450px]">
-             <thead id="headTab7" class="text-[10px] uppercase text-purple-900 font-bold tracking-wider bg-purple-100"></thead>
-             <tbody id="tableUsaha" class="text-xs divide-y divide-purple-100 text-gray-700 tags-upper"></tbody>
-           </table>
-         </div>
-
-         <!-- TAB 8: ANALISA USAHA KELUARGA -->
-         <div id="tab8-content" class="hidden flex-1 w-full dashboard-table">
-           <table class="w-full text-left border-collapse min-w-[1350px]">
-             <thead id="headTab8" class="text-[10px] uppercase text-emerald-900 font-bold tracking-wider bg-emerald-100"></thead>
-             <tbody id="tableUsahaKeluarga" class="text-xs divide-y divide-emerald-100 text-gray-700 tags-upper"></tbody>
-           </table>
-         </div>
-
+         <div id="tab6-content" class="hidden flex-1 w-full dashboard-table"><table class="w-full text-left border-collapse min-w-[1350px]"><thead id="headTab6" class="text-[10px] uppercase text-amber-900 font-bold tracking-wider bg-amber-100"></thead><tbody id="tableKeluarga" class="text-xs divide-y divide-amber-100 text-gray-700 tags-upper"></tbody></table></div>
+         <div id="tab7-content" class="hidden flex-1 w-full dashboard-table"><table class="w-full text-left border-collapse min-w-[1450px]"><thead id="headTab7" class="text-[10px] uppercase text-purple-900 font-bold tracking-wider bg-purple-100"></thead><tbody id="tableUsaha" class="text-xs divide-y divide-purple-100 text-gray-700 tags-upper"></tbody></table></div>
+         <div id="tab8-content" class="hidden flex-1 w-full dashboard-table"><table class="w-full text-left border-collapse min-w-[1350px]"><thead id="headTab8" class="text-[10px] uppercase text-emerald-900 font-bold tracking-wider bg-emerald-100"></thead><tbody id="tableUsahaKeluarga" class="text-xs divide-y divide-emerald-100 text-gray-700 tags-upper"></tbody></table></div>
       </div> 
       
       <!-- AREA PAGINASI -->
       <div id="paginasiArea" class="bg-white border border-gray-200 px-5 py-3 rounded-xl mt-3 shadow-sm flex justify-between items-center shrink-0">
          <div class="flex items-center gap-3">
-            <select id="perPageSelect" onchange="changePerPage()" class="text-xs font-bold text-gray-600 bg-gray-50 border border-gray-300 rounded-md px-2 py-1.5 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer shadow-sm">
-               <option value="10">10 Baris</option>
-               <option value="15">15 Baris</option>
-               <option value="20">20 Baris</option>
-               <option value="50">50 Baris</option>
-               <option value="100">100 Baris</option>
-               <option value="999999">Semua Baris</option>
+            <select id="perPageSelect" onchange="changePerPage()" class="text-xs font-bold text-gray-600 bg-gray-50 border border-gray-300 rounded-md px-2 py-1.5 outline-none cursor-pointer shadow-sm">
+               <option value="10">10 Baris</option><option value="15">15 Baris</option><option value="20">20 Baris</option>
+               <option value="50">50 Baris</option><option value="100">100 Baris</option><option value="999999">Semua Baris</option>
             </select>
             <span class="text-xs text-gray-500 font-bold bg-gray-100 px-2.5 py-1.5 rounded-md uppercase tracking-wider" id="pageInfoDash">Menampilkan 0 Data</span>
          </div>
@@ -258,20 +187,21 @@
 
 <script>
   // =========================================================================
-  // MASUKKAN URL API GAS ANDA DI BAWAH INI:
+  // KONFIGURASI URL API GAS
   // =========================================================================
-  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxSfOmssbzxzyoNXRdRtFFkXLxyFNJc7KNdPpL8h63H2p-7htGTtj7L7EXZ8QzhnUSP/exec";
+  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwIJ1XuJqzDpgjyPEHmbdENzrtAuLBWuEWx8Kj_hdwi98qdeIVlqNGqgwLSwKy3_ic/exec";
 
   // State Variables
   let DASH_DATA = [];
   let dashFilteredData = [];
   let TAB_STATE = { 1:[], 2:[], 3:[], 4:[], 6:[], 7:[], 8:[] }; 
+  let COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{} }; // State untuk Saringan Funnel
   let dashCurrentPage = 1;
   let dashRowsPerPage = 10; 
   let activeTabId = 1;
   let sortCol = '', sortAsc = true;
   
-  let tsKec, tsPml, tsPpl, tsPj, tsPrio, tsStatusPetugas; 
+  let tsPrio, tsKec, tsPml, tsPpl, tsPj, tsStatusPetugas; 
   let chartKecObj;
   let kecChartMapGlobal = {};
   let timingConfig = {};
@@ -285,119 +215,58 @@
           keyStrokes += 'f';
           if(keyStrokes.includes('ffff')) {
               const btn = document.getElementById('btnAdminUpload');
-              btn.classList.toggle('hidden');
-              btn.classList.toggle('flex');
+              btn.classList.toggle('hidden'); btn.classList.toggle('flex');
               keyStrokes = '';
-              Swal.fire({toast: true, position: 'top-end', icon: 'success', title: 'Panel Admin Diaktifkan!', showConfirmButton: false, timer: 1500});
+              Swal.fire({toast: true, position: 'top-end', icon: 'success', title: 'Panel Admin Aktif!', showConfirmButton: false, timer: 1500});
           }
-      } else {
-          keyStrokes = '';
-      }
+      } else { keyStrokes = ''; }
   });
 
-  window.onload = function() {
-    initDashboard();
-  };
+  window.onload = function() { initDashboard(); };
 
   function toProperCase(str) {
       if (!str) return '';
-      return str.toLowerCase().replace(/(^|\s)\S/g, function(s) {
-          return s.toUpperCase();
-      }).trim();
+      return str.toLowerCase().replace(/(^|\s)\S/g, function(s) { return s.toUpperCase(); }).trim();
   }
 
   function getHariPendataan() {
-      const now = new Date();
-      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-      const wib = new Date(utc + (3600000 * 7));
-
-      let actualDate = new Date(wib);
-      let effectiveDate = new Date(wib);
-      if (wib.getHours() < 21) {
-          effectiveDate.setDate(effectiveDate.getDate() - 1);
-      }
-
+      const now = new Date(); const utc = now.getTime() + (now.getTimezoneOffset() * 60000); const wib = new Date(utc + (3600000 * 7));
+      let eff = new Date(wib); if (wib.getHours() < 21) { eff.setDate(eff.getDate() - 1); }
       const startYear = 2026; const startMonth = 5; const startDateDate = 15;
       const endYear = 2026; const endMonth = 7; const endDateDate = 31;
-
-      const startDateUTC = Date.UTC(startYear, startMonth, startDateDate);
-      const endDateUTC = Date.UTC(endYear, endMonth, endDateDate);
-
-      const actualDateUTC = Date.UTC(actualDate.getFullYear(), actualDate.getMonth(), actualDate.getDate());
+      const startDateUTC = Date.UTC(startYear, startMonth, startDateDate); const endDateUTC = Date.UTC(endYear, endMonth, endDateDate);
+      const actualDateUTC = Date.UTC(wib.getFullYear(), wib.getMonth(), wib.getDate());
       let actualDiffDays = Math.floor((actualDateUTC - startDateUTC) / (1000 * 60 * 60 * 24)) + 1;
-
-      const effectiveDateUTC = Date.UTC(effectiveDate.getFullYear(), effectiveDate.getMonth(), effectiveDate.getDate());
+      const effectiveDateUTC = Date.UTC(eff.getFullYear(), eff.getMonth(), eff.getDate());
       let effectiveDiffDays = Math.floor((effectiveDateUTC - startDateUTC) / (1000 * 60 * 60 * 24)) + 1;
-
       const maxDays = Math.floor((endDateUTC - startDateUTC) / (1000 * 60 * 60 * 24)) + 1;
 
-      if (actualDiffDays < 1) actualDiffDays = 1;
-      if (actualDiffDays > maxDays) actualDiffDays = maxDays;
-
-      if (effectiveDiffDays < 1) effectiveDiffDays = 1;
-      if (effectiveDiffDays > maxDays) effectiveDiffDays = maxDays;
-
-      let targetPercentage = effectiveDiffDays * 1.34;
-      if (targetPercentage > 100) targetPercentage = 100;
-
+      if (actualDiffDays < 1) actualDiffDays = 1; if (actualDiffDays > maxDays) actualDiffDays = maxDays;
+      if (effectiveDiffDays < 1) effectiveDiffDays = 1; if (effectiveDiffDays > maxDays) effectiveDiffDays = maxDays;
+      let targetPercentage = Math.min(effectiveDiffDays * 1.34, 100);
       return { x: actualDiffDays, y: targetPercentage, effDay: effectiveDiffDays };
   }
 
   function initDashboard() {
-      const globalLoader = document.getElementById('globalLoading');
       timingConfig = getHariPendataan();
-      
       if (document.getElementById('badgeHari')) document.getElementById('badgeHari').innerText = `PENDATAAN HARI KE - ${timingConfig.x}`;
       if (document.getElementById('badgeTarget')) document.getElementById('badgeTarget').innerText = `TARGET PROGRESS : ${timingConfig.y.toFixed(2)}%`;
 
-      fetch(GAS_API_URL)
-        .then(response => {
-           if (!response.ok) throw new Error("Jaringan bermasalah atau URL API salah.");
-           return response.json();
-        })
-        .then(res => {
-          res.data.forEach(row => {
-              row.pml = toProperCase(row.pml);
-              row.ppl = toProperCase(row.ppl);
-              row.pj = toProperCase(row.pj);
-              row.kec = toProperCase(row.kec);
-          });
-
-          DASH_DATA = res.data;
-          if(globalLoader) globalLoader.classList.add('hidden');
+      fetch(GAS_API_URL).then(res => { if(!res.ok) throw new Error("API Gagal"); return res.json(); }).then(res => {
+          res.data.forEach(row => { row.pml = toProperCase(row.pml); row.ppl = toProperCase(row.ppl); row.pj = toProperCase(row.pj); row.kec = toProperCase(row.kec); });
+          DASH_DATA = res.data; document.getElementById('globalLoading').classList.add('hidden');
           
           if (res.integrityErrorCount > 0) {
               Swal.fire({
-                  title: '<span class="text-lg font-black text-gray-800 tracking-wide uppercase">Info Target Pendataan</span>',
-                  html: `
-                    <div class="bg-red-50 border border-red-300 text-red-800 p-3.5 rounded-xl mb-4 text-xs shadow-sm text-left animate-pulse">
-                        <b class="flex items-center gap-1.5 mb-1 text-[13px]">
-                           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
-                           WARNING: Integritas Data Pusat
-                        </b>
-                        Sistem mendeteksi ada <b>${res.integrityErrorCount} Assignment</b> yang jumlah laporannya <i>(Open/Draft/Submit/dkk)</i> tidak sinkron dengan kolom <b>'Total Target'</b>.
-                        <br><br><span class="italic text-red-600 opacity-90">Sistem otomatis menggunakan <b>Total Target Absolut</b> untuk mengunci persentase pencapaian agar performa petugas tetap akurat.</span>
-                    </div>
-                    <div class="text-sm text-gray-700 text-left space-y-3 mt-2 font-medium">
-                        <p>Saat ini Pendataan SE memasuki <b class="text-blue-600">Hari ke-${timingConfig.x}</b>.</p>
-                        <p>Batas target proporsional saat ini adalah <b class="text-purple-600">${timingConfig.y.toFixed(2)}% dari total assignment tiap petugas</b> <span class="text-gray-500 italic text-xs">(akumulasi target harian Hari ke-${timingConfig.effDay})</span>.</p>
-                    </div>
-                  `,
-                  icon: 'warning', confirmButtonText: 'OKE, SIAP!', buttonsStyling: false,
-                  customClass: { popup: 'rounded-[2rem] border border-gray-100 shadow-2xl', confirmButton: 'bg-blue-600 text-white px-8 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition w-full mt-2 shadow-sm text-xs tracking-wide uppercase' }
+                  title: '<span class="text-lg font-black uppercase">Info Target Pendataan</span>',
+                  html: `<div class="bg-red-50 text-red-800 p-3.5 rounded-xl mb-4 text-xs shadow-sm text-left animate-pulse"><b>WARNING: Integritas Data Pusat</b><br>Ditemukan <b>${res.integrityErrorCount} Assignment</b> tidak sinkron dengan kolom Total Target. Sistem memakai Target Absolut.</div>`,
+                  icon: 'warning', confirmButtonText: 'SIAP!'
               });
           }
-          
           if(document.getElementById('txtLastUpdate')) document.getElementById('txtLastUpdate').innerText = res.lastUpdate;
 
-          initSearchableDropdowns();
-          buildTableHeaders(); 
-          handleGlobalFilter(); 
-        })
-        .catch(err => {
-          if(globalLoader) globalLoader.classList.add('hidden');
-          Swal.fire("Gagal Memuat Data", "Terjadi kesalahan saat menghubungi API: " + err.message, "error");
-        });
+          initSearchableDropdowns(); buildTableHeaders(); handleGlobalFilter(); 
+      }).catch(err => { document.getElementById('globalLoading').classList.add('hidden'); Swal.fire("Gagal Memuat Data", err.message, "error"); });
   }
 
   function initSearchableDropdowns() {
@@ -405,187 +274,179 @@
     let pm = [...new Set(DASH_DATA.map(d=>d.pml ? String(d.pml) : ''))].sort();
     let pp = [...new Set(DASH_DATA.map(d=>d.ppl ? String(d.ppl) : ''))].sort();
     let pj = [...new Set(DASH_DATA.map(d=>d.pj ? String(d.pj) : ''))].sort();
-    
-    const fillOpts = (id, dataArr) => {
-      let sel = document.getElementById(id);
-      if(!sel) return;
-      dataArr.forEach(x => { if(x) sel.innerHTML += `<option value="${x}">${x}</option>`; });
-    };
-
+    const fillOpts = (id, dataArr) => { let sel = document.getElementById(id); if(sel) dataArr.forEach(x => { if(x) sel.innerHTML += `<option value="${x}">${x}</option>`; }); };
     fillOpts('fKec', k); fillOpts('fPml', pm); fillOpts('fPpl', pp); fillOpts('fPj', pj);
 
-    let tsConfig = { 
-       create: false, 
-       maxItems: 1, 
-       sortField: {field: "text", direction: "asc"},
-       plugins: ['clear_button'] 
-    };
-
-    if(document.getElementById('fPrio')) tsPrio = new TomSelect('#fPrio', tsConfig); 
+    let tsConfig = { create: false, plugins: ['clear_button', 'remove_button'], sortField: {field: "text", direction: "asc"} };
     if(document.getElementById('fKec')) tsKec = new TomSelect('#fKec', tsConfig);
     if(document.getElementById('fPml')) tsPml = new TomSelect('#fPml', tsConfig);
     if(document.getElementById('fPpl')) tsPpl = new TomSelect('#fPpl', tsConfig);
     if(document.getElementById('fPj')) tsPj = new TomSelect('#fPj', tsConfig);
     if(document.getElementById('fStatusPetugas')) tsStatusPetugas = new TomSelect('#fStatusPetugas', tsConfig);
+    
+    // Status Prioritas tetap single dropdown
+    let tsConfigSingle = { create: false, maxItems: 1, plugins: ['clear_button'] };
+    if(document.getElementById('fPrio')) tsPrio = new TomSelect('#fPrio', tsConfigSingle); 
 
     [tsPrio, tsKec, tsPml, tsPpl, tsPj, tsStatusPetugas].forEach(t => { if(t) { t.setValue(''); t.on('change', handleGlobalFilter); } });
   }
 
+  function resetGlobalFilters() {
+      document.getElementById('dashSearch').value = '';
+      if(tsPrio) tsPrio.clear(); if(tsKec) tsKec.clear(); if(tsPml) tsPml.clear(); 
+      if(tsPpl) tsPpl.clear(); if(tsPj) tsPj.clear(); if(tsStatusPetugas) tsStatusPetugas.clear();
+      // Reset Column Filter Funnels
+      COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{} };
+      handleGlobalFilter();
+  }
+
   // =========================================================================
-  // KONFIGURASI KOLOM & FILTER DROPDOWN HEADER
+  // KONFIGURASI KOLOM & FILTER FUNNEL HEADER
   // =========================================================================
+  // f: true menandakan kolom tersebut memunculkan ikon Funnel (Saringan)
   const TABS_CONFIG = {
       1: [
-         { k:'idSls', n:'ID SLS', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'150px' },
-         { k:'nmsls', n:'Wilayah', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'200px' },
-         { k:'ppl', n:'Petugas PPL', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'150px' },
-         { k:'pml', n:'Petugas PML', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'150px' },
+         { k:'idSls', n:'ID SLS', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'150px' }, { k:'nmsls', n:'Wilayah', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'200px' },
+         { k:'ppl', n:'Petugas PPL', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'150px' }, { k:'pml', n:'Petugas PML', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'150px' },
          { k:'pj', n:'PJ Kuda', c:'bg-blue-50 text-gray-700', w:'100px' },
-         { k:'open', n:'Open', c:'bg-blue-100 text-blue-800 text-center border-l border-blue-200' },
-         { k:'draft', n:'Draft', c:'bg-amber-100 text-amber-800 text-center border-l border-amber-200' },
-         { k:'agg_submit', n:'Submit', c:'bg-purple-100 text-purple-800 text-center border-l border-purple-200' },
-         { k:'calcTotal', n:'Total', c:'bg-indigo-100 text-indigo-900 text-center border-l border-indigo-200' }
+         { k:'open', n:'Open', c:'bg-blue-100 text-blue-800 text-center border-l border-blue-200', f:true }, { k:'draft', n:'Draft', c:'bg-amber-100 text-amber-800 text-center border-l border-amber-200', f:true },
+         { k:'agg_submit', n:'Submit', c:'bg-purple-100 text-purple-800 text-center border-l border-purple-200', f:true }, { k:'calcTotal', n:'Total', c:'bg-indigo-100 text-indigo-900 text-center border-l border-indigo-200', f:true }
       ],
       2: [
-         { k:'ppl', n:'Nama PPL', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'200px' },
-         { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
-         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200' },
-         { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200' },
-         { k:'agg_s', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200' },
-         { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200' },
-         { k:'avg_raw', n:'Rata² Harian', c:'text-center bg-orange-100 text-orange-800 border-l border-orange-200' },
-         { k:'pct_pendataan', n:'% Pendataan', c:'text-center bg-fuchsia-100 text-fuchsia-800 border-l border-fuchsia-200' },
-         { k:'pct_submit', n:'% Submit', c:'text-center bg-sky-100 text-sky-800 border-l border-sky-200' },
-         { k:'pct_approve', n:'% Approved', c:'text-center bg-emerald-100 text-emerald-800 border-l border-emerald-200' },
-         { k:'kekurangan', n:'Kekurangan', c:'text-center bg-rose-100 text-rose-800 border-l border-rose-200' },
-         { k:'statusTarget', n:'Status Capaian', c:'text-center bg-gray-100 text-gray-800 border-l border-gray-300' }
+         { k:'ppl', n:'Nama PPL', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'200px' }, { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
+         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true }, { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200', f:true },
+         { k:'agg_s', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true }, { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200', f:true },
+         { k:'avg_raw', n:'Rata² Harian', c:'text-center bg-orange-100 text-orange-800 border-l border-orange-200', f:true }, { k:'pct_pendataan', n:'% Pendataan', c:'text-center bg-fuchsia-100 text-fuchsia-800 border-l border-fuchsia-200', f:true },
+         { k:'pct_submit', n:'% Submit', c:'text-center bg-sky-100 text-sky-800 border-l border-sky-200', f:true }, { k:'pct_approve', n:'% Approved', c:'text-center bg-emerald-100 text-emerald-800 border-l border-emerald-200', f:true },
+         { k:'kekurangan', n:'Kekurangan', c:'text-center bg-rose-100 text-rose-800 border-l border-rose-200', f:true }, { k:'statusTarget', n:'Status Capaian', c:'text-center bg-gray-100 text-gray-800 border-l border-gray-300' }
       ],
       3: [
-         { k:'pml', n:'Nama PML', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'200px' },
-         { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
-         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200' },
-         { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200' },
-         { k:'sub', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200' },
-         { k:'rej', n:'Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200' },
-         { k:'app', n:'Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200' },
-         { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200' },
-         { k:'pct_open', n:'% Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200' },
-         { k:'pct_draft', n:'% Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200' },
-         { k:'pct_sub', n:'% Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200' },
-         { k:'pct_rej', n:'% Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200' },
-         { k:'pct_app', n:'% Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200' },
-         { k:'kekurangan', n:'Kekurangan', c:'text-center bg-rose-100 text-rose-800 border-l border-rose-200' },
+         { k:'pml', n:'Nama PML', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'200px' }, { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
+         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true }, { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200', f:true },
+         { k:'sub', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true }, { k:'rej', n:'Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200', f:true },
+         { k:'app', n:'Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200', f:true }, { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200', f:true },
+         { k:'pct_open', n:'% Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true }, { k:'pct_draft', n:'% Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200', f:true },
+         { k:'pct_sub', n:'% Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true }, { k:'pct_rej', n:'% Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200', f:true },
+         { k:'pct_app', n:'% Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200', f:true }, { k:'kekurangan', n:'Kekurangan', c:'text-center bg-rose-100 text-rose-800 border-l border-rose-200', f:true },
          { k:'statusTarget', n:'Status Capaian', c:'text-center bg-gray-100 text-gray-800 border-l border-gray-300' }
       ],
       4: [
-         { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-blue-900' },
-         { k:'pj', n:'PJ Kuda', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
-         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200' },
-         { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200' },
-         { k:'s', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200' },
-         { k:'rej', n:'Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200' },
-         { k:'app', n:'Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200' },
-         { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200' },
-         { k:'pct_pendataan', n:'% Pendataan', c:'text-center bg-fuchsia-100 text-fuchsia-800 border-l border-fuchsia-200' },
-         { k:'pct_submit', n:'% Submit', c:'text-center bg-sky-100 text-sky-800 border-l border-sky-200' },
-         { k:'pct_approve', n:'% Approve', c:'text-center bg-emerald-100 text-emerald-800 border-l border-emerald-200' }
+         { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-blue-900' }, { k:'pj', n:'PJ Kuda', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
+         { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true }, { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200', f:true },
+         { k:'s', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true }, { k:'rej', n:'Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200', f:true },
+         { k:'app', n:'Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200', f:true }, { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200', f:true },
+         { k:'pct_pendataan', n:'% Pendataan', c:'text-center bg-fuchsia-100 text-fuchsia-800 border-l border-fuchsia-200', f:true }, { k:'pct_submit', n:'% Submit', c:'text-center bg-sky-100 text-sky-800 border-l border-sky-200', f:true },
+         { k:'pct_approve', n:'% Approve', c:'text-center bg-emerald-100 text-emerald-800 border-l border-emerald-200', f:true }
       ],
       6: [
-         { k:'idSls', n:'ID SLS', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'150px' },
-         { k:'nmsls', n:'Wilayah', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'200px' },
-         { k:'ppl', n:'Petugas PPL', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'150px' },
-         { k:'pml', n:'Petugas PML', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'150px' },
+         { k:'idSls', n:'ID SLS', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'150px' }, { k:'nmsls', n:'Wilayah', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'200px' },
+         { k:'ppl', n:'Petugas PPL', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'150px' }, { k:'pml', n:'Petugas PML', c:'bg-amber-100 border-r border-amber-200 text-amber-900', w:'150px' },
          { k:'pj', n:'PJ Kuda', c:'bg-amber-100 text-amber-900', w:'100px' },
-         { k:'prelist', n:'Prelist Awal', c:'text-center border-l border-amber-200 bg-amber-50 text-slate-800' },
-         { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-amber-200 bg-amber-50 text-green-700' },
-         { k:'baru', n:'Kel. Baru', c:'text-center border-l border-amber-200 bg-amber-50 text-blue-700' },
-         { k:'meninggal', n:'Meninggal', c:'text-center border-l border-amber-200 bg-amber-50 text-gray-700' },
-         { k:'tdk', n:'Tdk Temu', c:'text-center border-l border-amber-200 bg-red-50 text-red-700' }
+         { k:'prelist', n:'Prelist', c:'text-center border-l border-amber-200 bg-amber-50 text-slate-800', f:true }, { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-amber-200 bg-amber-50 text-green-700', f:true },
+         { k:'baru', n:'Kel. Baru', c:'text-center border-l border-amber-200 bg-amber-50 text-blue-700', f:true }, { k:'meninggal', n:'Meninggal', c:'text-center border-l border-amber-200 bg-amber-50 text-gray-700', f:true },
+         { k:'tdk', n:'Tdk Temu', c:'text-center border-l border-amber-200 bg-red-50 text-red-700', f:true }
       ],
       7: [
-         { k:'idSls', n:'ID SLS', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'150px' },
-         { k:'nmsls', n:'Wilayah', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'200px' },
-         { k:'ppl', n:'Petugas PPL', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'150px' },
-         { k:'pml', n:'Petugas PML', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'150px' },
+         { k:'idSls', n:'ID SLS', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'150px' }, { k:'nmsls', n:'Wilayah', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'200px' },
+         { k:'ppl', n:'Petugas PPL', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'150px' }, { k:'pml', n:'Petugas PML', c:'bg-purple-100 border-r border-purple-200 text-purple-900', w:'150px' },
          { k:'pj', n:'PJ Kuda', c:'bg-purple-100 text-purple-900', w:'100px' },
-         { k:'prelist', n:'Pre Usaha', c:'text-center border-l border-purple-200 bg-purple-50 text-slate-800' },
-         { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-purple-200 bg-purple-50 text-green-700' },
-         { k:'baru', n:'Usaha Baru', c:'text-center border-l border-purple-200 bg-purple-50 text-blue-700' },
-         { k:'tutup', n:'Tutup', c:'text-center border-l border-purple-200 bg-purple-50 text-gray-700' },
-         { k:'ganda', n:'Ganda', c:'text-center border-l border-purple-200 bg-amber-50 text-amber-700' },
-         { k:'tdk', n:'Tdk Temu', c:'text-center border-l border-purple-200 bg-red-50 text-red-700' }
+         { k:'prelist', n:'Pre Usaha', c:'text-center border-l border-purple-200 bg-purple-50 text-slate-800', f:true }, { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-purple-200 bg-purple-50 text-green-700', f:true },
+         { k:'baru', n:'Usaha Baru', c:'text-center border-l border-purple-200 bg-purple-50 text-blue-700', f:true }, { k:'tutup', n:'Tutup', c:'text-center border-l border-purple-200 bg-purple-50 text-gray-700', f:true },
+         { k:'ganda', n:'Ganda', c:'text-center border-l border-purple-200 bg-amber-50 text-amber-700', f:true }, { k:'tdk', n:'Tdk Temu', c:'text-center border-l border-purple-200 bg-red-50 text-red-700', f:true }
       ],
       8: [
-         { k:'idSls', n:'ID SLS', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'150px' },
-         { k:'nmsls', n:'Wilayah', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'200px' },
-         { k:'ppl', n:'Petugas PPL', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'150px' },
-         { k:'pml', n:'Petugas PML', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'150px' },
+         { k:'idSls', n:'ID SLS', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'150px' }, { k:'nmsls', n:'Wilayah', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'200px' },
+         { k:'ppl', n:'Petugas PPL', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'150px' }, { k:'pml', n:'Petugas PML', c:'bg-emerald-100 border-r border-emerald-200 text-emerald-900', w:'150px' },
          { k:'pj', n:'PJ Kuda', c:'bg-emerald-100 text-emerald-900', w:'100px' },
-         { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-emerald-200 bg-emerald-50 text-green-700' },
-         { k:'baru', n:'Usaha Baru', c:'text-center border-l border-emerald-200 bg-emerald-50 text-blue-700' },
-         { k:'tutup', n:'Tutup', c:'text-center border-l border-emerald-200 bg-emerald-50 text-gray-700' },
-         { k:'ganda', n:'Ganda', c:'text-center border-l border-emerald-200 bg-amber-50 text-amber-700' },
-         { k:'tdk', n:'Tdk Temu', c:'text-center border-l border-emerald-200 bg-red-50 text-red-700' }
+         { k:'ditemukan', n:'Ditemukan', c:'text-center border-l border-emerald-200 bg-emerald-50 text-green-700', f:true }, { k:'baru', n:'Usaha Baru', c:'text-center border-l border-emerald-200 bg-emerald-50 text-blue-700', f:true },
+         { k:'tutup', n:'Tutup', c:'text-center border-l border-emerald-200 bg-emerald-50 text-gray-700', f:true }, { k:'ganda', n:'Ganda', c:'text-center border-l border-emerald-200 bg-amber-50 text-amber-700', f:true },
+         { k:'tdk', n:'Tdk Temu', c:'text-center border-l border-emerald-200 bg-red-50 text-red-700', f:true }
       ]
   };
 
   function buildTableHeaders() {
       Object.keys(TABS_CONFIG).forEach(tId => {
-          let headHtml = `<tr><th class="px-4 py-2 text-center align-top bg-gray-100 border-r border-gray-200 w-12 sticky top-0 z-20 shadow-sm">No</th>`;
+          let headHtml = `<tr><th class="px-4 py-3 text-center align-middle bg-gray-100 border-r border-gray-200 w-12 sticky top-0 z-20 shadow-sm">No</th>`;
           TABS_CONFIG[tId].forEach(col => {
               let wStyle = col.w ? `style="min-width:${col.w};"` : '';
+              let funnelIcon = col.f ? `<div onclick="openFilterModal('${tId}', '${col.k}', '${col.n}')" class="p-1 hover:bg-white/50 rounded-full transition" title="Saring Data"><svg class="w-3.5 h-3.5 opacity-70 hover:opacity-100" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"></path></svg></div>` : '';
+              
               headHtml += `
-                 <th class="px-3 py-2 align-top transition hover:opacity-90 sticky top-0 z-20 shadow-sm ${col.c}" ${wStyle}>
-                    <div class="flex justify-between items-center whitespace-nowrap gap-1 cursor-pointer" onclick="applySort('${col.k}')">
-                        <span>${col.n}</span>
-                        <span class="text-[9px] opacity-60">↕</span>
+                 <th class="px-3 py-3 align-middle transition hover:opacity-90 sticky top-0 z-20 shadow-sm ${col.c}" ${wStyle}>
+                    <div class="flex justify-between items-center gap-2">
+                        <div class="flex-1 flex justify-between items-center cursor-pointer" onclick="applySort('${col.k}')">
+                           <span>${col.n}</span>
+                           <span class="text-[9px] opacity-40 ml-1">↕</span>
+                        </div>
+                        ${funnelIcon}
                     </div>
-                    <select class="filter-select filter-sel-${tId}" data-col="${col.k}" onchange="renderCurrentTab()" onclick="event.stopPropagation()">
-                        <option value="">Semua</option>
-                    </select>
                  </th>`;
           });
           headHtml += `</tr>`;
-          if(document.getElementById(`headTab${tId}`)) {
-              document.getElementById(`headTab${tId}`).innerHTML = headHtml;
-          }
+          if(document.getElementById(`headTab${tId}`)) document.getElementById(`headTab${tId}`).innerHTML = headHtml;
       });
   }
 
-  function populateHeaderFilters(dataArr, tId) {
-      const selects = document.querySelectorAll(`.filter-sel-${tId}`);
-      selects.forEach(sel => {
-          let col = sel.getAttribute('data-col');
-          let currentVal = sel.value;
-          let uniqueVals = [...new Set(dataArr.map(x => String(x[col] || '')))];
-          uniqueVals.sort((a,b) => !isNaN(a) && !isNaN(b) ? Number(a) - Number(b) : a.localeCompare(b));
-          
-          let html = '<option value="">Semua</option>';
-          uniqueVals.forEach(v => { if(v !== '') html += `<option value="${v}">${v}</option>`; });
-          sel.innerHTML = html;
-          sel.value = currentVal; 
+  function openFilterModal(tId, colKey, colName) {
+      let currentFilter = COLUMN_FILTERS[tId][colKey] || { mode: 'all', val: '' };
+      
+      Swal.fire({
+          title: '<span class="text-lg font-black uppercase text-indigo-900">Saring: ' + colName + '</span>',
+          html: `
+              <div class="text-left text-sm mt-2">
+                  <label class="block mb-1.5 font-bold text-gray-700">Pilih Mode Saringan:</label>
+                  <select id="swal-filter-mode" class="w-full border border-gray-300 p-2.5 rounded-xl mb-4 bg-gray-50 focus:border-indigo-500 outline-none font-bold text-gray-700">
+                      <option value="all">Menampilkan Semua Data</option>
+                      <option value="gt">Lebih Dari ( > )</option>
+                      <option value="lt">Kurang Dari ( < )</option>
+                      <option value="eq">Spesifik Sama Dengan ( = )</option>
+                  </select>
+                  <div id="swal-filter-val-container" class="hidden">
+                      <label class="block mb-1.5 font-bold text-gray-700">Masukkan Angka/Nilai:</label>
+                      <input type="number" id="swal-filter-val" class="w-full border border-gray-300 p-2.5 rounded-xl bg-gray-50 focus:border-indigo-500 outline-none font-bold text-indigo-700 text-lg" placeholder="Contoh: 0">
+                  </div>
+              </div>
+          `,
+          showCancelButton: true, confirmButtonText: 'Terapkan Filter', cancelButtonText: 'Batal',
+          customClass: { popup: 'rounded-2xl', confirmButton: 'bg-indigo-600 text-white font-bold px-6 py-2 rounded-xl', cancelButton: 'bg-gray-200 text-gray-800 font-bold px-6 py-2 rounded-xl' },
+          didOpen: () => {
+              let mode = document.getElementById('swal-filter-mode');
+              let valCont = document.getElementById('swal-filter-val-container');
+              let valInput = document.getElementById('swal-filter-val');
+              mode.value = currentFilter.mode; valInput.value = currentFilter.val;
+              if(currentFilter.mode !== 'all') valCont.classList.remove('hidden');
+              mode.onchange = () => { if(mode.value === 'all') valCont.classList.add('hidden'); else valCont.classList.remove('hidden'); };
+          },
+          preConfirm: () => {
+              let m = document.getElementById('swal-filter-mode').value; let v = document.getElementById('swal-filter-val').value;
+              if(m !== 'all' && v === '') { Swal.showValidationMessage('Nilai angka tidak boleh kosong!'); return false; }
+              return { mode: m, val: v };
+          }
+      }).then(res => {
+          if(res.isConfirmed) {
+              if(res.value.mode === 'all') delete COLUMN_FILTERS[tId][colKey];
+              else COLUMN_FILTERS[tId][colKey] = res.value;
+              dashCurrentPage = 1;
+              renderCurrentTab();
+          }
       });
   }
 
   function applyHeaderFilters(dataArr, tId) {
-      const selects = document.querySelectorAll(`.filter-sel-${tId}`);
       let filtered = dataArr;
-      selects.forEach(sel => {
-          let col = sel.getAttribute('data-col');
-          let val = sel.value;
-          if(val !== "") {
-              filtered = filtered.filter(x => String(x[col] || '') === val);
-          }
+      let colFilters = COLUMN_FILTERS[tId] || {};
+      Object.keys(colFilters).forEach(k => {
+          let f = colFilters[k];
+          let fv = Number(f.val);
+          if(f.mode === 'gt') filtered = filtered.filter(r => Number(r[k]||0) > fv);
+          else if(f.mode === 'lt') filtered = filtered.filter(r => Number(r[k]||0) < fv);
+          else if(f.mode === 'eq') filtered = filtered.filter(r => Number(r[k]||0) === fv);
       });
       return filtered;
   }
 
   function applySort(col) {
-      if(sortCol === col) {
-          sortAsc = !sortAsc;
-      } else {
-          sortCol = col; sortAsc = true;
-      }
+      if(sortCol === col) sortAsc = !sortAsc; else { sortCol = col; sortAsc = true; }
       renderCurrentTab();
   }
 
@@ -594,13 +455,21 @@
   // =========================================================================
   function handleGlobalFilter() {
       const search = document.getElementById('dashSearch').value.toLowerCase();
-      const fp = document.getElementById('fPrio').value; const fk = document.getElementById('fKec').value;
-      const fpm = document.getElementById('fPml').value; const fpp = document.getElementById('fPpl').value;
-      const fpj = document.getElementById('fPj').value;
+      // Mengambil Array dari Multi-Select
+      const fkec = tsKec ? tsKec.getValue() : [];
+      const fpml = tsPml ? tsPml.getValue() : [];
+      const fppl = tsPpl ? tsPpl.getValue() : [];
+      const fpj = tsPj ? tsPj.getValue() : [];
+      const fprio = tsPrio ? tsPrio.getValue() : '';
       
       dashFilteredData = DASH_DATA.filter(r => {
           let mS = search === '' || `${r.idSls} ${r.nmsls} ${r.desa} ${r.ppl} ${r.pml}`.toLowerCase().includes(search);
-          return mS && (fp===''||String(r.prioritas)===fp) && (fk===''||r.kec===fk) && (fpm===''||r.pml===fpm) && (fpp===''||r.ppl===fpp) && (fpj===''||r.pj===fpj);
+          let mPrio = fprio === '' || String(r.prioritas) === fprio;
+          let mKec = fkec.length === 0 || fkec.includes(r.kec);
+          let mPml = fpml.length === 0 || fpml.includes(r.pml);
+          let mPpl = fppl.length === 0 || fppl.includes(r.ppl);
+          let mPj = fpj.length === 0 || fpj.includes(r.pj);
+          return mS && mPrio && mKec && mPml && mPpl && mPj;
       });
 
       let tSls=0, tOpen=0, tDraft=0, tSub=0, tRej=0, tApp=0, tTot=0;
@@ -615,8 +484,8 @@
 
       document.getElementById('dashTotSls').innerText = tSls.toLocaleString('id-ID');
       document.getElementById('dashTotTarget').innerText = tTot.toLocaleString('id-ID');
-      document.getElementById('dashProgPendataan').innerHTML = `${(tDraft+tSub+tRej+tApp).toLocaleString('id-ID')} <span class="text-xs">(${pPend})</span>`;
-      document.getElementById('dashProgSubmit').innerHTML = `${(tSub+tRej+tApp).toLocaleString('id-ID')} <span class="text-xs">(${pSubm})</span>`;
+      document.getElementById('dashProgPendataan').innerHTML = `${(tDraft+tSub+tRej+tApp).toLocaleString('id-ID')} <span class="text-xs font-bold opacity-80">(${pPend})</span>`;
+      document.getElementById('dashProgSubmit').innerHTML = `${(tSub+tRej+tApp).toLocaleString('id-ID')} <span class="text-xs font-bold opacity-80">(${pSubm})</span>`;
       document.getElementById('dashTotOpen').innerText = tOpen.toLocaleString('id-ID'); document.getElementById('dashTotDraft').innerText = tDraft.toLocaleString('id-ID');
       document.getElementById('dashTotSubmit').innerText = tSub.toLocaleString('id-ID'); document.getElementById('dashTotReject').innerText = tRej.toLocaleString('id-ID');
       document.getElementById('dashTotApprove').innerText = tApp.toLocaleString('id-ID');
@@ -627,7 +496,6 @@
   }
 
   function buildTabStates() {
-      // Build flattened objects for all tabs
       TAB_STATE[1] = dashFilteredData.map(r => ({ ...r, desaKec: r.desa + ' - ' + r.kec }));
       
       let pplM={}, pmlM={}, kecM={};
@@ -678,7 +546,6 @@
      if(activeTabId !== tabId) dashCurrentPage = 1; 
      activeTabId = tabId;
      
-     // Dinamis Pagination Default
      if ([2, 3, 4].includes(tabId)) {
         dashRowsPerPage = 999999;
         if(document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "999999";
@@ -690,7 +557,6 @@
         }
      }
      
-     // Styling Buttons
      [1,2,3,4,5,6,7,8].forEach(i => {
         let btn = document.getElementById('btnTab'+i);
         if(btn) btn.className = btn.className.replace(/border-blue-500|border-amber-500|border-purple-500|border-emerald-500|text-blue-700|text-amber-600|text-purple-600|text-emerald-600/g, "border-transparent text-gray-500");
@@ -700,14 +566,15 @@
      let btnAct = document.getElementById('btnTab'+tabId);
      if(btnAct) {
         btnAct.classList.remove("border-transparent", "text-gray-500");
-        if(tabId===6) btnAct.classList.add("border-amber-500", "text-amber-600");
-        else if(tabId===7) btnAct.classList.add("border-purple-500", "text-purple-600");
-        else if(tabId===8) btnAct.classList.add("border-emerald-500", "text-emerald-600");
+        if(tabId === 6) btnAct.classList.add("border-amber-500", "text-amber-600");
+        else if(tabId === 7) btnAct.classList.add("border-purple-500", "text-purple-600");
+        else if(tabId === 8) btnAct.classList.add("border-emerald-500", "text-emerald-600");
         else btnAct.classList.add("border-blue-500", "text-blue-700");
      }
      
-     if(document.getElementById('tab'+tabId+'-content')) document.getElementById('tab'+tabId+'-content').classList.remove('hidden');
-     document.getElementById('paginasiArea').style.display = ([1,2,3,4,6,7,8].includes(tabId)) ? 'flex' : 'none';
+     let tabAct = document.getElementById('tab'+tabId+'-content');
+     if(tabAct) { tabAct.classList.remove('hidden'); tabAct.classList.add('block'); }
+     if(document.getElementById('paginasiArea')) document.getElementById('paginasiArea').style.display = ([1,2,3,4,6,7,8].includes(tabId)) ? 'flex' : 'none';
      
      renderCurrentTab();
   }
@@ -715,15 +582,18 @@
   function renderCurrentTab() {
      if(activeTabId === 5) return renderVisualisasi();
      
-     const fStatus = document.getElementById('fStatusPetugas') ? document.getElementById('fStatusPetugas').value : '';
      let rawData = TAB_STATE[activeTabId];
      
-     if (fStatus && [2,3].includes(activeTabId)) {
-        rawData = rawData.filter(r => r.statusTarget === fStatus);
+     // Global Status Filter Overlay
+     const fStatus = tsStatusPetugas ? tsStatusPetugas.getValue() : [];
+     if (fStatus.length > 0 && [2,3].includes(activeTabId)) {
+        rawData = rawData.filter(r => fStatus.includes(r.statusTarget));
      }
 
-     populateHeaderFilters(rawData, activeTabId);
+     // Apply Modal Funnel Filters
      let processedData = applyHeaderFilters(rawData, activeTabId);
+     
+     // Apply Sort
      if(sortCol) sortLogic(processedData, sortCol, sortAsc);
 
      const s = (dashCurrentPage - 1) * dashRowsPerPage;
@@ -742,14 +612,14 @@
            if(activeTabId === 1) {
               html += `
                 <tr class="border-b transition hover:bg-blue-50/50 ${r.isMismatch?'bg-red-50/30':''}">
-                  <td class="px-4 py-3 text-center border-r border-blue-100 font-bold text-gray-500">${n}${r.isMismatch?'<br>⚠️':''}</td>
+                  <td class="px-4 py-3 text-center border-r border-blue-100 font-black text-gray-500 align-middle">${n}${r.isMismatch?'<br><span class="text-red-500 text-[10px]">⚠️</span>':''}</td>
                   <td class="px-4 py-3 font-mono text-[11px] font-bold text-blue-900 border-r border-blue-100 align-middle">${r.idSls}</td>
-                  <td class="px-4 py-3 leading-tight border-r border-blue-100 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500">${r.desaKec}</span></td>
+                  <td class="px-4 py-3 leading-tight border-r border-blue-100 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 uppercase">${r.desaKec}</span></td>
                   <td class="px-4 py-3 leading-tight border-r border-blue-100 align-middle">
-                     <span class="text-[10px] font-bold text-blue-700">PPL: ${r.ppl}</span><br>
-                     <span class="text-[9px] font-bold text-indigo-700">PML: ${r.pml}</span>
+                     <span class="text-[10px] font-bold text-blue-700 uppercase">PPL: ${r.ppl}</span><br>
+                     <span class="text-[9px] font-bold text-indigo-700 uppercase">PML: ${r.pml}</span>
                   </td>
-                  <td class="px-4 py-3 font-bold text-[10px] align-middle">${r.pj}</td>
+                  <td class="px-4 py-3 font-bold text-[10px] uppercase align-middle">${r.pj}</td>
                   <td class="px-4 py-3 text-center font-bold text-blue-600 border-l border-blue-100 bg-blue-50/10 align-middle">${r.open}</td>
                   <td class="px-4 py-3 text-center font-bold text-amber-600 border-l border-amber-100 bg-amber-50/10 align-middle">${r.draft}</td>
                   <td class="px-4 py-3 text-center font-black text-purple-700 border-l border-purple-100 bg-purple-50/30 align-middle">${r.agg_submit}</td>
@@ -824,10 +694,10 @@
                   <td class="px-4 py-3 font-mono text-[11px] font-bold text-amber-900 border-r border-amber-200 align-middle">${r.idSls}</td>
                   <td class="px-4 py-3 leading-tight border-r border-amber-200 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 uppercase">${r.desaKec}</span></td>
                   <td class="px-4 py-3 leading-tight border-r border-amber-200 align-middle">
-                    <span class="text-[10px] font-bold text-blue-700">PPL: ${r.ppl}</span><br>
-                    <span class="text-[9px] font-bold text-indigo-700">PML: ${r.pml}</span>
+                    <span class="text-[10px] font-bold text-blue-700 uppercase">PPL: ${r.ppl}</span><br>
+                    <span class="text-[9px] font-bold text-indigo-700 uppercase">PML: ${r.pml}</span>
                   </td>
-                  <td class="px-4 py-3 font-bold text-[10px] text-amber-900 align-middle">${r.pj}</td>
+                  <td class="px-4 py-3 font-bold text-[10px] text-amber-900 uppercase align-middle">${r.pj}</td>
                   <td class="px-4 py-3 text-center font-mono font-bold text-slate-800 border-l border-amber-200 bg-amber-50/10 align-middle">${r.prelist}</td>
                   <td class="px-4 py-3 text-center font-mono font-bold text-green-700 border-l border-amber-200 align-middle">${r.ditemukan}</td>
                   <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 border-l border-amber-200 align-middle">${r.baru}</td>
@@ -843,10 +713,10 @@
                   <td class="px-4 py-3 font-mono text-[11px] font-bold text-purple-900 border-r border-purple-200 align-middle">${r.idSls}</td>
                   <td class="px-4 py-3 leading-tight border-r border-purple-200 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 uppercase">${r.desaKec}</span></td>
                   <td class="px-4 py-3 leading-tight border-r border-purple-200 align-middle">
-                    <span class="text-[10px] font-bold text-blue-700">PPL: ${r.ppl}</span><br>
-                    <span class="text-[9px] font-bold text-indigo-700">PML: ${r.pml}</span>
+                    <span class="text-[10px] font-bold text-blue-700 uppercase">PPL: ${r.ppl}</span><br>
+                    <span class="text-[9px] font-bold text-indigo-700 uppercase">PML: ${r.pml}</span>
                   </td>
-                  <td class="px-4 py-3 font-bold text-[10px] text-purple-900 align-middle">${r.pj}</td>
+                  <td class="px-4 py-3 font-bold text-[10px] text-purple-900 uppercase align-middle">${r.pj}</td>
                   <td class="px-4 py-3 text-center font-mono font-bold text-slate-800 border-l border-purple-200 bg-purple-50/10 align-middle">${r.prelist}</td>
                   <td class="px-4 py-3 text-center font-mono font-bold text-green-700 border-l border-purple-200 align-middle">${r.ditemukan}</td>
                   <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 border-l border-purple-200 align-middle">${r.baru}</td>
@@ -863,10 +733,10 @@
                   <td class="px-4 py-3 font-mono text-[11px] font-bold text-emerald-900 border-r border-emerald-200 align-middle">${r.idSls}</td>
                   <td class="px-4 py-3 leading-tight border-r border-emerald-200 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 uppercase">${r.desaKec}</span></td>
                   <td class="px-4 py-3 leading-tight border-r border-emerald-200 align-middle">
-                    <span class="text-[10px] font-bold text-blue-700">PPL: ${r.ppl}</span><br>
-                    <span class="text-[9px] font-bold text-indigo-700">PML: ${r.pml}</span>
+                    <span class="text-[10px] font-bold text-blue-700 uppercase">PPL: ${r.ppl}</span><br>
+                    <span class="text-[9px] font-bold text-indigo-700 uppercase">PML: ${r.pml}</span>
                   </td>
-                  <td class="px-4 py-3 font-bold text-[10px] text-emerald-900 align-middle">${r.pj}</td>
+                  <td class="px-4 py-3 font-bold text-[10px] text-emerald-900 uppercase align-middle">${r.pj}</td>
                   <td class="px-4 py-3 text-center font-mono font-bold text-green-700 border-l border-emerald-200 align-middle">${r.ditemukan}</td>
                   <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 border-l border-emerald-200 align-middle">${r.baru}</td>
                   <td class="px-4 py-3 text-center font-mono font-bold text-gray-700 border-l border-emerald-200 align-middle">${r.tutup}</td>
@@ -881,14 +751,22 @@
      if(document.getElementById(bodyId[activeTabId])) document.getElementById(bodyId[activeTabId]).innerHTML = html;
   }
 
-  function changePerPage() { 
-      dashCurrentPage = 1; 
-      renderCurrentTab(); 
-  }
+  function changePerPage() { dashCurrentPage = 1; renderCurrentTab(); }
+  function goDashPage(pageNum) { dashCurrentPage = pageNum; renderCurrentTab(); }
   
-  function goDashPage(pageNum) { 
-      dashCurrentPage = pageNum; 
-      renderCurrentTab(); 
+  function generatePaginationHTML(totalItems, currentPage, rowsPerPage, callbackName) {
+       const totalPages = Math.ceil(totalItems / rowsPerPage);
+       if (totalPages <= 1) return '';
+       let html = '<div class="flex flex-wrap gap-1">';
+       html += `<button onclick="${callbackName}(${currentPage - 1})" class="px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-bold text-gray-600 hover:bg-gray-100 disabled:opacity-50 transition shadow-sm" ${currentPage === 1 ? 'disabled' : ''}>&laquo;</button>`;
+       let startPage = Math.max(1, currentPage - 2);
+       let endPage = Math.min(totalPages, currentPage + 2);
+       for (let i = startPage; i <= endPage; i++) {
+           let activeClass = i === currentPage ? 'bg-blue-600 text-white border-blue-600 shadow-md' : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-100 shadow-sm';
+           html += `<button onclick="${callbackName}(${i})" class="px-3 py-1.5 rounded-lg border ${activeClass} text-xs font-bold transition">${i}</button>`;
+       }
+       html += `<button onclick="${callbackName}(${currentPage + 1})" class="px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-bold text-gray-600 hover:bg-gray-100 disabled:opacity-50 transition shadow-sm" ${currentPage === totalPages ? 'disabled' : ''}>&raquo;</button>`;
+       return html + '</div>';
   }
 
   // --- RENDERER TAB 5 (CHART VISUALISASI) ---
@@ -918,8 +796,9 @@
              type: 'bar', data: { labels: lbls, datasets: [ { label: 'Open', data: dO, backgroundColor: '#3b82f6', borderRadius: 2 }, { label: 'Draft', data: dD, backgroundColor: '#f59e0b', borderRadius: 2 }, { label: 'Submit', data: dS, backgroundColor: '#9333ea', borderRadius: 2 }, { label: 'Reject', data: dR, backgroundColor: '#dc2626', borderRadius: 2 }, { label: 'Approved', data: dA, backgroundColor: '#16a34a', borderRadius: 2 } ] },
              options: { 
                  indexAxis: 'y', maintainAspectRatio: false, responsive: true, interaction: { mode: 'y', intersect: true }, 
-                 scales: { x: { stacked: true, max: 100, ticks: { callback: v => v+'%' } }, y: { stacked: true } }, 
-                 plugins: { tooltip: { callbacks: { label: c => (c.dataset.label||'') + ': ' + (c.parsed.x||0) + '%', footer: (i) => `Total Target: ${kecChartMapGlobal[i[0].label].tot}\nTotal Submit Absolut: ${kecChartMapGlobal[i[0].label].s+kecChartMapGlobal[i[0].label].rej+kecChartMapGlobal[i[0].label].a}` } } }
+                 scales: { x: { stacked: true, max: 100, grid: { display: false }, ticks: { callback: v => v+'%' } }, y: { stacked: true } }, 
+                 plugins: { legend: { display: true, position: 'top', labels: {font:{family:'Montserrat', weight:'bold'}} }, datalabels: { display: false }, tooltip: { enabled: true, position: 'nearest', callbacks: { label: c => (c.dataset.label||'') + ': ' + (c.parsed.x||0) + '%', footer: (i) => `Total Target: ${kecChartMapGlobal[i[0].label].tot}\nTotal Submit Absolut: ${kecChartMapGlobal[i[0].label].s+kecChartMapGlobal[i[0].label].rej+kecChartMapGlobal[i[0].label].a}` } } },
+                 layout: { padding: { left: 120, right: 40, top: 10, bottom: 10 } } 
              }
          });
      }
@@ -929,8 +808,8 @@
   // ADMIN PANEL: UPLOAD DATA EKSTERNAL VIA SHEETJS
   // ====================================================================
   function authAdminPanel() {
-    Swal.fire({ title: '<span class="text-xl font-black text-indigo-900">OTORISASI ADMIN</span>', input: 'password', showCancelButton: true, confirmButtonText: 'Buka Panel', customClass: { confirmButton: 'bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold', popup: 'rounded-2xl' }
-    }).then(res => { if(res.isConfirmed && res.value === 'fasih2026') showUploadModal(); else if(res.isConfirmed) Swal.fire('Ditolak', 'PIN Salah.', 'error'); });
+    Swal.fire({ title: '<span class="text-xl font-black text-indigo-900">OTORISASI ADMIN</span>', input: 'password', showCancelButton: true, confirmButtonText: 'Buka Panel', cancelButtonText: 'Batal', customClass: { confirmButton: 'bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold', popup: 'rounded-2xl' }
+    }).then(res => { if(res.isConfirmed && res.value === 'fasih2026') showUploadModal(); else if(res.isConfirmed) Swal.fire('Akses Ditolak', 'PIN Salah.', 'error'); });
   }
 
   function showUploadModal() {
@@ -938,11 +817,13 @@
       title: '<span class="text-xl font-black uppercase text-indigo-800">INTEGRASI DATA LAPANGAN</span>',
       html: `
         <div class="text-left text-sm mt-4 space-y-4">
-          <div class="p-4 border border-amber-300 bg-amber-50 rounded-xl shadow-sm"><label class="font-black text-amber-800 block mb-2">1. Upload Pemutakhiran Keluarga (.xlsx)</label><input type="file" id="fileKel" accept=".xlsx" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-amber-600 file:text-white file:font-bold"></div>
-          <div class="p-4 border border-purple-300 bg-purple-50 rounded-xl shadow-sm"><label class="font-black text-purple-800 block mb-2">2. Upload Pendataan Usaha (.xlsx)</label><input type="file" id="fileUsa" accept=".xlsx" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-purple-600 file:text-white file:font-bold"></div>
+          <div class="p-4 border border-amber-300 bg-amber-50 rounded-xl shadow-sm"><label class="font-black text-amber-800 block mb-2">1. Upload Pemutakhiran Keluarga (.xlsx)</label><input type="file" id="fileKel" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-amber-600 file:text-white file:font-bold hover:file:bg-amber-700 transition"></div>
+          <div class="p-4 border border-purple-300 bg-purple-50 rounded-xl shadow-sm"><label class="font-black text-purple-800 block mb-2">2. Upload Pendataan Usaha (.xlsx)</label><input type="file" id="fileUsa" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-purple-600 file:text-white file:font-bold hover:file:bg-purple-700 transition"></div>
+          <p class="text-[10px] text-gray-500 font-medium italic mt-2 text-center">Pilih file yang ingin diperbarui (bisa salah satu). Sistem otomatis memecah file Usaha menjadi BKU & Usaha Keluarga.</p>
         </div>
       `,
       confirmButtonText: 'SINKRONISASI SEKARANG', showCancelButton: true, allowOutsideClick: false,
+      customClass: { confirmButton: 'bg-indigo-600 w-full mt-2 text-white font-bold tracking-wider rounded-xl py-3', popup: 'rounded-2xl' },
       preConfirm: () => {
         let fk = document.getElementById('fileKel').files[0]; let fu = document.getElementById('fileUsa').files[0];
         if(!fk && !fu) { Swal.showValidationMessage('Pilih minimal 1 file!'); return false; }
@@ -952,12 +833,16 @@
   }
 
   async function processUploads(fKel, fUsa) {
-     Swal.fire({title: 'Memproses Data...', html: '<b>Sistem</b> sedang mengekstrak ribuan baris Excel Anda di belakang layar...<br><span class="text-xs text-red-500 italic mt-2 block">Dilarang menutup browser!</span>', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
+     Swal.fire({title: 'Memproses Data...', html: '<b>Sistem</b> mengekstrak ribuan baris Excel Anda di belakang layar...<br><span class="text-xs text-red-500 italic mt-2 block">Dilarang menutup browser!</span>', allowOutsideClick: false, didOpen: () => Swal.showLoading()});
      try {
        if(fKel) { let dataKel = await parseExcelKeluarga(fKel); await sendToGAS('keluarga', dataKel); }
-       if(fUsa) { let dataUsa = await parseExcelUsahaAll(fUsa); if(dataUsa.bku && dataUsa.bku.length > 1) await sendToGAS('usaha_bku', dataUsa.bku); if(dataUsa.kel && dataUsa.kel.length > 1) await sendToGAS('usaha_kel', dataUsa.kel); }
-       Swal.fire('Integrasi Berhasil!', 'Data Eksternal telah tersimpan ke Database.', 'success').then(()=>location.reload());
-     } catch (err) { Swal.fire('Gagal Ekstrak', 'Error format Excel: ' + String(err), 'error'); }
+       if(fUsa) { 
+           let dataUsa = await parseExcelUsahaAll(fUsa); 
+           if(dataUsa.bku && dataUsa.bku.length > 1) await sendToGAS('usaha_bku', dataUsa.bku); 
+           if(dataUsa.kel && dataUsa.kel.length > 1) await sendToGAS('usaha_kel', dataUsa.kel); 
+       }
+       Swal.fire('Integrasi Berhasil!', 'Data telah tersimpan ke Database.', 'success').then(()=>location.reload());
+     } catch (err) { Swal.fire('Gagal Ekstrak', String(err), 'error'); }
   }
 
   function sendToGAS(tipe, dataArray) {
@@ -983,6 +868,52 @@
           if(sUK) { let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUK], {header: 1}); let cIdx = {d:-1, b:-1, tu:-1, g:-1, t:-1}; let start = false; rows.forEach(r => { if(!r || !r.length) return; if(!start) { if(String(r[0]).trim().toUpperCase() === 'KODE') { start = true; for(let c=0; c<r.length; c++){ let h = String(r[c]||'').toUpperCase().trim(); if(h==='DITEMUKAN') cIdx.d=c; else if(h==='BARU') cIdx.b=c; else if(h==='TUTUP') cIdx.tu=c; else if(h==='GANDA') cIdx.g=c; else if(h==='TIDAK DITEMUKAN') cIdx.t=c; } } return; } if(String(r[0]||'').trim().length === 16) rK.push([String(r[0]).trim(), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.tu]||0), Number(r[cIdx.g]||0), Number(r[cIdx.t]||0)]); }); }
           res({bku: rB, kel: rK}); } catch(err) { rej(err); }
       }; r.readAsArrayBuffer(f); });
+  }
+
+  function exportDashboardExcel() {
+    if(dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong', 'info');
+    const exportData = dashFilteredData.map((row, idx) => ({
+      "No": idx + 1, "ID SLS": row.idSls, "Kecamatan": row.kec, "Desa": row.desa, "Nama SLS": row.nmsls, "Prioritas": row.prioritas === 1 ? "Ya" : "Tidak", 
+      "PJ Kuda": row.pj, "PML": row.pml, "Email PML": row.emailPml, "PPL": row.ppl, "Email PPL": row.emailPpl,
+      "Open": row.open, "Draft": row.draft, "Submit": row.submit, "Reject": row.reject, "Approve": row.approve, "Total Target": row.calcTotal
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(exportData); const workbook = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(workbook, worksheet, "Progress_FASIH");
+    XLSX.writeFile(workbook, `Rekap_Monitoring_FASIH_${new Date().toISOString().slice(0,10)}.xlsx`);
+  }
+
+  function downloadImage() {
+       if(dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong', 'info');
+       const btn = document.getElementById('btnImage'); const originalText = btn.innerHTML; btn.innerHTML = 'PROSES...'; btn.disabled = true;
+       const element = document.getElementById('captureArea'); const watermarkHeader = document.getElementById('watermarkHeader');
+       watermarkHeader.classList.remove('hidden'); watermarkHeader.classList.add('flex');
+       document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - ${timingConfig.x} | TARGET PROGRESS : ${timingConfig.y.toFixed(2)}% | TERAKHIR SINKRONISASI: ${document.getElementById('txtLastUpdate').innerText}`;
+       const originalWidth = element.style.width; const originalOverflow = element.style.overflow;
+       window.scrollTo(0,0); document.documentElement.scrollLeft = 0; document.body.scrollLeft = 0; element.scrollLeft = 0; 
+       element.classList.remove('overflow-auto', 'flex-1', 'min-h-0'); element.classList.add('h-max'); element.style.overflow = 'visible'; 
+       const fullWidth = element.scrollWidth; element.style.width = fullWidth + 'px'; element.style.maxWidth = 'none';
+       html2canvas(element, { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: fullWidth, width: fullWidth }).then(canvas => {
+           watermarkHeader.classList.add('hidden'); watermarkHeader.classList.remove('flex'); element.style.width = originalWidth; element.style.overflow = originalOverflow;
+           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); element.classList.remove('h-max');
+           let link = document.createElement('a'); link.download = `Dashboard_FASIH_${new Date().toISOString().slice(0,10)}.png`; link.href = canvas.toDataURL('image/png'); link.click();
+           btn.innerHTML = originalText; btn.disabled = false;
+       });
+  }
+
+  function downloadPDF() {
+       if(dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong', 'info');
+       const btn = document.getElementById('btnScreenshot'); const originalText = btn.innerHTML; btn.innerHTML = 'PROSES...'; btn.disabled = true;
+       const element = document.getElementById('captureArea'); const watermarkHeader = document.getElementById('watermarkHeader');
+       watermarkHeader.classList.remove('hidden'); watermarkHeader.classList.add('flex');
+       document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - ${timingConfig.x} | TARGET PROGRESS : ${timingConfig.y.toFixed(2)}% | TERAKHIR SINKRONISASI: ${document.getElementById('txtLastUpdate').innerText}`;
+       const originalWidth = element.style.width; const originalOverflow = element.style.overflow;
+       window.scrollTo(0,0); document.documentElement.scrollLeft = 0; document.body.scrollLeft = 0; element.scrollLeft = 0; 
+       element.classList.remove('overflow-auto', 'flex-1', 'min-h-0'); element.classList.add('h-max'); element.style.overflow = 'visible';
+       const table = element.querySelector('.block table'); const fullWidth = table ? table.scrollWidth : element.scrollWidth; element.style.width = fullWidth + 'px'; element.style.maxWidth = 'none';
+       let optOpt = { margin: [0.3, 0.2, 0.3, 0.3], filename: `Laporan_Monitoring_FASIH_${new Date().toISOString().slice(0,10)}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, x: 0, y: 0, windowWidth: fullWidth, width: fullWidth }, jsPDF: { unit: 'in', format: 'a3', orientation: 'landscape' }, pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'td', 'th'] } };
+       html2pdf().set(optOpt).from(element).save().then(() => {
+           watermarkHeader.classList.add('hidden'); watermarkHeader.classList.remove('flex'); element.style.width = originalWidth; element.style.overflow = originalOverflow;
+           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); element.classList.remove('h-max'); btn.innerHTML = originalText; btn.disabled = false;
+       });
   }
 </script>
 </body>
