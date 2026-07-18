@@ -410,7 +410,7 @@
       }).trim();
   }
 
-function getHariPendataan() {
+  function getHariPendataan() {
       const now = new Date();
       const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
       const wib = new Date(utc + (3600000 * 7));
@@ -430,7 +430,6 @@ function getHariPendataan() {
       const actualDateUTC = Date.UTC(actualDate.getFullYear(), actualDate.getMonth(), actualDate.getDate());
       let actualDiffDays = Math.floor((actualDateUTC - startDateUTC) / (1000 * 60 * 60 * 24)) + 1;
 
-      // PERBAIKAN: Mengganti 'eff' menjadi 'effectiveDate'
       const effectiveDateUTC = Date.UTC(effectiveDate.getFullYear(), effectiveDate.getMonth(), effectiveDate.getDate());
       let effectiveDiffDays = Math.floor((effectiveDateUTC - startDateUTC) / (1000 * 60 * 60 * 24)) + 1;
 
@@ -765,6 +764,61 @@ function getHariPendataan() {
           }
       });
       return filtered;
+  }
+
+  function switchTab(tabId) {
+     if(activeTabId !== tabId) dashCurrentPage = 1; 
+     activeTabId = tabId;
+     
+     if ([2, 3, 4].includes(tabId)) {
+        dashRowsPerPage = 999999;
+        if(document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "999999";
+     } else {
+        dashRowsPerPage = parseInt(document.getElementById('perPageSelect').value) || 10;
+        if (dashRowsPerPage === 999999) { 
+            dashRowsPerPage = 10;
+            if(document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "10";
+        }
+     }
+     
+     [1,2,3,4,5,6,7,8].forEach(i => {
+        let btn = document.getElementById('btnTab'+i);
+        if(btn) btn.className = btn.className.replace(/border-blue-500|border-amber-500|border-purple-500|border-emerald-500|text-blue-700|text-amber-600|text-purple-600|text-emerald-600/g, "border-transparent text-gray-500");
+        let tc = document.getElementById('tab'+i+'-content'); if(tc) { tc.classList.add('hidden'); tc.classList.remove('block'); }
+     });
+     
+     let btnAct = document.getElementById('btnTab'+tabId);
+     if(btnAct) {
+        btnAct.classList.remove("border-transparent", "text-gray-500");
+        if(tabId===6) btnAct.classList.add("border-amber-500", "text-amber-600");
+        else if(tabId===7) btnAct.classList.add("border-purple-500", "text-purple-600");
+        else if(tabId===8) btnAct.classList.add("border-emerald-500", "text-emerald-600");
+        else btnAct.classList.add("border-blue-500", "text-blue-700");
+     }
+     
+     if(document.getElementById('tab'+tabId+'-content')) document.getElementById('tab'+tabId+'-content').classList.remove('hidden');
+     if(document.getElementById('paginasiArea')) document.getElementById('paginasiArea').style.display = ([1,2,3,4,6,7,8].includes(tabId)) ? 'flex' : 'none';
+     
+     renderCurrentTab();
+  }
+
+  function applySort(col) {
+      if(sortCol === col) sortAsc = !sortAsc; 
+      else { sortCol = col; sortAsc = true; }
+      renderCurrentTab();
+  }
+
+  function sortLogic(arr, col, isAsc) {
+     arr.sort((a, b) => {
+        let valA = a[col]; let valB = b[col];
+        if (typeof valA === 'number' && typeof valB === 'number') {
+           return isAsc ? valA - valB : valB - valA;
+        }
+        valA = String(valA).toLowerCase(); valB = String(valB).toLowerCase();
+        if (valA < valB) return isAsc ? -1 : 1;
+        if (valA > valB) return isAsc ? 1 : -1;
+        return 0;
+     });
   }
 
   // =========================================================================
