@@ -1050,9 +1050,9 @@
                  </tr>`;
             }
             else if(activeTabId === 6) {
-               let al = r.tdk > (r.prelist*0.2) ? 'bg-red-50/50 hover:bg-red-100/50' : 'even:bg-amber-50/20 odd:bg-white hover:bg-amber-100/30';
-               html += `
-                 <tr class="border-b border-amber-100 transition ${al}">
+// Hapus logika 'al' dan gunakan warna putih statis dengan hover abu-abu
+html += `
+  <tr class="border-b border-gray-100 transition hover:bg-gray-50 bg-white">
                    <td class="px-4 py-3 text-center font-bold text-gray-500 border-r border-amber-200 align-middle">${n}</td>
                    <td class="px-4 py-3 font-mono text-[11px] font-bold text-amber-900 border-r border-amber-200 align-middle">${r.idSls}</td>
                    <td class="px-4 py-3 leading-tight border-r border-amber-200 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 font-bold tracking-wider uppercase">${r.desaKec}</span></td>
@@ -1071,9 +1071,8 @@
                  </tr>`;
             }
             else if(activeTabId === 7) {
-               let al = r.tdk > (r.prelist*0.2) ? 'bg-red-50/50 hover:bg-red-100/50' : 'even:bg-purple-50/20 odd:bg-white hover:bg-purple-100/30';
                html += `
-                 <tr class="border-b border-purple-100 transition ${al}">
+                 <tr class="border-b border-gray-100 transition hover:bg-gray-50 bg-white">
                    <td class="px-4 py-3 text-center font-bold text-gray-500 border-r border-purple-200 align-middle">${n}</td>
                    <td class="px-4 py-3 font-mono text-[11px] font-bold text-purple-900 border-r border-purple-200 align-middle">${r.idSls}</td>
                    <td class="px-4 py-3 leading-tight border-r border-purple-200 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 font-bold tracking-wider uppercase">${r.desaKec}</span></td>
@@ -1090,9 +1089,8 @@
                  </tr>`;
             }
             else if(activeTabId === 8) {
-               let al = r.tdk > 0 ? 'bg-red-50/50 hover:bg-red-100/50' : 'even:bg-emerald-50/20 odd:bg-white hover:bg-emerald-100/30';
                html += `
-                 <tr class="border-b border-emerald-100 transition ${al}">
+   <tr class="border-b border-gray-100 transition hover:bg-gray-50 bg-white">
                    <td class="px-4 py-3 text-center font-bold text-gray-500 border-r border-emerald-200 align-middle">${n}</td>
                    <td class="px-4 py-3 font-mono text-[11px] font-bold text-emerald-900 border-r border-emerald-200 align-middle">${r.idSls}</td>
                    <td class="px-4 py-3 leading-tight border-r border-emerald-200 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 font-bold tracking-wider uppercase">${r.desaKec}</span></td>
