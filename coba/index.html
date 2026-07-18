@@ -973,13 +973,16 @@
                ${r.emailPml ? `<br><a href="mailto:${r.emailPml}" class="text-[9px] font-bold text-gray-500 lowercase flex items-center gap-1 mt-0.5 hover:text-blue-600 hover:underline transition"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.53 4.81a2 2 0 002.94 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>${r.emailPml}</a>` : ''}
             `;
 
+           let prioBadge = r.prioritas === 1 || r.prioritas == "1" 
+             ? `<span class="ml-1 bg-amber-100 text-amber-700 border border-amber-300 px-1.5 py-0.5 rounded text-[8px] font-black tracking-wider shadow-sm">PRIORITAS</span>` 
+             : '';
+           
             if(activeTabId === 1) {
                html += `
                  <tr class="border-b transition hover:bg-blue-50/50 ${r.isMismatch?'bg-red-50/30':''}">
                    <td class="px-4 py-3 text-center border-r border-blue-100 font-bold text-gray-500 align-middle">${n}${r.isMismatch?'<br><span class="text-red-500 text-[10px]">⚠️</span>':''}</td>
                    <td class="px-4 py-3 font-mono text-[11px] font-bold text-blue-900 border-r border-blue-100 align-middle">${r.idSls}</td>
-                   <td class="px-4 py-3 leading-tight border-r border-blue-100 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 font-bold tracking-wider uppercase">${r.desaKec}</span></td>
-                   <td class="px-4 py-3 leading-tight border-r border-blue-100 align-middle">${petugasHtml}</td>
+                   <td class="px-4 py-3 leading-tight border-r border-blue-100 align-middle"><span class="font-bold text-xs">${r.nmsls}</span> ${prioBadge}<br><span class="text-[9px] text-gray-500 font-bold tracking-wider uppercase">${r.desaKec}</span></td>
                    <td class="px-4 py-3 font-bold text-[10px] uppercase align-middle">${r.pj}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono text-blue-700 border-l border-blue-100 bg-blue-50/10 align-middle">${r.open}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono text-amber-700 border-l border-amber-100 bg-amber-50/10 align-middle">${r.draft}</td>
