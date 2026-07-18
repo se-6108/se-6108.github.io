@@ -1281,7 +1281,7 @@
     });
   }
 
-  function parseExcelUsahaAll(f) {
+function parseExcelUsahaAll(f) {
     return new Promise((resolve, reject) => { 
       let r = new FileReader(); 
       r.onload = e => { 
@@ -1290,58 +1290,81 @@
           let rB = [["KODE_16", "PRELIST", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]]; 
           let rK = [["KODE_16", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]];
           
+          // --- PARSING SHEET USAHA PERUSAHAAN (BKU) ---
           let sUP = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA PERUSAHAAN'));
           if(sUP) { 
               let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUP], {header: 1}); 
               let cIdx = {p:-1, d:-1, b:-1, tu:-1, g:-1, t:-1}; 
               let start = false; 
-              rows.forEach(r => { 
-                  if(!r || !r.length) return; 
+              
+              for (let i = 0; i < rows.length; i++) {
+                  let row = rows[i];
+                  if(!row || !row.length) continue; 
+                  
                   if(!start) { 
-                      if(String(r[0]).trim().toUpperCase() === 'KODE') { 
+                      if(String(row[0]).trim().toUpperCase() === 'KODE') { 
                           start = true; 
-                          for(let c=0; c<r.length; c++){ 
-                              let h = String(r[c]||'').toUpperCase().trim(); 
-                              if(h.includes('PRELIST')) cIdx.p=c; 
-                              else if(h==='DITEMUKAN') cIdx.d=c; 
-                              else if(h==='BARU') cIdx.b=c; 
-                              else if(h==='TUTUP') cIdx.tu=c; 
-                              else if(h==='GANDA') cIdx.g=c; 
-                              else if(h==='TIDAK DITEMUKAN') cIdx.t=c; 
+                          // Intip baris tepat di bawah baris "KODE"
+                          let nextRow = rows[i+1] || []; 
+                          let maxCol = Math.max(row.length, nextRow.length);
+                          
+                          for(let c=0; c < maxCol; c++){ 
+                              let h1 = String(row[c]||'').toUpperCase().trim(); 
+                              let h2 = String(nextRow[c]||'').toUpperCase().trim(); 
+                              
+                              if(h1.includes('PRELIST') || h2.includes('PRELIST')) cIdx.p=c; 
+                              else if(h1==='DITEMUKAN' || h2==='DITEMUKAN') cIdx.d=c; 
+                              else if(h1==='BARU' || h2==='BARU') cIdx.b=c; 
+                              else if(h1==='TUTUP' || h2==='TUTUP') cIdx.tu=c; 
+                              else if(h1==='GANDA' || h2==='GANDA') cIdx.g=c; 
+                              else if(h1==='TIDAK DITEMUKAN' || h2==='TIDAK DITEMUKAN') cIdx.t=c; 
                           } 
                       } 
-                      return; 
+                      continue; 
                   } 
-                  if(String(r[0]||'').trim().length === 16) {
-                      rB.push([String(r[0]).trim(), Number(r[cIdx.p]||0), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.tu]||0), Number(r[cIdx.g]||0), Number(r[cIdx.t]||0)]); 
+                  
+                  if(String(row[0]||'').trim().length === 16) {
+                      rB.push([String(row[0]).trim(), Number(row[cIdx.p]||0), Number(row[cIdx.d]||0), Number(row[cIdx.b]||0), Number(row[cIdx.tu]||0), Number(row[cIdx.g]||0), Number(row[cIdx.t]||0)]); 
                   }
-              }); 
+              } 
           }
+
+          // --- PARSING SHEET USAHA KELUARGA ---
           let sUK = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA KELUARGA'));
           if(sUK) { 
               let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUK], {header: 1}); 
               let cIdx = {d:-1, b:-1, tu:-1, g:-1, t:-1}; 
               let start = false; 
-              rows.forEach(r => { 
-                  if(!r || !r.length) return; 
+              
+              for (let i = 0; i < rows.length; i++) {
+                  let row = rows[i];
+                  if(!row || !row.length) continue; 
+                  
                   if(!start) { 
-                      if(String(r[0]).trim().toUpperCase() === 'KODE') { 
+                      if(String(row[0]).trim().toUpperCase() === 'KODE') { 
                           start = true; 
-                          for(let c=0; c<r.length; c++){ 
-                              let h = String(r[c]||'').toUpperCase().trim(); 
-                              if(h==='DITEMUKAN') cIdx.d=c; 
-                              else if(h==='BARU') cIdx.b=c; 
-                              else if(h==='TUTUP') cIdx.tu=c; 
-                              else if(h==='GANDA') cIdx.g=c; 
-                              else if(h==='TIDAK DITEMUKAN') cIdx.t=c; 
+                          // Intip baris tepat di bawah baris "KODE"
+                          let nextRow = rows[i+1] || [];
+                          let maxCol = Math.max(row.length, nextRow.length);
+                          
+                          for(let c=0; c < maxCol; c++){ 
+                              let h1 = String(row[c]||'').toUpperCase().trim(); 
+                              let h2 = String(nextRow[c]||'').toUpperCase().trim(); 
+                              
+                              if(h1==='DITEMUKAN' || h2==='DITEMUKAN') cIdx.d=c; 
+                              else if(h1==='BARU' || h2==='BARU') cIdx.b=c; 
+                              else if(h1==='TUTUP' || h2==='TUTUP') cIdx.tu=c; 
+                              else if(h1==='GANDA' || h2==='GANDA') cIdx.g=c; 
+                              else if(h1==='TIDAK DITEMUKAN' || h2==='TIDAK DITEMUKAN') cIdx.t=c; 
                           } 
                       } 
-                      return; 
+                      continue; 
                   } 
-                  if(String(r[0]||'').trim().length === 16) {
-                      rK.push([String(r[0]).trim(), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.tu]||0), Number(r[cIdx.g]||0), Number(r[cIdx.t]||0)]); 
+                  
+                  if(String(row[0]||'').trim().length === 16) {
+                      rK.push([String(row[0]).trim(), Number(row[cIdx.d]||0), Number(row[cIdx.b]||0), Number(row[cIdx.tu]||0), Number(row[cIdx.g]||0), Number(row[cIdx.t]||0)]); 
                   }
-              }); 
+              } 
           }
           resolve({bku: rB, kel: rK}); 
         } catch(err) { reject(err); }
