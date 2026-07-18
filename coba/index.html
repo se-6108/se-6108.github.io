@@ -1308,76 +1308,78 @@
     });
   }
 
-  function parseExcelUsahaAll(f) {
-    return new Promise((res, rej) => { 
-        let r = new FileReader(); 
-        r.onload = e => { 
-            try {
-                let wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'}); 
-                let resBKU = [["KODE_16", "PRELIST", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]]; 
-                let resKel = [["KODE_16", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]];
-                
-                let sUP = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA PERUSAHAAN'));
-                if(sUP) { 
-                    let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUP], {header: 1}); 
-                    let cIdx = {p:-1, d:-1, b:-1, tu:-1, g:-1, t:-1}; 
-                    let start = false; 
-                    rows.forEach(r => { 
-                        if(!r || !r.length) return; 
-                        if(!start) { 
-                            if(String(r[0]).trim().toUpperCase() === 'KODE') { 
-                                start = true; 
-                                for(let c=0; c<r.length; c++){ 
-                                    let h = String(r[c]||'').toUpperCase().trim(); 
-                                    if(h.includes('PRELIST')) cIdx.p=c; 
-                                    else if(h==='DITEMUKAN') cIdx.d=c; 
-                                    else if(h==='BARU') cIdx.b=c; 
-                                    else if(h==='TUTUP') cIdx.tu=c; 
-                                    else if(h==='GANDA') cIdx.g=c; 
-                                    else if(h==='TIDAK DITEMUKAN') cIdx.t=c; 
-                                } 
-                            } 
-                            return; 
+function parseExcelUsahaAll(f) {
+  return new Promise((res, rej) => { 
+    let r = new FileReader(); 
+    r.onload = e => { 
+      try {
+        let wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'}); 
+        let rB = [["KODE_16", "PRELIST", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]]; 
+        let rK = [["KODE_16", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]];
+        
+        let sUP = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA PERUSAHAAN'));
+        if(sUP) { 
+            let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUP], {header: 1}); 
+            let cIdx = {p:-1, d:-1, b:-1, tu:-1, g:-1, t:-1}; 
+            let start = false; 
+            rows.forEach(r => { 
+                if(!r || !r.length) return; 
+                if(!start) { 
+                    if(String(r[0]).trim().toUpperCase() === 'KODE') { 
+                        start = true; 
+                        for(let c=0; c<r.length; c++){ 
+                            let h = String(r[c]||'').toUpperCase().trim(); 
+                            if(h.includes('PRELIST')) cIdx.p=c; 
+                            else if(h==='DITEMUKAN') cIdx.d=c; 
+                            else if(h==='BARU') cIdx.b=c; 
+                            else if(h==='TUTUP') cIdx.tu=c; 
+                            else if(h==='GANDA') cIdx.g=c; 
+                            else if(h==='TIDAK DITEMUKAN') cIdx.t=c; 
                         } 
-                        if(String(r[0]||'').trim().length === 16) {
-                            resBKU.push([String(r[0]).trim(), Number(r[cIdx.p]||0), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.tu]||0), Number(r[cIdx.g]||0), Number(r[cIdx.t]||0)]); 
-                        }
-                    }); 
+                    } 
+                    return; 
+                } 
+                if(String(r[0]||'').trim().length === 16) {
+                    rB.push([String(r[0]).trim(), Number(r[cIdx.p]||0), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.tu]||0), Number(r[cIdx.g]||0), Number(r[cIdx.t]||0)]); 
                 }
+            }); 
+        }
 
-                let sUK = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA KELUARGA'));
-                if(sUK) { 
-                    let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUK], {header: 1}); 
-                    let cIdx = {d:-1, b:-1, tu:-1, g:-1, t:-1}; 
-                    let start = false; 
-                    rows.forEach(r => { 
-                        if(!r || !r.length) return; 
-                        if(!start) { 
-                            if(String(r[0]).trim().toUpperCase() === 'KODE') { 
-                                start = true; 
-                                for(let c=0; c<r.length; c++){ 
-                                    let h = String(r[c]||'').toUpperCase().trim(); 
-                                    if(h==='DITEMUKAN') cIdx.d=c; 
-                                    else if(h==='BARU') cIdx.b=c; 
-                                    else if(h==='TUTUP') cIdx.tu=c; 
-                                    else if(h==='GANDA') cIdx.g=c; 
-                                    else if(h==='TIDAK DITEMUKAN') cIdx.t=c; 
-                                } 
-                            } 
-                            return; 
+        let sUK = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA KELUARGA'));
+        if(sUK) { 
+            let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUK], {header: 1}); 
+            let cIdx = {d:-1, b:-1, tu:-1, g:-1, t:-1}; 
+            let start = false; 
+            rows.forEach(r => { 
+                if(!r || !r.length) return; 
+                if(!start) { 
+                    if(String(r[0]).trim().toUpperCase() === 'KODE') { 
+                        start = true; 
+                        for(let c=0; c<r.length; c++){ 
+                            let h = String(r[c]||'').toUpperCase().trim(); 
+                            if(h==='DITEMUKAN') cIdx.d=c; 
+                            else if(h==='BARU') cIdx.b=c; 
+                            else if(h==='TUTUP') cIdx.tu=c; 
+                            else if(h==='GANDA') cIdx.g=c; 
+                            else if(h==='TIDAK DITEMUKAN') cIdx.t=c; 
                         } 
-                        if(String(r[0]||'').trim().length === 16) {
-                            resKel.push([String(r[0]).trim(), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.tu]||0), Number(r[cIdx.g]||0), Number(r[cIdx.t]||0)]); 
-                        }
-                    }); 
+                    } 
+                    return; 
+                } 
+                if(String(r[0]||'').trim().length === 16) {
+                    rK.push([String(r[0]).trim(), Number(r[cIdx.d]||0), Number(r[cIdx.b]||0), Number(r[cIdx.tu]||0), Number(r[cIdx.g]||0), Number(r[cIdx.t]||0)]); 
                 }
-
-                resolve({bku: resBKU, kel: resKel}); 
-            } catch(err) { rej(err); }
-        }; 
-        r.readAsArrayBuffer(f); 
-    });
-  }
+            }); 
+        }
+        // Perbaikan: gunakan 'res' dan 'rej' sesuai deklarasi Promise
+        res({bku: rB, kel: rK}); 
+      } catch(err) { 
+        rej(err); 
+      }
+    }; 
+    r.readAsArrayBuffer(f); 
+  });
+}
 
   // ====================================================================
   // EXPORT & DOWNLOAD UTILS
