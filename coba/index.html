@@ -1536,7 +1536,7 @@ function parseExcelUsahaAll(f) {
 function downloadImage() {
     if (dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
     
-    const btn = document.getElementById('btnScreenshot'); 
+    const btn = document.getElementById('btnImage'); 
     const originalText = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROSES...';
     btn.disabled = true;
@@ -1544,7 +1544,7 @@ function downloadImage() {
     const element = document.getElementById('captureArea');
     const watermarkHeader = document.getElementById('watermarkHeader');
 
-    // 1. SETTING WATERMARK & WARNA (Inline CSS Kuning)
+    // 1. SETTING WATERMARK & WARNA
     const tabNamesDict = { 
         1: "Detail SLS", 2: "Progress PPL", 3: "Progress PML", 
         4: "Progress Kecamatan", 5: "Visualisasi Data", 
@@ -1561,39 +1561,42 @@ function downloadImage() {
     watermarkHeader.classList.remove('hidden');
     watermarkHeader.classList.add('flex');
 
-    // 2. INJEKSI CSS SEMENTARA (Fix Posisi Objek & Fix Terpotong)
+    // 2. INJEKSI CSS SEMENTARA (MEMBUKA KUNCI SCROLL DAN HEIGHT)
     const styleFix = document.createElement('style');
-    styleFix.id = 'html2canvas-fix-img';
+    styleFix.id = 'html2canvas-fix-scroll';
     styleFix.innerHTML = `
-        /* Fix Posisi Objek */
-        .badge-prioritas, svg, img, i, .ikon-sort, .fa-envelope {
-            display: inline-block !important;
-            vertical-align: middle !important;
-            margin-top: -1px;
-        }
-        td span, th span {
-            display: inline-block !important;
-            vertical-align: middle !important;
-        }
-        
-        /* Fix Agar Baris Tidak Terpotong (Buka Scroll) */
-        #captureArea, #captureArea div, #captureArea table, #captureArea tbody {
-            max-height: none !important;
+        /* Bebaskan tinggi dan overflow dari parent terluar sampai ke dalam */
+        html, body, #halaman-dashboard {
             height: auto !important;
+            min-height: 100% !important;
             overflow: visible !important;
+        }
+        .flex-1, #captureArea, #captureArea > div, #captureArea table, #captureArea tbody {
+            height: auto !important;
+            max-height: none !important;
+            overflow: visible !important;
+        }
+        /* Fix Posisi Objek & Icon */
+        .badge-prioritas, svg, img, i {
+            display: inline-block !important;
+            vertical-align: middle !important;
         }
     `;
     document.head.appendChild(styleFix);
 
-    // Matikan sticky header tabel sementara
+    // Matikan sticky header tabel sementara agar tidak menumpuk saat di-capture
     const tableHeaders = element.querySelectorAll('th');
     tableHeaders.forEach(th => th.style.position = 'relative');
 
-    // 3. PROSES EKSPOR GAMBAR (Tambahkan windowHeight)
+    // Mencegah bug offset layar
+    window.scrollTo(0, 0);
+
+    // 3. PROSES EKSPOR GAMBAR
     html2canvas(element, { 
         scale: 2, 
         useCORS: true,
-        windowHeight: element.scrollHeight 
+        windowHeight: element.scrollHeight,
+        scrollY: 0
     }).then(canvas => {
         const link = document.createElement('a');
         link.download = `Dashboard_FASIH_${new Date().toISOString().slice(0,10)}.jpg`;
@@ -1603,7 +1606,7 @@ function downloadImage() {
         Swal.fire('Error', 'Gagal memproses gambar.', 'error');
     }).finally(() => {
         // 4. KEMBALIKAN KE KEADAAN SEMULA
-        document.getElementById('html2canvas-fix-img')?.remove(); 
+        document.getElementById('html2canvas-fix-scroll')?.remove(); 
         tableHeaders.forEach(th => th.style.position = 'sticky'); 
         watermarkHeader.classList.add('hidden');
         watermarkHeader.classList.remove('flex');
@@ -1619,7 +1622,7 @@ function downloadImage() {
 function downloadPDF() {
     if (dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
     
-    const btn = document.getElementById('btnScreenshotPDF'); 
+    const btn = document.getElementById('btnScreenshot'); 
     const originalText = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROSES...';
     btn.disabled = true;
@@ -1627,7 +1630,7 @@ function downloadPDF() {
     const element = document.getElementById('captureArea');
     const watermarkHeader = document.getElementById('watermarkHeader');
 
-    // 1. SETTING WATERMARK & WARNA (Inline CSS Kuning)
+    // 1. SETTING WATERMARK & WARNA
     const tabNamesDict = { 
         1: "Detail SLS", 2: "Progress PPL", 3: "Progress PML", 
         4: "Progress Kecamatan", 5: "Visualisasi Data", 
@@ -1644,40 +1647,42 @@ function downloadPDF() {
     watermarkHeader.classList.remove('hidden');
     watermarkHeader.classList.add('flex');
 
-    // 2. INJEKSI CSS SEMENTARA (Fix Posisi Objek & Fix Terpotong)
+    // 2. INJEKSI CSS SEMENTARA (MEMBUKA KUNCI SCROLL DAN HEIGHT)
     const styleFix = document.createElement('style');
-    styleFix.id = 'html2canvas-fix-pdf';
+    styleFix.id = 'html2canvas-fix-scroll-pdf';
     styleFix.innerHTML = `
-        /* Fix Posisi Objek */
-        .badge-prioritas, svg, img, i, .ikon-sort, .fa-envelope {
-            display: inline-block !important;
-            vertical-align: middle !important;
-            margin-top: -1px;
-        }
-        td span, th span {
-            display: inline-block !important;
-            vertical-align: middle !important;
-        }
-        
-        /* Fix Agar Baris Tidak Terpotong (Buka Scroll) */
-        #captureArea, #captureArea div, #captureArea table, #captureArea tbody {
-            max-height: none !important;
+        /* Bebaskan tinggi dan overflow dari parent terluar sampai ke dalam */
+        html, body, #halaman-dashboard {
             height: auto !important;
+            min-height: 100% !important;
             overflow: visible !important;
+        }
+        .flex-1, #captureArea, #captureArea > div, #captureArea table, #captureArea tbody {
+            height: auto !important;
+            max-height: none !important;
+            overflow: visible !important;
+        }
+        /* Fix Posisi Objek & Icon */
+        .badge-prioritas, svg, img, i {
+            display: inline-block !important;
+            vertical-align: middle !important;
         }
     `;
     document.head.appendChild(styleFix);
 
-    // Matikan sticky header tabel sementara
+    // Matikan sticky header tabel sementara agar tidak menumpuk
     const tableHeaders = element.querySelectorAll('th');
     tableHeaders.forEach(th => th.style.position = 'relative');
 
-    // 3. PROSES EKSPOR PDF (Tambahkan windowHeight di konfigurasi)
+    // Mencegah bug offset layar
+    window.scrollTo(0, 0);
+
+    // 3. PROSES EKSPOR PDF
     const opt = {
         margin:       0.2,
         filename:     `Dashboard_FASIH_${new Date().toISOString().slice(0,10)}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, windowHeight: element.scrollHeight },
+        html2canvas:  { scale: 2, useCORS: true, windowHeight: element.scrollHeight, scrollY: 0 },
         jsPDF:        { unit: 'in', format: 'legal', orientation: 'landscape' }
     };
 
@@ -1687,7 +1692,7 @@ function downloadPDF() {
         Swal.fire('Error', 'Gagal membuat PDF', 'error');
     }).finally(() => {
         // 4. KEMBALIKAN KE KEADAAN SEMULA
-        document.getElementById('html2canvas-fix-pdf')?.remove(); 
+        document.getElementById('html2canvas-fix-scroll-pdf')?.remove(); 
         tableHeaders.forEach(th => th.style.position = 'sticky'); 
         watermarkHeader.classList.add('hidden');
         watermarkHeader.classList.remove('flex');
