@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Halaman Tidak Ditemukan</title>
+    <style>
+        /* Menggunakan font modern dari Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #fcfcfc;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 500px;
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 8rem;
+            font-weight: 600;
+            margin: 0;
+            color: #1a202c;
+            letter-spacing: -4px;
+            line-height: 1;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin: 10px 0 20px;
+            color: #4a5568;
+        }
+
+        p {
+            color: #718096;
+            margin-bottom: 35px;
+            line-height: 1.6;
+            font-size: 1.05rem;
+        }
+
+        .btn-home {
+            display: inline-block;
+            padding: 12px 28px;
+            background-color: #1a202c;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 400;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-home:hover {
+            background-color: #2d3748;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Responsif untuk layar HP */
+        @media (max-width: 600px) {
+            h1 { font-size: 6rem; }
+            h2 { font-size: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>404</h1>
+        <h2>Oops! Halaman tidak ditemukan.</h2>
+        <p>Maaf, halaman yang Anda cari mungkin telah dihapus, namanya diubah, atau sementara tidak tersedia.</p>
+        <!-- Tautan ini akan selalu mengarahkan pengunjung kembali ke root domain Anda -->
+        <a href="/" class="btn-home">Kembali ke Beranda</a>
+    </div>
+</body>
+</html>
