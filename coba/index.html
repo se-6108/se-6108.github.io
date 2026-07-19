@@ -1522,10 +1522,12 @@ function parseExcelUsahaAll(f) {
     XLSX.writeFile(workbook, `Rekap_Monitoring_FASIH_${new Date().toISOString().slice(0,10)}.xlsx`);
   }
 
+// ====================================================================
+// FUNGSI EKSPOR GAMBAR (JPG)
+// ====================================================================
 function downloadImage() {
     if (dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
     
-    // Ganti ID dengan ID tombol gambar Anda
     const btn = document.getElementById('btnScreenshot'); 
     const originalText = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROSES...';
@@ -1534,7 +1536,7 @@ function downloadImage() {
     const element = document.getElementById('captureArea');
     const watermarkHeader = document.getElementById('watermarkHeader');
 
-    // --- 1. SETTING WATERMARK & WARNA ---
+    // 1. SETTING WATERMARK & WARNA (Inline CSS Kuning)
     const tabNamesDict = { 
         1: "Detail SLS", 2: "Progress PPL", 3: "Progress PML", 
         4: "Progress Kecamatan", 5: "Visualisasi Data", 
@@ -1543,7 +1545,6 @@ function downloadImage() {
     const actTabName = tabNamesDict[activeTabId] || "Progress Pendataan FASIH";
     document.getElementById('watermarkTitle').innerText = "LAPORAN " + actTabName.toUpperCase();
     
-    // Menggunakan innerHTML + inline style untuk warna kuning font
     document.getElementById('watermarkText').innerHTML = 
         `PENDATAAN HARI KE - <span style="color: #facc15; font-weight: bold;">${timingConfig.x}</span> | ` + 
         `TARGET PROGRESS : <span style="color: #facc15; font-weight: bold;">${timingConfig.y.toFixed(2)}%</span> | ` + 
@@ -1552,10 +1553,11 @@ function downloadImage() {
     watermarkHeader.classList.remove('hidden');
     watermarkHeader.classList.add('flex');
 
-    // --- 2. INJEKSI CSS SEMENTARA UNTUK MEMPERBAIKI POSISI OBJEK ---
+    // 2. INJEKSI CSS SEMENTARA (Fix Posisi Objek & Fix Terpotong)
     const styleFix = document.createElement('style');
     styleFix.id = 'html2canvas-fix-img';
     styleFix.innerHTML = `
+        /* Fix Posisi Objek */
         .badge-prioritas, svg, img, i, .ikon-sort, .fa-envelope {
             display: inline-block !important;
             vertical-align: middle !important;
@@ -1565,15 +1567,26 @@ function downloadImage() {
             display: inline-block !important;
             vertical-align: middle !important;
         }
+        
+        /* Fix Agar Baris Tidak Terpotong (Buka Scroll) */
+        #captureArea, #captureArea div, #captureArea table, #captureArea tbody {
+            max-height: none !important;
+            height: auto !important;
+            overflow: visible !important;
+        }
     `;
     document.head.appendChild(styleFix);
 
-    // Matikan sticky header tabel agar tidak berantakan
+    // Matikan sticky header tabel sementara
     const tableHeaders = element.querySelectorAll('th');
     tableHeaders.forEach(th => th.style.position = 'relative');
 
-    // --- 3. PROSES EKSPOR ---
-    html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+    // 3. PROSES EKSPOR GAMBAR (Tambahkan windowHeight)
+    html2canvas(element, { 
+        scale: 2, 
+        useCORS: true,
+        windowHeight: element.scrollHeight 
+    }).then(canvas => {
         const link = document.createElement('a');
         link.download = `Dashboard_FASIH_${new Date().toISOString().slice(0,10)}.jpg`;
         link.href = canvas.toDataURL('image/jpeg', 0.98);
@@ -1581,9 +1594,9 @@ function downloadImage() {
     }).catch(err => {
         Swal.fire('Error', 'Gagal memproses gambar.', 'error');
     }).finally(() => {
-        // --- 4. KEMBALIKAN KE KEADAAN SEMULA ---
-        document.getElementById('html2canvas-fix-img')?.remove(); // Hapus CSS sementara
-        tableHeaders.forEach(th => th.style.position = 'sticky'); // Kembalikan sticky
+        // 4. KEMBALIKAN KE KEADAAN SEMULA
+        document.getElementById('html2canvas-fix-img')?.remove(); 
+        tableHeaders.forEach(th => th.style.position = 'sticky'); 
         watermarkHeader.classList.add('hidden');
         watermarkHeader.classList.remove('flex');
         btn.innerHTML = originalText;
@@ -1591,13 +1604,13 @@ function downloadImage() {
     });
 }
 
-  // ====================================================================
-  // FITUR EKSPOR PDF (Fungsi yang hilang dari tombol)
-  // ====================================================================
+
+// ====================================================================
+// FUNGSI EKSPOR PDF
+// ====================================================================
 function downloadPDF() {
     if (dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
     
-    // Ganti ID dengan ID tombol PDF Anda
     const btn = document.getElementById('btnScreenshotPDF'); 
     const originalText = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROSES...';
@@ -1606,7 +1619,7 @@ function downloadPDF() {
     const element = document.getElementById('captureArea');
     const watermarkHeader = document.getElementById('watermarkHeader');
 
-    // --- 1. SETTING WATERMARK & WARNA ---
+    // 1. SETTING WATERMARK & WARNA (Inline CSS Kuning)
     const tabNamesDict = { 
         1: "Detail SLS", 2: "Progress PPL", 3: "Progress PML", 
         4: "Progress Kecamatan", 5: "Visualisasi Data", 
@@ -1615,7 +1628,6 @@ function downloadPDF() {
     const actTabName = tabNamesDict[activeTabId] || "Progress Pendataan FASIH";
     document.getElementById('watermarkTitle').innerText = "LAPORAN " + actTabName.toUpperCase();
     
-    // Menggunakan innerHTML + inline style untuk warna kuning font
     document.getElementById('watermarkText').innerHTML = 
         `PENDATAAN HARI KE - <span style="color: #facc15; font-weight: bold;">${timingConfig.x}</span> | ` + 
         `TARGET PROGRESS : <span style="color: #facc15; font-weight: bold;">${timingConfig.y.toFixed(2)}%</span> | ` + 
@@ -1624,10 +1636,11 @@ function downloadPDF() {
     watermarkHeader.classList.remove('hidden');
     watermarkHeader.classList.add('flex');
 
-    // --- 2. INJEKSI CSS SEMENTARA UNTUK MEMPERBAIKI POSISI OBJEK ---
+    // 2. INJEKSI CSS SEMENTARA (Fix Posisi Objek & Fix Terpotong)
     const styleFix = document.createElement('style');
     styleFix.id = 'html2canvas-fix-pdf';
     styleFix.innerHTML = `
+        /* Fix Posisi Objek */
         .badge-prioritas, svg, img, i, .ikon-sort, .fa-envelope {
             display: inline-block !important;
             vertical-align: middle !important;
@@ -1637,30 +1650,37 @@ function downloadPDF() {
             display: inline-block !important;
             vertical-align: middle !important;
         }
+        
+        /* Fix Agar Baris Tidak Terpotong (Buka Scroll) */
+        #captureArea, #captureArea div, #captureArea table, #captureArea tbody {
+            max-height: none !important;
+            height: auto !important;
+            overflow: visible !important;
+        }
     `;
     document.head.appendChild(styleFix);
 
-    // Matikan sticky header tabel
+    // Matikan sticky header tabel sementara
     const tableHeaders = element.querySelectorAll('th');
     tableHeaders.forEach(th => th.style.position = 'relative');
 
-    // --- 3. PROSES EKSPOR ---
+    // 3. PROSES EKSPOR PDF (Tambahkan windowHeight di konfigurasi)
     const opt = {
         margin:       0.2,
         filename:     `Dashboard_FASIH_${new Date().toISOString().slice(0,10)}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
+        html2canvas:  { scale: 2, useCORS: true, windowHeight: element.scrollHeight },
         jsPDF:        { unit: 'in', format: 'legal', orientation: 'landscape' }
     };
 
     html2pdf().set(opt).from(element).save().then(() => {
-        // PDF berhasil di-download
+        // Berhasil
     }).catch(err => {
         Swal.fire('Error', 'Gagal membuat PDF', 'error');
     }).finally(() => {
-        // --- 4. KEMBALIKAN KE KEADAAN SEMULA ---
-        document.getElementById('html2canvas-fix-pdf')?.remove(); // Hapus CSS sementara
-        tableHeaders.forEach(th => th.style.position = 'sticky'); // Kembalikan sticky
+        // 4. KEMBALIKAN KE KEADAAN SEMULA
+        document.getElementById('html2canvas-fix-pdf')?.remove(); 
+        tableHeaders.forEach(th => th.style.position = 'sticky'); 
         watermarkHeader.classList.add('hidden');
         watermarkHeader.classList.remove('flex');
         btn.innerHTML = originalText;
