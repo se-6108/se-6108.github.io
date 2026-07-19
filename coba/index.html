@@ -784,15 +784,13 @@ function initDashboard() {
      if(activeTabId !== tabId) dashCurrentPage = 1; 
      activeTabId = tabId;
      
-     if ([2, 3, 4].includes(tabId)) {
+if ([2, 3, 4].includes(tabId)) {
         dashRowsPerPage = 999999;
         if(document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "999999";
      } else {
         dashRowsPerPage = parseInt(document.getElementById('perPageSelect').value) || 10;
-        if (dashRowsPerPage === 999999) { 
-            dashRowsPerPage = 10;
-            if(document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "10";
-        }
+        // Blok paksaan kembali ke 10 telah dihapus di sini
+     }
      }
      
 [1,2,3,4,5,6,7,8].forEach(i => {
@@ -1166,7 +1164,11 @@ else if(activeTabId === 8) {
       }
   }
 
-  function changePerPage() { 
+ function changePerPage() { 
+      let sel = document.getElementById('perPageSelect');
+      if (sel) {
+          dashRowsPerPage = parseInt(sel.value) || 10;
+      }
       dashCurrentPage = 1; 
       renderCurrentTab(); 
   }
