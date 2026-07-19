@@ -1522,7 +1522,7 @@ function parseExcelUsahaAll(f) {
     XLSX.writeFile(workbook, `Rekap_Monitoring_FASIH_${new Date().toISOString().slice(0,10)}.xlsx`);
   }
 
-  function downloadImage() {
+function downloadImage() {
        if(dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
        const btn = document.getElementById('btnImage'); 
        const originalText = btn.innerHTML; 
@@ -1532,15 +1532,15 @@ function parseExcelUsahaAll(f) {
        const element = document.getElementById('captureArea'); 
        const watermarkHeader = document.getElementById('watermarkHeader');
        
-   const tabNamesDict = { 
-    1: "Detail SLS", 2: "Progress PPL", 3: "Progress PML", 
-    4: "Progress Kecamatan", 5: "Visualisasi Data", 
-    6: "Rekap. Keluarga", 7: "Rekap. BKU", 8: "Rekap. Usaha Keluarga" 
-};
-const actTabName = tabNamesDict[activeTabId] || "Progress Pendataan FASIH";
-document.getElementById('watermarkTitle').innerText = "LAPORAN " + actTabName.toUpperCase();
+       const tabNamesDict = { 
+        1: "Detail SLS", 2: "Progress PPL", 3: "Progress PML", 
+        4: "Progress Kecamatan", 5: "Visualisasi Data", 
+        6: "Rekap. Keluarga", 7: "Rekap. BKU", 8: "Rekap. Usaha Keluarga" 
+       };
+       const actTabName = tabNamesDict[activeTabId] || "Progress Pendataan FASIH";
+       document.getElementById('watermarkTitle').innerText = "LAPORAN " + actTabName.toUpperCase();
 
-document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - <span class="text-yellow-400">${timingConfig.x}</span> | TARGET PROGRESS : <span class="text-yellow-400">${timingConfig.y.toFixed(2)}%</span> | TERAKHIR SINKRONISASI: <span class="text-yellow-400">${document.getElementById('txtLastUpdate').innerText}</span>`;
+       document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - <span class="text-yellow-400">${timingConfig.x}</span> | TARGET PROGRESS : <span class="text-yellow-400">${timingConfig.y.toFixed(2)}%</span> | TERAKHIR SINKRONISASI: <span class="text-yellow-400">${document.getElementById('txtLastUpdate').innerText}</span>`;
        watermarkHeader.classList.remove('hidden'); 
        watermarkHeader.classList.add('flex');
        
@@ -1560,6 +1560,10 @@ document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - <span 
        element.style.width = fullWidth + 'px'; 
        element.style.maxWidth = 'none';
 
+       // --- FIX POSISI: Matikan sticky pada tabel header sebelum render ---
+       const tableHeaders = element.querySelectorAll('th');
+       tableHeaders.forEach(th => th.style.position = 'relative');
+
        html2canvas(element, { 
            scale: 2, 
            useCORS: true, 
@@ -1568,6 +1572,9 @@ document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - <span 
            windowWidth: fullWidth,
            width: fullWidth
        }).then(canvas => {
+           // --- FIX POSISI: Kembalikan sticky setelah render ---
+           tableHeaders.forEach(th => th.style.position = 'sticky');
+
            watermarkHeader.classList.add('hidden'); 
            watermarkHeader.classList.remove('flex'); 
            element.style.width = originalWidth; 
@@ -1583,6 +1590,9 @@ document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - <span 
            btn.innerHTML = originalText; 
            btn.disabled = false;
        }).catch(err => {
+           // --- FIX POSISI: Kembalikan sticky jika terjadi error ---
+           tableHeaders.forEach(th => th.style.position = 'sticky');
+
            watermarkHeader.classList.add('hidden'); 
            watermarkHeader.classList.remove('flex');
            element.style.width = originalWidth; 
@@ -1605,15 +1615,15 @@ document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - <span 
        const element = document.getElementById('captureArea'); 
        const watermarkHeader = document.getElementById('watermarkHeader');
        
-const tabNamesDict = { 
-    1: "Detail SLS", 2: "Progress PPL", 3: "Progress PML", 
-    4: "Progress Kecamatan", 5: "Visualisasi Data", 
-    6: "Rekap. Keluarga", 7: "Rekap. BKU", 8: "Rekap. Usaha Keluarga" 
-};
-const actTabName = tabNamesDict[activeTabId] || "Progress Pendataan FASIH";
-document.getElementById('watermarkTitle').innerText = "LAPORAN " + actTabName.toUpperCase();
+       const tabNamesDict = { 
+        1: "Detail SLS", 2: "Progress PPL", 3: "Progress PML", 
+        4: "Progress Kecamatan", 5: "Visualisasi Data", 
+        6: "Rekap. Keluarga", 7: "Rekap. BKU", 8: "Rekap. Usaha Keluarga" 
+       };
+       const actTabName = tabNamesDict[activeTabId] || "Progress Pendataan FASIH";
+       document.getElementById('watermarkTitle').innerText = "LAPORAN " + actTabName.toUpperCase();
 
-document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - <span class="text-yellow-400">${timingConfig.x}</span> | TARGET PROGRESS : <span class="text-yellow-400">${timingConfig.y.toFixed(2)}%</span> | TERAKHIR SINKRONISASI: <span class="text-yellow-400">${document.getElementById('txtLastUpdate').innerText}</span>`;
+       document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - <span class="text-yellow-400">${timingConfig.x}</span> | TARGET PROGRESS : <span class="text-yellow-400">${timingConfig.y.toFixed(2)}%</span> | TERAKHIR SINKRONISASI: <span class="text-yellow-400">${document.getElementById('txtLastUpdate').innerText}</span>`;
        watermarkHeader.classList.remove('hidden'); 
        watermarkHeader.classList.add('flex');
        
@@ -1634,6 +1644,10 @@ document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - <span 
        element.style.width = fullWidth + 'px'; 
        element.style.maxWidth = 'none';
 
+       // --- FIX POSISI: Matikan sticky pada tabel header sebelum render ---
+       const tableHeaders = element.querySelectorAll('th');
+       tableHeaders.forEach(th => th.style.position = 'relative');
+
        let optOpt = {
           margin:        [0.3, 0.2, 0.3, 0.3], 
           filename:      `Laporan_Monitoring_FASIH_${new Date().toISOString().slice(0,10)}.pdf`,
@@ -1653,6 +1667,9 @@ document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - <span 
        };
 
        html2pdf().set(optOpt).from(element).save().then(() => {
+           // --- FIX POSISI: Kembalikan sticky setelah render PDF ---
+           tableHeaders.forEach(th => th.style.position = 'sticky');
+
            watermarkHeader.classList.add('hidden'); 
            watermarkHeader.classList.remove('flex'); 
            element.style.width = originalWidth; 
@@ -1662,6 +1679,9 @@ document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - <span 
            btn.innerHTML = originalText; 
            btn.disabled = false;
        }).catch(err => {
+           // --- FIX POSISI: Kembalikan sticky jika terjadi error ---
+           tableHeaders.forEach(th => th.style.position = 'sticky');
+
            watermarkHeader.classList.add('hidden'); 
            watermarkHeader.classList.remove('flex');
            element.style.width = originalWidth; 
