@@ -193,15 +193,19 @@
              <input type="text" id="dashSearch" onkeyup="handleGlobalFilter()" placeholder="PENCARIAN..." class="w-full px-4 py-1 border border-gray-300 rounded-full text-xs font-medium focus:border-blue-500 outline-none h-[38px] teks-upper shadow-sm transition hover:border-blue-400">
          </div>
          
-         <!-- NATIVE SELECT YANG DISERAGAMKAN -->
-         <div class="flex-1 min-w-[130px] relative">
-             <select id="fPrio" onchange="updateSingleFilter('prio', this.value)" class="w-full px-4 py-1 border border-gray-300 rounded-full text-xs font-medium focus:border-blue-500 outline-none h-[38px] teks-upper shadow-sm bg-white text-gray-700 cursor-pointer transition hover:border-blue-400 appearance-none pr-8">
-                 <option value="">STATUS PRIORITAS</option>
-                 <option value="1">YA</option>
-                 <option value="0">TIDAK</option>
-             </select>
-             <!-- Panah kustom agar mirip dropdown lain -->
-             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[10px] text-gray-400">▼</div>
+<!-- DROPDOWN CUSTOM PRIORITAS -->
+         <div class="flex-1 min-w-[140px] relative filter-dropdown">
+            <button onclick="toggleDropdown('dropPrio')" class="w-full px-4 py-1 border border-gray-300 rounded-full text-xs font-medium focus:border-blue-500 outline-none h-[38px] teks-upper shadow-sm bg-white text-gray-700 flex justify-between items-center transition hover:border-blue-400">
+                STATUS PRIORITAS <span class="text-[10px] text-gray-400">▼</span>
+            </button>
+            <div id="dropPrio" class="filter-menu hidden absolute left-0 mt-2 min-w-full w-max z-50 bg-white border border-gray-200 rounded-2xl shadow-xl max-h-60 overflow-y-auto">
+                <label class="flex items-center px-4 py-3 hover:bg-slate-50 cursor-pointer border-b border-gray-100 font-bold text-slate-700 text-xs uppercase whitespace-nowrap">
+                    <input type="checkbox" class="mr-2 rounded" value="1" onchange="updateFilter('prio', this)"> YA
+                </label>
+                <label class="flex items-center px-4 py-3 hover:bg-slate-50 cursor-pointer font-bold text-slate-700 text-xs uppercase whitespace-nowrap">
+                    <input type="checkbox" class="mr-2 rounded" value="0" onchange="updateFilter('prio', this)"> TIDAK
+                </label>
+            </div>
          </div>
          
          <!-- DROPDOWN CHECKLISTS -->
@@ -355,7 +359,7 @@
   let sortCol = '', sortAsc = true;
   
   // State Custom Filters
-  let activeFilters = { kec: [], pml: [], ppl: [], pj: [], statusPetugas: [], prio: '' };
+  let activeFilters = { kec: [], pml: [], ppl: [], pj: [], statusPetugas: [], prio: [] };
   
   let chartKecObj;
   let kecChartMapGlobal = {};
@@ -538,9 +542,8 @@
 
   function resetGlobalFilters() {
       document.getElementById('dashSearch').value = '';
-      activeFilters = { kec: [], pml: [], ppl: [], pj: [], statusPetugas: [], prio: '' };
+      activeFilters = { kec: [], pml: [], ppl: [], pj: [], statusPetugas: [], prio: [] };
       
-      document.getElementById('fPrio').value = '';
       document.querySelectorAll('input[type="checkbox"]').forEach(chk => chk.checked = false);
       
       COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{} };
@@ -818,7 +821,7 @@
       
       dashFilteredData = DASH_DATA.filter(r => {
           let mS = search === '' || `${r.idSls} ${r.nmsls} ${r.desa} ${r.ppl} ${r.pml}`.toLowerCase().includes(search);
-          let mPrio = fprio === '' || String(r.prioritas) === fprio;
+          let mPrio = fprio.length === 0 || fprio.includes(String(r.prioritas));
           let mKec = fkec.length === 0 || fkec.includes(r.kec);
           let mPml = fpml.length === 0 || fpml.includes(r.pml);
           let mPpl = fppl.length === 0 || fppl.includes(r.ppl);
