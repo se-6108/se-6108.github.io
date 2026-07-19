@@ -702,8 +702,10 @@ function initDashboard() {
          { k:'pct_approve', n:'% Approve', c:'text-center bg-emerald-100 text-emerald-800 border-l border-pink-200', f:true },
          { k:'pct_reject', n:'% Reject', c:'text-center bg-rose-100 text-rose-800 border-l border-pink-200', f:true },
          { k:'kolomA', n:'Jml Dokumen Ditemukan (A)', c:'text-center bg-purple-100 text-purple-900 border-l border-pink-200', f:true },
-         { k:'kolomB', n:'Jml Dokumen Tdk Ditemukan (B)', c:'text-center bg-orange-100 text-orange-900 border-l border-pink-200', f:true },
-         { k:'selisih', n:'Selisih (A - B)', c:'text-center bg-pink-200 text-pink-900 border-l border-pink-300 font-black', f:true }
+         { k:'pctA', n:'% (A)', c:'text-center bg-purple-50 text-purple-700 border-l border-pink-200 font-bold', f:true },
+        { k:'kolomB', n:'Jml Dokumen Tdk Ditemukan (B)', c:'text-center bg-orange-100 text-orange-900 border-l border-pink-200', f:true },
+        { k:'pctB', n:'% (B)', c:'text-center bg-orange-50 text-orange-700 border-l border-pink-200 font-bold', f:true }, 
+        { k:'selisih', n:'Selisih (A - B)', c:'text-center bg-pink-200 text-pink-900 border-l border-pink-300 font-black', f:true }
       ]
   };
 
@@ -1043,8 +1045,10 @@ function switchTab(tabId) {
           let kolomA = (p.b_dit + p.b_bar) + (p.k_dit + p.k_bar + p.k_khu);
           let kolomB = p.b_tdk + p.k_tdk;
           let selisih = kolomA - kolomB;
+          let pctA = p.t > 0 ? ((kolomA / p.t) * 100).toFixed(1) : '0.0';
+          let pctB = p.t > 0 ? ((kolomB / p.t) * 100).toFixed(1) : '0.0';
 
-          return { ...p, pct_submit, pct_approve, pct_reject, kolomA, kolomB, selisih };
+          return { ...p, pct_submit, pct_approve, pct_reject, kolomA, kolomB, selisih, pctA, pctB };
       });
   }
 
@@ -1244,7 +1248,9 @@ function switchTab(tabId) {
                    <td class="px-4 py-3 text-center font-bold font-mono text-rose-700 border-l border-pink-200 bg-rose-50/30 align-middle">${r.pct_reject}%</td>
                    
                    <td class="px-4 py-3 text-center font-bold font-mono text-purple-800 border-l border-pink-200 bg-purple-50/50 align-middle">${r.kolomA}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-purple-700 border-l border-pink-200 bg-purple-50/10 align-middle">${r.pctA}%</td>
                    <td class="px-4 py-3 text-center font-bold font-mono text-orange-800 border-l border-pink-200 bg-orange-50/50 align-middle">${r.kolomB}</td>
+<td class="px-4 py-3 text-center font-bold font-mono text-orange-700 border-l border-pink-200 bg-orange-50/10 align-middle">${r.pctB}%</td>
                    <td class="px-4 py-3 text-center font-black font-mono text-pink-900 border-l border-pink-300 bg-pink-100/50 align-middle text-sm">${r.selisih}</td>
                  </tr>`;
             }
