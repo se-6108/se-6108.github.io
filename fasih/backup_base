@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1400"> 
+  
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="shortcut icon" type="image/png" href="icon.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Dashboard Monitoring FASIH">
+  <meta property="og:description" content="Sistem Monitoring Progress Pencacahan dan Pengawasan Sensus Ekonomi 2026 Kabupaten Kapuas Hulu.">
+  
+  <meta property="og:image" content="https://se-6108.github.io/fasih/icon.png">
+  
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="300">
+  <meta property="og:image:height" content="300">
+  <meta property="og:url" content="https://se-6108.github.io/fasih/">
+  <title>Dashboard Monitoring FASIH</title>
+
+  <link rel="icon" type="image/png" href="icon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+  
+  <style>
+    body { font-family: 'Montserrat', sans-serif; background-color: #f0fdf4; } 
+    .smooth-shadow { box-shadow: 0 20px 50px -12px rgba(37, 99, 235, 0.15); }
+    .swal2-popup { border-radius: 1.5rem !important; font-family: 'Montserrat', sans-serif !important; }
+    .swal2-html-container { overflow: hidden !important; } 
+    .custom-spinner { width: 3.5rem; height: 3.5rem; border: 4px solid #bfdbfe; border-top-color: #2563eb; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .dashboard-table th { position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: pointer;}
+    .dashboard-table th:hover { background-color: #dbeafe; }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    
+    .ts-control { border-radius: 0.75rem !important; border-color: #e2e8f0 !important; padding: 0.75rem 1rem !important; font-size: 0.75rem !important; font-family: 'Montserrat', sans-serif !important; background-color: #ffffff !important; font-weight: 700; text-transform: uppercase; color: #1e293b !important;}
+    .ts-control.focus { border-color: #2563eb !important; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important; }
+    .ts-control.single.has-items input { opacity: 0; width: 0; padding: 0; margin: 0; border: none; } 
+    .ts-control { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%239ca3af'%3e%3cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 16px 12px; padding-right: 4rem !important; }
+    
+    .ts-wrapper.has-items .ts-control > input { display: none !important; }
+    .ts-wrapper .clear-button { position: absolute !important; right: 2.2rem !important; top: 50% !important; transform: translateY(-50%) !important; margin: 0 !important; border: none !important; color: #ef4444 !important; font-size: 18px !important; font-weight: bold !important; z-index: 10; cursor: pointer; transition: transform 0.1s;}
+    .ts-wrapper .clear-button:hover { transform: translateY(-50%) scale(1.2) !important; color: #dc2626 !important; }
+
+    .teks-upper { text-transform: uppercase !important; }
+    tr, .group, .flex-col { page-break-inside: avoid !important; break-inside: avoid-page !important; }
+  </style>
+</head>
+<body class="h-screen overflow-hidden bg-blue-50/30 flex flex-col text-gray-800">
+
+  <div id="globalLoading" class="fixed inset-0 z-[100] bg-white/95 flex flex-col items-center justify-center transition-opacity duration-300 flex">
+      <div class="custom-spinner"></div>
+      <span class="text-sm text-blue-600 mt-4 font-black tracking-widest animate-pulse">MEMUAT DASHBOARD FASIH...</span>
+  </div>
+
+  <div id="halaman-dashboard" class="flex flex-col h-full w-full relative z-10">
+    <div class="bg-white border-b border-blue-200 shadow-sm flex-none z-40 relative flex flex-col">
+      <div class="px-6 py-4 flex justify-between items-center bg-gradient-to-r from-[#2563eb] to-[#1e3a8a] relative overflow-hidden flex-wrap gap-4">
+        <div class="absolute -top-4 -left-4 w-20 h-20 rounded-full bg-white opacity-10"></div>
+        <div class="absolute -bottom-10 right-20 w-32 h-32 rounded-full bg-white opacity-10"></div>
+
+        <div class="flex items-center gap-4 relative z-10">
+           <img src="https://i.ibb.co.com/jv8y1FSq/unnamed.png" class="w-12 h-12 drop-shadow-md bg-white rounded-full p-1 border-2 border-blue-200">
+           <div>
+              <div class="flex items-center gap-2 mb-1" id="headerBadges">
+                 <h1 class="font-black text-xl text-white leading-tight uppercase tracking-wide">Dashboard Monitoring FASIH</h1>
+                 <span class="bg-white/20 px-2.5 py-0.5 rounded text-[10px] font-bold text-white border border-white/30 shadow-sm backdrop-blur-sm tracking-wide uppercase" id="badgeHari">-</span>
+                 <div class="bg-white/20 px-2.5 py-1 rounded flex items-center gap-2 border border-white/30 shadow-sm backdrop-blur-sm">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-400"></span>
+                    </span>
+                    <span class="text-[10px] font-bold text-white tracking-wide uppercase" id="badgeTarget">-</span>
+                 </div>
+              </div>
+              <div class="flex items-center mt-1">
+                 <span class="relative flex h-2.5 w-2.5 mr-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-400"></span></span>
+                 <span class="text-[10px] text-blue-100 font-bold uppercase tracking-wider mr-1.5">TERAKHIR SINKRONISASI:</span>
+                 <span id="txtLastUpdate" class="text-white text-[10px] font-bold tracking-wider uppercase">-</span>
+              </div>
+           </div>
+        </div>
+        <div class="flex gap-2 relative z-10 overflow-x-auto pb-1">
+           <button onclick="downloadImage()" id="btnImage" class="bg-blue-50 hover:bg-white text-blue-700 px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-sm border border-blue-200 uppercase tracking-wide">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> Export Image
+           </button>
+           <button onclick="downloadPDF()" id="btnScreenshot" class="bg-white/20 hover:bg-white/30 text-white border border-white/40 px-4 py-2.5 rounded-lg text-xs font-bold transition flex items-center gap-2 backdrop-blur-sm uppercase tracking-wide shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg> Export PDF
+           </button>
+           <button onclick="exportDashboardExcel()" class="bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-md border border-green-400 uppercase tracking-wide">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg> Export Excel
+           </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-9 gap-3 px-6 py-4 bg-blue-50/40 border-b border-blue-100">
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-slate-200 opacity-[0.25] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-1 relative z-10">Beban SLS</p>
+            <h3 id="dashTotSls" class="text-2xl font-black text-slate-800 relative z-10">-</h3>
+        </div>
+        <div class="bg-gradient-to-br from-indigo-50 to-white p-3 rounded-xl border border-indigo-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-indigo-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            <p class="text-[9px] text-indigo-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Assignment</p>
+            <h3 id="dashTotTarget" class="text-2xl font-black text-indigo-700 relative z-10">-</h3>
+        </div>
+        <div class="bg-gradient-to-br from-fuchsia-50 to-white p-3 rounded-xl border border-fuchsia-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-fuchsia-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+            <p class="text-[9px] text-fuchsia-600 font-bold uppercase tracking-wider mb-1 relative z-10">Progress Pendataan</p>
+            <h3 id="dashProgPendataan" class="text-2xl font-black text-fuchsia-700 relative z-10">-</h3>
+        </div>
+        <div class="bg-gradient-to-br from-sky-50 to-white p-3 rounded-xl border border-sky-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-sky-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            <p class="text-[9px] text-sky-600 font-bold uppercase tracking-wider mb-1 relative z-10">Progress Submit</p>
+            <h3 id="dashProgSubmit" class="text-2xl font-black text-sky-700 relative z-10">-</h3>
+        </div>
+        <div class="bg-gradient-to-br from-blue-50 to-white p-3 rounded-xl border border-blue-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-blue-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
+            <p class="text-[9px] text-blue-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Open</p>
+            <h3 id="dashTotOpen" class="text-2xl font-black text-blue-700 relative z-10">-</h3>
+        </div>
+        <div class="bg-gradient-to-br from-amber-50 to-white p-3 rounded-xl border border-amber-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-amber-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+            <p class="text-[9px] text-amber-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Draft</p>
+            <h3 id="dashTotDraft" class="text-2xl font-black text-amber-700 relative z-10">-</h3>
+        </div>
+        <div class="bg-gradient-to-br from-purple-50 to-white p-3 rounded-xl border border-purple-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-purple-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            <p class="text-[9px] text-purple-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Submit</p>
+            <h3 id="dashTotSubmit" class="text-2xl font-black text-purple-700 relative z-10">-</h3>
+        </div>
+        <div class="bg-gradient-to-br from-red-50 to-white p-3 rounded-xl border border-red-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-red-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            <p class="text-[9px] text-red-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Reject</p>
+            <h3 id="dashTotReject" class="text-2xl font-black text-red-700 relative z-10">-</h3>
+        </div>
+        <div class="bg-gradient-to-br from-green-50 to-white p-3 rounded-xl border border-green-200 shadow-sm flex flex-col justify-between relative overflow-hidden group">
+            <svg class="absolute -right-4 -bottom-4 w-20 h-20 text-green-200 opacity-[0.35] group-hover:scale-110 transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.41-1.4L9 16.2z"/></svg>
+            <p class="text-[9px] text-green-600 font-bold uppercase tracking-wider mb-1 relative z-10">Total Approve</p>
+            <h3 id="dashTotApprove" class="text-2xl font-black text-green-700 relative z-10">-</h3>
+        </div>
+      </div>
+      
+      <div class="px-6 pt-3 bg-white flex gap-6 border-b border-gray-200 overflow-x-auto scrollbar-hide">
+         <button id="btnTab1" onclick="switchTab(1)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-blue-500 text-blue-700 transition">Detail SLS</button>
+         <button id="btnTab2" onclick="switchTab(2)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Progress PPL</button>
+         <button id="btnTab3" onclick="switchTab(3)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Progress PML</button>
+         <button id="btnTab4" onclick="switchTab(4)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Progress Kecamatan</button>
+         <button id="btnTab5" onclick="switchTab(5)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Visualisasi Data</button>
+      </div>
+
+      <div class="px-6 py-3 bg-gray-50/50 flex gap-2 items-center border-b border-blue-100 flex-wrap" id="filterArea">
+         <div class="flex-none w-48"><input type="text" id="dashSearch" onkeyup="filterTabel()" placeholder="PENCARIAN DATA..." class="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-bold focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none h-[34px] teks-upper text-gray-700 shadow-sm"></div>
+         <div class="flex-1 min-w-[130px]"><select id="fPrio"><option value="">STATUS PRIORITAS</option><option value="1">YA</option><option value="0">TIDAK</option></select></div>
+         <div class="flex-1 min-w-[130px]"><select id="fKec"><option value="">KECAMATAN</option></select></div>
+         <div class="fPml flex-1 min-w-[130px]"><select id="fPml"><option value="">PML</option></select></div>
+         <div class="flex-1 min-w-[130px]"><select id="fPpl"><option value="">PPL</option></select></div>
+         <div class="flex-1 min-w-[130px]"><select id="fPj"><option value="">PJ KUDA</option></select></div>
+         <div class="flex-1 min-w-[150px]"><select id="fStatusPetugas"><option value="">STATUS TARGET</option><option value="Tercapai">TERCAPAI</option><option value="Belum Tercapai">BELUM TERCAPAI</option></select></div>
+      </div>
+    </div>
+
+    <div class="flex-1 bg-blue-50/20 relative p-4 flex flex-col min-h-0">
+      <div id="captureArea" class="flex-1 flex flex-col min-h-0 bg-white border border-gray-200 rounded-2xl shadow-sm overflow-auto transition-all">
+         
+         <div id="watermarkHeader" class="hidden w-full p-5 bg-gradient-to-r from-[#2563eb] to-[#1e3a8a] border-b-2 border-blue-200 items-center justify-between mb-2 rounded-t-2xl shrink-0">
+            <div>
+               <h2 class="text-2xl font-black text-white uppercase tracking-tight mb-2">Laporan Progress Pendataan FASIH</h2>
+               <p class="text-xs font-bold text-white mt-1 uppercase block" id="watermarkText"></p>
+            </div>
+            <img src="https://i.ibb.co.com/jv8y1FSq/unnamed.png" class="h-16 w-16 drop-shadow-md bg-white rounded-full p-1 border">
+         </div>
+         
+         <div id="tab1-content" class="flex-1 w-full dashboard-table block">
+           <table class="w-full text-left border-collapse min-w-[1200px]">
+             <thead class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50 border-b border-blue-200">
+               <tr>
+                 <th class="px-4 py-3 bg-blue-50 border-r border-blue-100 w-12 text-center rounded-tl-2xl">No</th>
+                 <th onclick="sortTabel('idSls')" class="px-4 py-3 bg-blue-50 border-r border-blue-100 hover:bg-blue-100 transition">ID SLS ↕</th>
+                 <th onclick="sortTabel('nmsls')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition">Wilayah ↕</th>
+                 <th onclick="sortTabel('ppl')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition">Petugas (PPL/PML) ↕</th>
+                 <th onclick="sortTabel('pj')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition">PJ Kuda ↕</th>
+                 <th onclick="sortTabel('open')" class="px-4 py-3 text-center bg-blue-50 text-blue-800 border-l border-blue-100 hover:bg-blue-100 transition">Open ↕</th>
+                 <th onclick="sortTabel('draft')" class="px-4 py-3 text-center bg-amber-50 text-amber-800 border-l border-amber-100 hover:bg-amber-100 transition">Draft ↕</th>
+                 <th onclick="sortTabel('agg_submit')" class="px-4 py-3 text-center bg-purple-50 text-purple-800 border-l border-purple-100 hover:bg-purple-100 transition">Submit ↕</th>
+                 <th onclick="sortTabel('calcTotal')" class="px-4 py-3 text-center bg-indigo-50 text-indigo-900 border-l border-indigo-200 hover:bg-indigo-100 transition rounded-tr-2xl">Total ↕</th>
+               </tr>
+             </thead>
+             <tbody id="tableBodyDash" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
+           </table>
+         </div>
+
+         <div id="tab2-content" class="hidden flex-1 w-full dashboard-table">
+           <table class="w-full text-left border-collapse min-w-[1450px]"> 
+             <thead class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50 border-b border-blue-200">
+               <tr>
+                 <th class="px-4 py-3 bg-blue-50 border-r border-blue-100 w-12 text-center rounded-tl-2xl">No</th>
+                 <th onclick="sortTabelPpl('ppl')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition cursor-pointer">Nama PPL ↕</th>
+                 <th onclick="sortTabelPpl('kec')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition cursor-pointer">Kecamatan ↕</th>
+                 <th onclick="sortTabelPpl('o')" class="px-4 py-3 text-center bg-blue-50 border-l border-blue-100 text-blue-800 hover:bg-blue-100 transition cursor-pointer">Open ↕</th>
+                 <th onclick="sortTabelPpl('d')" class="px-4 py-3 text-center bg-amber-50 border-l border-amber-100 text-amber-800 hover:bg-amber-100 transition cursor-pointer">Draft ↕</th>
+                 <th onclick="sortTabelPpl('agg_s')" class="px-4 py-3 text-center bg-purple-50 border-l border-purple-100 text-purple-800 hover:bg-purple-100 transition cursor-pointer">Submit ↕</th>
+                 <th onclick="sortTabelPpl('t')" class="px-4 py-3 text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200 hover:bg-indigo-200 transition cursor-pointer">Total ↕</th>
+                 
+                 <th onclick="sortTabelPpl('avg_raw')" class="px-4 py-3 text-center bg-orange-50 border-l border-orange-100 text-orange-800 hover:bg-orange-100 transition cursor-pointer whitespace-nowrap">Rata² Submit Harian ↕</th>
+                 
+                 <th onclick="sortTabelPpl('pct_pendataan')" class="px-4 py-3 text-center bg-fuchsia-50 border-l border-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-100 transition cursor-pointer whitespace-nowrap">% Pendataan ↕</th>
+                 <th onclick="sortTabelPpl('pct_submit')" class="px-4 py-3 text-center bg-sky-50 border-l border-sky-100 text-sky-800 hover:bg-sky-100 transition cursor-pointer whitespace-nowrap">% Submit ↕</th>
+                 <th onclick="sortTabelPpl('pct_approve')" class="px-4 py-3 text-center bg-emerald-50 border-l border-emerald-100 text-emerald-800 hover:bg-emerald-100 transition cursor-pointer whitespace-nowrap">% Approved ↕</th>
+                 
+                 <th onclick="sortTabelPpl('kekurangan')" class="px-4 py-3 text-center bg-rose-50 border-l border-rose-100 text-rose-800 hover:bg-rose-100 transition cursor-pointer whitespace-nowrap">Kekurangan ↕</th>
+                 <th onclick="sortTabelPpl('statusTarget')" class="px-4 py-3 text-center bg-gray-100 border-l border-gray-200 text-gray-700 hover:bg-gray-200 transition cursor-pointer rounded-tr-2xl whitespace-nowrap">Status Capaian Target ↕</th>
+               </tr>
+             </thead>
+             <tbody id="tableLeaderboard" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
+           </table>
+         </div>
+
+         <div id="tab3-content" class="hidden flex-1 w-full dashboard-table">
+           <table class="w-full text-left border-collapse min-w-[1550px]">
+             <thead class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50 border-b border-blue-200">
+               <tr>
+                 <th class="px-4 py-3 bg-blue-50 border-r border-blue-100 w-12 text-center rounded-tl-2xl">No</th>
+                 <th onclick="sortTabelPml('pml')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition cursor-pointer">Nama PML ↕</th>
+                 <th onclick="sortTabelPml('kec')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition cursor-pointer">Kecamatan ↕</th>
+                 
+                 <th onclick="sortTabelPml('o')" class="px-4 py-3 text-center bg-blue-50 border-l border-blue-100 text-blue-800 hover:bg-blue-100 transition cursor-pointer">Open ↕</th>
+                 <th onclick="sortTabelPml('d')" class="px-4 py-3 text-center bg-amber-50 border-l border-amber-100 text-amber-800 hover:bg-amber-100 transition cursor-pointer">Draft ↕</th>
+                 <th onclick="sortTabelPml('sub')" class="px-4 py-3 text-center bg-purple-50 border-l border-purple-100 text-purple-800 hover:bg-purple-100 transition cursor-pointer">Submit ↕</th>
+                 <th onclick="sortTabelPml('rej')" class="px-4 py-3 text-center bg-red-50 border-l border-red-100 text-red-800 hover:bg-red-100 transition cursor-pointer">Reject ↕</th>
+                 <th onclick="sortTabelPml('app')" class="px-4 py-3 text-center bg-green-50 border-l border-green-100 text-green-800 hover:bg-green-100 transition cursor-pointer">Approve ↕</th>
+                 <th onclick="sortTabelPml('t')" class="px-4 py-3 text-center bg-indigo-100 border-l border-indigo-200 text-indigo-900 hover:bg-indigo-200 transition cursor-pointer">Total ↕</th>
+                 
+                 <th onclick="sortTabelPml('pct_open')" class="px-4 py-3 text-center bg-blue-50 border-l border-blue-100 text-blue-800 hover:bg-blue-100 transition cursor-pointer whitespace-nowrap">% Open ↕</th>
+                 <th onclick="sortTabelPml('pct_draft')" class="px-4 py-3 text-center bg-amber-50 border-l border-amber-100 text-amber-800 hover:bg-amber-100 transition cursor-pointer whitespace-nowrap">% Draft ↕</th>
+                 <th onclick="sortTabelPml('pct_sub')" class="px-4 py-3 text-center bg-purple-50 border-l border-purple-100 text-purple-800 hover:bg-purple-100 transition cursor-pointer whitespace-nowrap">% Submit ↕</th>
+                 <th onclick="sortTabelPml('pct_rej')" class="px-4 py-3 text-center bg-rose-50 border-l border-rose-100 text-rose-800 hover:bg-rose-100 transition cursor-pointer whitespace-nowrap">% Reject ↕</th>
+                 <th onclick="sortTabelPml('pct_app')" class="px-4 py-3 text-center bg-emerald-50 border-l border-emerald-100 text-emerald-800 hover:bg-emerald-100 transition cursor-pointer whitespace-nowrap">% Approve ↕</th>
+                 
+                 <th onclick="sortTabelPml('kekurangan')" class="px-4 py-3 text-center bg-rose-50 border-l border-rose-100 text-rose-800 hover:bg-rose-100 transition cursor-pointer whitespace-nowrap">Kekurangan ↕</th>
+                 <th onclick="sortTabelPml('statusTarget')" class="px-4 py-3 text-center bg-gray-100 border-l border-gray-200 text-gray-700 hover:bg-gray-200 transition cursor-pointer rounded-tr-2xl whitespace-nowrap">Status Capaian Target ↕</th>
+               </tr>
+             </thead>
+             <tbody id="tablePml" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
+           </table>
+         </div>
+
+         <div id="tab4-content" class="hidden flex-1 w-full dashboard-table">
+           <table class="w-full text-left border-collapse min-w-[950px]">
+             <thead class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50 border-b border-blue-200">
+               <tr>
+                 <th class="px-4 py-3 bg-blue-50 border-r border-blue-100 w-12 text-center rounded-tl-2xl">No</th>
+                 <th onclick="sortTabelKec('kec')" class="px-4 py-3 bg-blue-50 border-r border-blue-100 hover:bg-blue-100 transition cursor-pointer">Kecamatan ↕</th>
+                 <th onclick="sortTabelKec('pj')" class="px-4 py-3 bg-blue-50 hover:bg-blue-100 transition cursor-pointer">PJ Kuda ↕</th>
+                 <th onclick="sortTabelKec('o')" class="px-4 py-3 text-center bg-blue-50 border-l border-blue-100 text-blue-800 hover:bg-blue-100 transition cursor-pointer">Open ↕</th>
+                 <th onclick="sortTabelKec('d')" class="px-4 py-3 text-center bg-amber-50 border-l border-amber-100 text-amber-800 hover:bg-amber-100 transition cursor-pointer">Draft ↕</th>
+                 <th onclick="sortTabelKec('s')" class="px-4 py-3 text-center bg-purple-50 border-l border-purple-100 text-purple-800 hover:bg-purple-100 transition cursor-pointer">Submit ↕</th>
+                 <th onclick="sortTabelKec('rej')" class="px-4 py-3 text-center bg-red-50 border-l border-red-100 text-red-800 hover:bg-red-100 transition cursor-pointer">Reject ↕</th>
+                 <th onclick="sortTabelKec('app')" class="px-4 py-3 text-center bg-green-50 border-l border-green-100 text-green-800 hover:bg-green-100 transition cursor-pointer">Approve ↕</th>
+                 <th onclick="sortTabelKec('t')" class="px-4 py-3 text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200 hover:bg-indigo-200 transition cursor-pointer">Total ↕</th>
+                 
+                 <th onclick="sortTabelKec('pct_pendataan')" class="px-4 py-3 text-center bg-fuchsia-50 border-l border-fuchsia-100 text-fuchsia-800 hover:bg-fuchsia-100 transition cursor-pointer whitespace-nowrap">% Pendataan ↕</th>
+                 <th onclick="sortTabelKec('pct_submit')" class="px-4 py-3 text-center bg-sky-50 border-l border-sky-100 text-sky-800 hover:bg-sky-100 transition cursor-pointer whitespace-nowrap">% Submit ↕</th>
+                 <th onclick="sortTabelKec('pct_approve')" class="px-4 py-3 text-center bg-emerald-50 border-l border-emerald-100 text-emerald-800 hover:bg-emerald-100 transition cursor-pointer rounded-tr-2xl whitespace-nowrap">% Approved ↕</th>
+               </tr>
+             </thead>
+             <tbody id="tableKecamatan" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
+           </table>
+         </div>
+
+         <div id="tab5-content" class="hidden flex-1 w-full p-6 bg-white overflow-hidden">
+           <div class="flex flex-col border border-gray-100 p-4 rounded-2xl shadow-sm bg-gray-50/50 h-full">
+              <h3 class="font-bold text-gray-700 text-center uppercase tracking-wide mb-4 text-xs shrink-0">Status Assignment Berdasarkan Kecamatan</h3>
+              <div id="chartContainerWrapper" class="flex-1 relative w-full overflow-y-auto">
+                 <div id="chartInner" style="position: relative; width: 100%;">
+                    <canvas id="chartKecamatan"></canvas>
+                 </div>
+              </div>
+           </div>
+         </div>
+      </div> 
+      
+      <div id="paginasiArea" class="bg-white border border-gray-200 px-5 py-3 rounded-xl mt-3 shadow-sm flex justify-between items-center shrink-0">
+         <div class="flex items-center gap-3">
+            <select id="perPageSelect" onchange="changePerPage()" class="text-xs font-bold text-gray-600 bg-gray-50 border border-gray-300 rounded-md px-2 py-1.5 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer shadow-sm">
+               <option value="10">10 Baris</option>
+               <option value="15">15 Baris</option>
+               <option value="20">20 Baris</option>
+               <option value="50">50 Baris</option>
+               <option value="100">100 Baris</option>
+               <option value="999999">Semua Baris</option>
+            </select>
+            <span class="text-xs text-gray-500 font-bold bg-gray-100 px-2.5 py-1.5 rounded-md uppercase tracking-wider" id="pageInfoDash">Menampilkan 0 Data</span>
+         </div>
+         <div id="paginationDashContainer"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // =========================================================================
+  // MASUKKAN URL API GAS ANDA DI BAWAH INI:
+  // =========================================================================
+  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwIJ1XuJqzDpgjyPEHmbdENzrtAuLBWuEWx8Kj_hdwi98qdeIVlqNGqgwLSwKy3_ic/exec";
+
+  let DASH_DATA = [];
+  let dashFilteredData = [];
+  let dashCurrentPage = 1;
+  let dashRowsPerPage = 10; 
+  
+  let sortCol = ''; let sortAsc = true;
+  let sortColKec = 'agg_sra'; let sortAscKec = false; 
+  let sortColPpl = 'pct_submit'; let sortAscPpl = false; 
+  let sortColPml = 'pct_app'; let sortAscPml = false; 
+  
+  let tsKec, tsPml, tsPpl, tsPj, tsPrio, tsStatusPetugas; 
+  let chartKecObj;
+  let activeTabId = 1;
+  let kecChartMapGlobal = {};
+
+  window.onload = function() {
+    initDashboard();
+  };
+
+  function toProperCase(str) {
+      if (!str) return '';
+      return str.toLowerCase().replace(/(^|\s)\S/g, function(s) {
+          return s.toUpperCase();
+      }).trim();
+  }
+
+  function getHariPendataan() {
+      const now = new Date();
+      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+      const wib = new Date(utc + (3600000 * 7));
+
+      let actualDate = new Date(wib);
+      let effectiveDate = new Date(wib);
+      if (wib.getHours() < 21) {
+          effectiveDate.setDate(effectiveDate.getDate() - 1);
+      }
+
+      const startYear = 2026;
+      const startMonth = 5; 
+      const startDateDate = 15;
+      
+      const endYear = 2026;
+      const endMonth = 7; 
+      const endDateDate = 31;
+
+      const startDateUTC = Date.UTC(startYear, startMonth, startDateDate);
+      const endDateUTC = Date.UTC(endYear, endMonth, endDateDate);
+
+      const actualDateUTC = Date.UTC(actualDate.getFullYear(), actualDate.getMonth(), actualDate.getDate());
+      let actualDiffDays = Math.floor((actualDateUTC - startDateUTC) / (1000 * 60 * 60 * 24)) + 1;
+
+      const effectiveDateUTC = Date.UTC(effectiveDate.getFullYear(), effectiveDate.getMonth(), effectiveDate.getDate());
+      let effectiveDiffDays = Math.floor((effectiveDateUTC - startDateUTC) / (1000 * 60 * 60 * 24)) + 1;
+
+      const maxDays = Math.floor((endDateUTC - startDateUTC) / (1000 * 60 * 60 * 24)) + 1;
+
+      if (actualDiffDays < 1) actualDiffDays = 1;
+      if (actualDiffDays > maxDays) actualDiffDays = maxDays;
+
+      if (effectiveDiffDays < 1) effectiveDiffDays = 1;
+      if (effectiveDiffDays > maxDays) effectiveDiffDays = maxDays;
+
+      let targetPercentage = effectiveDiffDays * 1.34;
+      if (targetPercentage > 100) targetPercentage = 100;
+
+      return { 
+          x: actualDiffDays, 
+          y: targetPercentage, 
+          effDay: effectiveDiffDays 
+      };
+  }
+
+  function initDashboard() {
+      const globalLoader = document.getElementById('globalLoading');
+      const timing = getHariPendataan();
+      
+      const badgeHari = document.getElementById('badgeHari');
+      if (badgeHari) badgeHari.innerText = `PENDATAAN HARI KE - ${timing.x}`;
+      const badgeTarget = document.getElementById('badgeTarget');
+      if (badgeTarget) badgeTarget.innerText = `TARGET PROGRESS : ${timing.y.toFixed(2)}%`;
+
+      fetch(GAS_API_URL)
+        .then(response => {
+           if (!response.ok) throw new Error("Jaringan bermasalah atau URL API salah.");
+           return response.json();
+        })
+        .then(res => {
+          res.data.forEach(row => {
+              row.pml = toProperCase(row.pml);
+              row.ppl = toProperCase(row.ppl);
+              row.pj = toProperCase(row.pj);
+              row.kec = toProperCase(row.kec);
+          });
+
+          DASH_DATA = res.data;
+          if(globalLoader) globalLoader.classList.add('hidden');
+          
+          let warningHTML = "";
+          if (res.integrityErrorCount > 0) {
+              warningHTML = `
+                <div class="bg-red-50 border border-red-300 text-red-800 p-3.5 rounded-xl mb-4 text-xs shadow-sm text-left animate-pulse">
+                    <b class="flex items-center gap-1.5 mb-1 text-[13px]">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                       WARNING: Integritas Data Pusat
+                    </b>
+                    Sistem mendeteksi ada <b>${res.integrityErrorCount} Assignment</b> yang jumlah laporannya <i>(Open/Draft/Submit/dkk)</i> tidak sinkron dengan kolom <b>'Total Target'</b>.
+                    <br><br><span class="italic text-red-600 opacity-90">Sistem otomatis menggunakan <b>Total Target Absolut</b> untuk mengunci persentase pencapaian agar performa petugas tetap akurat.</span>
+                </div>
+              `;
+          }
+
+          Swal.fire({
+              title: '<span class="text-lg font-black text-gray-800 tracking-wide uppercase">Info Target Pendataan</span>',
+              html: `
+                  ${warningHTML}
+                  <div class="text-sm text-gray-700 text-left space-y-3 mt-2 font-medium">
+                      <p>Saat ini Pendataan SE memasuki <b class="text-blue-600">Hari ke-${timing.x}</b>.</p>
+                      <p>Batas target proporsional saat ini adalah <b class="text-purple-600">${timing.y.toFixed(2)}% dari total assignment tiap petugas</b> <span class="text-gray-500 italic text-xs">(akumulasi target harian Hari ke-${timing.effDay})</span>.</p>
+                      
+                      <div class="bg-blue-50/50 p-3 rounded-xl border border-blue-100 text-xs mt-3">
+                          <b class="text-blue-800 flex items-center gap-1 mb-1.5">⏰ Mekanisme Update Target:</b>
+                          <ul class="list-disc pl-4 space-y-1 mb-2 text-gray-700">
+                             <li>Target persentase otomatis bertambah (+1,34% per hari) setiap pukul <b>21:00 WIB</b>.</li>
+                             <li>Target kemajuan <b>PPL</b> dinilai berdasarkan capaian <b>Total Submit</b> <i class="text-[10px]">(Submit + Reject + Approve)</i>.</li>
+                             <li>Target kemajuan <b>PML</b> dinilai murni berdasarkan capaian dokumen <b>Approved</b>.</li>
+                          </ul>
+                          
+                          <div class="mt-3 p-2.5 bg-amber-100 text-amber-900 border border-amber-300 rounded-lg shadow-sm">
+                             <b class="flex items-center gap-1 text-[13px] mb-1">💰 Syarat Pencairan Termin 1:</b>
+                             Sebagai informasi, per tanggal <b>15 Juli 2026</b> minimal capaian persentase <b>APPROVED</b> harus menyentuh angka <b>40%</b> agar dapat dilakukan pencairan termin 1.
+                          </div>
+                      </div>
+                  </div>
+              `,
+              icon: res.integrityErrorCount > 0 ? 'warning' : 'info',
+              confirmButtonText: 'OKE, SIAP!',
+              buttonsStyling: false,
+              customClass: {
+                  popup: 'rounded-[2rem] border border-gray-100 shadow-2xl',
+                  confirmButton: 'bg-blue-600 text-white px-8 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition w-full mt-2 shadow-sm text-xs tracking-wide uppercase'
+              }
+          });
+          
+          if(document.getElementById('txtLastUpdate')) {
+              document.getElementById('txtLastUpdate').innerText = res.lastUpdate;
+          }
+
+          initSearchableDropdowns();
+          filterTabel();
+        })
+        .catch(err => {
+          if(globalLoader) globalLoader.classList.add('hidden');
+          Swal.fire("Gagal Memuat Data", "Terjadi kesalahan saat menghubungi API: " + err.message, "error");
+        });
+  }
+
+  function initSearchableDropdowns() {
+    let k = [...new Set(DASH_DATA.map(d=>d.kec ? String(d.kec) : ''))].sort();
+    let pm = [...new Set(DASH_DATA.map(d=>d.pml ? String(d.pml) : ''))].sort();
+    let pp = [...new Set(DASH_DATA.map(d=>d.ppl ? String(d.ppl) : ''))].sort();
+    let pj = [...new Set(DASH_DATA.map(d=>d.pj ? String(d.pj) : ''))].sort();
+    
+    const fillOpts = (id, dataArr) => {
+      let sel = document.getElementById(id);
+      if(!sel) return;
+      dataArr.forEach(x => { if(x) sel.innerHTML += `<option value="${x}">${x}</option>`; });
+    };
+
+    fillOpts('fKec', k); fillOpts('fPml', pm); fillOpts('fPpl', pp); fillOpts('fPj', pj);
+
+    let tsConfig = { 
+       create: false, 
+       maxItems: 1, 
+       sortField: {field: "text", direction: "asc"},
+       plugins: ['clear_button'] 
+    };
+
+    if(document.getElementById('fPrio')) tsPrio = new TomSelect('#fPrio', tsConfig); 
+    if(document.getElementById('fKec')) tsKec = new TomSelect('#fKec', tsConfig);
+    if(document.getElementById('fPml')) tsPml = new TomSelect('#fPml', tsConfig);
+    if(document.getElementById('fPpl')) tsPpl = new TomSelect('#fPpl', tsConfig);
+    if(document.getElementById('fPj')) tsPj = new TomSelect('#fPj', tsConfig);
+    if(document.getElementById('fStatusPetugas')) tsStatusPetugas = new TomSelect('#fStatusPetugas', tsConfig);
+
+    if(tsPrio) tsPrio.setValue(''); 
+    if(tsKec) tsKec.setValue(''); 
+    if(tsPml) tsPml.setValue(''); 
+    if(tsPpl) tsPpl.setValue(''); 
+    if(tsPj) tsPj.setValue('');
+    if(tsStatusPetugas) tsStatusPetugas.setValue('');
+
+    if(tsPrio) tsPrio.on('change', filterTabel); 
+    if(tsKec) tsKec.on('change', filterTabel); 
+    if(tsPml) tsPml.on('change', filterTabel); 
+    if(tsPpl) tsPpl.on('change', filterTabel); 
+    if(tsPj) tsPj.on('change', filterTabel);
+    if(tsStatusPetugas) tsStatusPetugas.on('change', filterTabel);
+  }
+
+  function switchTab(tabId) {
+     activeTabId = tabId;
+     for(let i=1; i<=5; i++) {
+        let btn = document.getElementById('btnTab'+i);
+        if(btn) btn.className = "whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition";
+        let tabC = document.getElementById('tab'+i+'-content');
+        if(tabC) { tabC.classList.add('hidden'); tabC.classList.remove('block'); }
+     }
+     
+     let btnAct = document.getElementById('btnTab'+tabId);
+     if(btnAct) btnAct.className = "whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-blue-500 text-blue-700 transition";
+     let tabAct = document.getElementById('tab'+tabId+'-content');
+     if(tabAct) { tabAct.classList.remove('hidden'); tabAct.classList.add('block'); }
+     
+     if(document.getElementById('paginasiArea')) document.getElementById('paginasiArea').style.display = (tabId === 1) ? 'flex' : 'none';
+     if(tabId === 2) renderLeaderboard();
+     if(tabId === 3) renderProgressPml();
+     if(tabId === 4) renderProgressKecamatan();
+     if(tabId === 5) renderVisualisasi();
+  }
+
+  function sortLogic(arr, col, isAsc) {
+     arr.sort((a, b) => {
+        let valA = a[col]; let valB = b[col];
+        if (typeof valA === 'number' && typeof valB === 'number') {
+           return isAsc ? valA - valB : valB - valA;
+        }
+        valA = String(valA).toLowerCase(); valB = String(valB).toLowerCase();
+        if (valA < valB) return isAsc ? -1 : 1;
+        if (valA > valB) return isAsc ? 1 : -1;
+        return 0;
+     });
+  }
+
+  function filterTabel() {
+    const search = document.getElementById('dashSearch') ? document.getElementById('dashSearch').value.toLowerCase() : '';
+    const fPrio = document.getElementById('fPrio') ? document.getElementById('fPrio').value : '';
+    const fkec = document.getElementById('fKec') ? document.getElementById('fKec').value : '';
+    const fpml = document.getElementById('fPml') ? document.getElementById('fPml').value : '';
+    const fppl = document.getElementById('fPpl') ? document.getElementById('fPpl').value : '';
+    const fpj = document.getElementById('fPj') ? document.getElementById('fPj').value : '';
+    
+    let tSls = 0, tOpen = 0, tDraft = 0, tSubmit = 0, tReject = 0, tApprove = 0, tTotal = 0;
+
+    dashFilteredData = DASH_DATA.filter(row => {
+      let mSearch = search === '' || `${row.idSls} ${row.nmsls} ${row.desa} ${row.ppl} ${row.pml} ${row.emailPpl}`.toLowerCase().includes(search);
+      let mPrio = fPrio === '' || String(row.prioritas) === fPrio;
+      let mKec = fkec === '' || String(row.kec || '').toUpperCase() === fkec.toUpperCase();
+      let mPml = fpml === '' || String(row.pml || '').toUpperCase() === fpml.toUpperCase();
+      let mPpl = fppl === '' || String(row.ppl || '').toUpperCase() === fppl.toUpperCase();
+      let mPj = fpj === '' || String(row.pj || '').toUpperCase() === fpj.toUpperCase();
+      return mSearch && mPrio && mKec && mPml && mPpl && mPj;
+    });
+
+    dashFilteredData.forEach(row => {
+      // FIX PERHITUNGAN BARU: Gunakan Target Absolut
+      row.calcTotal = row.totalAbsolut || (row.open + row.draft + row.submit + row.reject + row.approve);
+      row.agg_submit = row.submit + row.reject + row.approve; 
+      
+      tSls++;
+      tOpen += row.open;
+      tDraft += row.draft; 
+      tSubmit += row.submit; 
+      tReject += row.reject;
+      tApprove += row.approve;
+      tTotal += row.calcTotal;
+    });
+
+    if(sortCol !== '') { sortLogic(dashFilteredData, sortCol, sortAsc); }
+
+    let tProgPendataan = tDraft + tSubmit + tReject + tApprove;
+    let tProgSubmit = tSubmit + tReject + tApprove;
+
+    let pProgPendataan = tTotal > 0 ? ((tProgPendataan / tTotal) * 100).toFixed(1) + '%' : '0%';
+    let pProgSubmit = tTotal > 0 ? ((tProgSubmit / tTotal) * 100).toFixed(1) + '%' : '0%';
+    
+    let pOpen = tTotal > 0 ? ((tOpen / tTotal) * 100).toFixed(1) + '%' : '0%';
+    let pDraft = tTotal > 0 ? ((tDraft / tTotal) * 100).toFixed(1) + '%' : '0%';
+    let pSubmit = tTotal > 0 ? ((tSubmit / tTotal) * 100).toFixed(1) + '%' : '0%';
+    let pReject = tTotal > 0 ? ((tReject / tTotal) * 100).toFixed(1) + '%' : '0%';
+    let pApprove = tTotal > 0 ? ((tApprove / tTotal) * 100).toFixed(1) + '%' : '0%';
+
+    if(document.getElementById('dashTotSls')) document.getElementById('dashTotSls').innerText = tSls.toLocaleString('id-ID');
+    if(document.getElementById('dashTotTarget')) document.getElementById('dashTotTarget').innerText = tTotal.toLocaleString('id-ID');
+    
+    if(document.getElementById('dashProgPendataan')) document.getElementById('dashProgPendataan').innerHTML = `${tProgPendataan.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pProgPendataan})</span>`;
+    if(document.getElementById('dashProgSubmit')) document.getElementById('dashProgSubmit').innerHTML = `${tProgSubmit.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pProgSubmit})</span>`;
+    
+    if(document.getElementById('dashTotOpen')) document.getElementById('dashTotOpen').innerHTML = `${tOpen.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pOpen})</span>`;
+    if(document.getElementById('dashTotDraft')) document.getElementById('dashTotDraft').innerHTML = `${tDraft.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pDraft})</span>`;
+    if(document.getElementById('dashTotSubmit')) document.getElementById('dashTotSubmit').innerHTML = `${tSubmit.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pSubmit})</span>`;
+    if(document.getElementById('dashTotReject')) document.getElementById('dashTotReject').innerHTML = `${tReject.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pReject})</span>`;
+    if(document.getElementById('dashTotApprove')) document.getElementById('dashTotApprove').innerHTML = `${tApprove.toLocaleString('id-ID')} <span class="text-sm font-bold opacity-80">(${pApprove})</span>`;
+
+    dashCurrentPage = 1;
+    if(activeTabId === 1) renderTabelPaginasi();
+    if(activeTabId === 2) renderLeaderboard();
+    if(activeTabId === 3) renderProgressPml();
+    if(activeTabId === 4) renderProgressKecamatan();
+    if(activeTabId === 5) renderVisualisasi();
+  }
+
+  function sortTabel(colName) {
+     if(sortCol === colName) sortAsc = !sortAsc; else { sortCol = colName; sortAsc = true; }
+     filterTabel();
+  }
+  function sortTabelKec(colName) {
+     if(sortColKec === colName) sortAscKec = !sortAscKec; else { sortColKec = colName; sortAscKec = (colName === 'kec' || colName === 'pj') ? true : false; }
+     renderProgressKecamatan();
+  }
+  function sortTabelPpl(colName) {
+     if(sortColPpl === colName) sortAscPpl = !sortAscPpl; else { sortColPpl = colName; sortAscPpl = (colName === 'ppl' || colName === 'kec' || colName === 'statusTarget') ? true : false; }
+     renderLeaderboard();
+  }
+  function sortTabelPml(colName) {
+     if(sortColPml === colName) sortAscPml = !sortAscPml; else { sortColPml = colName; sortAscPml = (colName === 'pml' || colName === 'kec') ? true : false; }
+     renderProgressPml();
+  }
+
+  function changePerPage() {
+    let sel = document.getElementById('perPageSelect');
+    if(sel) { dashRowsPerPage = parseInt(sel.value); dashCurrentPage = 1; renderTabelPaginasi(); }
+  }
+
+  function renderTabelPaginasi() {
+    const tbody = document.getElementById('tableBodyDash');
+    if(!tbody) return;
+    
+    const startIdx = (dashCurrentPage - 1) * dashRowsPerPage;
+    const endIdx = Math.min(startIdx + dashRowsPerPage, dashFilteredData.length);
+    const pageData = dashFilteredData.slice(startIdx, endIdx);
+
+    if(document.getElementById("pageInfoDash")) document.getElementById("pageInfoDash").innerText = `Menampilkan ${dashFilteredData.length > 0 ? startIdx + 1 : 0} - ${endIdx} dari ${dashFilteredData.length} Baris`;
+    if(document.getElementById("paginationDashContainer")) document.getElementById("paginationDashContainer").innerHTML = generatePaginationHTML(dashFilteredData.length, dashCurrentPage, dashRowsPerPage, 'goDashPage');
+
+    if(pageData.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="9" class="text-center py-10 text-slate-400 font-medium italic">Tidak ada data ditemukan</td></tr>';
+      return;
+    }
+
+    let htmlContent = '';
+    pageData.forEach((row, index) => {
+      let prioBadge = row.prioritas === 1 ? `<span class="ml-1 bg-amber-100 text-amber-700 border border-amber-300 px-1.5 py-0.5 rounded text-[8px] font-black tracking-wider shadow-sm">PRIORITAS</span>` : '';
+      
+      htmlContent += `
+        <tr class="even:bg-blue-50/20 odd:bg-white hover:bg-blue-100/30 transition border-b border-blue-100 ${row.isMismatch ? 'bg-red-50/30' : ''}">
+          <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-blue-100">
+             ${startIdx + index + 1}
+             ${row.isMismatch ? '<br><span title="Target Mismatch" class="text-red-500 text-[10px]">⚠️</span>' : ''}
+          </td>
+          <td class="px-4 py-3 font-mono text-[11px] text-blue-800 font-bold align-middle border-r border-blue-100">${row.idSls}</td>
+          <td class="px-4 py-3 leading-tight align-middle"><span class="font-bold text-gray-800 text-xs">${row.nmsls}</span> ${prioBadge}<br><span class="text-[9px] text-gray-500 uppercase font-bold">${row.desa} - Kec. ${row.kec}</span></td>
+          <td class="px-4 py-3 leading-tight align-middle">
+            <span class="text-blue-600 font-bold text-[10px] uppercase">PPL: ${row.ppl || '-'}</span>
+            ${row.emailPpl ? `<br><a href="mailto:${row.emailPpl}" class="text-[9px] text-gray-800 font-medium lowercase hover:text-blue-600 block">✉️ ${row.emailPpl}</a>` : '<br><span class="text-[9px] text-gray-400 italic">Email Belum Ada</span>'}
+            <span class="text-indigo-600 font-bold text-[10px] uppercase mt-2 block">PML: ${row.pml || '-'}</span>
+            ${row.emailPml ? `<a href="mailto:${row.emailPml}" class="text-[9px] text-gray-800 font-medium lowercase hover:text-blue-600 block">✉️ ${row.emailPml}</a>` : '<span class="text-[9px] text-gray-400 italic">Email Belum Ada</span>'}
+          </td>
+          <td class="px-4 py-3 font-bold text-gray-700 text-[11px] align-middle uppercase">${row.pj}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-blue-600 align-middle border-l border-blue-100 bg-blue-50/10">${row.open !== '' ? row.open : '-'}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-amber-600 align-middle border-l border-amber-100 bg-amber-50/10">${row.draft !== '' ? row.draft : '-'}</td>
+          <td class="px-4 py-3 text-center font-mono font-black text-purple-700 align-middle border-l border-purple-100 bg-purple-50/30">${row.agg_submit !== '' ? row.agg_submit : '-'}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-indigo-900 align-middle border-l border-indigo-200 bg-indigo-50/30">${row.calcTotal !== '' ? row.calcTotal : '-'}</td>
+        </tr>
+      `;
+    });
+    tbody.innerHTML = htmlContent;
+  }
+
+  function renderLeaderboard() {
+     let pplData = {};
+     const timing = getHariPendataan();
+     const targetPct = timing.y;
+     const filterStatus = document.getElementById('fStatusPetugas') ? document.getElementById('fStatusPetugas').value : '';
+
+     dashFilteredData.forEach(row => {
+        let key = row.ppl + "_" + row.kec;
+        if(!pplData[key]) pplData[key] = { ppl: row.ppl, kec: row.kec, email: row.emailPpl, o:0, d:0, agg_s:0, t:0, app:0 };
+        
+        pplData[key].o += row.open; 
+        pplData[key].d += row.draft; 
+        pplData[key].agg_s += row.agg_submit; 
+        pplData[key].t += row.calcTotal;
+        pplData[key].app += row.approve;
+     });
+     
+     let arr = Object.values(pplData);
+     
+     arr.forEach(p => {
+        p.target_absolut = Math.ceil((targetPct / 100) * p.t); 
+        p.kekurangan = p.target_absolut - p.agg_s;
+        if (p.kekurangan < 0) p.kekurangan = 0; 
+        
+        p.statusTarget = p.kekurangan <= 0 ? 'Tercapai' : 'Belum Tercapai';
+
+        let avg = timing.x > 0 ? (p.agg_s / timing.x) : 0;
+        avg = Math.round(avg * 100) / 100;
+        p.avg_raw = avg; 
+        p.avg_submit_harian = (avg % 1 === 0) ? avg.toString() : `${Math.floor(avg)}-${Math.ceil(avg)}`;
+
+        p.pct_pendataan = p.t > 0 ? ((p.d + p.agg_s) / p.t) * 100 : 0;
+        p.pct_submit = p.t > 0 ? (p.agg_s / p.t) * 100 : 0;
+        p.pct_approve = p.t > 0 ? (p.app / p.t) * 100 : 0; 
+     });
+
+     if (filterStatus) {
+        arr = arr.filter(p => p.statusTarget === filterStatus);
+     }
+     
+     sortLogic(arr, sortColPpl, sortAscPpl);
+     
+     let html = '';
+     arr.forEach((p, idx) => {
+        const isMencapai = p.statusTarget === 'Tercapai';
+        const rowClass = isMencapai 
+           ? 'even:bg-blue-50/20 odd:bg-white hover:bg-blue-100/30 transition border-b border-blue-100'
+           : 'bg-red-50/40 hover:bg-red-100/50 text-red-950 transition border-b border-red-200 font-medium';
+        
+        const badgeLabel = isMencapai
+           ? `<span style="display:inline-flex; align-items:center; justify-content:center; height:24px; padding:0 12px; font-weight:800; font-size:10px; text-transform:uppercase; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,0.05);" class="bg-green-50 text-green-700 border border-green-300">Tercapai</span>`
+           : `<span style="display:inline-flex; align-items:center; justify-content:center; height:24px; padding:0 12px; font-weight:800; font-size:10px; text-transform:uppercase; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,0.05);" class="bg-red-50 text-red-700 border border-red-300">Belum Tercapai</span>`;
+
+        html += `<tr class="${rowClass}">
+          <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-blue-100 align-middle">${idx+1}</td>
+          <td class="px-4 py-3 font-bold align-middle ${isMencapai ? 'text-blue-700' : 'text-red-900'}"><span>${p.ppl || '-'}</span>${p.email ? `<br><a href="mailto:${p.email}" class="text-[9px] text-gray-800 font-normal lowercase hover:text-blue-600 block">✉ ${p.email}</a>` : ''}</td>
+          <td class="px-4 py-3 font-bold align-middle ${isMencapai ? 'text-gray-600' : 'text-red-900'}">${p.kec}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-blue-600 border-l border-blue-100 bg-blue-50/10 align-middle">${p.o}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-amber-600 border-l border-amber-100 bg-amber-50/10 align-middle">${p.d}</td>
+          <td class="px-4 py-3 text-center font-mono font-black text-purple-700 border-l border-purple-100 bg-purple-50/30 align-middle">${p.agg_s}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-indigo-900 border-l border-indigo-200 bg-indigo-100/30 align-middle">${p.t}</td>
+          
+          <td class="px-4 py-3 text-center font-mono font-bold text-orange-700 border-l border-orange-100 bg-orange-50/50 align-middle">${p.avg_submit_harian}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-fuchsia-700 border-l border-fuchsia-100 bg-fuchsia-50/10 align-middle">${p.pct_pendataan.toFixed(1)}%</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-sky-700 border-l border-sky-100 bg-sky-50/10 align-middle">${p.pct_submit.toFixed(1)}%</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-emerald-700 border-l border-emerald-100 bg-emerald-50/10 align-middle">${p.pct_approve.toFixed(1)}%</td>
+          
+          <td class="px-4 py-3 text-center font-mono font-bold text-rose-700 border-l border-rose-100 bg-rose-50/20 align-middle">${p.kekurangan}</td>
+          <td class="px-4 py-3 text-center border-l border-gray-200 align-middle whitespace-nowrap">${badgeLabel}</td>
+        </tr>`;
+     });
+     if(document.getElementById('tableLeaderboard')) document.getElementById('tableLeaderboard').innerHTML = html || '<tr><td colspan="13" class="text-center py-5 italic text-gray-400">Belum ada data</td></tr>';
+  }
+
+  function renderProgressPml() {
+     let pmlData = {};
+     const timing = getHariPendataan();
+     const targetPct = timing.y;
+     const filterStatus = document.getElementById('fStatusPetugas') ? document.getElementById('fStatusPetugas').value : '';
+
+     dashFilteredData.forEach(row => {
+        let key = row.pml + "_" + row.kec;
+        if(!pmlData[key]) pmlData[key] = { pml: row.pml, kec: row.kec, email: row.emailPml, o:0, d:0, sub:0, rej:0, app:0, app_rej:0, t:0 };
+        
+        pmlData[key].o += row.open; 
+        pmlData[key].d += row.draft; 
+        pmlData[key].sub += row.submit; 
+        pmlData[key].rej += row.reject; 
+        pmlData[key].app += row.approve;
+        pmlData[key].app_rej += (row.approve + row.reject); 
+        pmlData[key].t += row.calcTotal; 
+     });
+     
+     let arr = Object.values(pmlData);
+
+     arr.forEach(p => {
+         p.pct_open = p.t > 0 ? (p.o / p.t) * 100 : 0; 
+         p.pct_draft = p.t > 0 ? (p.d / p.t) * 100 : 0; 
+         p.pct_sub = p.t > 0 ? (p.sub / p.t) * 100 : 0;
+         p.pct_rej = p.t > 0 ? (p.rej / p.t) * 100 : 0;
+         p.pct_app = p.t > 0 ? (p.app / p.t) * 100 : 0;
+         
+         p.target_absolut = Math.ceil((targetPct / 100) * p.t); 
+         p.kekurangan = p.target_absolut - p.app;
+         if (p.kekurangan < 0) p.kekurangan = 0; 
+         
+         p.statusTarget = p.kekurangan <= 0 ? 'Tercapai' : 'Belum Tercapai';
+     });
+     
+     if (filterStatus) {
+        arr = arr.filter(p => p.statusTarget === filterStatus);
+     }
+     
+     sortLogic(arr, sortColPml, sortAscPml);
+     
+     let html = '';
+     arr.forEach((p, idx) => {
+        const isMencapai = p.statusTarget === 'Tercapai';
+        const rowClass = isMencapai 
+           ? 'even:bg-blue-50/20 odd:bg-white hover:bg-blue-100/30 transition border-b border-blue-100'
+           : 'bg-red-50/40 hover:bg-red-100/50 text-red-950 transition border-b border-red-200 font-medium';
+        
+        const badgeLabel = isMencapai
+           ? `<span style="display:inline-flex; align-items:center; justify-content:center; height:24px; padding:0 12px; font-weight:800; font-size:10px; text-transform:uppercase; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,0.05);" class="bg-green-50 text-green-700 border border-green-300">Tercapai</span>`
+           : `<span style="display:inline-flex; align-items:center; justify-content:center; height:24px; padding:0 12px; font-weight:800; font-size:10px; text-transform:uppercase; border-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,0.05);" class="bg-red-50 text-red-700 border border-red-300">Belum Tercapai</span>`;
+
+        html += `<tr class="${rowClass}">
+          <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-blue-100 align-middle">${idx+1}</td>
+          <td class="px-4 py-3 font-bold align-middle ${isMencapai ? 'text-indigo-700' : 'text-red-900'}"><span>${p.pml || '-'}</span>${p.email ? `<br><a href="mailto:${p.email}" class="text-[9px] text-gray-800 font-normal lowercase hover:text-blue-600 block">✉ ${p.email}</a>` : ''}</td>
+          <td class="px-4 py-3 font-bold align-middle ${isMencapai ? 'text-gray-600' : 'text-red-900'}">${p.kec}</td>
+          
+          <td class="px-4 py-3 text-center font-mono font-bold text-blue-600 border-l border-blue-100 bg-blue-50/10 align-middle">${p.o}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-amber-600 border-l border-amber-100 bg-amber-50/10 align-middle">${p.d}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-purple-600 border-l border-purple-100 bg-purple-50/10 align-middle">${p.sub}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-red-600 border-l border-red-100 bg-red-50/10 align-middle">${p.rej}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-green-600 border-l border-green-100 bg-green-50/10 align-middle">${p.app}</td>
+          
+          <td class="px-4 py-3 text-center font-mono font-bold text-indigo-900 border-l border-indigo-200 bg-indigo-100/30 align-middle">${p.t}</td>
+          
+          <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 border-l border-blue-100 bg-blue-50/10 align-middle">${p.pct_open.toFixed(1)}%</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-amber-700 border-l border-amber-100 bg-amber-50/10 align-middle">${p.pct_draft.toFixed(1)}%</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-purple-700 border-l border-purple-100 bg-purple-50/10 align-middle">${p.pct_sub.toFixed(1)}%</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-rose-700 border-l border-rose-100 bg-rose-50/10 align-middle">${p.pct_rej.toFixed(1)}%</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-emerald-700 border-l border-emerald-100 bg-emerald-50/10 align-middle">${p.pct_app.toFixed(1)}%</td>
+          
+          <td class="px-4 py-3 text-center font-mono font-bold text-rose-700 border-l border-rose-100 bg-rose-50/20 align-middle">${p.kekurangan}</td>
+          <td class="px-4 py-3 text-center border-l border-gray-200 align-middle whitespace-nowrap">${badgeLabel}</td>
+        </tr>`;
+     });
+     
+     if(document.getElementById('tablePml')) document.getElementById('tablePml').innerHTML = html || '<tr><td colspan="16" class="text-center py-5 italic text-gray-400">Belum ada data</td></tr>';
+  }
+
+  function renderProgressKecamatan() {
+     let kecData = {};
+     dashFilteredData.forEach(row => {
+        let key = row.kec + "_" + row.pj;
+        if(!kecData[key]) kecData[key] = { kec: row.kec, pj: row.pj, o:0, d:0, s:0, rej:0, app:0, t:0, agg_sra:0 };
+        kecData[key].o += row.open; 
+        kecData[key].d += row.draft; 
+        kecData[key].s += row.submit;
+        kecData[key].rej += row.reject;
+        kecData[key].app += row.approve; 
+        kecData[key].agg_sra += row.agg_submit; 
+        kecData[key].t += row.calcTotal;
+     });
+     
+     let arr = Object.values(kecData);
+     
+     arr.forEach(p => {
+        p.pct_pendataan = p.t > 0 ? ((p.d + p.agg_sra) / p.t) * 100 : 0;
+        p.pct_submit = p.t > 0 ? (p.agg_sra / p.t) * 100 : 0;
+        p.pct_approve = p.t > 0 ? (p.app / p.t) * 100 : 0;
+     });
+     
+     if (sortColKec === 'agg_sra') {
+        sortLogic(arr, 'pct_submit', false);
+     } else {
+        sortLogic(arr, sortColKec, sortAscKec);
+     }
+     
+     let html = '';
+     arr.forEach((p, idx) => {
+        html += `<tr class="even:bg-blue-50/20 odd:bg-white hover:bg-blue-100/30 transition border-b border-blue-100">
+          <td class="px-4 py-3 text-center font-black text-gray-500 border-r border-blue-100">${idx+1}</td>
+          <td class="px-4 py-3 font-black text-gray-700 border-r border-blue-100">${p.kec}</td>
+          <td class="px-4 py-3 font-bold text-gray-600">${p.pj}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-blue-600 border-l border-blue-100 bg-blue-50/10">${p.o}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-amber-600 border-l border-amber-100 bg-amber-50/10">${p.d}</td>
+          <td class="px-4 py-3 text-center font-mono font-black text-purple-700 border-l border-purple-100 bg-purple-50/30">${p.s}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-red-600 border-l border-red-100 bg-red-50/10">${p.rej}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-green-600 border-l border-green-100 bg-green-50/10">${p.app}</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-indigo-900 border-l border-indigo-200 bg-indigo-100/30">${p.t}</td>
+          
+          <td class="px-4 py-3 text-center font-mono font-bold text-fuchsia-700 border-l border-fuchsia-100 bg-fuchsia-50/10">${p.pct_pendataan.toFixed(1)}%</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-sky-700 border-l border-sky-100 bg-sky-50/10">${p.pct_submit.toFixed(1)}%</td>
+          <td class="px-4 py-3 text-center font-mono font-bold text-emerald-700 border-l border-emerald-100 bg-emerald-50/10">${p.pct_approve.toFixed(1)}%</td>
+        </tr>`;
+     });
+     
+     if(document.getElementById('tableKecamatan')) document.getElementById('tableKecamatan').innerHTML = html || '<tr><td colspan="12" class="text-center py-5 italic text-gray-400">Belum ada data</td></tr>';
+  }
+
+  function renderVisualisasi() {
+     let kecChartMap = {}; 
+     dashFilteredData.forEach(r => {
+        let k = r.kec || 'Tanpa Kecamatan';
+        if(!kecChartMap[k]) kecChartMap[k] = {o:0, d:0, s:0, rej:0, a:0, tot:0};
+        kecChartMap[k].o += r.open;
+        kecChartMap[k].d += r.draft;
+        kecChartMap[k].s += r.submit;
+        kecChartMap[k].a += r.approve;
+        kecChartMap[k].rej += r.reject;
+        kecChartMap[k].tot += r.calcTotal;
+     });
+
+     kecChartMapGlobal = kecChartMap;
+
+     let sortedKec = Object.entries(kecChartMap).sort((a, b) => {
+          let pctSubmitA = a[1].tot > 0 ? ((a[1].s + a[1].rej + a[1].a) / a[1].tot) : 0;
+          let pctSubmitB = b[1].tot > 0 ? ((b[1].s + b[1].rej + b[1].a) / b[1].tot) : 0;
+          return pctSubmitB - pctSubmitA; 
+     });
+     
+     let labelsKec = sortedKec.map(x => x[0]);
+     
+     let dO = sortedKec.map(x => x[1].tot > 0 ? ((x[1].o / x[1].tot) * 100).toFixed(2) : 0);
+     let dD = sortedKec.map(x => x[1].tot > 0 ? ((x[1].d / x[1].tot) * 100).toFixed(2) : 0);
+     let dS = sortedKec.map(x => x[1].tot > 0 ? ((x[1].s / x[1].tot) * 100).toFixed(2) : 0);
+     let dR = sortedKec.map(x => x[1].tot > 0 ? ((x[1].rej / x[1].tot) * 100).toFixed(2) : 0);
+     let dA = sortedKec.map(x => x[1].tot > 0 ? ((x[1].a / x[1].tot) * 100).toFixed(2) : 0);
+
+     if(chartKecObj) chartKecObj.destroy();
+
+     let cvKecamatan = document.getElementById('chartKecamatan');
+     if(cvKecamatan) {
+          let requiredHeight = Math.max(400, labelsKec.length * 40);
+          document.getElementById('chartInner').style.height = requiredHeight + 'px';
+
+          chartKecObj = new Chart(cvKecamatan, {
+             type: 'bar',
+             data: { 
+                labels: labelsKec, 
+                datasets: [
+                    { label: 'Open', data: dO, backgroundColor: '#3b82f6', borderRadius: 2 },
+                    { label: 'Draft', data: dD, backgroundColor: '#f59e0b', borderRadius: 2 },
+                    { label: 'Submit', data: dS, backgroundColor: '#9333ea', borderRadius: 2 },
+                    { label: 'Reject', data: dR, backgroundColor: '#dc2626', borderRadius: 2 },
+                    { label: 'Approved', data: dA, backgroundColor: '#16a34a', borderRadius: 2 }
+                ] 
+             },
+             options: { 
+                 indexAxis: 'y', 
+                 maintainAspectRatio: false, 
+                 responsive: true,
+                 interaction: { mode: 'y', intersect: true }, 
+                 scales: { 
+                     x: { 
+                         stacked: true, 
+                         beginAtZero: true, 
+                         max: 100,
+                         grid: { display: false },
+                         ticks: {
+                             callback: function(value) { return value + '%'; }
+                         }
+                     },
+                     y: { stacked: true }
+                 }, 
+                 plugins: { 
+                    legend: { display: true, position: 'top', labels: {font:{family:'Montserrat', weight:'bold'}} },
+                    datalabels: { display: false }, 
+                    tooltip: {
+                       enabled: true,
+                       position: 'nearest', 
+                       callbacks: {
+                          label: function(context) {
+                             let label = context.dataset.label || '';
+                             let value = context.parsed.x || 0;
+                             return label + ': ' + value + '%';
+                          },
+                          footer: (items) => {
+                             let kecName = items[0].label;
+                             let sum = kecChartMapGlobal[kecName] ? kecChartMapGlobal[kecName].tot : 0;
+                             let absSubmit = kecChartMapGlobal[kecName] ? (kecChartMapGlobal[kecName].s + kecChartMapGlobal[kecName].rej + kecChartMapGlobal[kecName].a) : 0;
+                             return `Total Assignment: ${sum.toLocaleString('id-ID')}\nTotal Submit (Sub+Rej+App): ${absSubmit.toLocaleString('id-ID')}`;
+                          }
+                       }
+                    }
+                 },
+                 layout: { padding: { left: 120, right: 40, top: 10, bottom: 10 } } 
+             }
+          });
+     }
+  }
+
+  function goDashPage(pageNum) { dashCurrentPage = pageNum; renderTabelPaginasi(); }
+  function generatePaginationHTML(totalItems, currentPage, rowsPerPage, callbackName) {
+       const totalPages = Math.ceil(totalItems / rowsPerPage);
+       if (totalPages <= 1) return '';
+       let html = '<div class="flex flex-wrap gap-1">';
+       html += `<button onclick="${callbackName}(${currentPage - 1})" class="px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-bold text-gray-600 hover:bg-gray-100 disabled:opacity-50 transition shadow-sm" ${currentPage === 1 ? 'disabled' : ''}>&laquo;</button>`;
+       let startPage = Math.max(1, currentPage - 2);
+       let endPage = Math.min(totalPages, currentPage + 2);
+       for (let i = startPage; i <= endPage; i++) {
+           let activeClass = i === currentPage ? 'bg-blue-600 text-white border-blue-600 shadow-md' : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-100 shadow-sm';
+           html += `<button onclick="${callbackName}(${i})" class="px-3 py-1.5 rounded-lg border ${activeClass} text-xs font-bold transition">${i}</button>`;
+       }
+       html += `<button onclick="${callbackName}(${currentPage + 1})" class="px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-bold text-gray-600 hover:bg-gray-100 disabled:opacity-50 transition shadow-sm" ${currentPage === totalPages ? 'disabled' : ''}>&raquo;</button>`;
+       return html + '</div>';
+  }
+
+  function exportDashboardExcel() {
+    if(dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong', 'info');
+    const exportData = dashFilteredData.map((row, idx) => ({
+      "No": idx + 1, "ID SLS": row.idSls, "Kecamatan": row.kec, "Desa": row.desa, "Nama SLS": row.nmsls, "Prioritas": row.prioritas === 1 ? "Ya" : "Tidak", 
+      "PJ Kuda": row.pj, "PML": row.pml, "Email PML": row.emailPml, "PPL": row.ppl, "Email PPL": row.emailPpl,
+      "Open": row.open, "Draft": row.draft, "Submit": row.submit, "Reject": row.reject, "Approve": row.approve, "Total Target": row.calcTotal
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Progress_FASIH");
+    XLSX.writeFile(workbook, `Rekap_Monitoring_FASIH_${new Date().toISOString().slice(0,10)}.xlsx`);
+  }
+
+  function downloadImage() {
+       if(dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
+       const btn = document.getElementById('btnImage');
+       const originalText = btn.innerHTML;
+       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROSES...';
+       btn.disabled = true;
+
+       const element = document.getElementById('captureArea');
+       const watermarkHeader = document.getElementById('watermarkHeader');
+       const watermarkText = document.getElementById('watermarkText');
+
+       const timing = getHariPendataan();
+       const currentSync = document.getElementById('txtLastUpdate') ? document.getElementById('txtLastUpdate').innerText : '-';
+       
+       watermarkText.innerHTML = `<span style="color: #ffffff; font-weight: bold;">PENDATAAN HARI KE - ${timing.x}</span> &nbsp;|&nbsp; <span style="color: #FFFF00; font-weight: bold;">TARGET PROGRESS : ${timing.y.toFixed(2)}%</span> &nbsp;|&nbsp; <span style="color: #ffffff; font-weight: bold;">TERAKHIR SINKRONISASI: ${currentSync}</span>`;
+       
+       watermarkHeader.classList.remove('hidden'); watermarkHeader.classList.add('flex');
+       
+       const originalWidth = element.style.width;
+       const originalOverflow = element.style.overflow;
+       
+       window.scrollTo(0,0);
+       document.documentElement.scrollLeft = 0;
+       document.body.scrollLeft = 0;
+       element.scrollLeft = 0; 
+       
+       element.classList.remove('overflow-auto', 'flex-1', 'min-h-0');
+       element.classList.add('h-max');
+       element.style.overflow = 'visible'; 
+       
+       const fullWidth = element.scrollWidth;
+       element.style.width = fullWidth + 'px'; 
+       element.style.maxWidth = 'none';
+
+       html2canvas(element, { 
+           scale: 2, 
+           useCORS: true, 
+           scrollX: 0, 
+           scrollY: 0,
+           windowWidth: fullWidth,
+           width: fullWidth
+       }).then(canvas => {
+           watermarkHeader.classList.add('hidden'); watermarkHeader.classList.remove('flex');
+           element.style.width = originalWidth;
+           element.style.overflow = originalOverflow;
+           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); 
+           element.classList.remove('h-max');
+           
+           let link = document.createElement('a');
+           link.download = `Dashboard_FASIH_${new Date().toISOString().slice(0,10)}.png`;
+           link.href = canvas.toDataURL('image/png');
+           link.click();
+
+           btn.innerHTML = originalText; btn.disabled = false;
+       }).catch(err => {
+           watermarkHeader.classList.add('hidden'); watermarkHeader.classList.remove('flex');
+           element.style.width = originalWidth;
+           element.style.overflow = originalOverflow;
+           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); 
+           element.classList.remove('h-max');
+           btn.innerHTML = originalText; btn.disabled = false;
+           Swal.fire('Error', 'Gagal memproses Gambar.', 'error');
+       });
+  }
+
+  function downloadPDF() {
+       if(dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
+       const btn = document.getElementById('btnScreenshot');
+       const originalText = btn.innerHTML;
+       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROSES...';
+       btn.disabled = true;
+
+       const element = document.getElementById('captureArea');
+       const watermarkHeader = document.getElementById('watermarkHeader');
+       const watermarkText = document.getElementById('watermarkText');
+
+       const timing = getHariPendataan();
+       const currentSync = document.getElementById('txtLastUpdate') ? document.getElementById('txtLastUpdate').innerText : '-';
+       
+       watermarkText.innerHTML = `<span style="color: #ffffff; font-weight: bold;">PENDATAAN HARI KE - ${timing.x}</span> &nbsp;|&nbsp; <span style="color: #FFFF00; font-weight: bold;">TARGET PROGRESS : ${timing.y.toFixed(2)}%</span> &nbsp;|&nbsp; <span style="color: #ffffff; font-weight: bold;">TERAKHIR SINKRONISASI: ${currentSync}</span>`;
+       
+       watermarkHeader.classList.remove('hidden'); watermarkHeader.classList.add('flex');
+       
+       const originalWidth = element.style.width;
+       const originalOverflow = element.style.overflow;
+       
+       window.scrollTo(0,0);
+       document.documentElement.scrollLeft = 0;
+       document.body.scrollLeft = 0;
+       element.scrollLeft = 0; 
+       
+       element.classList.remove('overflow-auto', 'flex-1', 'min-h-0');
+       element.classList.add('h-max');
+       element.style.overflow = 'visible';
+       
+       const table = element.querySelector('.block table');
+       const fullWidth = table ? table.scrollWidth : element.scrollWidth;
+       
+       element.style.width = fullWidth + 'px'; 
+       element.style.maxWidth = 'none';
+
+       let optOpt = {
+          margin:       [0.3, 0.2, 0.3, 0.3], 
+          filename:     `Laporan_Monitoring_FASIH_${new Date().toISOString().slice(0,10)}.pdf`,
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { 
+              scale: 2, 
+              useCORS: true, 
+              scrollX: 0, 
+              scrollY: 0,
+              x: 0,
+              y: 0,
+              windowWidth: fullWidth,
+              width: fullWidth
+          },
+          jsPDF:        { unit: 'in', format: 'a3', orientation: 'landscape' }, 
+          pagebreak:    { mode: ['css', 'legacy'], avoid: ['tr', 'td', 'th'] } 
+       };
+
+       html2pdf().set(optOpt).from(element).save().then(() => {
+           watermarkHeader.classList.add('hidden'); watermarkHeader.classList.remove('flex');
+           element.style.width = originalWidth;
+           element.style.overflow = originalOverflow;
+           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); 
+           element.classList.remove('h-max');
+           btn.innerHTML = originalText; btn.disabled = false;
+       }).catch(err => {
+           watermarkHeader.classList.add('hidden'); watermarkHeader.classList.remove('flex');
+           element.style.width = originalWidth;
+           element.style.overflow = originalOverflow;
+           element.classList.add('overflow-auto', 'flex-1', 'min-h-0'); 
+           element.classList.remove('h-max');
+           btn.innerHTML = originalText; btn.disabled = false;
+           Swal.fire('Error', 'Gagal memproses PDF.', 'error');
+       });
+  }
+</script>
+</body>
+</html>
