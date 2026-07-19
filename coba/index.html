@@ -778,47 +778,55 @@ function initDashboard() {
       return filtered;
   }
 
-  function switchTab(tabId) {
-     if (!DASH_DATA || DASH_DATA.length === 0) return; 
+function switchTab(tabId) {
+    if (!DASH_DATA || DASH_DATA.length === 0) return; 
 
-     if(activeTabId !== tabId) dashCurrentPage = 1; 
-     activeTabId = tabId;
-     
-if ([2, 3, 4].includes(tabId)) {
+    if (activeTabId !== tabId) dashCurrentPage = 1; 
+    activeTabId = tabId;
+    
+    // --- LOGIKA PAGINATION BARU ---
+    // Tab 1, 6, 7, 8 -> default 10
+    // Tab 2, 3, 4 -> default semua (999999)
+    // Tab 5 -> biasanya tidak pakai pagination (abaikan)
+    if ([1, 6, 7, 8].includes(tabId)) {
+        dashRowsPerPage = 10;
+        if (document.getElementById('perPageSelect')) {
+            document.getElementById('perPageSelect').value = "10";
+        }
+    } else if ([2, 3, 4].includes(tabId)) {
         dashRowsPerPage = 999999;
-        if(document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "999999";
-     } else {
-        dashRowsPerPage = parseInt(document.getElementById('perPageSelect').value) || 10;
-        // Blok paksaan kembali ke 10 telah dihapus di sini
-     }
-     
-[1,2,3,4,5,6,7,8].forEach(i => {
+        if (document.getElementById('perPageSelect')) {
+            document.getElementById('perPageSelect').value = "999999";
+        }
+    }
+    // -------------------------------
+    
+    [1,2,3,4,5,6,7,8].forEach(i => {
         let btn = document.getElementById('btnTab'+i);
-        // Regex diperbaiki untuk mereset warna tombol menjadi abu-abu
-        if(btn) btn.className = btn.className.replace(/border-blue-500|border-amber-500|border-purple-500|border-cyan-500|text-blue-700|text-blue-600|text-amber-600|text-purple-600|text-cyan-600|text-amber-500|text-purple-500|text-cyan-500/g, "border-transparent text-gray-500");
-        let tc = document.getElementById('tab'+i+'-content'); if(tc) { tc.classList.add('hidden'); tc.classList.remove('block'); }
-     });
-     
-     let btnAct = document.getElementById('btnTab'+tabId);
-     if(btnAct) {
+        if(btn) btn.className = btn.className.replace(/border-blue-500|border-amber-500|border-purple-500|text-blue-700|text-blue-600|text-amber-600|text-purple-600|text-amber-500|text-purple-500/g, "border-transparent text-gray-500");
+        let tc = document.getElementById('tab'+i+'-content'); 
+        if(tc) { tc.classList.add('hidden'); tc.classList.remove('block'); }
+    });
+    
+    let btnAct = document.getElementById('btnTab'+tabId);
+    if(btnAct) {
         btnAct.classList.remove("border-transparent", "text-gray-500");
         if(tabId===6) btnAct.classList.add("border-amber-500", "text-amber-600");
-        else if(tabId===7) btnAct.classList.add("border-purple-500", "text-purple-600"); // Tab 7 tetap ungu
-        else if(tabId===8) btnAct.classList.add("border-blue-500", "text-blue-700"); // Tab 8 menjadi Biru
+        else if(tabId===7) btnAct.classList.add("border-purple-500", "text-purple-600");
+        else if(tabId===8) btnAct.classList.add("border-blue-500", "text-blue-700");
         else btnAct.classList.add("border-blue-500", "text-blue-700");
-     }
-     
-     if(document.getElementById('tab'+tabId+'-content')) document.getElementById('tab'+tabId+'-content').classList.remove('hidden');
-     if(document.getElementById('paginasiArea')) document.getElementById('paginasiArea').style.display = ([1,2,3,4,6,7,8].includes(tabId)) ? 'flex' : 'none';
+    }
+    
+    if(document.getElementById('tab'+tabId+'-content')) document.getElementById('tab'+tabId+'-content').classList.remove('hidden');
+    if(document.getElementById('paginasiArea')) document.getElementById('paginasiArea').style.display = ([1,2,3,4,6,7,8].includes(tabId)) ? 'flex' : 'none';
 
-     // Default sort saat pindah tab
-     sortCol = ''; sortAsc = true; 
-     if (activeTabId === 2) { sortCol = 'pct_submit'; sortAsc = false; } 
-     else if (activeTabId === 3) { sortCol = 'pct_app'; sortAsc = false; } 
-     else if (activeTabId === 4) { sortCol = 'pct_submit'; sortAsc = false; } 
-     
-     renderCurrentTab();
-  }
+    sortCol = ''; sortAsc = true; 
+    if (activeTabId === 2) { sortCol = 'pct_submit'; sortAsc = false; } 
+    else if (activeTabId === 3) { sortCol = 'pct_app'; sortAsc = false; } 
+    else if (activeTabId === 4) { sortCol = 'pct_submit'; sortAsc = false; } 
+    
+    renderCurrentTab();
+}
 
   function applySort(col) {
       if(sortCol === col) sortAsc = !sortAsc; 
