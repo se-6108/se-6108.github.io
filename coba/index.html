@@ -257,7 +257,7 @@
          
          <div id="watermarkHeader" class="hidden w-full p-5 bg-gradient-to-r from-[#2563eb] to-[#1e3a8a] border-b-2 border-blue-200 items-center justify-between mb-2 rounded-t-2xl shrink-0">
             <div>
-               <h2 class="text-2xl font-black text-white uppercase tracking-tight mb-2">Laporan Progress Pendataan FASIH</h2>
+<h2 id="watermarkTitle" class="text-2xl font-black text-white uppercase tracking-tight mb-2">Laporan Progress Pendataan FASIH</h2>
                <p class="text-xs font-bold text-white mt-1 uppercase block" id="watermarkText"></p>
             </div>
             <img src="https://i.ibb.co.com/jv8y1FSq/unnamed.png" class="h-16 w-16 drop-shadow-md bg-white rounded-full p-1 border">
@@ -441,7 +441,7 @@ function initDashboard() {
           document.getElementById('badgeHari').innerText = `PENDATAAN HARI KE - ${timingConfig.x}`;
       }
       if (document.getElementById('badgeTarget')) {
-          document.getElementById('badgeTarget').innerText = `TARGET PROGRESS : ${timingConfig.y.toFixed(2)}%`;
+          document.getElementById('badgeTarget').innerText = `TARGET % SUBMIT : ${timingConfig.y.toFixed(2)}%`;
       }
 
       fetch(GAS_API_URL)
@@ -1532,7 +1532,15 @@ function parseExcelUsahaAll(f) {
        const element = document.getElementById('captureArea'); 
        const watermarkHeader = document.getElementById('watermarkHeader');
        
-       document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - ${timingConfig.x} | TARGET PROGRESS : ${timingConfig.y.toFixed(2)}% | TERAKHIR SINKRONISASI: ${document.getElementById('txtLastUpdate').innerText}`;
+   const tabNamesDict = { 
+    1: "Detail SLS", 2: "Progress PPL", 3: "Progress PML", 
+    4: "Progress Kecamatan", 5: "Visualisasi Data", 
+    6: "Rekap. Keluarga", 7: "Rekap. BKU", 8: "Rekap. Usaha Keluarga" 
+};
+const actTabName = tabNamesDict[activeTabId] || "Progress Pendataan FASIH";
+document.getElementById('watermarkTitle').innerText = "LAPORAN " + actTabName.toUpperCase();
+
+document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - <span class="text-yellow-400">${timingConfig.x}</span> | TARGET PROGRESS : <span class="text-yellow-400">${timingConfig.y.toFixed(2)}%</span> | TERAKHIR SINKRONISASI: <span class="text-yellow-400">${document.getElementById('txtLastUpdate').innerText}</span>`;
        watermarkHeader.classList.remove('hidden'); 
        watermarkHeader.classList.add('flex');
        
@@ -1597,7 +1605,15 @@ function parseExcelUsahaAll(f) {
        const element = document.getElementById('captureArea'); 
        const watermarkHeader = document.getElementById('watermarkHeader');
        
-       document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - ${timingConfig.x} | TARGET PROGRESS : ${timingConfig.y.toFixed(2)}% | TERAKHIR SINKRONISASI: ${document.getElementById('txtLastUpdate').innerText}`;
+const tabNamesDict = { 
+    1: "Detail SLS", 2: "Progress PPL", 3: "Progress PML", 
+    4: "Progress Kecamatan", 5: "Visualisasi Data", 
+    6: "Rekap. Keluarga", 7: "Rekap. BKU", 8: "Rekap. Usaha Keluarga" 
+};
+const actTabName = tabNamesDict[activeTabId] || "Progress Pendataan FASIH";
+document.getElementById('watermarkTitle').innerText = "LAPORAN " + actTabName.toUpperCase();
+
+document.getElementById('watermarkText').innerHTML = `PENDATAAN HARI KE - <span class="text-yellow-400">${timingConfig.x}</span> | TARGET PROGRESS : <span class="text-yellow-400">${timingConfig.y.toFixed(2)}%</span> | TERAKHIR SINKRONISASI: <span class="text-yellow-400">${document.getElementById('txtLastUpdate').innerText}</span>`;
        watermarkHeader.classList.remove('hidden'); 
        watermarkHeader.classList.add('flex');
        
