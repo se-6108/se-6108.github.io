@@ -1072,25 +1072,23 @@
                    <td class="px-4 py-3 text-center font-bold font-mono border-l border-emerald-100 text-emerald-700 align-middle">${r.pct_approve}%</td>
                  </tr>`;
             }
-            else if(activeTabId === 6) {
-// Hapus logika 'al' dan gunakan warna putih statis dengan hover abu-abu
-html += `
-  <tr class="border-b border-gray-100 transition hover:bg-gray-50 bg-white">
+else if(activeTabId === 6) {
+               html += `
+                 <tr class="border-b border-gray-100 transition hover:bg-gray-50 bg-white">
                    <td class="px-4 py-3 text-center font-bold text-gray-500 border-r border-amber-200 align-middle">${n}</td>
                    <td class="px-4 py-3 font-mono text-[11px] font-bold text-amber-900 border-r border-amber-200 align-middle">${r.idSls}</td>
                    <td class="px-4 py-3 leading-tight border-r border-amber-200 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 font-bold tracking-wider uppercase">${r.desaKec}</span></td>
                    <td class="px-4 py-3 leading-tight border-r border-amber-200 align-middle">${petugasHtml}</td>
                    <td class="px-4 py-3 font-bold text-[10px] text-amber-900 uppercase align-middle">${r.pj}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-slate-800 border-l border-amber-200 bg-amber-50/10 align-middle">${r.prelist}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-green-700 border-l border-amber-200 align-middle">${r.ditemukan}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 border-l border-amber-200 align-middle">${r.baru}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-gray-700 border-l border-amber-200 align-middle">${r.meninggal}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-red-700 border-l border-amber-200 ${r.tdk>0?'bg-red-50/80':''} align-middle">${r.tdk}</td>
-                   
-                   <td class="px-4 py-3 text-center font-mono font-bold text-orange-700 border-l border-amber-200 align-middle">${r.tdk_eligible}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-rose-700 border-l border-amber-200 align-middle">${r.tdk_dpt_ditemui}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-fuchsia-700 border-l border-amber-200 align-middle">${r.khusus}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-amber-900 border-l border-amber-300 bg-amber-200/50 align-middle">${r.tot_pendataan_kel}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-slate-800 border-l border-amber-200 bg-slate-50/20 align-middle">${r.prelist}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-green-700 border-l border-amber-200 bg-green-50/20 align-middle">${r.ditemukan}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 border-l border-amber-200 bg-blue-50/20 align-middle">${r.baru}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-gray-700 border-l border-amber-200 bg-gray-50/20 align-middle">${r.meninggal}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-red-700 border-l border-amber-200 bg-red-50/20 align-middle">${r.tdk}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-orange-700 border-l border-amber-200 bg-orange-50/20 align-middle">${r.tdk_eligible}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-rose-700 border-l border-amber-200 bg-rose-50/20 align-middle">${r.tdk_dpt_ditemui}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-fuchsia-700 border-l border-amber-200 bg-fuchsia-50/20 align-middle">${r.khusus}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-amber-900 border-l border-amber-300 bg-amber-200/40 align-middle">${r.tot_pendataan_kel}</td>
                  </tr>`;
             }
             else if(activeTabId === 7) {
@@ -1101,31 +1099,29 @@ html += `
                    <td class="px-4 py-3 leading-tight border-r border-purple-200 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 font-bold tracking-wider uppercase">${r.desaKec}</span></td>
                    <td class="px-4 py-3 leading-tight border-r border-purple-200 align-middle">${petugasHtml}</td>
                    <td class="px-4 py-3 font-bold text-[10px] text-purple-900 uppercase align-middle">${r.pj}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-slate-800 border-l border-purple-200 bg-purple-50/10 align-middle">${r.prelist}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-green-700 border-l border-purple-200 align-middle">${r.ditemukan}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 border-l border-purple-200 align-middle">${r.baru}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-gray-700 border-l border-purple-200 align-middle">${r.tutup}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-amber-700 border-l border-purple-200 align-middle">${r.ganda}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-red-700 border-l border-purple-200 ${r.tdk>0?'bg-red-50/80':''} align-middle">${r.tdk}</td>
-                   
-                   <td class="px-4 py-3 text-center font-mono font-bold text-purple-900 border-l border-purple-300 bg-purple-200/50 align-middle">${r.jml_usaha_bku}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-slate-800 border-l border-purple-200 bg-slate-50/20 align-middle">${r.prelist}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-green-700 border-l border-purple-200 bg-green-50/20 align-middle">${r.ditemukan}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 border-l border-purple-200 bg-blue-50/20 align-middle">${r.baru}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-gray-700 border-l border-purple-200 bg-gray-50/20 align-middle">${r.tutup}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-amber-700 border-l border-purple-200 bg-amber-50/20 align-middle">${r.ganda}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-red-700 border-l border-purple-200 bg-red-50/20 align-middle">${r.tdk}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-purple-900 border-l border-purple-300 bg-purple-200/40 align-middle">${r.jml_usaha_bku}</td>
                  </tr>`;
             }
             else if(activeTabId === 8) {
                html += `
-   <tr class="border-b border-gray-100 transition hover:bg-gray-50 bg-white">
+                 <tr class="border-b border-gray-100 transition hover:bg-gray-50 bg-white">
                    <td class="px-4 py-3 text-center font-bold text-gray-500 border-r border-emerald-200 align-middle">${n}</td>
                    <td class="px-4 py-3 font-mono text-[11px] font-bold text-emerald-900 border-r border-emerald-200 align-middle">${r.idSls}</td>
                    <td class="px-4 py-3 leading-tight border-r border-emerald-200 align-middle"><span class="font-bold text-xs">${r.nmsls}</span><br><span class="text-[9px] text-gray-500 font-bold tracking-wider uppercase">${r.desaKec}</span></td>
                    <td class="px-4 py-3 leading-tight border-r border-emerald-200 align-middle">${petugasHtml}</td>
                    <td class="px-4 py-3 font-bold text-[10px] text-emerald-900 uppercase align-middle">${r.pj}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-green-700 border-l border-emerald-200 bg-emerald-50/10 align-middle">${r.ditemukan}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 border-l border-emerald-200 bg-emerald-50/10 align-middle">${r.baru}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-gray-700 border-l border-emerald-200 bg-emerald-50/10 align-middle">${r.tutup}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-amber-700 border-l border-emerald-200 bg-emerald-50/10 align-middle">${r.ganda}</td>
-                   <td class="px-4 py-3 text-center font-mono font-bold text-red-700 border-l border-emerald-200 ${r.tdk>0?'bg-red-50/80':''} align-middle">${r.tdk}</td>
-                   
-                   <td class="px-4 py-3 text-center font-mono font-bold text-emerald-900 border-l border-emerald-300 bg-emerald-200/50 align-middle">${r.jml_usaha_kel}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-green-700 border-l border-emerald-200 bg-green-50/20 align-middle">${r.ditemukan}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-blue-700 border-l border-emerald-200 bg-blue-50/20 align-middle">${r.baru}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-gray-700 border-l border-emerald-200 bg-gray-50/20 align-middle">${r.tutup}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-amber-700 border-l border-emerald-200 bg-amber-50/20 align-middle">${r.ganda}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-red-700 border-l border-emerald-200 bg-red-50/20 align-middle">${r.tdk}</td>
+                   <td class="px-4 py-3 text-center font-mono font-bold text-emerald-900 border-l border-emerald-300 bg-emerald-200/40 align-middle">${r.jml_usaha_kel}</td>
                  </tr>`;
             }
          });
