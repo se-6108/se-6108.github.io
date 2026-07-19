@@ -1261,7 +1261,7 @@ else if(activeTabId === 8) {
   // ====================================================================
   function authAdminPanel() {
     Swal.fire({ 
-        title: '<span class="text-xl font-black text-indigo-900">OTORISASI ADMIN</span>', 
+        title: '<span class="text-xl font-black text-indigo-900">MASUKKAN PASSWORD ADMIN</span>', 
         input: 'password', 
         showCancelButton: true, 
         confirmButtonText: 'Buka Panel', 
@@ -1279,11 +1279,11 @@ else if(activeTabId === 8) {
       html: `
         <div class="text-left text-sm mt-4 space-y-4">
           <div class="p-4 border border-amber-300 bg-amber-50 rounded-xl shadow-sm">
-              <label class="font-black text-amber-800 block mb-2">1. Upload Pemutakhiran Keluarga (.xlsx)</label>
+              <label class="font-black text-amber-800 block mb-2">1. Progres_Pemutakhiran_Keluarga_Sub... (.xlsx)</label>
               <input type="file" id="fileKel" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-amber-600 file:text-white file:font-bold hover:file:bg-amber-700 transition">
           </div>
           <div class="p-4 border border-purple-300 bg-purple-50 rounded-xl shadow-sm">
-              <label class="font-black text-purple-800 block mb-2">2. Upload Pendataan Usaha (.xlsx)</label>
+              <label class="font-black text-purple-800 block mb-2">2. Progres_Pendataan_Sub... (.xlsx)</label>
               <input type="file" id="fileUsa" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-purple-600 file:text-white file:font-bold hover:file:bg-purple-700 transition">
           </div>
           <p class="text-[10px] text-gray-500 font-medium italic mt-2 text-center">Pilih file yang ingin diperbarui (bisa salah satu). Sistem otomatis memecah file Usaha menjadi BKU & Usaha Keluarga.</p>
