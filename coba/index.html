@@ -1036,20 +1036,26 @@ function switchTab(tabId) {
           }; 
       });
 
-      // Meneruskan data Tab 9 (Evaluasi PPL)
-      TAB_STATE[9] = Object.values(evalM).map(p => {
-          let pct_submit = p.t > 0 ? (((p.s + p.rej + p.app) / p.t) * 100).toFixed(1) : '0.0';
-          let pct_approve = p.t > 0 ? ((p.app / p.t) * 100).toFixed(1) : '0.0';
-          let pct_reject = p.t > 0 ? ((p.rej / p.t) * 100).toFixed(1) : '0.0';
-          
-          let kolomA = (p.b_dit + p.b_bar) + (p.k_dit + p.k_bar + p.k_khu);
-          let kolomB = p.b_tdk + p.k_tdk;
-          let selisih = kolomA - kolomB;
-          let pctA = p.t > 0 ? ((kolomA / p.t) * 100).toFixed(1) : '0.0';
-          let pctB = p.t > 0 ? ((kolomB / p.t) * 100).toFixed(1) : '0.0';
+// Di dalam buildTabStates(), bagian TAB_STATE[9]
+TAB_STATE[9] = Object.values(evalM).map(p => {
+    // Total Submit Absolut (Sesuai kolom progres PPL: submit + reject + approve)
+    let totalSubmitAbsolut = (p.s + p.rej + p.app); 
+    
+    let pct_submit = p.t > 0 ? (((p.s + p.rej + p.app) / p.t) * 100).toFixed(1) : '0.0';
+    let pct_approve = p.t > 0 ? ((p.app / p.t) * 100).toFixed(1) : '0.0';
+    let pct_reject = p.t > 0 ? ((p.rej / p.t) * 100).toFixed(1) : '0.0';
+    
+    let kolomA = (p.b_dit + p.b_bar) + (p.k_dit + p.k_bar + p.k_khu);
+    let kolomB = p.b_tdk + p.k_tdk;
+    let selisih = kolomA - kolomB;
+    
+    // Perhitungan Persentase berbasis TOTAL SUBMIT
+    // Jika totalSubmitAbsolut adalah 0, maka persentase adalah 0.0
+    let pctA = totalSubmitAbsolut > 0 ? ((kolomA / totalSubmitAbsolut) * 100).toFixed(1) : '0.0';
+    let pctB = totalSubmitAbsolut > 0 ? ((kolomB / totalSubmitAbsolut) * 100).toFixed(1) : '0.0';
 
-          return { ...p, pct_submit, pct_approve, pct_reject, kolomA, kolomB, selisih, pctA, pctB };
-      });
+    return { ...p, pct_submit, pct_approve, pct_reject, kolomA, kolomB, selisih, pctA, pctB };
+});
   }
 
   function renderCurrentTab() {
