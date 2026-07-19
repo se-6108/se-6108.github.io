@@ -433,7 +433,7 @@
       return { x: actualDiffDays, y: targetPercentage, effDay: effectiveDiffDays };
   }
 
-  function initDashboard() {
+function initDashboard() {
       const globalLoader = document.getElementById('globalLoading');
       timingConfig = getHariPendataan();
       
@@ -460,7 +460,7 @@
           DASH_DATA = res.data;
           if(globalLoader) globalLoader.classList.add('hidden');
           
-let warningHTML = "";
+          let warningHTML = "";
           if (res.integrityErrorCount > 0) {
               warningHTML = `
                 <div class="bg-red-50 border border-red-300 text-red-800 p-3.5 rounded-xl mb-4 text-xs shadow-sm text-left animate-pulse">
@@ -505,6 +505,20 @@ let warningHTML = "";
                   confirmButton: 'bg-blue-600 text-white px-8 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition w-full mt-2 shadow-sm text-xs tracking-wide uppercase'
               }
           });
+
+          if(document.getElementById('txtLastUpdate')) {
+              document.getElementById('txtLastUpdate').innerText = res.lastUpdate;
+          }
+
+          // KODE INI YANG SEBELUMNYA TERHAPUS:
+          initCustomDropdowns();
+          buildTableHeaders(); 
+          handleGlobalFilter(); 
+        })
+        .catch(err => {
+          if(globalLoader) globalLoader.classList.add('hidden');
+          Swal.fire("Gagal Memuat Data", err.message, "error");
+        });
   }
 
   // =========================================================================
