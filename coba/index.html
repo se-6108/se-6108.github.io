@@ -175,7 +175,7 @@
         </div>
       </div>
       
-      <!-- NAVIGASI TAB MENU ASLI DIPERTAHANKAN -->
+      <!-- NAVIGASI TAB MENU ASLI DIPERTAHANKAN (DITAMBAH TAB 9) -->
       <div class="px-6 pt-3 bg-white flex gap-6 border-b border-gray-200 overflow-x-auto scrollbar-hide">
          <button id="btnTab1" onclick="switchTab(1)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-blue-500 text-blue-700 transition">Detail SLS</button>
          <button id="btnTab2" onclick="switchTab(2)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Progress PPL</button>
@@ -185,6 +185,7 @@
          <button id="btnTab6" onclick="switchTab(6)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-amber-600 transition flex gap-1 items-center">Pendataan Keluarga</button>
          <button id="btnTab7" onclick="switchTab(7)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-purple-600 transition flex gap-1 items-center">Pendataan BKU</button>
          <button id="btnTab8" onclick="switchTab(8)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-600 transition flex gap-1 items-center">Pendataan Usaha Keluarga</button>
+         <button id="btnTab9" onclick="switchTab(9)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-pink-600 transition flex gap-1 items-center">Evaluasi Dokumen PPL</button>
       </div>
 
 <!-- FILTER GLOBAL (SERAGAM & SMOOTH) -->
@@ -322,6 +323,13 @@
                  <tbody id="tableUsahaKeluarga" class="text-xs divide-y divide-emerald-100 text-gray-700 tags-upper"></tbody>
              </table>
          </div>
+         
+         <div id="tab9-content" class="hidden flex-1 w-full dashboard-table">
+             <table class="w-full text-left border-collapse min-w-[1500px]">
+                 <thead id="headTab9" class="text-[10px] uppercase text-pink-900 font-bold tracking-wider bg-pink-100"></thead>
+                 <tbody id="tableEvaluasiPpl" class="text-xs divide-y divide-pink-100 text-gray-700 tags-upper"></tbody>
+             </table>
+         </div>
       </div> 
       
       <!-- AREA PAGINASI -->
@@ -353,8 +361,8 @@
   let lastUploadKel = "BELUM ADA DATA";
   let lastUploadUsa = "BELUM ADA DATA";
   let dashFilteredData = [];
-  let TAB_STATE = { 1:[], 2:[], 3:[], 4:[], 6:[], 7:[], 8:[] }; 
-  let COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{} }; 
+  let TAB_STATE = { 1:[], 2:[], 3:[], 4:[], 6:[], 7:[], 8:[], 9:[] }; 
+  let COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{}, 9:{} }; 
   let dashCurrentPage = 1;
   let dashRowsPerPage = 10; 
   let activeTabId = 1;
@@ -516,7 +524,6 @@ function initDashboard() {
               document.getElementById('txtLastUpdate').innerText = res.lastUpdate;
           }
 
-          // KODE INI YANG SEBELUMNYA TERHAPUS:
           initCustomDropdowns();
           buildTableHeaders(); 
           handleGlobalFilter(); 
@@ -584,12 +591,12 @@ function initDashboard() {
       
       document.querySelectorAll('input[type="checkbox"]').forEach(chk => chk.checked = false);
       
-      COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{} };
+      COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{}, 9:{} };
       handleGlobalFilter();
   }
 
   // =========================================================================
-  // KONFIGURASI KOLOM (TERMASUK PENAMBAHAN KOLOM TAB 6, 7, 8)
+  // KONFIGURASI KOLOM
   // =========================================================================
   const TABS_CONFIG = {
       1: [
@@ -646,7 +653,7 @@ function initDashboard() {
          { k:'pct_submit', n:'% Submit', c:'text-center bg-sky-100 text-sky-800 border-l border-sky-200', f:true },
          { k:'pct_approve', n:'% Approve', c:'text-center bg-emerald-100 text-emerald-800 border-l border-emerald-200', f:true }
       ],
- 6: [
+      6: [
          { k:'idSls', n:'ID SLS', c:'bg-amber-50 border-r border-amber-200 text-amber-900', w:'140px' },
          { k:'nmsls', n:'Wilayah', c:'bg-amber-50 border-r border-amber-200 text-amber-900', w:'200px' },
          { k:'petugas', n:'Petugas (PPL / PML)', c:'bg-amber-50 border-r border-amber-200 text-amber-900', w:'250px' },
@@ -674,7 +681,7 @@ function initDashboard() {
          { k:'tdk', n:'Tdk ditemukan', c:'text-center border-l border-red-200 bg-red-100 text-red-700', f:true },
          { k:'jml_usaha_bku', n:'Total BKU', c:'text-center border-l border-purple-300 bg-purple-200 text-purple-900', f:true }
       ],
-    8: [
+      8: [
          { k:'idSls', n:'ID SLS', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'140px' },
          { k:'nmsls', n:'Wilayah', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'200px' },
          { k:'petugas', n:'Petugas (PPL / PML)', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'250px' },
@@ -685,6 +692,18 @@ function initDashboard() {
          { k:'ganda', n:'Ganda', c:'text-center border-l border-amber-100 bg-amber-50 text-amber-700', f:true },
          { k:'tdk', n:'Tdk ditemukan', c:'text-center border-l border-red-100 bg-red-50 text-red-700', f:true },
          { k:'jml_usaha_kel', n:'Jml Usaha Keluarga', c:'text-center border-l border-blue-200 bg-blue-100 text-blue-900', f:true }
+      ],
+      9: [
+         { k:'ppl', n:'Nama PPL', c:'bg-pink-50 border-r border-pink-200 text-pink-900', w:'200px' },
+         { k:'pml', n:'Nama PML', c:'bg-pink-50 border-r border-pink-200 text-gray-700' },
+         { k:'kec', n:'Kecamatan', c:'bg-pink-50 border-r border-pink-200 text-gray-700' },
+         { k:'pj', n:'PJ Kuda', c:'bg-pink-50 border-r border-pink-200 text-gray-700' },
+         { k:'pct_submit', n:'% Submit', c:'text-center bg-sky-100 text-sky-800 border-l border-pink-200', f:true },
+         { k:'pct_approve', n:'% Approve', c:'text-center bg-emerald-100 text-emerald-800 border-l border-pink-200', f:true },
+         { k:'pct_reject', n:'% Reject', c:'text-center bg-rose-100 text-rose-800 border-l border-pink-200', f:true },
+         { k:'kolomA', n:'Jml Dokumen Ditemukan (A)', c:'text-center bg-purple-100 text-purple-900 border-l border-pink-200', f:true },
+         { k:'kolomB', n:'Jml Dokumen Tdk Ditemukan (B)', c:'text-center bg-orange-100 text-orange-900 border-l border-pink-200', f:true },
+         { k:'selisih', n:'Selisih (A - B)', c:'text-center bg-pink-200 text-pink-900 border-l border-pink-300 font-black', f:true }
       ]
   };
 
@@ -706,7 +725,7 @@ function initDashboard() {
                         <div class="flex-1 flex justify-center items-center gap-1 cursor-pointer group" onclick="applySort('${col.k}')">
                            <span class="text-center group-hover:text-blue-600 transition">${col.n}</span>
                           <!-- Perubahan: Menambahkan shadow, kontras lebih tinggi, dan ukuran sedikit lebih besar -->
-                            <span class="ml-2 px-1 py-0.5 rounded border border-black/10 bg-white/60 shadow-sm text-[12px] font-black text-blue-700">↕</span>
+                           <span class="ml-2 px-1 py-0.5 rounded border border-black/10 bg-white/60 shadow-sm text-[12px] font-black text-blue-700">↕</span>
                         </div>
                         ${funnelIcon}
                     </div>
@@ -792,14 +811,14 @@ function switchTab(tabId) {
     
     // --- LOGIKA PAGINATION BARU ---
     // Tab 1, 6, 7, 8 -> default 10
-    // Tab 2, 3, 4 -> default semua (999999)
+    // Tab 2, 3, 4, 9 -> default semua (999999)
     // Tab 5 -> biasanya tidak pakai pagination (abaikan)
     if ([1, 6, 7, 8].includes(tabId)) {
         dashRowsPerPage = 10;
         if (document.getElementById('perPageSelect')) {
             document.getElementById('perPageSelect').value = "10";
         }
-    } else if ([2, 3, 4].includes(tabId)) {
+    } else if ([2, 3, 4, 9].includes(tabId)) {
         dashRowsPerPage = 999999;
         if (document.getElementById('perPageSelect')) {
             document.getElementById('perPageSelect').value = "999999";
@@ -807,9 +826,9 @@ function switchTab(tabId) {
     }
     // -------------------------------
     
-    [1,2,3,4,5,6,7,8].forEach(i => {
+    [1,2,3,4,5,6,7,8,9].forEach(i => {
         let btn = document.getElementById('btnTab'+i);
-        if(btn) btn.className = btn.className.replace(/border-blue-500|border-amber-500|border-purple-500|text-blue-700|text-blue-600|text-amber-600|text-purple-600|text-amber-500|text-purple-500/g, "border-transparent text-gray-500");
+        if(btn) btn.className = btn.className.replace(/border-blue-500|border-amber-500|border-purple-500|border-pink-500|text-blue-700|text-blue-600|text-amber-600|text-purple-600|text-amber-500|text-purple-500|text-pink-600/g, "border-transparent text-gray-500");
         let tc = document.getElementById('tab'+i+'-content'); 
         if(tc) { tc.classList.add('hidden'); tc.classList.remove('block'); }
     });
@@ -820,16 +839,18 @@ function switchTab(tabId) {
         if(tabId===6) btnAct.classList.add("border-amber-500", "text-amber-600");
         else if(tabId===7) btnAct.classList.add("border-purple-500", "text-purple-600");
         else if(tabId===8) btnAct.classList.add("border-blue-500", "text-blue-700");
+        else if(tabId===9) btnAct.classList.add("border-pink-500", "text-pink-600");
         else btnAct.classList.add("border-blue-500", "text-blue-700");
     }
     
     if(document.getElementById('tab'+tabId+'-content')) document.getElementById('tab'+tabId+'-content').classList.remove('hidden');
-    if(document.getElementById('paginasiArea')) document.getElementById('paginasiArea').style.display = ([1,2,3,4,6,7,8].includes(tabId)) ? 'flex' : 'none';
+    if(document.getElementById('paginasiArea')) document.getElementById('paginasiArea').style.display = ([1,2,3,4,6,7,8,9].includes(tabId)) ? 'flex' : 'none';
 
     sortCol = ''; sortAsc = true; 
     if (activeTabId === 2) { sortCol = 'pct_submit'; sortAsc = false; } 
     else if (activeTabId === 3) { sortCol = 'pct_app'; sortAsc = false; } 
     else if (activeTabId === 4) { sortCol = 'pct_submit'; sortAsc = false; } 
+    else if (activeTabId === 9) { sortCol = 'selisih'; sortAsc = false; } 
     
     renderCurrentTab();
 }
@@ -910,7 +931,7 @@ function switchTab(tabId) {
   function buildTabStates() {
       TAB_STATE[1] = dashFilteredData.map(r => ({ ...r, desaKec: r.desa + ' - ' + r.kec }));
       
-      let pplM={}, pmlM={}, kecM={};
+      let pplM={}, pmlM={}, kecM={}, evalM={};
       dashFilteredData.forEach(r => {
           let kPpl = r.ppl+"_"+r.kec; 
           if(!pplM[kPpl]) pplM[kPpl]={ppl:r.ppl, kec:r.kec, email:r.emailPpl, o:0, d:0, agg_s:0, t:0, app:0};
@@ -923,6 +944,31 @@ function switchTab(tabId) {
           let kKec = r.kec+"_"+r.pj; 
           if(!kecM[kKec]) kecM[kKec]={kec:r.kec, pj:r.pj, o:0, d:0, s:0, rej:0, app:0, t:0, agg_sra:0};
           kecM[kKec].o+=r.open; kecM[kKec].d+=r.draft; kecM[kKec].s+=r.submit; kecM[kKec].rej+=r.reject; kecM[kKec].app+=r.approve; kecM[kKec].agg_sra+=r.agg_submit; kecM[kKec].t+=r.calcTotal;
+
+          // EVALUASI PPL (TAB 9)
+          if(!evalM[kPpl]) {
+              evalM[kPpl] = {
+                  ppl: r.ppl, pml: r.pml, kec: r.kec, pj: r.pj, emailPpl: r.emailPpl,
+                  t: 0, s: 0, rej: 0, app: 0,
+                  k_dit: 0, k_bar: 0, k_khu: 0, k_tdk: 0,
+                  b_dit: 0, b_bar: 0, b_tdk: 0
+              };
+          }
+          evalM[kPpl].t += r.calcTotal;
+          evalM[kPpl].s += r.submit;
+          evalM[kPpl].rej += r.reject;
+          evalM[kPpl].app += r.approve;
+          
+          let ek = r.extKel || {};
+          evalM[kPpl].k_dit += (ek.ditemukan || 0);
+          evalM[kPpl].k_bar += (ek.baru || 0);
+          evalM[kPpl].k_khu += (ek.khusus || 0);
+          evalM[kPpl].k_tdk += (ek.tdk || 0);
+
+          let eb = r.extBku || {};
+          evalM[kPpl].b_dit += (eb.ditemukan || 0);
+          evalM[kPpl].b_bar += (eb.baru || 0);
+          evalM[kPpl].b_tdk += (eb.tdk || 0);
       });
 
       TAB_STATE[2] = Object.values(pplM).map(p => {
@@ -955,7 +1001,7 @@ function switchTab(tabId) {
           return p;
       });
 
-      // Meneruskan data Tab 6, 7, 8 (Termasuk Kalkulasi Kolom Baru)
+      // Meneruskan data Tab 6, 7, 8
       TAB_STATE[6] = dashFilteredData.map(r => { 
           let e = r.extKel||{}; 
           return { 
@@ -986,6 +1032,19 @@ function switchTab(tabId) {
               jml_usaha_kel: (e.ditemukan||0) + (e.baru||0),
               isMismatch:r.isMismatch 
           }; 
+      });
+
+      // Meneruskan data Tab 9 (Evaluasi PPL)
+      TAB_STATE[9] = Object.values(evalM).map(p => {
+          let pct_submit = p.t > 0 ? (((p.s + p.rej + p.app) / p.t) * 100).toFixed(1) : '0.0';
+          let pct_approve = p.t > 0 ? ((p.app / p.t) * 100).toFixed(1) : '0.0';
+          let pct_reject = p.t > 0 ? ((p.rej / p.t) * 100).toFixed(1) : '0.0';
+          
+          let kolomA = (p.b_dit + p.b_bar) + (p.k_dit + p.k_bar + p.k_khu);
+          let kolomB = p.b_tdk + p.k_tdk;
+          let selisih = kolomA - kolomB;
+
+          return { ...p, pct_submit, pct_approve, pct_reject, kolomA, kolomB, selisih };
       });
   }
 
@@ -1116,7 +1175,7 @@ function switchTab(tabId) {
                    <td class="px-4 py-3 text-center font-bold font-mono border-l border-emerald-100 text-emerald-700 align-middle">${r.pct_approve}%</td>
                  </tr>`;
             }
-else if(activeTabId === 6) {
+            else if(activeTabId === 6) {
                html += `
                  <tr class="border-b border-gray-100 transition hover:bg-gray-50 bg-white">
                    <td class="px-4 py-3 text-center font-bold text-gray-500 border-r border-amber-200 align-middle">${n}</td>
@@ -1152,7 +1211,7 @@ else if(activeTabId === 6) {
                    <td class="px-4 py-3 text-center font-mono font-bold text-purple-900 border-l border-purple-300 bg-purple-200/40 align-middle">${r.jml_usaha_bku}</td>
                  </tr>`;
             }
-else if(activeTabId === 8) {
+            else if(activeTabId === 8) {
                html += `
                  <tr class="border-b border-gray-100 transition hover:bg-gray-50 bg-white">
                    <td class="px-4 py-3 text-center font-bold text-gray-500 border-r border-blue-200 align-middle">${n}</td>
@@ -1168,10 +1227,31 @@ else if(activeTabId === 8) {
                    <td class="px-4 py-3 text-center font-mono font-bold text-blue-900 border-l border-blue-300 bg-blue-200/40 align-middle">${r.jml_usaha_kel}</td>
                  </tr>`;
             }
+            else if(activeTabId === 9) {
+               html += `
+                 <tr class="border-b transition hover:bg-pink-50/50 bg-white">
+                   <td class="px-4 py-3 text-center border-r border-pink-200 align-middle font-bold text-gray-500">${n}</td>
+                   <td class="px-4 py-3 font-bold border-r border-pink-200 text-pink-700 align-middle">
+                       ${r.ppl}
+                       ${r.emailPpl ? `<br><a href="mailto:${r.emailPpl}" class="text-[9px] font-bold text-gray-500 lowercase flex items-center gap-1 mt-0.5 hover:text-pink-600 hover:underline transition"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.53 4.81a2 2 0 002.94 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>${r.emailPpl}</a>` : ''}
+                   </td>
+                   <td class="px-4 py-3 border-r border-pink-200 align-middle font-bold text-gray-600 uppercase tracking-wider text-[10px]">${r.pml}</td>
+                   <td class="px-4 py-3 border-r border-pink-200 align-middle font-bold text-gray-600 uppercase tracking-wider text-[10px]">${r.kec}</td>
+                   <td class="px-4 py-3 border-r border-pink-200 align-middle font-bold text-gray-600 uppercase tracking-wider text-[10px]">${r.pj}</td>
+                   
+                   <td class="px-4 py-3 text-center font-bold font-mono text-sky-700 border-l border-pink-200 bg-sky-50/30 align-middle">${r.pct_submit}%</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-emerald-700 border-l border-pink-200 bg-emerald-50/30 align-middle">${r.pct_approve}%</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-rose-700 border-l border-pink-200 bg-rose-50/30 align-middle">${r.pct_reject}%</td>
+                   
+                   <td class="px-4 py-3 text-center font-bold font-mono text-purple-800 border-l border-pink-200 bg-purple-50/50 align-middle">${r.kolomA}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-orange-800 border-l border-pink-200 bg-orange-50/50 align-middle">${r.kolomB}</td>
+                   <td class="px-4 py-3 text-center font-black font-mono text-pink-900 border-l border-pink-300 bg-pink-100/50 align-middle text-sm">${r.selisih}</td>
+                 </tr>`;
+            }
          });
       }
       
-      let bodyId = {1:'tableBodyDash', 2:'tableLeaderboard', 3:'tablePml', 4:'tableKecamatan', 6:'tableKeluarga', 7:'tableUsaha', 8:'tableUsahaKeluarga'};
+      let bodyId = {1:'tableBodyDash', 2:'tableLeaderboard', 3:'tablePml', 4:'tableKecamatan', 6:'tableKeluarga', 7:'tableUsaha', 8:'tableUsahaKeluarga', 9:'tableEvaluasiPpl'};
       if(document.getElementById(bodyId[activeTabId])) {
           document.getElementById(bodyId[activeTabId]).innerHTML = html;
       }
@@ -1264,17 +1344,14 @@ else if(activeTabId === 8) {
                              footer: (i) => `Total Target: ${kecChartMapGlobal[i[0].label].tot}\nTotal Submit Absolut: ${kecChartMapGlobal[i[0].label].s+kecChartMapGlobal[i[0].label].rej+kecChartMapGlobal[i[0].label].a}` 
                          } 
                      } 
-                 },
-                 layout: { padding: { left: 120, right: 40, top: 10, bottom: 10 } } 
-             }
+                 } 
+             },
+             layout: { padding: { left: 120, right: 40, top: 10, bottom: 10 } } 
          });
      }
   }
 
   // ====================================================================
-  // ADMIN PANEL: UPLOAD DATA EKSTERNAL VIA SHEETJS 
-  // ====================================================================
-// ====================================================================
   // ADMIN PANEL: UPLOAD DATA EKSTERNAL VIA SHEETJS 
   // ====================================================================
   function authAdminPanel() {
@@ -1568,7 +1645,8 @@ function downloadImage() {
     const tabNamesDict = { 
         1: "Detail SLS", 2: "Progress PPL", 3: "Progress PML", 
         4: "Progress Kecamatan", 5: "Visualisasi Data", 
-        6: "Rekap. Keluarga", 7: "Rekap. BKU", 8: "Rekap. Usaha Keluarga" 
+        6: "Rekap. Keluarga", 7: "Rekap. BKU", 8: "Rekap. Usaha Keluarga",
+        9: "Evaluasi Dokumen PPL" 
     };
     const actTabName = tabNamesDict[activeTabId] || "Progress Pendataan FASIH";
     document.getElementById('watermarkTitle').innerText = "LAPORAN " + actTabName.toUpperCase();
@@ -1654,7 +1732,8 @@ function downloadPDF() {
     const tabNamesDict = { 
         1: "Detail SLS", 2: "Progress PPL", 3: "Progress PML", 
         4: "Progress Kecamatan", 5: "Visualisasi Data", 
-        6: "Rekap. Keluarga", 7: "Rekap. BKU", 8: "Rekap. Usaha Keluarga" 
+        6: "Rekap. Keluarga", 7: "Rekap. BKU", 8: "Rekap. Usaha Keluarga",
+        9: "Evaluasi Dokumen PPL"
     };
     const actTabName = tabNamesDict[activeTabId] || "Progress Pendataan FASIH";
     document.getElementById('watermarkTitle').innerText = "LAPORAN " + actTabName.toUpperCase();
