@@ -1259,17 +1259,41 @@ else if(activeTabId === 8) {
   // ====================================================================
   // ADMIN PANEL: UPLOAD DATA EKSTERNAL VIA SHEETJS 
   // ====================================================================
+// ====================================================================
+  // ADMIN PANEL: UPLOAD DATA EKSTERNAL VIA SHEETJS 
+  // ====================================================================
   function authAdminPanel() {
     Swal.fire({ 
-        title: '<span class="text-xl font-black text-indigo-900">MASUKKAN PASSWORD ADMIN</span>', 
+        title: '<span class="text-xl font-black text-indigo-900">OTORISASI ADMIN</span>', 
         input: 'password', 
         showCancelButton: true, 
         confirmButtonText: 'Buka Panel', 
         cancelButtonText: 'Batal', 
-        customClass: { confirmButton: 'bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold', popup: 'rounded-2xl' }
+        customClass: { confirmButton: 'bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold', popup: 'rounded-2xl' },
+        showLoaderOnConfirm: true, // Menampilkan animasi loading saat mengecek password
+        preConfirm: (loginPin) => {
+            // Mengirim request ke backend GAS untuk mengecek PIN
+            return fetch(GAS_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ type: 'verify_auth', password: loginPin })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status !== 'success') {
+                    throw new Error(data.message); // Lempar error jika PIN salah
+                }
+                return true; // Sukses jika PIN benar
+            })
+            .catch(error => {
+                Swal.showValidationMessage(`Akses Ditolak: ${error.message}`);
+            });
+        },
+        allowOutsideClick: () => !Swal.isLoading()
     }).then(res => { 
-        if(res.isConfirmed && res.value === 'fasih2026') showUploadModal(); 
-        else if(res.isConfirmed) Swal.fire('Akses Ditolak', 'PIN Salah.', 'error'); 
+        if(res.isConfirmed && res.value) {
+            showUploadModal(); // Buka panel jika berhasil dari backend
+        }
     });
   }
 
