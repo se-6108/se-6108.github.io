@@ -315,7 +315,7 @@
          
          <div id="tab9-content" class="hidden flex-1 w-full dashboard-table">
              <table class="w-full text-left border-collapse min-w-[1500px]">
-                 <thead id="headTab9" class="text-[10px] uppercase text-pink-900 font-bold tracking-wider bg-pink-100"></thead>
+                 <thead id="headTab9" class="text-[10px] uppercase text-teal-900 font-bold tracking-wider bg-teal-100"></thead>
                  <tbody id="tableEvaluasiPpl" class="text-xs divide-y divide-pink-100 text-gray-700 tags-upper"></tbody>
              </table>
          </div>
@@ -691,19 +691,19 @@ function resetGlobalFilters() {
          { k:'tdk', n:'Tdk ditemukan', c:'text-center border-l border-red-100 bg-red-50 text-red-700', f:true },
          { k:'jml_usaha_kel', n:'Jml Usaha Keluarga', c:'text-center border-l border-blue-200 bg-blue-100 text-blue-900', f:true }
       ],
-      9: [
-         { k:'ppl', n:'Nama PPL', c:'bg-pink-50 border-r border-pink-200 text-pink-900', w:'200px' },
-         { k:'pml', n:'Nama PML', c:'bg-pink-50 border-r border-pink-200 text-gray-700' },
-         { k:'kec', n:'Kecamatan', c:'bg-pink-50 border-r border-pink-200 text-gray-700' },
-         { k:'pj', n:'PJ Kuda', c:'bg-pink-50 border-r border-pink-200 text-gray-700' },
-         { k:'pct_submit', n:'% Submit', c:'text-center bg-sky-100 text-sky-800 border-l border-pink-200', f:true },
-         { k:'pct_approve', n:'% Approve', c:'text-center bg-emerald-100 text-emerald-800 border-l border-pink-200', f:true },
-         { k:'pct_reject', n:'% Reject', c:'text-center bg-rose-100 text-rose-800 border-l border-pink-200', f:true },
-         { k:'kolomA', n:'Jml Dokumen Ditemukan (A)', c:'text-center bg-purple-100 text-purple-900 border-l border-pink-200', f:true },
-         { k:'pctA', n:'% (A)', c:'text-center bg-purple-50 text-purple-700 border-l border-pink-200 font-bold', f:true },
-        { k:'kolomB', n:'Jml Dokumen Tdk Ditemukan (B)', c:'text-center bg-orange-100 text-orange-900 border-l border-pink-200', f:true },
-        { k:'pctB', n:'% (B)', c:'text-center bg-orange-50 text-orange-700 border-l border-pink-200 font-bold', f:true }, 
-        { k:'selisih', n:'Selisih (A - B)', c:'text-center bg-pink-200 text-pink-900 border-l border-pink-300 font-black', f:true }
+9: [
+         { k:'ppl', n:'Nama PPL', c:'bg-teal-50 border-r border-teal-200 text-teal-900', w:'200px' },
+         { k:'pml', n:'Nama PML', c:'bg-teal-50 border-r border-teal-200 text-gray-700' },
+         { k:'kec', n:'Kecamatan', c:'bg-teal-50 border-r border-teal-200 text-gray-700' },
+         { k:'pj', n:'PJ Kuda', c:'bg-teal-50 border-r border-teal-200 text-gray-700' },
+         { k:'pct_submit', n:'% Submit', c:'text-center bg-sky-50 text-sky-800 border-l border-teal-200', f:true },
+         { k:'pct_approve', n:'% Approve', c:'text-center bg-emerald-50 text-emerald-800 border-l border-teal-200', f:true },
+         { k:'pct_reject', n:'% Reject', c:'text-center bg-rose-50 text-rose-800 border-l border-teal-200', f:true },
+         { k:'kolomA', n:'Jml Dokumen Ditemukan (A)', c:'text-center bg-indigo-50 text-indigo-900 border-l border-teal-200', f:true },
+         { k:'pctA', n:'% (A)', c:'text-center bg-indigo-50/50 text-indigo-700 border-l border-teal-200 font-bold', f:true },
+         { k:'kolomB', n:'Jml Dokumen Tdk Ditemukan (B)', c:'text-center bg-amber-50 text-amber-900 border-l border-teal-200', f:true },
+         { k:'pctB', n:'% (B)', c:'text-center bg-amber-50/50 text-amber-700 border-l border-teal-200 font-bold', f:true }, 
+         { k:'selisih', n:'Selisih (A - B)', c:'text-center bg-teal-100 text-teal-900 border-l border-teal-300 font-black', f:true }
       ]
   };
 
@@ -833,7 +833,7 @@ function switchTab(tabId) {
         if(tabId===6) btnAct.classList.add("border-amber-500", "text-amber-600");
         else if(tabId===7) btnAct.classList.add("border-purple-500", "text-purple-600");
         else if(tabId===8) btnAct.classList.add("border-blue-500", "text-blue-700");
-        else if(tabId===9) btnAct.classList.add("border-pink-500", "text-pink-600");
+ else if(tabId===9) btnAct.classList.add("border-teal-500", "text-teal-600");
         else btnAct.classList.add("border-blue-500", "text-blue-700");
     }
     
@@ -1255,27 +1255,27 @@ function handleGlobalFilter() {
                    <td class="px-4 py-3 text-center font-mono font-bold text-blue-900 border-l border-blue-300 bg-blue-200/40 align-middle">${r.jml_usaha_kel}</td>
                  </tr>`;
             }
-            else if(activeTabId === 9) {
+else if(activeTabId === 9) {
                html += `
-                 <tr class="border-b transition hover:bg-pink-50/50 bg-white">
-                   <td class="px-4 py-3 text-center border-r border-pink-200 align-middle font-bold text-gray-500">${n}</td>
-                   <td class="px-4 py-3 font-bold border-r border-pink-200 text-pink-700 align-middle">
+                 <tr class="border-b transition hover:bg-teal-50/50 bg-white">
+                   <td class="px-4 py-3 text-center border-r border-teal-200 align-middle font-bold text-gray-500">${n}</td>
+                   <td class="px-4 py-3 font-bold border-r border-teal-200 text-teal-700 align-middle">
                        ${r.ppl}
-                       ${r.emailPpl ? `<br><a href="mailto:${r.emailPpl}" class="text-[9px] font-bold text-gray-500 lowercase flex items-center gap-1 mt-0.5 hover:text-pink-600 hover:underline transition"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.53 4.81a2 2 0 002.94 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>${r.emailPpl}</a>` : ''}
+                       ${r.emailPpl ? `<br><a href="mailto:${r.emailPpl}" class="text-[9px] font-bold text-gray-500 lowercase flex items-center gap-1 mt-0.5 hover:text-teal-600 hover:underline transition"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.53 4.81a2 2 0 002.94 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>${r.emailPpl}</a>` : ''}
                    </td>
-                   <td class="px-4 py-3 border-r border-pink-200 align-middle font-bold text-gray-600 uppercase tracking-wider text-[10px]">${r.pml}</td>
-                   <td class="px-4 py-3 border-r border-pink-200 align-middle font-bold text-gray-600 uppercase tracking-wider text-[10px]">${r.kec}</td>
-                   <td class="px-4 py-3 border-r border-pink-200 align-middle font-bold text-gray-600 uppercase tracking-wider text-[10px]">${r.pj}</td>
+                   <td class="px-4 py-3 border-r border-teal-200 align-middle font-bold text-gray-600 uppercase tracking-wider text-[10px]">${r.pml}</td>
+                   <td class="px-4 py-3 border-r border-teal-200 align-middle font-bold text-gray-600 uppercase tracking-wider text-[10px]">${r.kec}</td>
+                   <td class="px-4 py-3 border-r border-teal-200 align-middle font-bold text-gray-600 uppercase tracking-wider text-[10px]">${r.pj}</td>
                    
-                   <td class="px-4 py-3 text-center font-bold font-mono text-sky-700 border-l border-pink-200 bg-sky-50/30 align-middle">${r.pct_submit}%</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono text-emerald-700 border-l border-pink-200 bg-emerald-50/30 align-middle">${r.pct_approve}%</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono text-rose-700 border-l border-pink-200 bg-rose-50/30 align-middle">${r.pct_reject}%</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-sky-700 border-l border-teal-200 bg-sky-50/30 align-middle">${r.pct_submit}%</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-emerald-700 border-l border-teal-200 bg-emerald-50/30 align-middle">${r.pct_approve}%</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-rose-700 border-l border-teal-200 bg-rose-50/30 align-middle">${r.pct_reject}%</td>
                    
-                   <td class="px-4 py-3 text-center font-bold font-mono text-purple-800 border-l border-pink-200 bg-purple-50/50 align-middle">${r.kolomA}</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono text-purple-700 border-l border-pink-200 bg-purple-50/10 align-middle">${r.pctA}%</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono text-orange-800 border-l border-pink-200 bg-orange-50/50 align-middle">${r.kolomB}</td>
-<td class="px-4 py-3 text-center font-bold font-mono text-orange-700 border-l border-pink-200 bg-orange-50/10 align-middle">${r.pctB}%</td>
-                   <td class="px-4 py-3 text-center font-black font-mono text-pink-900 border-l border-pink-300 bg-pink-100/50 align-middle text-sm">${r.selisih}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-indigo-800 border-l border-teal-200 bg-indigo-50/40 align-middle">${r.kolomA}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-indigo-700 border-l border-teal-200 bg-indigo-50/10 align-middle">${r.pctA}%</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-amber-800 border-l border-teal-200 bg-amber-50/40 align-middle">${r.kolomB}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-amber-700 border-l border-teal-200 bg-amber-50/10 align-middle">${r.pctB}%</td>
+                   <td class="px-4 py-3 text-center font-black font-mono text-teal-900 border-l border-teal-300 bg-teal-100/50 align-middle text-sm">${r.selisih}</td>
                  </tr>`;
             }
          });
