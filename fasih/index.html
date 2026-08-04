@@ -818,16 +818,29 @@ function switchTab(tabId) {
       renderCurrentTab();
   }
 
-  function sortLogic(arr, col, isAsc) {
-     arr.sort((a, b) => {
-        let valA = a[col]; let valB = b[col];
-        if (typeof valA === 'number' && typeof valB === 'number') return isAsc ? valA - valB : valB - valA;
-        valA = String(valA).toLowerCase(); valB = String(valB).toLowerCase();
-        if (valA < valB) return isAsc ? -1 : 1;
-        if (valA > valB) return isAsc ? 1 : -1;
-        return 0;
-     });
-  }
+function sortLogic(arr, col, isAsc) {
+   arr.sort((a, b) => {
+      let valA = a[col]; 
+      let valB = b[col];
+
+      // Coba konversi ke angka desimal (berguna untuk "100.0", "95.5", dsb)
+      let numA = parseFloat(valA);
+      let numB = parseFloat(valB);
+
+      // Jika keduanya valid sebagai angka (dan bukan string kosong), urutkan secara numerik
+      if (!isNaN(numA) && !isNaN(numB) && valA !== "" && valB !== "") {
+          return isAsc ? numA - numB : numB - numA;
+      }
+
+      // Jika bukan angka (misal nama petugas/kecamatan), kembalikan ke pengurutan teks (A-Z)
+      valA = String(valA).toLowerCase(); 
+      valB = String(valB).toLowerCase();
+      
+      if (valA < valB) return isAsc ? -1 : 1;
+      if (valA > valB) return isAsc ? 1 : -1;
+      return 0;
+   });
+}
 
   function handleGlobalFilter() {
       const search = document.getElementById('dashSearch').value.toLowerCase();
@@ -1092,7 +1105,7 @@ function switchTab(tabId) {
                    <td class="px-4 py-3 text-center border-r border-blue-100 align-middle font-bold">${n}</td>
                    <td class="px-4 py-3 font-bold border-r border-blue-100 text-indigo-700 align-middle">
                        ${r.pml}
-                       ${r.email ? `<br><a href="mailto:${r.email}" class="text-[9px] font-bold text-gray-500 lowercase flex items-center gap-1 mt-0.5 hover:text-blue-600 hover:underline transition"><svg class="w-3 h-3" fillnone" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.53 4.81a2 2 0 002.94 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>${r.email}</a>` : ''}
+                       ${r.email ? `<br><a href="mailto:${r.email}" class="text-[9px] font-bold text-gray-500 lowercase flex items-center gap-1 mt-0.5 hover:text-blue-600 hover:underline transition"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.53 4.81a2 2 0 002.94 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>${r.email}</a>` : ''}
                    </td>
                    <td class="px-4 py-3 border-r border-blue-100 align-middle font-bold text-gray-500 uppercase tracking-wider text-[10px]">${r.kec}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono border-l border-blue-100 align-middle">${r.o}</td>
