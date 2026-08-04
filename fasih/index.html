@@ -360,6 +360,7 @@
   let DASH_DATA = [];
   let lastUploadKel = "BELUM ADA DATA";
   let lastUploadUsa = "BELUM ADA DATA";
+  let lastUploadFasih = "BELUM ADA DATA"; // [BARU] State variable untuk upload FASIH
   let dashFilteredData = [];
   let TAB_STATE = { 1:[], 2:[], 3:[], 4:[], 6:[], 7:[], 8:[], 9:[] }; 
   let COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{}, 9:{} }; 
@@ -471,27 +472,13 @@ function initDashboard() {
 
           lastUploadKel = res.lastUpdateKel || "BELUM ADA DATA";
           lastUploadUsa = res.lastUpdateUsa || "BELUM ADA DATA";
+          lastUploadFasih = res.lastUpdateFasih || "BELUM ADA DATA"; // [BARU] inisialisasi timestamp FASIH
           
           if(globalLoader) globalLoader.classList.add('hidden');
           
-          let warningHTML = "";
-          if (res.integrityErrorCount > 0) {
-              warningHTML = `
-                <div class="bg-red-50 border border-red-300 text-red-800 p-3.5 rounded-xl mb-4 text-xs shadow-sm text-left animate-pulse">
-                    <b class="flex items-center gap-1.5 mb-1 text-[13px]">
-                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
-                       WARNING: Integritas Data Pusat
-                    </b>
-                    Sistem mendeteksi ada <b>${res.integrityErrorCount} Assignment</b> yang jumlah laporannya <i>(Open/Draft/Submit/dkk)</i> tidak sinkron dengan kolom <b>'Total Target'</b>.
-                    <br><br><span class="italic text-red-600 opacity-90">Sistem otomatis menggunakan <b>Total Target Absolut</b> untuk mengunci persentase pencapaian agar performa petugas tetap akurat.</span>
-                </div>
-              `;
-          }
-
           Swal.fire({
               title: '<span class="text-lg font-black text-gray-800 tracking-wide uppercase">Info Target Pendataan</span>',
               html: `
-                  ${warningHTML}
                   <div class="text-sm text-gray-700 text-left space-y-3 mt-2 font-medium">
                       <p>Saat ini Pendataan SE memasuki <b class="text-blue-600">Hari ke-${timingConfig.x}</b>.</p>
                       <p>Batas target proporsional saat ini adalah <b class="text-purple-600">${timingConfig.y.toFixed(2)}% dari total assignment tiap petugas</b> <span class="text-gray-500 italic text-xs">(akumulasi target harian Hari ke-${timingConfig.effDay})</span>.</p>
@@ -511,7 +498,7 @@ function initDashboard() {
                       </div>
                   </div>
               `,
-              icon: res.integrityErrorCount > 0 ? 'warning' : 'info',
+              icon: 'info',
               confirmButtonText: 'OKE, SIAP!',
               buttonsStyling: false,
               customClass: {
@@ -726,8 +713,7 @@ function initDashboard() {
                     <div class="flex justify-between items-center gap-2">
                         <div class="flex-1 flex justify-center items-center gap-1 cursor-pointer group" onclick="applySort('${col.k}')">
                            <span class="text-center group-hover:text-blue-600 transition">${col.n}</span>
-                          <!-- Perubahan: Menambahkan shadow, kontras lebih tinggi, dan ukuran sedikit lebih besar -->
-                           <span class="ml-2 px-1 py-0.5 rounded border border-black/10 bg-white/60 shadow-sm text-[12px] font-black text-blue-700">↕</span>
+                          <span class="ml-2 px-1 py-0.5 rounded border border-black/10 bg-white/60 shadow-sm text-[12px] font-black text-blue-700">↕</span>
                         </div>
                         ${funnelIcon}
                     </div>
@@ -1406,29 +1392,38 @@ function showUploadModal() {
       title: '<span class="text-xl font-black uppercase text-indigo-800">INTEGRASI DATA LAPANGAN</span>',
       html: `
         <div class="text-left text-sm mt-4 space-y-4">
+          
+          <!-- FORM 1: DATA FASIH CSV -->
+          <div class="p-4 border border-blue-300 bg-blue-50 rounded-xl shadow-sm relative overflow-hidden">
+              <label class="font-black text-blue-800 block mb-2">1. Data Output FASIH (.csv)</label>
+              <input type="file" id="fileFasih" accept=".csv" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-blue-600 file:text-white file:font-bold hover:file:bg-blue-700 transition">
+              <div class="mt-3 bg-blue-100 border border-blue-200 rounded-lg p-2 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  <span class="text-[10px] text-blue-800 font-bold uppercase tracking-wider">Update: ${lastUploadFasih}</span>
+              </div>
+          </div>
+
+          <!-- FORM 2: KELUARGA -->
           <div class="p-4 border border-amber-300 bg-amber-50 rounded-xl shadow-sm relative overflow-hidden">
-              <label class="font-black text-amber-800 block mb-2">1. Progres_Pemutakhiran_Keluarga_Sub... (.xlsx)</label>
+              <label class="font-black text-amber-800 block mb-2">2. Progres_Pemutakhiran_Keluarga_... (.xlsx)</label>
               <input type="file" id="fileKel" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-amber-600 file:text-white file:font-bold hover:file:bg-amber-700 transition">
-              
-              <!-- Bage Timestamp File Keluarga -->
               <div class="mt-3 bg-amber-100 border border-amber-200 rounded-lg p-2 flex items-center gap-2">
                   <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                   <span class="text-[10px] text-amber-800 font-bold uppercase tracking-wider">Update: ${lastUploadKel}</span>
               </div>
           </div>
 
+          <!-- FORM 3: USAHA -->
           <div class="p-4 border border-purple-300 bg-purple-50 rounded-xl shadow-sm relative overflow-hidden">
-              <label class="font-black text-purple-800 block mb-2">2. Progres_Pendataan_Sub... (.xlsx)</label>
+              <label class="font-black text-purple-800 block mb-2">3. Progres_Pendataan_Sub... (.xlsx)</label>
               <input type="file" id="fileUsa" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-purple-600 file:text-white file:font-bold hover:file:bg-purple-700 transition">
-              
-              <!-- Bage Timestamp File Usaha -->
               <div class="mt-3 bg-purple-100 border border-purple-200 rounded-lg p-2 flex items-center gap-2">
                   <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                   <span class="text-[10px] text-purple-800 font-bold uppercase tracking-wider">Update: ${lastUploadUsa}</span>
               </div>
           </div>
           
-          <p class="text-[10px] text-gray-500 font-medium italic mt-2 text-center">Pilih file yang ingin diperbarui (bisa salah satu). Sistem otomatis memecah file Usaha menjadi BKU & Usaha Keluarga.</p>
+          <p class="text-[10px] text-gray-500 font-medium italic mt-2 text-center">Pilih file yang ingin diperbarui (bisa salah satu). Sistem otomatis membaca dan menimpa database lama.</p>
         </div>
       `,
       confirmButtonText: 'SINKRONISASI SEKARANG', 
@@ -1436,24 +1431,29 @@ function showUploadModal() {
       allowOutsideClick: false,
       customClass: { confirmButton: 'bg-indigo-600 w-full mt-2 text-white font-bold tracking-wider rounded-xl py-3', popup: 'rounded-2xl' },
       preConfirm: () => {
+        let ff = document.getElementById('fileFasih').files[0];
         let fk = document.getElementById('fileKel').files[0]; 
         let fu = document.getElementById('fileUsa').files[0];
-        if(!fk && !fu) { Swal.showValidationMessage('Pilih minimal 1 file!'); return false; }
-        return {kel: fk, usa: fu};
+        if(!ff && !fk && !fu) { Swal.showValidationMessage('Pilih minimal 1 file!'); return false; }
+        return {fasih: ff, kel: fk, usa: fu};
       }
     }).then(r => { 
-        if(r.isConfirmed) processUploads(r.value.kel, r.value.usa); 
+        if(r.isConfirmed) processUploads(r.value.fasih, r.value.kel, r.value.usa); 
     });
-  }
+}
 
-  async function processUploads(fKel, fUsa) {
+async function processUploads(fFasih, fKel, fUsa) {
      Swal.fire({
          title: 'Memproses Data...', 
-         html: '<b>Sistem</b> sedang mengekstrak ribuan baris Excel Anda di belakang layar...<br><span class="text-xs text-red-500 italic mt-2 block">Dilarang menutup browser!</span>', 
+         html: '<b>Sistem</b> sedang mengekstrak ribuan baris data Anda di belakang layar...<br><span class="text-xs text-red-500 italic mt-2 block">Dilarang menutup browser!</span>', 
          allowOutsideClick: false, 
          didOpen: () => Swal.showLoading()
      });
      try {
+       if(fFasih) {
+           let dataFasih = await parseCSV(fFasih);
+           await sendToGAS('fasih', dataFasih);
+       }
        if(fKel) { 
            let dataKel = await parseExcelKeluarga(fKel); 
            await sendToGAS('keluarga', dataKel); 
@@ -1465,9 +1465,27 @@ function showUploadModal() {
        }
        Swal.fire('Integrasi Berhasil!', 'Data Eksternal telah tersimpan ke Database dan siap dianalisa.', 'success').then(()=>{ location.reload(); });
      } catch (err) { 
-         Swal.fire('Gagal Ekstrak', 'Terjadi kesalahan format Excel: ' + String(err), 'error'); 
+         Swal.fire('Gagal Ekstrak', 'Terjadi kesalahan format: ' + String(err), 'error'); 
      }
-  }
+}
+
+function parseCSV(file) {
+  return new Promise((resolve, reject) => {
+    let r = new FileReader();
+    r.onload = e => {
+      try {
+        let wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+        // Karena CSV, pasti ada di sheet pertama
+        let sheetName = wb.SheetNames[0];
+        let jsonResult = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1 });
+        resolve(jsonResult);
+      } catch (err) {
+        reject("Gagal membaca CSV. Pastikan format benar.");
+      }
+    };
+    r.readAsArrayBuffer(file);
+  });
+}
 
   function sendToGAS(tipe, dataArray) {
      return fetch(GAS_API_URL, { 
