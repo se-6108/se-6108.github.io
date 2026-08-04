@@ -520,20 +520,47 @@
     renderCheckboxes('dropPj', pj, 'pj');
   }
 
-  function renderCheckboxes(containerId, dataArr, filterKey) {
+function renderCheckboxes(containerId, dataArr, filterKey) {
       let cont = document.getElementById(containerId);
       if(!cont) return;
-      let html = '';
+      
+      // [BARU] Tambahkan kolom pencarian (Search Bar) dengan posisi Sticky
+      let html = `
+          <div class="px-3 py-2 sticky top-0 bg-white border-b border-gray-100 z-10 rounded-t-2xl">
+              <div class="relative">
+                  <input type="text" placeholder="CARI..." onkeyup="filterDropdownItems(this, '${containerId}')" class="w-full pl-8 pr-3 py-1.5 border border-gray-300 rounded-lg text-[10px] font-bold focus:border-blue-500 outline-none uppercase transition bg-gray-50 focus:bg-white placeholder-gray-400">
+                  <svg class="w-3.5 h-3.5 absolute left-2.5 top-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+              </div>
+          </div>
+      `;
+
       dataArr.forEach(x => {
           if(!x) return;
-          html += `<label class="flex items-center px-4 py-2 hover:bg-slate-50 border-b border-gray-100 text-[11px] font-bold text-slate-700 cursor-pointer uppercase">
+          // [BARU] Tambahkan class 'dropdown-item' dan 'item-text' untuk target pencarian
+          html += `<label class="flex items-center px-4 py-2 hover:bg-slate-50 border-b border-gray-100 text-[11px] font-bold text-slate-700 cursor-pointer uppercase dropdown-item transition">
                       <input type="checkbox" class="mr-2 rounded" value="${x}" onchange="updateFilter('${filterKey}', this)">
-                      ${x}
+                      <span class="item-text">${x}</span>
                    </label>`;
       });
       cont.innerHTML = html;
   }
 
+// [BARU] Fungsi logika pencarian di dalam dropdown
+  function filterDropdownItems(inputEl, containerId) {
+      let filter = inputEl.value.toLowerCase();
+      let container = document.getElementById(containerId);
+      let items = container.querySelectorAll('.dropdown-item');
+
+      items.forEach(item => {
+          let text = item.querySelector('.item-text').innerText.toLowerCase();
+          if (text.indexOf(filter) > -1) {
+              item.style.display = ""; // Tampilkan jika cocok
+          } else {
+              item.style.display = "none"; // Sembunyikan jika tidak cocok
+          }
+      });
+  }
+  
   function toggleDropdown(id) {
       document.querySelectorAll('.filter-menu').forEach(menu => {
           if(menu.id !== id) menu.classList.add('hidden');
@@ -551,10 +578,18 @@
       handleGlobalFilter();
   }
 
-  function resetGlobalFilters() {
+function resetGlobalFilters() {
       document.getElementById('dashSearch').value = '';
       activeFilters = { kec: [], pml: [], ppl: [], pj: [], statusPetugas: [], prio: [] };
+      
       document.querySelectorAll('input[type="checkbox"]').forEach(chk => chk.checked = false);
+      
+      // [BARU] Bersihkan juga input search di dalam setiap dropdown
+      document.querySelectorAll('.filter-menu input[type="text"]').forEach(input => input.value = '');
+      
+      // [BARU] Tampilkan kembali semua opsi yang sempat tersembunyi
+      document.querySelectorAll('.dropdown-item').forEach(item => item.style.display = "");
+      
       COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{}, 9:{} };
       handleGlobalFilter();
   }
@@ -842,7 +877,7 @@ function sortLogic(arr, col, isAsc) {
    });
 }
 
-  function handleGlobalFilter() {
+function handleGlobalFilter() {
       const search = document.getElementById('dashSearch').value.toLowerCase();
       
       const fkec = activeFilters.kec;
@@ -850,6 +885,32 @@ function sortLogic(arr, col, isAsc) {
       const fppl = activeFilters.ppl;
       const fpj = activeFilters.pj;
       const fprio = activeFilters.prio;
+
+      // === [1] LOGIKA PENANDA FILTER AKTIF (WARNA TOMBOL) ===
+      const filterIndicators = [
+          { id: 'btn-prio', count: fprio.length },
+          { id: 'btn-kec', count: fkec.length },
+          { id: 'btn-pml', count: fpml.length },
+          { id: 'btn-ppl', count: fppl.length },
+          { id: 'btn-pj', count: fpj.length },
+          { id: 'btn-status', count: activeFilters.statusPetugas.length }
+      ];
+
+      filterIndicators.forEach(f => {
+          let btn = document.getElementById(f.id);
+          if (btn) {
+              if (f.count > 0) {
+                  // Jika filter aktif: Ubah tombol jadi biru muda
+                  btn.classList.add('bg-blue-50', 'border-blue-500', 'text-blue-700', 'font-bold');
+                  btn.classList.remove('bg-white', 'border-gray-300', 'text-gray-700');
+              } else {
+                  // Jika kosong: Kembalikan ke putih standar
+                  btn.classList.add('bg-white', 'border-gray-300', 'text-gray-700');
+                  btn.classList.remove('bg-blue-50', 'border-blue-500', 'text-blue-700', 'font-bold');
+              }
+          }
+      });
+      // ========================================================
       
       dashFilteredData = DASH_DATA.filter(r => {
           let mS = search === '' || `${r.idSls} ${r.nmsls} ${r.desa} ${r.ppl} ${r.pml}`.toLowerCase().includes(search);
