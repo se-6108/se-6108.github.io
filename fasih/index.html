@@ -700,9 +700,9 @@ function resetGlobalFilters() {
          { k:'pct_approve', n:'% Approve', c:'text-center bg-emerald-50 text-emerald-800 border-l border-slate-200', f:true },
          { k:'pct_reject', n:'% Reject', c:'text-center bg-rose-50 text-rose-800 border-l border-slate-200', f:true },
          { k:'kolomA', n:'Jml Dokumen Ditemukan (A)', c:'text-center bg-indigo-50 text-indigo-900 border-l border-slate-200', f:true },
-         { k:'pctA', n:'% (A)', c:'text-center bg-indigo-50/50 text-indigo-700 border-l border-slate-200 font-bold', f:true },
+         { k:'pctA', n:'% (A)', c:'text-center bg-indigo-100 text-indigo-700 border-l border-slate-200 font-bold', f:true },
          { k:'kolomB', n:'Jml Dokumen Tdk Ditemukan (B)', c:'text-center bg-amber-50 text-amber-900 border-l border-slate-200', f:true },
-         { k:'pctB', n:'% (B)', c:'text-center bg-amber-50/50 text-amber-700 border-l border-slate-200 font-bold', f:true }, 
+         { k:'pctB', n:'% (B)', c:'text-center bg-amber-100 text-amber-700 border-l border-slate-200 font-bold', f:true }, 
          { k:'selisih', n:'Selisih (A - B)', c:'text-center bg-slate-200 text-slate-900 border-l border-slate-300 font-black', f:true }
       ]
   };
@@ -1317,7 +1317,7 @@ else if(activeTabId === 9) {
        return html + '</div>';
   }
 
-  function renderVisualisasi() {
+function renderVisualisasi() {
      let kecM = {}; 
      dashFilteredData.forEach(r => {
         let k = r.kec || 'Tanpa Kecamatan';
@@ -1325,11 +1325,45 @@ else if(activeTabId === 9) {
         kecM[k].o += r.open; kecM[k].d += r.draft; kecM[k].s += r.submit; kecM[k].a += r.approve; kecM[k].rej += r.reject; kecM[k].tot += r.calcTotal;
      });
      kecChartMapGlobal = kecM;
-     let sortK = Object.entries(kecM).sort((a, b) => {
-         let pA = a[1].tot>0 ? ((a[1].s+a[1].rej+a[1].a)/a[1].tot) : 0; 
-         let pB = b[1].tot>0 ? ((b[1].s+b[1].rej+b[1].a)/b[1].tot) : 0;
-         return pB - pA; 
-     });
+
+     // === [BARU] FUNGSI BANTU SORTING DINAMIS ===
+     function getSortedData(visibleFlags = [true, true, true, true, true]) {
+         return Object.entries(kecChartMapGlobal).sort((a, b) => {
+             let valA = a[1]; let valB = b[1];
+             let scoreA = 0, scoreB = 0;
+             let activeCount = visibleFlags.filter(v => v).length;
+
+             if(activeCount === 5) {
+                 // Default jika semua aktif: Urutkan berdasarkan persentase Approve tertinggi
+                 scoreA = valA.tot > 0 ? (valA.a / valA.tot) : 0;
+                 scoreB = valB.tot > 0 ? (valB.a / valB.tot) : 0;
+             } else {
+                 // Auto-Sort berdasarkan gabungan status visual yang sedang diklik (aktif)
+                 if(valA.tot > 0) {
+                     let sumA = 0;
+                     if(visibleFlags[0]) sumA += valA.o;
+                     if(visibleFlags[1]) sumA += valA.d;
+                     if(visibleFlags[2]) sumA += valA.s;
+                     if(visibleFlags[3]) sumA += valA.rej;
+                     if(visibleFlags[4]) sumA += valA.a;
+                     scoreA = sumA / valA.tot;
+                 }
+                 if(valB.tot > 0) {
+                     let sumB = 0;
+                     if(visibleFlags[0]) sumB += valB.o;
+                     if(visibleFlags[1]) sumB += valB.d;
+                     if(visibleFlags[2]) sumB += valB.s;
+                     if(visibleFlags[3]) sumB += valB.rej;
+                     if(visibleFlags[4]) sumB += valB.a;
+                     scoreB = sumB / valB.tot;
+                 }
+             }
+             return scoreB - scoreA;
+         });
+     }
+
+     // Tarik data dengan urutan default (Semua True)
+     let sortK = getSortedData();
      
      let lbls = sortK.map(x => x[0]);
      let dO = sortK.map(x => x[1].tot>0 ? ((x[1].o/x[1].tot)*100).toFixed(2) : 0); 
@@ -1364,7 +1398,46 @@ else if(activeTabId === 9) {
                      y: { stacked: true } 
                  }, 
                  plugins: { 
-                     legend: { display: true, position: 'top', labels: {font:{family:'Montserrat', weight:'bold'}} }, 
+                     legend: { 
+                         display: true, 
+                         position: 'top', 
+                         labels: {font:{family:'Montserrat', weight:'bold'}},
+                         // === [BARU] INTERCEPT KLIK PADA LEGEND UNTUK RE-SORTING ===
+                         onClick: function(e, legendItem, legend) {
+                             const index = legendItem.datasetIndex;
+                             const ci = legend.chart;
+                             
+                             // Toggle visibilitas default bawaan Chart.js
+                             if (ci.isDatasetVisible(index)) {
+                                 ci.hide(index);
+                                 legendItem.hidden = true;
+                             } else {
+                                 ci.show(index);
+                                 legendItem.hidden = false;
+                             }
+                             
+                             // Ambil status visibility terbaru (0 sampai 4)
+                             let visibleFlags = [
+                                 ci.isDatasetVisible(0),
+                                 ci.isDatasetVisible(1),
+                                 ci.isDatasetVisible(2),
+                                 ci.isDatasetVisible(3),
+                                 ci.isDatasetVisible(4)
+                             ];
+                             
+                             // Update urutan label dan isi datanya berdasarkan filter yang aktif
+                             let newSort = getSortedData(visibleFlags);
+                             ci.data.labels = newSort.map(x => x[0]);
+                             ci.data.datasets[0].data = newSort.map(x => x[1].tot>0 ? ((x[1].o/x[1].tot)*100).toFixed(2) : 0);
+                             ci.data.datasets[1].data = newSort.map(x => x[1].tot>0 ? ((x[1].d/x[1].tot)*100).toFixed(2) : 0);
+                             ci.data.datasets[2].data = newSort.map(x => x[1].tot>0 ? ((x[1].s/x[1].tot)*100).toFixed(2) : 0);
+                             ci.data.datasets[3].data = newSort.map(x => x[1].tot>0 ? ((x[1].rej/x[1].tot)*100).toFixed(2) : 0);
+                             ci.data.datasets[4].data = newSort.map(x => x[1].tot>0 ? ((x[1].a/x[1].tot)*100).toFixed(2) : 0);
+                             
+                             // Segarkan ulang visual chart
+                             ci.update();
+                         }
+                     }, 
                      datalabels: { display: false }, 
                      tooltip: { 
                          enabled: true, 
