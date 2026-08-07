@@ -321,19 +321,21 @@
              </table>
          </div>
 
-       <div id="tab10-content" class="hidden flex-1 w-full dashboard-table relative">
-             <div class="p-3 bg-white border-b border-gray-200 flex justify-center sticky left-0 z-30">
-                 <div class="bg-gray-100 p-1.5 rounded-xl flex gap-1 shadow-inner">
+<div id="tab10-content" class="hidden flex-1 w-full flex-col min-h-0 relative">
+             <!-- SWITCHER TETAP (STICKY) DI ATAS -->
+             <div class="p-3 bg-gray-50/90 border-b border-gray-200 flex justify-center flex-none z-30 shadow-sm backdrop-blur-sm">
+                 <div class="bg-white border border-gray-200 p-1.5 rounded-xl flex gap-1 shadow-sm">
                      <button id="btnTogglePpl" onclick="switchDailyMode('ppl')" class="px-6 py-2 text-[11px] font-black rounded-lg bg-amber-500 text-white shadow-md transition tracking-wider">PROGRESS PPL (SUBMIT)</button>
-                     <button id="btnTogglePml" onclick="switchDailyMode('pml')" class="px-6 py-2 text-[11px] font-black rounded-lg text-gray-500 hover:bg-gray-200 transition tracking-wider">PROGRESS PML (APPROVE)</button>
+                     <button id="btnTogglePml" onclick="switchDailyMode('pml')" class="px-6 py-2 text-[11px] font-black rounded-lg text-gray-500 hover:bg-gray-100 transition tracking-wider">PROGRESS PML (APPROVE)</button>
                  </div>
              </div>
-             <table class="w-full text-left border-collapse min-w-[1300px]">
-                 <!-- Hapus warna bawaan thead, biarkan JS yang mengatur -->
-                 <thead id="headTab10"></thead>
-                 <tbody id="tableDaily" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
-             </table>
-         </div>
+             <!-- AREA TABEL SCROLLING -->
+             <div class="flex-1 w-full dashboard-table overflow-auto">
+                 <table class="w-full text-left border-collapse min-w-[1600px]">
+                     <thead id="headTab10"></thead>
+                     <tbody id="tableDaily" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
+                 </table>
+             </div>
         
       </div> 
       
@@ -1116,25 +1118,21 @@ dashFilteredData.forEach(r => {
 
 // KALKULASI TAB 10 (PROGRESS HARIAN)
 // KALKULASI TAB 10 (PROGRESS HARIAN)
+// KALKULASI TAB 10 (PROGRESS HARIAN)
       TAB_STATE[10] = [];
       let sortedHist = [...HISTORY_DATA].sort((a,b) => a.date < b.date ? 1 : -1);
       
-      let dateH1 = sortedHist[1] ? formatTanggalIndo(sortedHist[1].date) : "H-1";
-      let dateH2 = sortedHist[2] ? formatTanggalIndo(sortedHist[2].date) : "H-2";
-      window.tab10DateH1 = dateH1; window.tab10DateH2 = dateH2; 
-      
-      TABS_CONFIG[10] = getTab10Config(dailyProgressMode, dateH1, dateH2);
+      TABS_CONFIG[10] = getTab10Config(dailyProgressMode);
       buildTableHeaders(); 
 
       let h0Data = sortedHist[0] ? sortedHist[0].data : {ppl:{}, pml:{}};
       let h1Data = sortedHist[1] ? sortedHist[1].data : {ppl:{}, pml:{}};
       let h2Data = sortedHist[2] ? sortedHist[2].data : {ppl:{}, pml:{}};
 
-      // Fungsi Badge Tren Kinerja
       function getTrenLogic(d1, d2) {
           let pct = 0;
           if (d1 === 0 && d2 === 0) { pct = 0; }
-          else if (d1 === 0 && d2 > 0) { pct = 100; } // Asumsi lonjakan awal
+          else if (d1 === 0 && d2 > 0) { pct = 100; } 
           else { pct = ((d2 - d1) / d1) * 100; }
 
           let trenText = "", badgeClass = "";
@@ -1148,31 +1146,34 @@ dashFilteredData.forEach(r => {
               trenText = `STAGNAN (0%)`; 
               badgeClass = "bg-gray-100 text-gray-500 border-gray-300"; 
           }
-          return { trenVal: pct, trenHtml: `<span class="px-2.5 py-1 rounded text-[9px] font-black border tracking-wider whitespace-nowrap ${badgeClass}">${trenText}</span>` };
+          return { trenVal: pct, trenHtml: `<span class="px-2.5 py-1 rounded text-[9px] font-black border tracking-wider whitespace-nowrap shadow-sm ${badgeClass}">${trenText}</span>` };
       }
 
-      // Fungsi Burn-down Velocity (Estimasi)
       function getPrediksiSelesai(tTarget, currentCapaian) {
-          if (tTarget === 0) return `<span class="text-gray-400">-</span>`;
+          // Jika target 0, return "-" dengan nilai sort 0
+          if (tTarget === 0) return { html: `<span class="text-gray-400">-</span>`, sisa_hari: 0 };
+          
+          // Jika Selesai, return Centang dengan nilai sort 0
           if (currentCapaian >= tTarget) {
-              return `<span class="px-2 py-0.5 rounded text-[9px] font-black bg-emerald-100 text-emerald-700 border border-emerald-300 uppercase tracking-wider">✅ SELESAI</span>`;
+              return { html: `<span class="px-2 py-0.5 rounded text-[9px] font-black bg-emerald-100 text-emerald-700 border border-emerald-300 uppercase tracking-wider shadow-sm">✅ SELESAI</span>`, sisa_hari: 0 };
           }
           
-          let daysElapsed = timingConfig.x || 1; // Hari berjalan
-          let velocity = currentCapaian / daysElapsed; // Kecepatan rata-rata per hari
+          let daysElapsed = timingConfig.x || 1;
+          let velocity = currentCapaian / daysElapsed;
           
+          // Jika stagnan tanpa progres dari awal, beri nilai sort 999999 agar berada paling bawah (Terlama) saat diurutkan
           if (velocity <= 0) {
-              return `<span class="px-2 py-0.5 rounded text-[9px] font-black bg-rose-50 text-rose-600 border border-rose-200 uppercase tracking-wider">⚠️ BELUM JELAS</span>`;
+              return { html: `<span class="px-2 py-0.5 rounded text-[9px] font-black bg-rose-50 text-rose-600 border border-rose-200 uppercase tracking-wider shadow-sm">⚠️ BLM JELAS</span>`, sisa_hari: 999999 };
           }
           
           let remainingCapaian = tTarget - currentCapaian;
           let remainingDays = Math.ceil(remainingCapaian / velocity);
           
           let d = new Date(); 
-          d.setDate(d.getDate() + remainingDays); // Hitung tanggal estimasi
+          d.setDate(d.getDate() + remainingDays); 
           let dateStr = formatTanggalIndo(d.toISOString());
           
-          return `<span class="text-[11px] font-black text-fuchsia-800">${dateStr}</span><br><span class="text-[9px] text-fuchsia-600/70 font-bold">${remainingDays} hari lagi</span>`;
+          return { html: `<span class="text-[11px] font-black text-fuchsia-800">${dateStr}</span><br><span class="text-[9px] text-fuchsia-600/70 font-bold">${remainingDays} hari lagi</span>`, sisa_hari: remainingDays };
       }
 
       Object.values(pplM).forEach(p => {
@@ -1184,8 +1185,9 @@ dashFilteredData.forEach(r => {
           let d1 = v1 - v2; let d2 = v0 - v1;
           let tren = getTrenLogic(d1, d2);
           let prediksi = getPrediksiSelesai(p.t, v0);
+          let velocity = p.t > 0 ? (v0 / (timingConfig.x || 1)).toFixed(1) : 0;
           
-          TAB_STATE[10].push({ petugas: p.ppl, pml: p.pml, role: 'PPL', kec: p.kec, pj: p.pj, email: p.email, t: p.t, h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenHtml: tren.trenHtml, prediksi: prediksi });
+          TAB_STATE[10].push({ petugas: p.ppl, pml: p.pml, role: 'PPL', kec: p.kec, pj: p.pj, email: p.email, t: p.t, avg_vel: velocity, h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenHtml: tren.trenHtml, sisa_hari: prediksi.sisa_hari, prediksiHtml: prediksi.html });
       });
 
       Object.values(pmlM).forEach(p => {
@@ -1197,8 +1199,9 @@ dashFilteredData.forEach(r => {
           let d1 = v1 - v2; let d2 = v0 - v1;
           let tren = getTrenLogic(d1, d2);
           let prediksi = getPrediksiSelesai(p.t, v0);
+          let velocity = p.t > 0 ? (v0 / (timingConfig.x || 1)).toFixed(1) : 0;
           
-          TAB_STATE[10].push({ petugas: p.pml, role: 'PML', kec: p.kec, pj: p.pj, email: p.email, t: p.t, h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenHtml: tren.trenHtml, prediksi: prediksi });
+          TAB_STATE[10].push({ petugas: p.pml, role: 'PML', kec: p.kec, pj: p.pj, email: p.email, t: p.t, avg_vel: velocity, h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenHtml: tren.trenHtml, sisa_hari: prediksi.sisa_hari, prediksiHtml: prediksi.html });
       });
   }
 
@@ -1422,7 +1425,6 @@ else if(activeTabId === 10) {
 
                let pmlCol = isPpl ? `<td class="px-4 py-3 border-r ${clBorder} align-middle font-bold text-gray-500 uppercase tracking-wider text-[10px]">${r.pml}</td>` : '';
                
-               // Delta sekarang menampilkan angka 0 murni jika tidak ada pergerakan (tidak setrip lagi)
                let d1Html = r.delta1 > 0 ? `<span class="text-emerald-600 font-bold">+${r.delta1}</span>` : (r.delta1 < 0 ? `<span class="text-rose-600 font-bold">${r.delta1}</span>` : `<span class="text-gray-400 font-bold tracking-widest">0</span>`);
                let d2Html = r.delta2 > 0 ? `<span class="text-emerald-700 font-black">+${r.delta2}</span>` : (r.delta2 < 0 ? `<span class="text-rose-700 font-black">${r.delta2}</span>` : `<span class="text-gray-400 font-bold tracking-widest">0</span>`);
                
@@ -1437,7 +1439,8 @@ else if(activeTabId === 10) {
                    <td class="px-4 py-3 border-r ${clBorder} align-middle font-bold text-gray-500 uppercase tracking-wider text-[10px]">${r.kec}</td>
                    <td class="px-4 py-3 border-r ${clBorder} align-middle font-bold text-gray-500 uppercase tracking-wider text-[10px]">${r.pj}</td>
                    
-                   <td class="px-4 py-3 text-center font-bold font-mono text-gray-600 border-l border-gray-200 bg-gray-50/50 align-middle">${r.t}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-gray-600 border-l border-gray-200 bg-gray-50/50 align-middle text-[12px]">${r.t}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-slate-700 border-l border-gray-200 bg-slate-50/50 align-middle text-[12px]">${r.avg_vel}</td>
                    
                    <td class="px-4 py-3 text-center font-bold font-mono text-indigo-700 border-l border-indigo-200 bg-indigo-50/40 align-middle text-[12px]">${r.h2}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono text-teal-700 border-l border-teal-200 bg-teal-50/40 align-middle text-[12px]">${r.h1}</td>
@@ -1447,7 +1450,7 @@ else if(activeTabId === 10) {
                    <td class="px-4 py-3 text-center font-black font-mono border-l ${clBgDelta2} align-middle text-[15px]">${d2Html}</td>
                    
                    <td class="px-4 py-3 text-center align-middle border-l border-violet-200 bg-violet-50/40">${r.trenHtml}</td>
-                   <td class="px-4 py-3 text-center align-middle border-l border-fuchsia-200 bg-fuchsia-50/40 leading-tight">${r.prediksi}</td>
+                   <td class="px-4 py-3 text-center align-middle border-l border-fuchsia-200 bg-fuchsia-50/40 leading-tight">${r.prediksiHtml}</td>
                  </tr>`;
             }
          });
@@ -2063,16 +2066,14 @@ function switchDailyMode(mode) {
       
       if (mode === 'ppl') {
           btnPpl.className = "px-6 py-2 text-[11px] font-black rounded-lg bg-amber-500 text-white shadow-md transition tracking-wider";
-          btnPml.className = "px-6 py-2 text-[11px] font-black rounded-lg text-gray-500 hover:bg-gray-200 transition tracking-wider";
+          btnPml.className = "px-6 py-2 text-[11px] font-black rounded-lg text-gray-500 hover:bg-gray-100 transition tracking-wider";
       } else {
           btnPml.className = "px-6 py-2 text-[11px] font-black rounded-lg bg-blue-600 text-white shadow-md transition tracking-wider";
-          btnPpl.className = "px-6 py-2 text-[11px] font-black rounded-lg text-gray-500 hover:bg-gray-200 transition tracking-wider";
+          btnPpl.className = "px-6 py-2 text-[11px] font-black rounded-lg text-gray-500 hover:bg-gray-100 transition tracking-wider";
       }
       
-      // Update kerangka kolom (sembunyikan kolom PML jika mode PML)
-      TABS_CONFIG[10] = getTab10Config(mode, window.tab10DateH1, window.tab10DateH2);
+      TABS_CONFIG[10] = getTab10Config(mode);
       buildTableHeaders(); 
-      
       dashCurrentPage = 1;
       renderCurrentTab();
   }
@@ -2085,11 +2086,12 @@ function switchDailyMode(mode) {
       return d.getDate() + " " + months[d.getMonth()];
   }
 
-function getTab10Config(mode, dateH1, dateH2) {
+function getTab10Config(mode) {
       let clBg = mode === 'ppl' ? 'bg-amber-50' : 'bg-blue-50';
       let clBorder = mode === 'ppl' ? 'border-amber-200' : 'border-blue-200';
       let clText = mode === 'ppl' ? 'text-amber-900' : 'text-blue-900';
       let clBgHead = mode === 'ppl' ? 'bg-amber-100' : 'bg-blue-100';
+      let txtTipe = mode === 'ppl' ? 'Submit' : 'Approve';
       
       document.getElementById('headTab10').className = `text-[10px] uppercase ${clText} font-bold tracking-wider ${clBgHead}`;
 
@@ -2102,16 +2104,15 @@ function getTab10Config(mode, dateH1, dateH2) {
       base.push(
           { k:'kec', n:'Kecamatan', c:`${clBg} border-r ${clBorder} text-gray-700` },
           { k:'pj', n:'PJ Kuda', c:`${clBg} border-r ${clBorder} text-gray-700` },
-          // Total Assignment
           { k:'t', n:'Total<br>Assign.', c:'text-center border-l border-gray-200 bg-gray-100 text-gray-800', f:true },
-          // Warna warni pastel bebas untuk histori & prediksi
-          { k:'h2', n:`Capaian<br>${dateH2}`, c:'text-center border-l border-indigo-200 bg-indigo-50 text-indigo-800', f:true },
-          { k:'h1', n:`Capaian<br>${dateH1}`, c:'text-center border-l border-teal-200 bg-teal-50 text-teal-800', f:true },
-          { k:'delta1', n:`Δ (Selisih)<br>${dateH1}`, c:`text-center border-l ${mode==='ppl'?'border-amber-100 bg-amber-50 text-amber-700':'border-blue-100 bg-blue-50 text-blue-700'}`, f:true },
-          { k:'h0', n:'Capaian<br>HARI INI', c:`text-center border-l ${mode==='ppl'?'border-amber-200 bg-amber-100 text-amber-900':'border-blue-200 bg-blue-100 text-blue-900'} font-bold`, f:true },
-          { k:'delta2', n:'Δ (Selisih)<br>HARI INI', c:`text-center border-l ${mode==='ppl'?'border-amber-300 bg-amber-200 text-amber-900':'border-blue-300 bg-blue-200 text-blue-900'} font-black`, f:true },
-          { k:'trenVal', n:'TREN KINERJA<br>( % )', c:'text-center border-l border-violet-200 bg-violet-50 font-bold', f:true },
-          { k:'prediksi', n:'PREDIKSI SELESAI<br>(ESTIMASI)', c:'text-center border-l border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900 font-bold', f:true }
+          { k:'avg_vel', n:`Rata² ${txtTipe}<br>Harian`, c:'text-center border-l border-gray-200 bg-slate-100 text-slate-800 font-bold', f:true },
+          { k:'h2', n:`Total ${txtTipe}<br>H-2`, c:'text-center border-l border-indigo-200 bg-indigo-50 text-indigo-800', f:true },
+          { k:'h1', n:`Total ${txtTipe}<br>H-1`, c:'text-center border-l border-teal-200 bg-teal-50 text-teal-800', f:true },
+          { k:'delta1', n:`Δ ${txtTipe}<br>(H-1 - H-2)`, c:`text-center border-l ${mode==='ppl'?'border-amber-100 bg-amber-50 text-amber-700':'border-blue-100 bg-blue-50 text-blue-700'}`, f:true },
+          { k:'h0', n:`Total ${txtTipe}<br>HARI INI`, c:`text-center border-l ${mode==='ppl'?'border-amber-200 bg-amber-100 text-amber-900':'border-blue-200 bg-blue-100 text-blue-900'} font-bold`, f:true },
+          { k:'delta2', n:`Δ ${txtTipe}<br>(Hari Ini - H-1)`, c:`text-center border-l ${mode==='ppl'?'border-amber-300 bg-amber-200 text-amber-900':'border-blue-300 bg-blue-200 text-blue-900'} font-black`, f:true },
+          { k:'trenVal', n:`Tren ${txtTipe}<br>2 Hari Terakhir`, c:'text-center border-l border-violet-200 bg-violet-50 font-bold', w:'160px', f:true },
+          { k:'sisa_hari', n:'PREDIKSI SELESAI<br>(ESTIMASI)', c:'text-center border-l border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900 font-bold', w:'140px', f:true }
       );
       return base;
   }
