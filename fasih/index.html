@@ -59,15 +59,9 @@
     .teks-upper { text-transform: uppercase !important; }
     tr, .group, .flex-col { page-break-inside: avoid !important; break-inside: avoid-page !important; }
     
-    /* PERBAIKAN STICKY TAB 10 YANG RAPI */
-    .sticky-switcher {
-      position: sticky;
-      top: 0;
-      z-index: 30;
-      background: white;
-    }
-    #tab10-content th { 
-      top: 60px !important; /* Mendorong header ke bawah switcher */
+#tab10-content th { 
+      top: 61px !important; /* Tinggi area switcher */
+      z-index: 25 !important;
     }
   </style>
 </head>
@@ -332,12 +326,12 @@
              </table>
          </div>
 
-         <div id="tab10-content" class="hidden flex-1 w-full dashboard-table relative">
-             <!-- SWITCHER TETAP (STICKY) DI ATAS -->
-             <div class="sticky-switcher p-3 border-b flex justify-center shadow-sm backdrop-blur-sm">
-                 <div class="bg-white border border-gray-200 p-1.5 rounded-xl flex gap-1 shadow-sm">
+<div id="tab10-content" class="hidden flex-1 w-full dashboard-table">
+             <!-- SWITCHER STICKY DI PALING ATAS -->
+             <div class="p-3 bg-white border-b border-gray-200 flex justify-center sticky top-0 z-30 shadow-sm">
+                 <div class="bg-gray-100 border border-gray-200 p-1.5 rounded-xl flex gap-1 shadow-inner">
                      <button id="btnTogglePpl" onclick="switchDailyMode('ppl')" class="px-6 py-2 text-[11px] font-black rounded-lg bg-amber-500 text-white shadow-md transition tracking-wider">PROGRESS PPL (SUBMIT)</button>
-                     <button id="btnTogglePml" onclick="switchDailyMode('pml')" class="px-6 py-2 text-[11px] font-black rounded-lg text-gray-500 hover:bg-gray-100 transition tracking-wider">PROGRESS PML (APPROVE)</button>
+                     <button id="btnTogglePml" onclick="switchDailyMode('pml')" class="px-6 py-2 text-[11px] font-black rounded-lg text-gray-500 hover:bg-white transition tracking-wider">PROGRESS PML (APPROVE)</button>
                  </div>
              </div>
              <!-- AREA TABEL -->
@@ -880,11 +874,10 @@
           else btnAct.classList.add("border-blue-500", "text-blue-700");
       }
       
-      let currentContent = document.getElementById('tab'+tabId+'-content');
+let currentContent = document.getElementById('tab'+tabId+'-content');
       if(currentContent) {
           currentContent.classList.remove('hidden');
-          if (tabId === 10) currentContent.classList.add('flex');
-          else currentContent.classList.add('block');
+          currentContent.classList.add('block'); // Pastikan SEMUA tab menggunakan block
       }
 
       if(document.getElementById('paginasiArea')) document.getElementById('paginasiArea').style.display = ([1,2,3,4,6,7,8,9,10].includes(tabId)) ? 'flex' : 'none';
