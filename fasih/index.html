@@ -58,6 +58,7 @@
     .filter-menu { z-index: 9999; }
     .teks-upper { text-transform: uppercase !important; }
     tr, .group, .flex-col { page-break-inside: avoid !important; break-inside: avoid-page !important; }
+    #tab10-content th { top: 68px !important; }
   </style>
 </head>
 <body class="h-screen overflow-hidden bg-blue-50/30 flex flex-col text-gray-800">
@@ -321,21 +322,20 @@
              </table>
          </div>
 
-<div id="tab10-content" class="hidden flex-1 w-full flex-col min-h-0 relative">
+<div id="tab10-content" class="hidden flex-1 w-full dashboard-table relative">
              <!-- SWITCHER TETAP (STICKY) DI ATAS -->
-             <div class="p-3 bg-gray-50/90 border-b border-gray-200 flex justify-center flex-none z-30 shadow-sm backdrop-blur-sm">
+             <div class="p-3 bg-gray-50/90 border-b border-gray-200 flex justify-center sticky top-0 left-0 z-30 shadow-sm backdrop-blur-sm">
                  <div class="bg-white border border-gray-200 p-1.5 rounded-xl flex gap-1 shadow-sm">
                      <button id="btnTogglePpl" onclick="switchDailyMode('ppl')" class="px-6 py-2 text-[11px] font-black rounded-lg bg-amber-500 text-white shadow-md transition tracking-wider">PROGRESS PPL (SUBMIT)</button>
                      <button id="btnTogglePml" onclick="switchDailyMode('pml')" class="px-6 py-2 text-[11px] font-black rounded-lg text-gray-500 hover:bg-gray-100 transition tracking-wider">PROGRESS PML (APPROVE)</button>
                  </div>
              </div>
-             <!-- AREA TABEL SCROLLING -->
-             <div class="flex-1 w-full dashboard-table overflow-auto">
-                 <table class="w-full text-left border-collapse min-w-[1600px]">
-                     <thead id="headTab10"></thead>
-                     <tbody id="tableDaily" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
-                 </table>
-             </div>
+             <!-- AREA TABEL -->
+             <table class="w-full text-left border-collapse min-w-[1600px]">
+                 <thead id="headTab10"></thead>
+                 <tbody id="tableDaily" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
+             </table>
+         </div>
         
       </div> 
       
@@ -369,8 +369,8 @@
   let lastUploadUsa = "BELUM ADA DATA";
   let lastUploadFasih = "BELUM ADA DATA"; // State variabel untuk upload FASIH
   let dashFilteredData = [];
-  let TAB_STATE = { 1:[], 2:[], 3:[], 4:[], 6:[], 7:[], 8:[], 9:[] }; 
-  let COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{}, 9:{} }; 
+  let TAB_STATE = { 1:[], 2:[], 3:[], 4:[], 6:[], 7:[], 8:[], 9:[] , 10:[] }; 
+  let COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{}, 9:{} , 10:{} }; 
   let dashCurrentPage = 1;
   let dashRowsPerPage = 10; 
   let activeTabId = 1;
@@ -613,7 +613,7 @@ function resetGlobalFilters() {
       // [BARU] Tampilkan kembali semua opsi yang sempat tersembunyi
       document.querySelectorAll('.dropdown-item').forEach(item => item.style.display = "");
       
-      COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{}, 9:{} };
+      COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{}, 9:{} , 10:{} };
       handleGlobalFilter();
   }
 
@@ -1149,22 +1149,14 @@ dashFilteredData.forEach(r => {
           return { trenVal: pct, trenHtml: `<span class="px-2.5 py-1 rounded text-[9px] font-black border tracking-wider whitespace-nowrap shadow-sm ${badgeClass}">${trenText}</span>` };
       }
 
-      function getPrediksiSelesai(tTarget, currentCapaian) {
-          // Jika target 0, return "-" dengan nilai sort 0
-          if (tTarget === 0) return { html: `<span class="text-gray-400">-</span>`, sisa_hari: 0 };
-          
-          // Jika Selesai, return Centang dengan nilai sort 0
-          if (currentCapaian >= tTarget) {
-              return { html: `<span class="px-2 py-0.5 rounded text-[9px] font-black bg-emerald-100 text-emerald-700 border border-emerald-300 uppercase tracking-wider shadow-sm">✅ SELESAI</span>`, sisa_hari: 0 };
-          }
+function getPrediksiSelesai(tTarget, currentCapaian) {
+          if (tTarget === 0) return { html: `<span class="text-gray-400">-</span>`, sisa_hari: 0, isLate: false };
+          if (currentCapaian >= tTarget) return { html: `<span class="px-2 py-0.5 rounded text-[9px] font-black bg-emerald-100 text-emerald-700 border border-emerald-300 uppercase tracking-wider shadow-sm">✅ SELESAI</span>`, sisa_hari: 0, isLate: false };
           
           let daysElapsed = timingConfig.x || 1;
           let velocity = currentCapaian / daysElapsed;
           
-          // Jika stagnan tanpa progres dari awal, beri nilai sort 999999 agar berada paling bawah (Terlama) saat diurutkan
-          if (velocity <= 0) {
-              return { html: `<span class="px-2 py-0.5 rounded text-[9px] font-black bg-rose-50 text-rose-600 border border-rose-200 uppercase tracking-wider shadow-sm">⚠️ BLM JELAS</span>`, sisa_hari: 999999 };
-          }
+          if (velocity <= 0) return { html: `<span class="px-2 py-0.5 rounded text-[9px] font-black bg-rose-50 text-rose-600 border border-rose-200 uppercase tracking-wider shadow-sm">⚠️ BLM JELAS</span>`, sisa_hari: 999999, isLate: true };
           
           let remainingCapaian = tTarget - currentCapaian;
           let remainingDays = Math.ceil(remainingCapaian / velocity);
@@ -1173,7 +1165,14 @@ dashFilteredData.forEach(r => {
           d.setDate(d.getDate() + remainingDays); 
           let dateStr = formatTanggalIndo(d.toISOString());
           
-          return { html: `<span class="text-[11px] font-black text-fuchsia-800">${dateStr}</span><br><span class="text-[9px] text-fuchsia-600/70 font-bold">${remainingDays} hari lagi</span>`, sisa_hari: remainingDays };
+          // DETEKSI TERLAMBAT (Di atas 31 Agustus 2026)
+          let deadline = new Date(2026, 7, 31); // Bulan ke-7 karena JavaScript Date 0-indexed (0=Jan)
+          let isLate = d.getTime() > deadline.getTime();
+          let lateBadge = isLate ? `<br><span class="px-1.5 py-0.5 mt-1.5 inline-block rounded text-[8px] bg-red-600 text-white font-bold tracking-widest shadow-sm">TERLAMBAT</span>` : '';
+          
+          let htmlText = `<span class="text-[11px] font-black ${isLate?'text-red-700':'text-fuchsia-800'}">${dateStr}</span><br><span class="text-[9px] ${isLate?'text-red-600':'text-fuchsia-600/70'} font-bold">${remainingDays} hari lagi</span>${lateBadge}`;
+          
+          return { html: htmlText, sisa_hari: remainingDays, isLate: isLate };
       }
 
       Object.values(pplM).forEach(p => {
@@ -1187,7 +1186,7 @@ dashFilteredData.forEach(r => {
           let prediksi = getPrediksiSelesai(p.t, v0);
           let velocity = p.t > 0 ? (v0 / (timingConfig.x || 1)).toFixed(1) : 0;
           
-          TAB_STATE[10].push({ petugas: p.ppl, pml: p.pml, role: 'PPL', kec: p.kec, pj: p.pj, email: p.email, t: p.t, avg_vel: velocity, h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenHtml: tren.trenHtml, sisa_hari: prediksi.sisa_hari, prediksiHtml: prediksi.html });
+          TAB_STATE[10].push({ petugas: p.ppl, pml: p.pml, role: 'PPL', kec: p.kec, pj: p.pj, email: p.email, t: p.t, avg_vel: velocity, h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenHtml: tren.trenHtml, sisa_hari: prediksi.sisa_hari, prediksiHtml: prediksi.html, isLate: prediksi.isLate });
       });
 
       Object.values(pmlM).forEach(p => {
@@ -1201,9 +1200,8 @@ dashFilteredData.forEach(r => {
           let prediksi = getPrediksiSelesai(p.t, v0);
           let velocity = p.t > 0 ? (v0 / (timingConfig.x || 1)).toFixed(1) : 0;
           
-          TAB_STATE[10].push({ petugas: p.pml, role: 'PML', kec: p.kec, pj: p.pj, email: p.email, t: p.t, avg_vel: velocity, h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenHtml: tren.trenHtml, sisa_hari: prediksi.sisa_hari, prediksiHtml: prediksi.html });
+          TAB_STATE[10].push({ petugas: p.pml, role: 'PML', kec: p.kec, pj: p.pj, email: p.email, t: p.t, avg_vel: velocity, h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenHtml: tren.trenHtml, sisa_hari: prediksi.sisa_hari, prediksiHtml: prediksi.html, isLate: prediksi.isLate });
       });
-  }
 
   function renderCurrentTab() {
       if(activeTabId === 5) return renderVisualisasi();
@@ -1416,41 +1414,56 @@ else if(activeTabId === 9) {
 
 else if(activeTabId === 10) {
                let isPpl = dailyProgressMode === 'ppl';
-               let clBorder = isPpl ? 'border-amber-200' : 'border-blue-200';
-               let clHover = isPpl ? 'hover:bg-amber-50/80' : 'hover:bg-blue-50/80';
-               let clTextStrong = isPpl ? 'text-amber-800' : 'text-blue-800';
+               let isLate = r.isLate;
+
+               // Format Kondisional Baris Merah vs Normal
+               let clBorder = isLate ? 'border-rose-200' : (isPpl ? 'border-amber-200' : 'border-blue-200');
+               let clHover = isLate ? 'hover:bg-rose-100/80 bg-rose-50/40' : (isPpl ? 'hover:bg-amber-50/80 bg-white' : 'hover:bg-blue-50/80 bg-white');
+               let clTextStrong = isLate ? 'text-rose-900' : (isPpl ? 'text-amber-800' : 'text-blue-800');
+               
                let clBgDelta1 = isPpl ? 'bg-amber-50/30 border-amber-100' : 'bg-blue-50/30 border-blue-100';
                let clBgH0 = isPpl ? 'bg-amber-100/50 border-amber-200' : 'bg-blue-100/50 border-blue-200';
                let clBgDelta2 = isPpl ? 'bg-amber-200/40 border-amber-300' : 'bg-blue-200/40 border-blue-300';
+               
+               let bgT = isLate ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-gray-50/50 text-gray-600 border-gray-200';
+               let bgVel = isLate ? 'bg-rose-100/50 text-rose-800 border-rose-200' : 'bg-slate-50/50 text-slate-700 border-gray-200';
+               let bgH2 = isLate ? 'bg-rose-50 text-rose-800 border-rose-200' : 'bg-indigo-50/40 text-indigo-700 border-indigo-200';
+               let bgH1 = isLate ? 'bg-rose-100/50 text-rose-800 border-rose-200' : 'bg-teal-50/40 text-teal-700 border-teal-200';
+
+               if (isLate) {
+                   clBgDelta1 = 'bg-rose-100/30 border-rose-200';
+                   clBgH0 = 'bg-rose-200/40 border-rose-300';
+                   clBgDelta2 = 'bg-rose-300/40 border-rose-400';
+               }
 
                let pmlCol = isPpl ? `<td class="px-4 py-3 border-r ${clBorder} align-middle font-bold text-gray-500 uppercase tracking-wider text-[10px]">${r.pml}</td>` : '';
                
-               let d1Html = r.delta1 > 0 ? `<span class="text-emerald-600 font-bold">+${r.delta1}</span>` : (r.delta1 < 0 ? `<span class="text-rose-600 font-bold">${r.delta1}</span>` : `<span class="text-gray-400 font-bold tracking-widest">0</span>`);
-               let d2Html = r.delta2 > 0 ? `<span class="text-emerald-700 font-black">+${r.delta2}</span>` : (r.delta2 < 0 ? `<span class="text-rose-700 font-black">${r.delta2}</span>` : `<span class="text-gray-400 font-bold tracking-widest">0</span>`);
+               let d1Html = r.delta1 > 0 ? `<span class="${isLate?'text-rose-700':'text-emerald-600'} font-bold">+${r.delta1}</span>` : (r.delta1 < 0 ? `<span class="text-red-600 font-bold">${r.delta1}</span>` : `<span class="${isLate?'text-rose-400':'text-gray-400'} font-bold tracking-widest">0</span>`);
+               let d2Html = r.delta2 > 0 ? `<span class="${isLate?'text-rose-800':'text-emerald-700'} font-black">+${r.delta2}</span>` : (r.delta2 < 0 ? `<span class="text-red-700 font-black">${r.delta2}</span>` : `<span class="${isLate?'text-rose-400':'text-gray-400'} font-bold tracking-widest">0</span>`);
                
                html += `
-                 <tr class="border-b transition ${clHover} bg-white">
-                   <td class="px-4 py-3 text-center border-r ${clBorder} align-middle font-bold text-gray-400">${n}</td>
+                 <tr class="border-b transition ${clHover}">
+                   <td class="px-4 py-3 text-center border-r ${clBorder} align-middle font-bold ${isLate?'text-rose-400':'text-gray-400'}">${n}</td>
                    <td class="px-4 py-3 font-bold border-r ${clBorder} ${clTextStrong} align-middle">
                        ${r.petugas}
-                       ${r.email ? `<br><a href="mailto:${r.email}" class="text-[9px] font-bold text-gray-400 lowercase flex items-center gap-1 mt-0.5 hover:${clTextStrong} hover:underline transition"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.53 4.81a2 2 0 002.94 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>${r.email}</a>` : ''}
+                       ${r.email ? `<br><a href="mailto:${r.email}" class="text-[9px] font-bold ${isLate?'text-rose-500':'text-gray-400'} lowercase flex items-center gap-1 mt-0.5 hover:${clTextStrong} hover:underline transition"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.53 4.81a2 2 0 002.94 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>${r.email}</a>` : ''}
                    </td>
                    ${pmlCol}
-                   <td class="px-4 py-3 border-r ${clBorder} align-middle font-bold text-gray-500 uppercase tracking-wider text-[10px]">${r.kec}</td>
-                   <td class="px-4 py-3 border-r ${clBorder} align-middle font-bold text-gray-500 uppercase tracking-wider text-[10px]">${r.pj}</td>
+                   <td class="px-4 py-3 border-r ${clBorder} align-middle font-bold ${isLate?'text-rose-600':'text-gray-500'} uppercase tracking-wider text-[10px]">${r.kec}</td>
+                   <td class="px-4 py-3 border-r ${clBorder} align-middle font-bold ${isLate?'text-rose-600':'text-gray-500'} uppercase tracking-wider text-[10px]">${r.pj}</td>
                    
-                   <td class="px-4 py-3 text-center font-bold font-mono text-gray-600 border-l border-gray-200 bg-gray-50/50 align-middle text-[12px]">${r.t}</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono text-slate-700 border-l border-gray-200 bg-slate-50/50 align-middle text-[12px]">${r.avg_vel}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono border-l ${bgT} align-middle text-[12px]">${r.t}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono border-l ${bgVel} align-middle text-[12px]">${r.avg_vel}</td>
                    
-                   <td class="px-4 py-3 text-center font-bold font-mono text-indigo-700 border-l border-indigo-200 bg-indigo-50/40 align-middle text-[12px]">${r.h2}</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono text-teal-700 border-l border-teal-200 bg-teal-50/40 align-middle text-[12px]">${r.h1}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono border-l ${bgH2} align-middle text-[12px]">${r.h2}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono border-l ${bgH1} align-middle text-[12px]">${r.h1}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono border-l ${clBgDelta1} align-middle text-[13px]">${d1Html}</td>
                    
                    <td class="px-4 py-3 text-center font-black font-mono ${clTextStrong} border-l ${clBgH0} align-middle text-[13px]">${r.h0}</td>
                    <td class="px-4 py-3 text-center font-black font-mono border-l ${clBgDelta2} align-middle text-[15px]">${d2Html}</td>
                    
-                   <td class="px-4 py-3 text-center align-middle border-l border-violet-200 bg-violet-50/40">${r.trenHtml}</td>
-                   <td class="px-4 py-3 text-center align-middle border-l border-fuchsia-200 bg-fuchsia-50/40 leading-tight">${r.prediksiHtml}</td>
+                   <td class="px-4 py-3 text-center align-middle border-l ${isLate?'border-rose-300 bg-rose-50':'border-violet-200 bg-violet-50/40'}">${r.trenHtml}</td>
+                   <td class="px-4 py-3 text-center align-middle border-l ${isLate?'border-rose-300 bg-rose-100/50':'border-fuchsia-200 bg-fuchsia-50/40'} leading-tight">${r.prediksiHtml}</td>
                  </tr>`;
             }
          });
