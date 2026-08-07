@@ -59,11 +59,15 @@
     .teks-upper { text-transform: uppercase !important; }
     tr, .group, .flex-col { page-break-inside: avoid !important; break-inside: avoid-page !important; }
     
-    /* PERBAIKAN STICKY HEADER UNTUK TAB 10 */
+    /* PERBAIKAN STICKY TAB 10 YANG RAPI */
+    .sticky-switcher {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: white;
+    }
     #tab10-content th { 
-      position: sticky !important; 
-      top: 57px !important; 
-      z-index: 25 !important; 
+      top: 60px !important; /* Mendorong header ke bawah switcher */
     }
   </style>
 </head>
@@ -251,7 +255,7 @@
 
     <!-- MAIN DASHBOARD AREA -->
     <div class="flex-1 bg-blue-50/20 relative p-4 flex flex-col min-h-0">
-      <div id="captureArea" class="flex-1 flex flex-col min-h-0 bg-white border border-gray-200 rounded-2xl shadow-sm overflow-auto transition-all">
+      <div id="captureArea" class="flex-1 flex flex-col min-h-0 bg-white border border-gray-200 rounded-2xl shadow-sm overflow-auto transition-all relative">
          
          <div id="watermarkHeader" class="hidden w-full p-5 bg-gradient-to-r from-[#2563eb] to-[#1e3a8a] border-b-2 border-blue-200 items-center justify-between mb-2 rounded-t-2xl shrink-0">
             <div>
@@ -328,15 +332,15 @@
              </table>
          </div>
 
-         <div id="tab10-content" class="hidden flex-1 w-full dashboard-table relative overflow-auto">
-             <!-- SWITCHER STICKY DI PALING ATAS -->
-             <div class="p-3 bg-gray-50/90 border-b border-gray-200 flex justify-center sticky top-0 left-0 z-30 shadow-sm backdrop-blur-sm">
+         <div id="tab10-content" class="hidden flex-1 w-full dashboard-table relative">
+             <!-- SWITCHER TETAP (STICKY) DI ATAS -->
+             <div class="sticky-switcher p-3 border-b flex justify-center shadow-sm backdrop-blur-sm">
                  <div class="bg-white border border-gray-200 p-1.5 rounded-xl flex gap-1 shadow-sm">
                      <button id="btnTogglePpl" onclick="switchDailyMode('ppl')" class="px-6 py-2 text-[11px] font-black rounded-lg bg-amber-500 text-white shadow-md transition tracking-wider">PROGRESS PPL (SUBMIT)</button>
                      <button id="btnTogglePml" onclick="switchDailyMode('pml')" class="px-6 py-2 text-[11px] font-black rounded-lg text-gray-500 hover:bg-gray-100 transition tracking-wider">PROGRESS PML (APPROVE)</button>
                  </div>
              </div>
-             <!-- TABEL -->
+             <!-- AREA TABEL -->
              <table class="w-full text-left border-collapse min-w-[1600px]">
                  <thead id="headTab10"></thead>
                  <tbody id="tableDaily" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
@@ -484,7 +488,7 @@
           });
 
           DASH_DATA = res.data;
-          HISTORY_DATA = res.history || [];
+          HISTORY_DATA = res.history || []; 
 
           lastUploadKel = res.lastUpdateKel || "BELUM ADA DATA";
           lastUploadUsa = res.lastUpdateUsa || "BELUM ADA DATA";
