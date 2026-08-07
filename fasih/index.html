@@ -1177,7 +1177,7 @@ function handleGlobalFilter() {
                    <td class="px-4 py-3 text-center border-l border-gray-200 align-middle whitespace-nowrap">${bd}</td>
                  </tr>`;
             }
-            else if(activeTabId === 3) {
+else if(activeTabId === 3) {
                let cl = r.statusTarget === 'Tercapai' ? 'hover:bg-blue-50/50' : 'bg-red-50/40 text-red-900 hover:bg-red-100/50';
                let bd = r.statusTarget === 'Tercapai' ? '<span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[9px] font-bold">TERCAPAI</span>' : '<span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[9px] font-bold">BELUM</span>';
                html += `
@@ -1188,17 +1188,20 @@ function handleGlobalFilter() {
                        ${r.email ? `<br><a href="mailto:${r.email}" class="text-[9px] font-bold text-gray-500 lowercase flex items-center gap-1 mt-0.5 hover:text-blue-600 hover:underline transition"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.53 4.81a2 2 0 002.94 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>${r.email}</a>` : ''}
                    </td>
                    <td class="px-4 py-3 border-r border-blue-100 align-middle font-bold text-gray-500 uppercase tracking-wider text-[10px]">${r.kec}</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono border-l border-blue-100 align-middle">${r.o}</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono border-l border-amber-100 align-middle">${r.d}</td>
+                   
+                   <td class="px-4 py-3 text-center font-bold font-mono text-blue-700 border-l border-blue-100 align-middle">${r.o}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-amber-700 border-l border-amber-100 align-middle">${r.d}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono text-purple-700 border-l border-purple-100 align-middle">${r.sub}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono text-red-700 border-l border-red-100 align-middle">${r.rej}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono text-green-700 border-l border-green-100 align-middle">${r.app}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono text-indigo-900 border-l border-indigo-200 align-middle">${r.t}</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono border-l border-blue-100 align-middle">${r.pct_open}%</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono border-l border-amber-100 align-middle">${r.pct_draft}%</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono border-l border-purple-100 align-middle">${r.pct_sub}%</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono border-l border-red-100 align-middle">${r.pct_rej}%</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono text-emerald-700 border-l border-emerald-100 align-middle">${r.pct_app}%</td>
+                   
+                   <td class="px-4 py-3 text-center font-bold font-mono text-blue-700 border-l border-blue-100 align-middle">${r.pct_open}%</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-amber-700 border-l border-amber-100 align-middle">${r.pct_draft}%</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-purple-700 border-l border-purple-100 align-middle">${r.pct_sub}%</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-red-700 border-l border-red-100 align-middle">${r.pct_rej}%</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-green-700 border-l border-green-100 align-middle">${r.pct_app}%</td>
+                   
                    <td class="px-4 py-3 text-center font-bold font-mono text-rose-700 border-l border-rose-100 bg-rose-50/20 align-middle">${r.kekurangan}</td>
                    <td class="px-4 py-3 text-center border-l border-gray-200 align-middle whitespace-nowrap">${bd}</td>
                  </tr>`;
