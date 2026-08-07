@@ -1158,7 +1158,6 @@ function handleGlobalFilter() {
          rawData = rawData.filter(r => fStatus.includes(r.statusTarget));
       }
 
-    let rawData = TAB_STATE[activeTabId];
       // FILTER ROLE UNTUK TAB 10
       if (activeTabId === 10) {
           rawData = rawData.filter(r => r.role.toLowerCase() === dailyProgressMode);
