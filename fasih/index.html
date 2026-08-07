@@ -723,16 +723,7 @@ function resetGlobalFilters() {
          { k:'pctB', n:'% (B)', c:'text-center bg-amber-100 text-amber-700 border-l border-slate-200 font-bold', f:true }, 
          { k:'selisih', n:'Selisih (A - B)', c:'text-center bg-slate-200 text-slate-900 border-l border-slate-300 font-black', f:true }
       ],
-10: [
-         { k:'petugas', n:'Nama Petugas', c:'bg-emerald-50 border-r border-emerald-200 text-emerald-900', w:'250px' },
-         { k:'role', n:'Role', c:'bg-emerald-50 border-r border-emerald-200 text-gray-700' },
-         { k:'kec', n:'Kecamatan', c:'bg-emerald-50 border-r border-emerald-200 text-gray-700' },
-         { k:'pj', n:'PJ Kuda', c:'bg-emerald-50 text-gray-700' },
-         { k:'h2', n:'Capaian H-2', c:'text-center border-l border-gray-200 bg-gray-50 text-gray-600', f:true },
-         { k:'h1', n:'Capaian H-1', c:'text-center border-l border-gray-200 bg-gray-50 text-gray-600', f:true },
-         { k:'h0', n:'Capaian Hari Ini', c:'text-center border-l border-emerald-200 bg-emerald-50 text-emerald-800 font-bold', f:true },
-         { k:'delta', n:'Pertambahan (+)', c:'text-center border-l border-emerald-300 bg-emerald-100 text-emerald-900 font-black text-sm', f:true }
-      ]
+10: []
   };
 
   function buildTableHeaders() {
@@ -875,7 +866,7 @@ function switchTab(tabId) {
     else if (activeTabId === 3) { sortCol = 'pct_app'; sortAsc = false; } 
     else if (activeTabId === 4) { sortCol = 'pct_submit'; sortAsc = false; } 
     else if (activeTabId === 9) { sortCol = 'selisih'; sortAsc = true; }
-    else if (activeTabId === 10) { sortCol = 'delta'; sortAsc = false; }
+    else if (activeTabId === 10) { sortCol = 'delta2'; sortAsc = false; }
   
     
     renderCurrentTab();
@@ -1008,15 +999,17 @@ function handleGlobalFilter() {
       TAB_STATE[1] = dashFilteredData.map(r => ({ ...r, desaKec: r.desa + ' - ' + r.kec }));
       
       let pplM={}, pmlM={}, kecM={}, evalM={};
-      dashFilteredData.forEach(r => {
+dashFilteredData.forEach(r => {
           let kPpl = r.ppl+"_"+r.kec; 
-          if(!pplM[kPpl]) pplM[kPpl]={ppl:r.ppl, kec:r.kec, email:r.emailPpl, o:0, d:0, agg_s:0, t:0, app:0};
+          // PERBAIKAN: Masukkan pml dan pj
+          if(!pplM[kPpl]) pplM[kPpl]={ppl:r.ppl, pml:r.pml, kec:r.kec, pj:r.pj, email:r.emailPpl, o:0, d:0, agg_s:0, t:0, app:0};
           pplM[kPpl].o+=r.open; pplM[kPpl].d+=r.draft; pplM[kPpl].agg_s+=r.agg_submit; pplM[kPpl].t+=r.calcTotal; pplM[kPpl].app+=r.approve;
           
           let kPml = r.pml+"_"+r.kec; 
-          if(!pmlM[kPml]) pmlM[kPml]={pml:r.pml, kec:r.kec, email:r.emailPml, o:0, d:0, sub:0, rej:0, app:0, t:0};
+          // PERBAIKAN: Masukkan pj
+          if(!pmlM[kPml]) pmlM[kPml]={pml:r.pml, kec:r.kec, pj:r.pj, email:r.emailPml, o:0, d:0, sub:0, rej:0, app:0, t:0};
           pmlM[kPml].o+=r.open; pmlM[kPml].d+=r.draft; pmlM[kPml].sub+=r.submit; pmlM[kPml].rej+=r.reject; pmlM[kPml].app+=r.approve; pmlM[kPml].t+=r.calcTotal;
-          
+
           let kKec = r.kec+"_"+r.pj; 
           if(!kecM[kKec]) kecM[kKec]={kec:r.kec, pj:r.pj, o:0, d:0, s:0, rej:0, app:0, t:0, agg_sra:0};
           kecM[kKec].o+=r.open; kecM[kKec].d+=r.draft; kecM[kKec].s+=r.submit; kecM[kKec].rej+=r.reject; kecM[kKec].app+=r.approve; kecM[kKec].agg_sra+=r.agg_submit; kecM[kKec].t+=r.calcTotal;
@@ -1124,19 +1117,47 @@ function handleGlobalFilter() {
           return { ...p, pct_submit, pct_approve, pct_reject, kolomA, kolomB, selisih, pctA, pctB };
       });
 
-    // KALKULASI TAB 10 (PROGRESS HARIAN)
+// KALKULASI TAB 10 (PROGRESS HARIAN)
       TAB_STATE[10] = [];
       let sortedHist = [...HISTORY_DATA].sort((a,b) => a.date < b.date ? 1 : -1);
+      
+      let dateH1 = sortedHist[1] ? formatTanggalIndo(sortedHist[1].date) : "H-1";
+      let dateH2 = sortedHist[2] ? formatTanggalIndo(sortedHist[2].date) : "H-2";
+      window.tab10DateH1 = dateH1; window.tab10DateH2 = dateH2; // Simpan ke global
+      
+      // Update struktur kolom di antarmuka web
+      TABS_CONFIG[10] = getTab10Config(dailyProgressMode, dateH1, dateH2);
+      buildTableHeaders(); 
+
       let h0Data = sortedHist[0] ? sortedHist[0].data : {ppl:{}, pml:{}};
       let h1Data = sortedHist[1] ? sortedHist[1].data : {ppl:{}, pml:{}};
       let h2Data = sortedHist[2] ? sortedHist[2].data : {ppl:{}, pml:{}};
+
+      // Fungsi Pembantu Kalkulasi Matematika
+      function getTrenLogic(d1, d2) {
+          let trenVal = 0, trenText = "Stagnan", trenColor = "text-gray-400";
+          if (d1 === 0 && d2 > 0) { trenText = "🔥 Melesat (Baru)"; trenColor = "text-blue-600"; trenVal = 999; }
+          else if (d1 === 0 && d2 === 0) { trenText = "Stagnan"; trenColor = "text-gray-400"; trenVal = 0; }
+          else if (d1 > 0) {
+              let pct = ((d2 - d1) / d1) * 100;
+              trenVal = pct;
+              if (pct > 0) { trenText = `🚀 +${pct.toFixed(1)}%`; trenColor = "text-green-600"; }
+              else if (pct < 0) { trenText = `🔻 ${pct.toFixed(1)}%`; trenColor = "text-red-600"; }
+              else { trenText = "Konsisten"; trenColor = "text-sky-500"; }
+          }
+          return { trenVal, trenText, trenColor };
+      }
 
       Object.values(pplM).forEach(p => {
           let key = p.ppl + "_" + p.kec;
           let v0 = h0Data.ppl && h0Data.ppl[key] !== undefined ? h0Data.ppl[key] : p.agg_s; 
           let v1 = h1Data.ppl && h1Data.ppl[key] !== undefined ? h1Data.ppl[key] : v0;
           let v2 = h2Data.ppl && h2Data.ppl[key] !== undefined ? h2Data.ppl[key] : v1;
-          TAB_STATE[10].push({ petugas: p.ppl, role: 'PPL', kec: p.kec, pj: p.pj, email: p.email, h2: v2, h1: v1, h0: v0, delta: (v0 - v1) });
+          
+          let d1 = v1 - v2; let d2 = v0 - v1;
+          let tren = getTrenLogic(d1, d2);
+          
+          TAB_STATE[10].push({ petugas: p.ppl, pml: p.pml, role: 'PPL', kec: p.kec, pj: p.pj, email: p.email, h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenText: tren.trenText, trenColor: tren.trenColor });
       });
 
       Object.values(pmlM).forEach(p => {
@@ -1144,7 +1165,11 @@ function handleGlobalFilter() {
           let v0 = h0Data.pml && h0Data.pml[key] !== undefined ? h0Data.pml[key] : p.app; 
           let v1 = h1Data.pml && h1Data.pml[key] !== undefined ? h1Data.pml[key] : v0;
           let v2 = h2Data.pml && h2Data.pml[key] !== undefined ? h2Data.pml[key] : v1;
-          TAB_STATE[10].push({ petugas: p.pml, role: 'PML', kec: p.kec, pj: p.pj, email: p.email, h2: v2, h1: v1, h0: v0, delta: (v0 - v1) });
+          
+          let d1 = v1 - v2; let d2 = v0 - v1;
+          let tren = getTrenLogic(d1, d2);
+          
+          TAB_STATE[10].push({ petugas: p.pml, role: 'PML', kec: p.kec, pj: p.pj, email: p.email, h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenText: tren.trenText, trenColor: tren.trenColor });
       });
   }
 
@@ -1357,8 +1382,12 @@ else if(activeTabId === 9) {
                  </tr>`;
             }
 
-           else if(activeTabId === 10) {
-               let deltaHtml = r.delta > 0 ? `<span class="text-emerald-700 bg-emerald-200/50 px-2 py-1 rounded-md shadow-sm">+${r.delta}</span>` : `<span class="text-gray-400 font-medium">-</span>`;
+else if(activeTabId === 10) {
+               let pmlCol = dailyProgressMode === 'ppl' ? `<td class="px-4 py-3 border-r border-emerald-200 align-middle font-bold text-gray-500 uppercase tracking-wider text-[10px]">${r.pml}</td>` : '';
+               
+               let d1Html = r.delta1 > 0 ? `<span class="text-emerald-700 font-bold">+${r.delta1}</span>` : (r.delta1 < 0 ? `<span class="text-rose-700 font-bold">${r.delta1}</span>` : `<span class="text-gray-400">-</span>`);
+               let d2Html = r.delta2 > 0 ? `<span class="text-emerald-900 font-black">+${r.delta2}</span>` : (r.delta2 < 0 ? `<span class="text-rose-700 font-bold">${r.delta2}</span>` : `<span class="text-gray-400">-</span>`);
+               
                html += `
                  <tr class="border-b transition hover:bg-emerald-50/80 bg-white">
                    <td class="px-4 py-3 text-center border-r border-emerald-200 align-middle font-bold text-gray-500">${n}</td>
@@ -1366,13 +1395,18 @@ else if(activeTabId === 9) {
                        ${r.petugas}
                        ${r.email ? `<br><a href="mailto:${r.email}" class="text-[9px] font-bold text-gray-500 lowercase flex items-center gap-1 mt-0.5 hover:text-emerald-600 hover:underline transition"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.53 4.81a2 2 0 002.94 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>${r.email}</a>` : ''}
                    </td>
-                   <td class="px-4 py-3 border-r border-emerald-200 align-middle font-black text-gray-400 text-[10px]">${r.role}</td>
+                   ${pmlCol}
                    <td class="px-4 py-3 border-r border-emerald-200 align-middle font-bold text-gray-600 uppercase tracking-wider text-[10px]">${r.kec}</td>
                    <td class="px-4 py-3 border-r border-emerald-200 align-middle font-bold text-gray-600 uppercase tracking-wider text-[10px]">${r.pj}</td>
+                   
                    <td class="px-4 py-3 text-center font-bold font-mono text-gray-500 border-l border-gray-200 bg-gray-50/50 align-middle">${r.h2}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono text-gray-600 border-l border-gray-200 bg-gray-50 align-middle">${r.h1}</td>
-                   <td class="px-4 py-3 text-center font-black font-mono text-emerald-800 border-l border-emerald-200 bg-emerald-50 align-middle text-sm">${r.h0}</td>
-                   <td class="px-4 py-3 text-center font-black font-mono border-l border-emerald-300 bg-emerald-100/50 align-middle text-[15px]">${deltaHtml}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono border-l border-emerald-100 bg-emerald-50/30 align-middle text-[12px]">${d1Html}</td>
+                   
+                   <td class="px-4 py-3 text-center font-black font-mono text-emerald-800 border-l border-emerald-200 bg-emerald-100/50 align-middle text-[13px]">${r.h0}</td>
+                   <td class="px-4 py-3 text-center font-black font-mono border-l border-emerald-300 bg-emerald-200/40 align-middle text-[14px]">${d2Html}</td>
+                   
+                   <td class="px-4 py-3 text-center font-bold font-mono border-l border-emerald-300 bg-slate-50 align-middle text-[11px] ${r.trenColor}">${r.trenText}</td>
                  </tr>`;
             }
          });
@@ -1994,9 +2028,42 @@ function switchDailyMode(mode) {
           btnPpl.className = "px-6 py-2 text-[11px] font-black rounded-lg text-gray-500 hover:bg-gray-200 transition tracking-wider";
       }
       
+      // Update kerangka kolom (sembunyikan kolom PML jika mode PML)
+      TABS_CONFIG[10] = getTab10Config(mode, window.tab10DateH1, window.tab10DateH2);
+      buildTableHeaders(); 
+      
       dashCurrentPage = 1;
       renderCurrentTab();
-  }  
+  }
+
+  function formatTanggalIndo(dateStr) {
+      if (!dateStr) return "";
+      let d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      const months = ["Jan.", "Feb.", "Maret", "April", "Mei", "Juni", "Juli", "Ags.", "Sept.", "Okt.", "Nov.", "Des."];
+      return d.getDate() + " " + months[d.getMonth()];
+  }
+
+  function getTab10Config(mode, dateH1, dateH2) {
+      let base = [
+          { k:'petugas', n:(mode === 'ppl' ? 'Nama PPL' : 'Nama PML'), c:'bg-emerald-50 border-r border-emerald-200 text-emerald-900', w:'200px' }
+      ];
+      // Jika mode PPL, tambahkan kolom nama PML
+      if (mode === 'ppl') {
+          base.push({ k:'pml', n:'Nama PML', c:'bg-emerald-50 border-r border-emerald-200 text-gray-700', w:'200px' });
+      }
+      base.push(
+          { k:'kec', n:'Kecamatan', c:'bg-emerald-50 border-r border-emerald-200 text-gray-700' },
+          { k:'pj', n:'PJ Kuda', c:'bg-emerald-50 border-r border-emerald-200 text-gray-700' },
+          { k:'h2', n:`Capaian<br>${dateH2}`, c:'text-center border-l border-gray-200 bg-gray-50 text-gray-500', f:true },
+          { k:'h1', n:`Capaian<br>${dateH1}`, c:'text-center border-l border-gray-200 bg-gray-50 text-gray-600', f:true },
+          { k:'delta1', n:`Δ (Selisih)<br>${dateH1}`, c:'text-center border-l border-emerald-100 bg-emerald-50 text-emerald-700', f:true },
+          { k:'h0', n:'Capaian<br>HARI INI', c:'text-center border-l border-emerald-200 bg-emerald-100 text-emerald-900 font-bold', f:true },
+          { k:'delta2', n:'Δ (Selisih)<br>HARI INI', c:'text-center border-l border-emerald-300 bg-emerald-200 text-emerald-900 font-black', f:true },
+          { k:'trenVal', n:'TREN KINERJA<br>( % )', c:'text-center border-l border-emerald-300 bg-slate-50 font-bold', f:true }
+      );
+      return base;
+  }
 </script>
 </body>
 </html>
