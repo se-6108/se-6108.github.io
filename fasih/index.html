@@ -861,12 +861,28 @@ function sortLogic(arr, col, isAsc) {
       let valA = a[col]; 
       let valB = b[col];
 
-      // Coba konversi ke angka desimal (berguna untuk "100.0", "95.5", dsb)
+      // Coba konversi ke angka desimal
       let numA = parseFloat(valA);
       let numB = parseFloat(valB);
 
-      // Jika keduanya valid sebagai angka (dan bukan string kosong), urutkan secara numerik
+      // Jika keduanya valid sebagai angka
       if (!isNaN(numA) && !isNaN(numB) && valA !== "" && valB !== "") {
+          
+          // --- LOGIKA TIE-BREAKER (PENENTU SERI) ---
+          if (numA === numB) {
+              // Jika kolom yang sedang di-sort adalah % Submit, dan nilainya sama
+              if (col === 'pct_submit') {
+                  let appA = parseFloat(a['pct_approve']) || 0;
+                  let appB = parseFloat(b['pct_approve']) || 0;
+                  
+                  // Selalu prioritaskan % Approved yang lebih besar (Descending)
+                  if (appA !== appB) {
+                      return appB - appA; 
+                  }
+              }
+              return 0; // Jika % Approved juga sama persis, urutan tetap
+          }
+          
           return isAsc ? numA - numB : numB - numA;
       }
 
