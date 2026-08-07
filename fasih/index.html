@@ -58,7 +58,13 @@
     .filter-menu { z-index: 9999; }
     .teks-upper { text-transform: uppercase !important; }
     tr, .group, .flex-col { page-break-inside: avoid !important; break-inside: avoid-page !important; }
-    #tab10-content th { top: 68px !important; }
+    
+    /* PERBAIKAN STICKY HEADER UNTUK TAB 10 */
+    #tab10-content th { 
+      position: sticky !important; 
+      top: 57px !important; 
+      z-index: 25 !important; 
+    }
   </style>
 </head>
 <body class="h-screen overflow-hidden bg-blue-50/30 flex flex-col text-gray-800">
@@ -185,7 +191,7 @@
              <input type="text" id="dashSearch" onkeyup="handleGlobalFilter()" placeholder="PENCARIAN..." class="w-full px-4 py-1 border border-gray-300 rounded-full text-xs font-medium focus:border-blue-500 outline-none h-[38px] teks-upper shadow-sm transition hover:border-blue-400">
          </div>
          
-<!-- DROPDOWN CUSTOM PRIORITAS -->
+         <!-- DROPDOWN CUSTOM PRIORITAS -->
          <div class="flex-1 min-w-[140px] relative filter-dropdown">
             <button id="btn-prio" onclick="toggleDropdown('dropPrio')" class="w-full px-4 py-1 border border-gray-300 rounded-full text-xs font-medium focus:border-blue-500 outline-none h-[38px] teks-upper shadow-sm bg-white text-gray-700 flex justify-between items-center transition hover:border-blue-400">
                 STATUS PRIORITAS <span class="text-[10px] text-gray-400">▼</span>
@@ -322,15 +328,15 @@
              </table>
          </div>
 
-<div id="tab10-content" class="hidden flex-1 w-full dashboard-table relative">
-             <!-- SWITCHER TETAP (STICKY) DI ATAS -->
+         <div id="tab10-content" class="hidden flex-1 w-full dashboard-table relative overflow-auto">
+             <!-- SWITCHER STICKY DI PALING ATAS -->
              <div class="p-3 bg-gray-50/90 border-b border-gray-200 flex justify-center sticky top-0 left-0 z-30 shadow-sm backdrop-blur-sm">
                  <div class="bg-white border border-gray-200 p-1.5 rounded-xl flex gap-1 shadow-sm">
                      <button id="btnTogglePpl" onclick="switchDailyMode('ppl')" class="px-6 py-2 text-[11px] font-black rounded-lg bg-amber-500 text-white shadow-md transition tracking-wider">PROGRESS PPL (SUBMIT)</button>
                      <button id="btnTogglePml" onclick="switchDailyMode('pml')" class="px-6 py-2 text-[11px] font-black rounded-lg text-gray-500 hover:bg-gray-100 transition tracking-wider">PROGRESS PML (APPROVE)</button>
                  </div>
              </div>
-             <!-- AREA TABEL -->
+             <!-- TABEL -->
              <table class="w-full text-left border-collapse min-w-[1600px]">
                  <thead id="headTab10"></thead>
                  <tbody id="tableDaily" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
@@ -367,10 +373,10 @@
   let DASH_DATA = [];
   let lastUploadKel = "BELUM ADA DATA";
   let lastUploadUsa = "BELUM ADA DATA";
-  let lastUploadFasih = "BELUM ADA DATA"; // State variabel untuk upload FASIH
+  let lastUploadFasih = "BELUM ADA DATA"; 
   let dashFilteredData = [];
-  let TAB_STATE = { 1:[], 2:[], 3:[], 4:[], 6:[], 7:[], 8:[], 9:[] , 10:[] }; 
-  let COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{}, 9:{} , 10:{} }; 
+  let TAB_STATE = { 1:[], 2:[], 3:[], 4:[], 6:[], 7:[], 8:[], 9:[], 10:[] }; 
+  let COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{} }; 
   let dashCurrentPage = 1;
   let dashRowsPerPage = 10; 
   let activeTabId = 1;
@@ -478,7 +484,7 @@
           });
 
           DASH_DATA = res.data;
-          HISTORY_DATA = res.history || []; // TANGKAP HISTORY DARI BACKEND
+          HISTORY_DATA = res.history || [];
 
           lastUploadKel = res.lastUpdateKel || "BELUM ADA DATA";
           lastUploadUsa = res.lastUpdateUsa || "BELUM ADA DATA";
@@ -543,11 +549,10 @@
     renderCheckboxes('dropPj', pj, 'pj');
   }
 
-function renderCheckboxes(containerId, dataArr, filterKey) {
+  function renderCheckboxes(containerId, dataArr, filterKey) {
       let cont = document.getElementById(containerId);
       if(!cont) return;
       
-      // [BARU] Tambahkan kolom pencarian (Search Bar) dengan posisi Sticky
       let html = `
           <div class="px-3 py-2 sticky top-0 bg-white border-b border-gray-100 z-10 rounded-t-2xl">
               <div class="relative">
@@ -559,7 +564,6 @@ function renderCheckboxes(containerId, dataArr, filterKey) {
 
       dataArr.forEach(x => {
           if(!x) return;
-          // [BARU] Tambahkan class 'dropdown-item' dan 'item-text' untuk target pencarian
           html += `<label class="flex items-center px-4 py-2 hover:bg-slate-50 border-b border-gray-100 text-[11px] font-bold text-slate-700 cursor-pointer uppercase dropdown-item transition">
                       <input type="checkbox" class="mr-2 rounded" value="${x}" onchange="updateFilter('${filterKey}', this)">
                       <span class="item-text">${x}</span>
@@ -568,7 +572,6 @@ function renderCheckboxes(containerId, dataArr, filterKey) {
       cont.innerHTML = html;
   }
 
-// [BARU] Fungsi logika pencarian di dalam dropdown
   function filterDropdownItems(inputEl, containerId) {
       let filter = inputEl.value.toLowerCase();
       let container = document.getElementById(containerId);
@@ -577,9 +580,9 @@ function renderCheckboxes(containerId, dataArr, filterKey) {
       items.forEach(item => {
           let text = item.querySelector('.item-text').innerText.toLowerCase();
           if (text.indexOf(filter) > -1) {
-              item.style.display = ""; // Tampilkan jika cocok
+              item.style.display = ""; 
           } else {
-              item.style.display = "none"; // Sembunyikan jika tidak cocok
+              item.style.display = "none"; 
           }
       });
   }
@@ -601,19 +604,15 @@ function renderCheckboxes(containerId, dataArr, filterKey) {
       handleGlobalFilter();
   }
 
-function resetGlobalFilters() {
+  function resetGlobalFilters() {
       document.getElementById('dashSearch').value = '';
       activeFilters = { kec: [], pml: [], ppl: [], pj: [], statusPetugas: [], prio: [] };
       
       document.querySelectorAll('input[type="checkbox"]').forEach(chk => chk.checked = false);
-      
-      // [BARU] Bersihkan juga input search di dalam setiap dropdown
       document.querySelectorAll('.filter-menu input[type="text"]').forEach(input => input.value = '');
-      
-      // [BARU] Tampilkan kembali semua opsi yang sempat tersembunyi
       document.querySelectorAll('.dropdown-item').forEach(item => item.style.display = "");
       
-      COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{}, 9:{} , 10:{} };
+      COLUMN_FILTERS = { 1:{}, 2:{}, 3:{}, 4:{}, 6:{}, 7:{}, 8:{}, 9:{}, 10:{} };
       handleGlobalFilter();
   }
 
@@ -712,7 +711,7 @@ function resetGlobalFilters() {
          { k:'tdk', n:'Tdk ditemukan', c:'text-center border-l border-red-100 bg-red-50 text-red-700', f:true },
          { k:'jml_usaha_kel', n:'Jml Usaha Keluarga', c:'text-center border-l border-blue-200 bg-blue-100 text-blue-900', f:true }
       ],
-9: [
+      9: [
          { k:'ppl', n:'Nama PPL', c:'bg-slate-50 border-r border-slate-200 text-slate-800', w:'200px' },
          { k:'pml', n:'Nama PML', c:'bg-slate-50 border-r border-slate-200 text-gray-700' },
          { k:'kec', n:'Kecamatan', c:'bg-slate-50 border-r border-slate-200 text-gray-700' },
@@ -726,7 +725,7 @@ function resetGlobalFilters() {
          { k:'pctB', n:'% (B)', c:'text-center bg-amber-100 text-amber-700 border-l border-slate-200 font-bold', f:true }, 
          { k:'selisih', n:'Selisih (A - B)', c:'text-center bg-slate-200 text-slate-900 border-l border-slate-300 font-black', f:true }
       ],
-10: []
+      10: []
   };
 
   function buildTableHeaders() {
@@ -735,7 +734,7 @@ function resetGlobalFilters() {
           TABS_CONFIG[tId].forEach(col => {
               let wStyle = col.w ? `style="min-width:${col.w};"` : '';
               let funnelIcon = col.f ? `
-                  <div onclick="openFilterModal('${tId}', '${col.k}', '${col.n}')" class="p-1 hover:bg-black/10 rounded-full transition cursor-pointer" title="Saring Data">
+                  <div onclick="openFilterModal('${tId}', '${col.k}', '${col.n.replace(/<br>/g, ' ')}')" class="p-1 hover:bg-black/10 rounded-full transition cursor-pointer" title="Saring Data">
                       <svg class="w-3 h-3 opacity-70 hover:opacity-100" fill="currentColor" viewBox="0 0 20 20">
                           <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"></path>
                       </svg>
@@ -772,10 +771,11 @@ function resetGlobalFilters() {
                       <option value="gt">Lebih Dari ( > )</option>
                       <option value="lt">Kurang Dari ( < )</option>
                       <option value="eq">Spesifik Sama Dengan ( = )</option>
+                      <option value="contains">Mengandung Teks</option>
                   </select>
                   <div id="swal-filter-val-container" class="hidden">
-                      <label class="block mb-1.5 font-bold text-gray-700">Masukkan Angka/Nilai:</label>
-                      <input type="number" id="swal-filter-val" class="w-full border border-gray-300 p-2.5 rounded-xl bg-gray-50 focus:border-indigo-500 outline-none font-bold text-indigo-700 text-lg" placeholder="Contoh: 0">
+                      <label class="block mb-1.5 font-bold text-gray-700">Masukkan Nilai / Teks:</label>
+                      <input type="text" id="swal-filter-val" class="w-full border border-gray-300 p-2.5 rounded-xl bg-gray-50 focus:border-indigo-500 outline-none font-bold text-indigo-700 text-lg" placeholder="Contoh: 0 atau Nama">
                   </div>
               </div>
           `,
@@ -798,7 +798,7 @@ function resetGlobalFilters() {
           preConfirm: () => {
               let m = document.getElementById('swal-filter-mode').value; 
               let v = document.getElementById('swal-filter-val').value;
-              if(m !== 'all' && v === '') { Swal.showValidationMessage('Nilai angka tidak boleh kosong!'); return false; }
+              if(m !== 'all' && v === '') { Swal.showValidationMessage('Nilai filter tidak boleh kosong!'); return false; }
               return { mode: m, val: v };
           }
       }).then(res => {
@@ -811,65 +811,89 @@ function resetGlobalFilters() {
       });
   }
 
+  // PERBAIKAN DUKUNGAN FILTER TEKS & ANGKA UNTUK SEMUA TAB
   function applyHeaderFilters(dataArr, tId) {
       let filtered = dataArr;
       let colFilters = COLUMN_FILTERS[tId] || {};
       Object.keys(colFilters).forEach(k => {
           let f = colFilters[k];
-          let fv = Number(f.val);
-          if(f.mode === 'gt') filtered = filtered.filter(r => Number(r[k]||0) > fv);
-          else if(f.mode === 'lt') filtered = filtered.filter(r => Number(r[k]||0) < fv);
-          else if(f.mode === 'eq') filtered = filtered.filter(r => Number(r[k]||0) === fv);
+          let filterVal = String(f.val).toLowerCase().trim();
+
+          filtered = filtered.filter(r => {
+              let rawVal = r[k] !== undefined && r[k] !== null ? r[k] : '';
+              let numVal = Number(rawVal);
+              let fvNum = Number(f.val);
+
+              if (f.mode === 'contains') {
+                  return String(rawVal).toLowerCase().includes(filterVal);
+              }
+              
+              if (!isNaN(numVal) && !isNaN(fvNum) && String(rawVal).trim() !== '') {
+                  if (f.mode === 'gt') return numVal > fvNum;
+                  if (f.mode === 'lt') return numVal < fvNum;
+                  if (f.mode === 'eq') return numVal === fvNum;
+              } else {
+                  let strVal = String(rawVal).toLowerCase();
+                  if (f.mode === 'eq') return strVal === filterVal;
+                  if (f.mode === 'gt') return strVal > filterVal;
+                  if (f.mode === 'lt') return strVal < filterVal;
+              }
+              return true;
+          });
       });
       return filtered;
   }
 
-function switchTab(tabId) {
-    if (!DASH_DATA || DASH_DATA.length === 0) return; 
+  function switchTab(tabId) {
+      if (!DASH_DATA || DASH_DATA.length === 0) return; 
 
-    if (activeTabId !== tabId) dashCurrentPage = 1; 
-    activeTabId = tabId;
-    
-    // TAB 10 DIPINDAH KE KELOMPOK BAWAH AGAR PAGINATION-NYA "ALL" (999999)
-    if ([1, 6, 7, 8].includes(tabId)) {
-        dashRowsPerPage = 10;
-        if (document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "10";
-    } else if ([2, 3, 4, 9, 10].includes(tabId)) {
-        dashRowsPerPage = 999999;
-        if (document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "999999";
-    }
-    
-    [1,2,3,4,5,6,7,8,9,10].forEach(i => {
-        let btn = document.getElementById('btnTab'+i);
-        // PERBAIKAN BUG: Menambahkan 'emerald' dan 'orange' ke regex agar warnanya ikut terhapus saat pindah tab
-        if(btn) btn.className = btn.className.replace(/border-blue-500|border-amber-500|border-purple-500|border-pink-500|border-teal-500|border-slate-500|border-emerald-500|border-orange-500|text-blue-700|text-blue-600|text-amber-600|text-purple-600|text-amber-500|text-purple-500|text-pink-600|text-teal-600|text-slate-700|text-emerald-700|text-emerald-600|text-orange-600/g, "border-transparent text-gray-500");
-        let tc = document.getElementById('tab'+i+'-content'); 
-        if(tc) { tc.classList.add('hidden'); tc.classList.remove('block'); }
-    });
-    
-    let btnAct = document.getElementById('btnTab'+tabId);
-    if(btnAct) {
-        btnAct.classList.remove("border-transparent", "text-gray-500");
-        if(tabId===6) btnAct.classList.add("border-amber-500", "text-amber-600");
-        else if(tabId===7) btnAct.classList.add("border-purple-500", "text-purple-600");
-        else if(tabId===8) btnAct.classList.add("border-blue-500", "text-blue-700");
-        else if(tabId===9) btnAct.classList.add("border-slate-500", "text-slate-700");
-        else if(tabId===10) btnAct.classList.add("border-amber-500", "text-amber-600"); // TAB 10 SEKARANG ORANGE/AMBER
-        else btnAct.classList.add("border-blue-500", "text-blue-700");
-    }
-    
-    if(document.getElementById('tab'+tabId+'-content')) document.getElementById('tab'+tabId+'-content').classList.remove('hidden');
-    if(document.getElementById('paginasiArea')) document.getElementById('paginasiArea').style.display = ([1,2,3,4,6,7,8,9,10].includes(tabId)) ? 'flex' : 'none';
+      if (activeTabId !== tabId) dashCurrentPage = 1; 
+      activeTabId = tabId;
+      
+      if ([1, 6, 7, 8].includes(tabId)) {
+          dashRowsPerPage = 10;
+          if (document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "10";
+      } else if ([2, 3, 4, 9, 10].includes(tabId)) {
+          dashRowsPerPage = 999999;
+          if (document.getElementById('perPageSelect')) document.getElementById('perPageSelect').value = "999999";
+      }
+      
+      [1,2,3,4,5,6,7,8,9,10].forEach(i => {
+          let btn = document.getElementById('btnTab'+i);
+          if(btn) btn.className = btn.className.replace(/border-blue-500|border-amber-500|border-purple-500|border-pink-500|border-teal-500|border-slate-500|border-emerald-500|border-orange-500|text-blue-700|text-blue-600|text-amber-600|text-purple-600|text-amber-500|text-purple-500|text-pink-600|text-teal-600|text-slate-700|text-emerald-700|text-emerald-600|text-orange-600/g, "border-transparent text-gray-500");
+          let tc = document.getElementById('tab'+i+'-content'); 
+          if(tc) { tc.classList.add('hidden'); tc.classList.remove('flex', 'block'); }
+      });
+      
+      let btnAct = document.getElementById('btnTab'+tabId);
+      if(btnAct) {
+          btnAct.classList.remove("border-transparent", "text-gray-500");
+          if(tabId===6) btnAct.classList.add("border-amber-500", "text-amber-600");
+          else if(tabId===7) btnAct.classList.add("border-purple-500", "text-purple-600");
+          else if(tabId===8) btnAct.classList.add("border-blue-500", "text-blue-700");
+          else if(tabId===9) btnAct.classList.add("border-slate-500", "text-slate-700");
+          else if(tabId===10) btnAct.classList.add("border-amber-500", "text-amber-600"); 
+          else btnAct.classList.add("border-blue-500", "text-blue-700");
+      }
+      
+      let currentContent = document.getElementById('tab'+tabId+'-content');
+      if(currentContent) {
+          currentContent.classList.remove('hidden');
+          if (tabId === 10) currentContent.classList.add('flex');
+          else currentContent.classList.add('block');
+      }
 
-    sortCol = ''; sortAsc = true; 
-    if (activeTabId === 2) { sortCol = 'pct_submit'; sortAsc = false; } 
-    else if (activeTabId === 3) { sortCol = 'pct_app'; sortAsc = false; } 
-    else if (activeTabId === 4) { sortCol = 'pct_submit'; sortAsc = false; } 
-    else if (activeTabId === 9) { sortCol = 'selisih'; sortAsc = true; }
-    else if (activeTabId === 10) { sortCol = 'delta2'; sortAsc = false; }
-    
-    renderCurrentTab();
-}
+      if(document.getElementById('paginasiArea')) document.getElementById('paginasiArea').style.display = ([1,2,3,4,6,7,8,9,10].includes(tabId)) ? 'flex' : 'none';
+
+      sortCol = ''; sortAsc = true; 
+      if (activeTabId === 2) { sortCol = 'pct_submit'; sortAsc = false; } 
+      else if (activeTabId === 3) { sortCol = 'pct_app'; sortAsc = false; } 
+      else if (activeTabId === 4) { sortCol = 'pct_submit'; sortAsc = false; } 
+      else if (activeTabId === 9) { sortCol = 'selisih'; sortAsc = true; }
+      else if (activeTabId === 10) { sortCol = 'delta2'; sortAsc = false; }
+      
+      renderCurrentTab();
+  }
 
   function applySort(col) {
       if(sortCol === col) sortAsc = !sortAsc; 
@@ -877,47 +901,36 @@ function switchTab(tabId) {
       renderCurrentTab();
   }
 
-function sortLogic(arr, col, isAsc) {
-   arr.sort((a, b) => {
-      let valA = a[col]; 
-      let valB = b[col];
+  function sortLogic(arr, col, isAsc) {
+     arr.sort((a, b) => {
+        let valA = a[col]; 
+        let valB = b[col];
 
-      // Coba konversi ke angka desimal
-      let numA = parseFloat(valA);
-      let numB = parseFloat(valB);
+        let numA = parseFloat(valA);
+        let numB = parseFloat(valB);
 
-      // Jika keduanya valid sebagai angka
-      if (!isNaN(numA) && !isNaN(numB) && valA !== "" && valB !== "") {
-          
-          // --- LOGIKA TIE-BREAKER (PENENTU SERI) ---
-          if (numA === numB) {
-              // Jika kolom yang sedang di-sort adalah % Submit, dan nilainya sama
-              if (col === 'pct_submit') {
-                  let appA = parseFloat(a['pct_approve']) || 0;
-                  let appB = parseFloat(b['pct_approve']) || 0;
-                  
-                  // Selalu prioritaskan % Approved yang lebih besar (Descending)
-                  if (appA !== appB) {
-                      return appB - appA; 
-                  }
-              }
-              return 0; // Jika % Approved juga sama persis, urutan tetap
-          }
-          
-          return isAsc ? numA - numB : numB - numA;
-      }
+        if (!isNaN(numA) && !isNaN(numB) && valA !== "" && valB !== "") {
+            if (numA === numB) {
+                if (col === 'pct_submit') {
+                    let appA = parseFloat(a['pct_approve']) || 0;
+                    let appB = parseFloat(b['pct_approve']) || 0;
+                    if (appA !== appB) return appB - appA; 
+                }
+                return 0; 
+            }
+            return isAsc ? numA - numB : numB - numA;
+        }
 
-      // Jika bukan angka (misal nama petugas/kecamatan), kembalikan ke pengurutan teks (A-Z)
-      valA = String(valA).toLowerCase(); 
-      valB = String(valB).toLowerCase();
-      
-      if (valA < valB) return isAsc ? -1 : 1;
-      if (valA > valB) return isAsc ? 1 : -1;
-      return 0;
-   });
-}
+        valA = String(valA).toLowerCase(); 
+        valB = String(valB).toLowerCase();
+        
+        if (valA < valB) return isAsc ? -1 : 1;
+        if (valA > valB) return isAsc ? 1 : -1;
+        return 0;
+     });
+  }
 
-function handleGlobalFilter() {
+  function handleGlobalFilter() {
       const search = document.getElementById('dashSearch').value.toLowerCase();
       
       const fkec = activeFilters.kec;
@@ -926,7 +939,6 @@ function handleGlobalFilter() {
       const fpj = activeFilters.pj;
       const fprio = activeFilters.prio;
 
-      // === [1] LOGIKA PENANDA FILTER AKTIF (WARNA TOMBOL) ===
       const filterIndicators = [
           { id: 'btn-prio', count: fprio.length },
           { id: 'btn-kec', count: fkec.length },
@@ -940,17 +952,14 @@ function handleGlobalFilter() {
           let btn = document.getElementById(f.id);
           if (btn) {
               if (f.count > 0) {
-                  // Jika filter aktif: Ubah tombol jadi biru muda
                   btn.classList.add('bg-blue-50', 'border-blue-500', 'text-blue-700', 'font-bold');
                   btn.classList.remove('bg-white', 'border-gray-300', 'text-gray-700');
               } else {
-                  // Jika kosong: Kembalikan ke putih standar
                   btn.classList.add('bg-white', 'border-gray-300', 'text-gray-700');
                   btn.classList.remove('bg-blue-50', 'border-blue-500', 'text-blue-700', 'font-bold');
               }
           }
       });
-      // ========================================================
       
       dashFilteredData = DASH_DATA.filter(r => {
           let mS = search === '' || `${r.idSls} ${r.nmsls} ${r.desa} ${r.ppl} ${r.pml}`.toLowerCase().includes(search);
@@ -998,14 +1007,12 @@ function handleGlobalFilter() {
       TAB_STATE[1] = dashFilteredData.map(r => ({ ...r, desaKec: r.desa + ' - ' + r.kec }));
       
       let pplM={}, pmlM={}, kecM={}, evalM={};
-dashFilteredData.forEach(r => {
+      dashFilteredData.forEach(r => {
           let kPpl = r.ppl+"_"+r.kec; 
-          // PERBAIKAN: Masukkan pml dan pj
           if(!pplM[kPpl]) pplM[kPpl]={ppl:r.ppl, pml:r.pml, kec:r.kec, pj:r.pj, email:r.emailPpl, o:0, d:0, agg_s:0, t:0, app:0};
           pplM[kPpl].o+=r.open; pplM[kPpl].d+=r.draft; pplM[kPpl].agg_s+=r.agg_submit; pplM[kPpl].t+=r.calcTotal; pplM[kPpl].app+=r.approve;
           
           let kPml = r.pml+"_"+r.kec; 
-          // PERBAIKAN: Masukkan pj
           if(!pmlM[kPml]) pmlM[kPml]={pml:r.pml, kec:r.kec, pj:r.pj, email:r.emailPml, o:0, d:0, sub:0, rej:0, app:0, t:0};
           pmlM[kPml].o+=r.open; pmlM[kPml].d+=r.draft; pmlM[kPml].sub+=r.submit; pmlM[kPml].rej+=r.reject; pmlM[kPml].app+=r.approve; pmlM[kPml].t+=r.calcTotal;
 
@@ -1013,7 +1020,6 @@ dashFilteredData.forEach(r => {
           if(!kecM[kKec]) kecM[kKec]={kec:r.kec, pj:r.pj, o:0, d:0, s:0, rej:0, app:0, t:0, agg_sra:0};
           kecM[kKec].o+=r.open; kecM[kKec].d+=r.draft; kecM[kKec].s+=r.submit; kecM[kKec].rej+=r.reject; kecM[kKec].app+=r.approve; kecM[kKec].agg_sra+=r.agg_submit; kecM[kKec].t+=r.calcTotal;
 
-          // EVALUASI PPL (TAB 9)
           if(!evalM[kPpl]) {
               evalM[kPpl] = {
                   ppl: r.ppl, pml: r.pml, kec: r.kec, pj: r.pj, emailPpl: r.emailPpl,
@@ -1116,9 +1122,7 @@ dashFilteredData.forEach(r => {
           return { ...p, pct_submit, pct_approve, pct_reject, kolomA, kolomB, selisih, pctA, pctB };
       });
 
-// KALKULASI TAB 10 (PROGRESS HARIAN)
-// KALKULASI TAB 10 (PROGRESS HARIAN)
-// KALKULASI TAB 10 (PROGRESS HARIAN)
+      // KALKULASI TAB 10 (PROGRESS HARIAN)
       TAB_STATE[10] = [];
       let sortedHist = [...HISTORY_DATA].sort((a,b) => a.date < b.date ? 1 : -1);
       
@@ -1149,7 +1153,7 @@ dashFilteredData.forEach(r => {
           return { trenVal: pct, trenHtml: `<span class="px-2.5 py-1 rounded text-[9px] font-black border tracking-wider whitespace-nowrap shadow-sm ${badgeClass}">${trenText}</span>` };
       }
 
-function getPrediksiSelesai(tTarget, currentCapaian) {
+      function getPrediksiSelesai(tTarget, currentCapaian) {
           if (tTarget === 0) return { html: `<span class="text-gray-400">-</span>`, sisa_hari: 0, isLate: false };
           if (currentCapaian >= tTarget) return { html: `<span class="px-2 py-0.5 rounded text-[9px] font-black bg-emerald-100 text-emerald-700 border border-emerald-300 uppercase tracking-wider shadow-sm">✅ SELESAI</span>`, sisa_hari: 0, isLate: false };
           
@@ -1166,7 +1170,7 @@ function getPrediksiSelesai(tTarget, currentCapaian) {
           let dateStr = formatTanggalIndo(d.toISOString());
           
           // DETEKSI TERLAMBAT (Di atas 31 Agustus 2026)
-          let deadline = new Date(2026, 7, 31); // Bulan ke-7 karena JavaScript Date 0-indexed (0=Jan)
+          let deadline = new Date(2026, 7, 31); // 31 Agustus 2026
           let isLate = d.getTime() > deadline.getTime();
           let lateBadge = isLate ? `<br><span class="px-1.5 py-0.5 mt-1.5 inline-block rounded text-[8px] bg-red-600 text-white font-bold tracking-widest shadow-sm">TERLAMBAT</span>` : '';
           
@@ -1202,6 +1206,7 @@ function getPrediksiSelesai(tTarget, currentCapaian) {
           
           TAB_STATE[10].push({ petugas: p.pml, role: 'PML', kec: p.kec, pj: p.pj, email: p.email, t: p.t, avg_vel: velocity, h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenHtml: tren.trenHtml, sisa_hari: prediksi.sisa_hari, prediksiHtml: prediksi.html, isLate: prediksi.isLate });
       });
+  }
 
   function renderCurrentTab() {
       if(activeTabId === 5) return renderVisualisasi();
@@ -1213,7 +1218,6 @@ function getPrediksiSelesai(tTarget, currentCapaian) {
          rawData = rawData.filter(r => fStatus.includes(r.statusTarget));
       }
 
-      // FILTER ROLE UNTUK TAB 10
       if (activeTabId === 10) {
           rawData = rawData.filter(r => r.role.toLowerCase() === dailyProgressMode);
       }
@@ -1290,7 +1294,7 @@ function getPrediksiSelesai(tTarget, currentCapaian) {
                    <td class="px-4 py-3 text-center border-l border-gray-200 align-middle whitespace-nowrap">${bd}</td>
                  </tr>`;
             }
-else if(activeTabId === 3) {
+            else if(activeTabId === 3) {
                let cl = r.statusTarget === 'Tercapai' ? 'hover:bg-blue-50/50' : 'bg-red-50/40 text-red-900 hover:bg-red-100/50';
                let bd = r.statusTarget === 'Tercapai' ? '<span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[9px] font-bold">TERCAPAI</span>' : '<span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[9px] font-bold">BELUM</span>';
                html += `
@@ -1388,7 +1392,7 @@ else if(activeTabId === 3) {
                    <td class="px-4 py-3 text-center font-mono font-bold text-blue-900 border-l border-blue-300 bg-blue-200/40 align-middle">${r.jml_usaha_kel}</td>
                  </tr>`;
             }
-else if(activeTabId === 9) {
+            else if(activeTabId === 9) {
                html += `
                  <tr class="border-b transition hover:bg-slate-50/80 bg-white">
                    <td class="px-4 py-3 text-center border-r border-slate-200 align-middle font-bold text-gray-500">${n}</td>
@@ -1411,8 +1415,7 @@ else if(activeTabId === 9) {
                    <td class="px-4 py-3 text-center font-black font-mono text-slate-800 border-l border-slate-300 bg-slate-100/50 align-middle text-sm">${r.selisih}</td>
                  </tr>`;
             }
-
-else if(activeTabId === 10) {
+            else if(activeTabId === 10) {
                let isPpl = dailyProgressMode === 'ppl';
                let isLate = r.isLate;
 
@@ -1475,7 +1478,7 @@ else if(activeTabId === 10) {
       }
   }
 
- function changePerPage() { 
+  function changePerPage() { 
       let sel = document.getElementById('perPageSelect');
       if (sel) {
           dashRowsPerPage = parseInt(sel.value) || 10;
@@ -1504,7 +1507,7 @@ else if(activeTabId === 10) {
        return html + '</div>';
   }
 
-function renderVisualisasi() {
+  function renderVisualisasi() {
      let kecM = {}; 
      dashFilteredData.forEach(r => {
         let k = r.kec || 'Tanpa Kecamatan';
@@ -1513,7 +1516,6 @@ function renderVisualisasi() {
      });
      kecChartMapGlobal = kecM;
 
-     // === [BARU] FUNGSI BANTU SORTING DINAMIS ===
      function getSortedData(visibleFlags = [true, true, true, true, true]) {
          return Object.entries(kecChartMapGlobal).sort((a, b) => {
              let valA = a[1]; let valB = b[1];
@@ -1521,11 +1523,9 @@ function renderVisualisasi() {
              let activeCount = visibleFlags.filter(v => v).length;
 
              if(activeCount === 5) {
-                 // Default jika semua aktif: Urutkan berdasarkan persentase Approve tertinggi
                  scoreA = valA.tot > 0 ? (valA.a / valA.tot) : 0;
                  scoreB = valB.tot > 0 ? (valB.a / valB.tot) : 0;
              } else {
-                 // Auto-Sort berdasarkan gabungan status visual yang sedang diklik (aktif)
                  if(valA.tot > 0) {
                      let sumA = 0;
                      if(visibleFlags[0]) sumA += valA.o;
@@ -1549,7 +1549,6 @@ function renderVisualisasi() {
          });
      }
 
-     // Tarik data dengan urutan default (Semua True)
      let sortK = getSortedData();
      
      let lbls = sortK.map(x => x[0]);
@@ -1589,12 +1588,10 @@ function renderVisualisasi() {
                          display: true, 
                          position: 'top', 
                          labels: {font:{family:'Montserrat', weight:'bold'}},
-                         // === [BARU] INTERCEPT KLIK PADA LEGEND UNTUK RE-SORTING ===
                          onClick: function(e, legendItem, legend) {
                              const index = legendItem.datasetIndex;
                              const ci = legend.chart;
                              
-                             // Toggle visibilitas default bawaan Chart.js
                              if (ci.isDatasetVisible(index)) {
                                  ci.hide(index);
                                  legendItem.hidden = true;
@@ -1603,7 +1600,6 @@ function renderVisualisasi() {
                                  legendItem.hidden = false;
                              }
                              
-                             // Ambil status visibility terbaru (0 sampai 4)
                              let visibleFlags = [
                                  ci.isDatasetVisible(0),
                                  ci.isDatasetVisible(1),
@@ -1612,7 +1608,6 @@ function renderVisualisasi() {
                                  ci.isDatasetVisible(4)
                              ];
                              
-                             // Update urutan label dan isi datanya berdasarkan filter yang aktif
                              let newSort = getSortedData(visibleFlags);
                              ci.data.labels = newSort.map(x => x[0]);
                              ci.data.datasets[0].data = newSort.map(x => x[1].tot>0 ? ((x[1].o/x[1].tot)*100).toFixed(2) : 0);
@@ -1621,7 +1616,6 @@ function renderVisualisasi() {
                              ci.data.datasets[3].data = newSort.map(x => x[1].tot>0 ? ((x[1].rej/x[1].tot)*100).toFixed(2) : 0);
                              ci.data.datasets[4].data = newSort.map(x => x[1].tot>0 ? ((x[1].a/x[1].tot)*100).toFixed(2) : 0);
                              
-                             // Segarkan ulang visual chart
                              ci.update();
                          }
                      }, 
@@ -1675,13 +1669,12 @@ function renderVisualisasi() {
     });
   }
 
-function showUploadModal() {
+  function showUploadModal() {
     Swal.fire({
       title: '<span class="text-xl font-black uppercase text-indigo-800">INTEGRASI DATA LAPANGAN</span>',
       html: `
         <div class="text-left text-sm mt-4 space-y-4">
           
-          <!-- FORM 1: KELUARGA -->
           <div class="p-4 border border-amber-300 bg-amber-50 rounded-xl shadow-sm relative overflow-hidden">
               <label class="font-black text-amber-800 block mb-2">1. Progres_Pemutakhiran_Keluarga... (.xlsx)</label>
               <input type="file" id="fileKel" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-amber-600 file:text-white file:font-bold hover:file:bg-amber-700 transition">
@@ -1691,7 +1684,6 @@ function showUploadModal() {
               </div>
           </div>
 
-          <!-- FORM 2: USAHA -->
           <div class="p-4 border border-purple-300 bg-purple-50 rounded-xl shadow-sm relative overflow-hidden">
               <label class="font-black text-purple-800 block mb-2">2. Progres_Pendataan_Sub... (.xlsx)</label>
               <input type="file" id="fileUsa" accept=".xlsx, .xls" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-purple-600 file:text-white file:font-bold hover:file:bg-purple-700 transition">
@@ -1701,7 +1693,6 @@ function showUploadModal() {
               </div>
           </div>
 
-          <!-- FORM 3: DATA FASIH CSV -->
           <div class="p-4 border border-blue-300 bg-blue-50 rounded-xl shadow-sm relative overflow-hidden">
               <label class="font-black text-blue-800 block mb-2">3. File Progress FASIH (.csv)</label>
               <input type="file" id="fileFasih" accept=".csv" class="text-xs w-full cursor-pointer file:mr-3 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:bg-blue-600 file:text-white file:font-bold hover:file:bg-blue-700 transition">
@@ -1728,135 +1719,73 @@ function showUploadModal() {
     }).then(r => { 
         if(r.isConfirmed) processUploads(r.value.kel, r.value.usa, r.value.fasih); 
     });
-}
-
-async function processUploads(fKel, fUsa, fFasih) {
-     Swal.fire({
-         title: 'Memproses Data...', 
-         html: '<b>Sistem</b> sedang mengekstrak ribuan baris data Anda di belakang layar...<br><span class="text-xs text-red-500 italic mt-2 block">Dilarang menutup browser!</span>', 
-         allowOutsideClick: false, 
-         didOpen: () => Swal.showLoading()
-     });
-     try {
-       if(fKel) { 
-           let dataKel = await parseExcelKeluarga(fKel); 
-           await sendToGAS('keluarga', dataKel); 
-       }
-       if(fUsa) { 
-           let dataUsa = await parseExcelUsahaAll(fUsa); 
-           if(dataUsa.bku && dataUsa.bku.length > 1) await sendToGAS('usaha_bku', dataUsa.bku); 
-           if(dataUsa.kel && dataUsa.kel.length > 1) await sendToGAS('usaha_kel', dataUsa.kel); 
-       }
-       // [BARU] Baca file FASIH CSV sebagai Plain Text
-       if(fFasih) {
-           let dataFasih = await parseCSV(fFasih);
-           await sendToGAS('fasih', dataFasih);
-       }
-       Swal.fire('Integrasi Berhasil!', 'Data Eksternal telah tersimpan ke Database dan siap dianalisa.', 'success').then(()=>{ location.reload(); });
-     } catch (err) { 
-         Swal.fire('Gagal Ekstrak', 'Terjadi kesalahan format: ' + String(err), 'error'); 
-     }
-}
-
-// [BARU] Fungsi parser murni teks untuk file .csv
-function parseCSV(file) {
-  return new Promise((resolve, reject) => {
-    let r = new FileReader();
-    r.onload = e => {
-      try {
-        let csvText = e.target.result;
-        // SheetJS memiliki kapabilitas membaca text berformat csv secara langsung
-        let wb = XLSX.read(csvText, { type: 'string' });
-        let sheetName = wb.SheetNames[0];
-        let jsonResult = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1 });
-        resolve(jsonResult);
-      } catch (err) {
-        reject("Gagal membaca file CSV. Pastikan format file tidak rusak.");
-      }
-    };
-    // Wajib dibaca sebagai teks agar tidak bentrok dengan parser ArrayBuffer
-    r.readAsText(file, 'utf-8');
-  });
-}
-
-  function sendToGAS(tipe, dataArray) {
-     return fetch(GAS_API_URL, { 
-         method: 'POST', 
-         headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
-         body: JSON.stringify({ type: tipe, data: dataArray }) 
-     }).then(r => r.json());
   }
 
-function parseExcelKeluarga(f) {
-  return new Promise((resolve, reject) => { 
-    let r = new FileReader(); 
-    r.onload = e => { 
-      try {
-        let wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'}); 
-        let rK = [["KODE_16", "PRELIST", "DITEMUKAN", "BARU", "MENINGGAL", "TIDAK_DITEMUKAN", "TIDAK_ELIGIBLE", "TIDAK_DAPAT_DITEMUI", "KHUSUS"]]; 
-        
-        let sK = wb.SheetNames.find(s => s.toUpperCase() === 'KELUARGA' || s.toUpperCase().includes('KELUARGA'));
-        if(sK) { 
-            let rows = XLSX.utils.sheet_to_json(wb.Sheets[sK], {header: 1}); 
-            let cIdx = {p:-1, d:-1, b:-1, m:-1, t:-1, te:-1, tdd:-1, k:-1}; 
-            let start = false; 
-            
-            for (let i = 0; i < rows.length; i++) {
-                let row = rows[i];
-                if(!row || !row.length) continue; 
-                
-                if(!start) { 
-                    if(String(row[0]).trim().toUpperCase() === 'KODE') { 
-                        start = true; 
-                        let nextRow = rows[i+1] || []; 
-                        let maxCol = Math.max(row.length, nextRow.length);
-                        
-                        for(let c=0; c < maxCol; c++){ 
-                            let h1 = String(row[c]||'').toUpperCase().trim(); 
-                            let h2 = String(nextRow[c]||'').toUpperCase().trim(); 
-                            
-                            if(h1.includes('PRELIST') || h2.includes('PRELIST')) cIdx.p=c; 
-                            else if(h1==='DITEMUKAN' || h2==='DITEMUKAN') cIdx.d=c; 
-                            else if(h1==='KELUARGA BARU' || h2==='KELUARGA BARU' || h1==='BARU' || h2==='BARU') cIdx.b=c; 
-                            else if(h1==='MENINGGAL' || h2==='MENINGGAL') cIdx.m=c; 
-                            else if(h1==='TIDAK DITEMUKAN' || h2==='TIDAK DITEMUKAN') cIdx.t=c; 
-                            else if(h1==='TIDAK ELIGIBLE' || h2==='TIDAK ELIGIBLE') cIdx.te=c;
-                            else if(h1.includes('TIDAK DAPAT DITEMUI') || h2.includes('TIDAK DAPAT DITEMUI')) cIdx.tdd=c;
-                            else if(h1==='KELUARGA KHUSUS' || h2==='KELUARGA KHUSUS') cIdx.k=c;
-                        } 
-                    } 
-                    continue; 
-                } 
-                
-                if(String(row[0]||'').trim().length === 16) {
-                    rK.push([
-                        String(row[0]).trim(), Number(row[cIdx.p]||0), Number(row[cIdx.d]||0), 
-                        Number(row[cIdx.b]||0), Number(row[cIdx.m]||0), Number(row[cIdx.t]||0),
-                        Number(row[cIdx.te]||0), Number(row[cIdx.tdd]||0), Number(row[cIdx.k]||0)
-                    ]); 
-                }
-            } 
+  async function processUploads(fKel, fUsa, fFasih) {
+       Swal.fire({
+           title: 'Memproses Data...', 
+           html: '<b>Sistem</b> sedang mengekstrak ribuan baris data Anda di belakang layar...<br><span class="text-xs text-red-500 italic mt-2 block">Dilarang menutup browser!</span>', 
+           allowOutsideClick: false, 
+           didOpen: () => Swal.showLoading()
+       });
+       try {
+         if(fKel) { 
+             let dataKel = await parseExcelKeluarga(fKel); 
+             await sendToGAS('keluarga', dataKel); 
+         }
+         if(fUsa) { 
+             let dataUsa = await parseExcelUsahaAll(fUsa); 
+             if(dataUsa.bku && dataUsa.bku.length > 1) await sendToGAS('usaha_bku', dataUsa.bku); 
+             if(dataUsa.kel && dataUsa.kel.length > 1) await sendToGAS('usaha_kel', dataUsa.kel); 
+         }
+         if(fFasih) {
+             let dataFasih = await parseCSV(fFasih);
+             await sendToGAS('fasih', dataFasih);
+         }
+         Swal.fire('Integrasi Berhasil!', 'Data Eksternal telah tersimpan ke Database dan siap dianalisa.', 'success').then(()=>{ location.reload(); });
+       } catch (err) { 
+           Swal.fire('Gagal Ekstrak', 'Terjadi kesalahan format: ' + String(err), 'error'); 
+       }
+  }
+
+  function parseCSV(file) {
+    return new Promise((resolve, reject) => {
+      let r = new FileReader();
+      r.onload = e => {
+        try {
+          let csvText = e.target.result;
+          let wb = XLSX.read(csvText, { type: 'string' });
+          let sheetName = wb.SheetNames[0];
+          let jsonResult = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1 });
+          resolve(jsonResult);
+        } catch (err) {
+          reject("Gagal membaca file CSV. Pastikan format file tidak rusak.");
         }
-        resolve(rK); 
-      } catch(err) { reject(err); }
-    }; 
-    r.readAsArrayBuffer(f); 
-  });
-}
-  
-function parseExcelUsahaAll(f) {
+      };
+      r.readAsText(file, 'utf-8');
+    });
+  }
+
+  function sendToGAS(tipe, dataArray) {
+       return fetch(GAS_API_URL, { 
+           method: 'POST', 
+           headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+           body: JSON.stringify({ type: tipe, data: dataArray }) 
+       }).then(r => r.json());
+  }
+
+  function parseExcelKeluarga(f) {
     return new Promise((resolve, reject) => { 
       let r = new FileReader(); 
       r.onload = e => { 
         try {
           let wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'}); 
-          let rB = [["KODE_16", "PRELIST", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]]; 
-          let rK = [["KODE_16", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]];
+          let rK = [["KODE_16", "PRELIST", "DITEMUKAN", "BARU", "MENINGGAL", "TIDAK_DITEMUKAN", "TIDAK_ELIGIBLE", "TIDAK_DAPAT_DITEMUI", "KHUSUS"]]; 
           
-          let sUP = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA PERUSAHAAN'));
-          if(sUP) { 
-              let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUP], {header: 1}); 
-              let cIdx = {p:-1, d:-1, b:-1, tu:-1, g:-1, t:-1}; 
+          let sK = wb.SheetNames.find(s => s.toUpperCase() === 'KELUARGA' || s.toUpperCase().includes('KELUARGA'));
+          if(sK) { 
+              let rows = XLSX.utils.sheet_to_json(wb.Sheets[sK], {header: 1}); 
+              let cIdx = {p:-1, d:-1, b:-1, m:-1, t:-1, te:-1, tdd:-1, k:-1}; 
               let start = false; 
               
               for (let i = 0; i < rows.length; i++) {
@@ -1875,61 +1804,119 @@ function parseExcelUsahaAll(f) {
                               
                               if(h1.includes('PRELIST') || h2.includes('PRELIST')) cIdx.p=c; 
                               else if(h1==='DITEMUKAN' || h2==='DITEMUKAN') cIdx.d=c; 
-                              else if(h1==='BARU' || h2==='BARU') cIdx.b=c; 
-                              else if(h1==='TUTUP' || h2==='TUTUP') cIdx.tu=c; 
-                              else if(h1==='GANDA' || h2==='GANDA') cIdx.g=c; 
+                              else if(h1==='KELUARGA BARU' || h2==='KELUARGA BARU' || h1==='BARU' || h2==='BARU') cIdx.b=c; 
+                              else if(h1==='MENINGGAL' || h2==='MENINGGAL') cIdx.m=c; 
                               else if(h1==='TIDAK DITEMUKAN' || h2==='TIDAK DITEMUKAN') cIdx.t=c; 
+                              else if(h1==='TIDAK ELIGIBLE' || h2==='TIDAK ELIGIBLE') cIdx.te=c;
+                              else if(h1.includes('TIDAK DAPAT DITEMUI') || h2.includes('TIDAK DAPAT DITEMUI')) cIdx.tdd=c;
+                              else if(h1==='KELUARGA KHUSUS' || h2==='KELUARGA KHUSUS') cIdx.k=c;
                           } 
                       } 
                       continue; 
                   } 
                   
                   if(String(row[0]||'').trim().length === 16) {
-                      rB.push([String(row[0]).trim(), Number(row[cIdx.p]||0), Number(row[cIdx.d]||0), Number(row[cIdx.b]||0), Number(row[cIdx.tu]||0), Number(row[cIdx.g]||0), Number(row[cIdx.t]||0)]); 
+                      rK.push([
+                          String(row[0]).trim(), Number(row[cIdx.p]||0), Number(row[cIdx.d]||0), 
+                          Number(row[cIdx.b]||0), Number(row[cIdx.m]||0), Number(row[cIdx.t]||0),
+                          Number(row[cIdx.te]||0), Number(row[cIdx.tdd]||0), Number(row[cIdx.k]||0)
+                      ]); 
                   }
               } 
           }
-
-          let sUK = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA KELUARGA'));
-          if(sUK) { 
-              let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUK], {header: 1}); 
-              let cIdx = {d:-1, b:-1, tu:-1, g:-1, t:-1}; 
-              let start = false; 
-              
-              for (let i = 0; i < rows.length; i++) {
-                  let row = rows[i];
-                  if(!row || !row.length) continue; 
-                  
-                  if(!start) { 
-                      if(String(row[0]).trim().toUpperCase() === 'KODE') { 
-                          start = true; 
-                          let nextRow = rows[i+1] || [];
-                          let maxCol = Math.max(row.length, nextRow.length);
-                          
-                          for(let c=0; c < maxCol; c++){ 
-                              let h1 = String(row[c]||'').toUpperCase().trim(); 
-                              let h2 = String(nextRow[c]||'').toUpperCase().trim(); 
-                              
-                              if(h1==='DITEMUKAN' || h2==='DITEMUKAN') cIdx.d=c; 
-                              else if(h1==='BARU' || h2==='BARU') cIdx.b=c; 
-                              else if(h1==='TUTUP' || h2==='TUTUP') cIdx.tu=c; 
-                              else if(h1==='GANDA' || h2==='GANDA') cIdx.g=c; 
-                              else if(h1==='TIDAK DITEMUKAN' || h2==='TIDAK DITEMUKAN') cIdx.t=c; 
-                          } 
-                      } 
-                      continue; 
-                  } 
-                  
-                  if(String(row[0]||'').trim().length === 16) {
-                      rK.push([String(row[0]).trim(), Number(row[cIdx.d]||0), Number(row[cIdx.b]||0), Number(row[cIdx.tu]||0), Number(row[cIdx.g]||0), Number(row[cIdx.t]||0)]); 
-                  }
-              } 
-          }
-          resolve({bku: rB, kel: rK}); 
+          resolve(rK); 
         } catch(err) { reject(err); }
       }; 
       r.readAsArrayBuffer(f); 
     });
+  }
+    
+  function parseExcelUsahaAll(f) {
+      return new Promise((resolve, reject) => { 
+        let r = new FileReader(); 
+        r.onload = e => { 
+          try {
+            let wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'}); 
+            let rB = [["KODE_16", "PRELIST", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]]; 
+            let rK = [["KODE_16", "DITEMUKAN", "BARU", "TUTUP", "GANDA", "TIDAK_DITEMUKAN"]];
+            
+            let sUP = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA PERUSAHAAN'));
+            if(sUP) { 
+                let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUP], {header: 1}); 
+                let cIdx = {p:-1, d:-1, b:-1, tu:-1, g:-1, t:-1}; 
+                let start = false; 
+                
+                for (let i = 0; i < rows.length; i++) {
+                    let row = rows[i];
+                    if(!row || !row.length) continue; 
+                    
+                    if(!start) { 
+                        if(String(row[0]).trim().toUpperCase() === 'KODE') { 
+                            start = true; 
+                            let nextRow = rows[i+1] || []; 
+                            let maxCol = Math.max(row.length, nextRow.length);
+                            
+                            for(let c=0; c < maxCol; c++){ 
+                                let h1 = String(row[c]||'').toUpperCase().trim(); 
+                                let h2 = String(nextRow[c]||'').toUpperCase().trim(); 
+                                
+                                if(h1.includes('PRELIST') || h2.includes('PRELIST')) cIdx.p=c; 
+                                else if(h1==='DITEMUKAN' || h2==='DITEMUKAN') cIdx.d=c; 
+                                else if(h1==='BARU' || h2==='BARU') cIdx.b=c; 
+                                else if(h1==='TUTUP' || h2==='TUTUP') cIdx.tu=c; 
+                                else if(h1==='GANDA' || h2==='GANDA') cIdx.g=c; 
+                                else if(h1==='TIDAK DITEMUKAN' || h2==='TIDAK DITEMUKAN') cIdx.t=c; 
+                            } 
+                        } 
+                        continue; 
+                    } 
+                    
+                    if(String(row[0]||'').trim().length === 16) {
+                        rB.push([String(row[0]).trim(), Number(row[cIdx.p]||0), Number(row[cIdx.d]||0), Number(row[cIdx.b]||0), Number(row[cIdx.tu]||0), Number(row[cIdx.g]||0), Number(row[cIdx.t]||0)]); 
+                    }
+                } 
+            }
+
+            let sUK = wb.SheetNames.find(s => s.toUpperCase().includes('USAHA KELUARGA'));
+            if(sUK) { 
+                let rows = XLSX.utils.sheet_to_json(wb.Sheets[sUK], {header: 1}); 
+                let cIdx = {d:-1, b:-1, tu:-1, g:-1, t:-1}; 
+                let start = false; 
+                
+                for (let i = 0; i < rows.length; i++) {
+                    let row = rows[i];
+                    if(!row || !row.length) continue; 
+                    
+                    if(!start) { 
+                        if(String(row[0]).trim().toUpperCase() === 'KODE') { 
+                            start = true; 
+                            let nextRow = rows[i+1] || [];
+                            let maxCol = Math.max(row.length, nextRow.length);
+                            
+                            for(let c=0; c < maxCol; c++){ 
+                                let h1 = String(row[c]||'').toUpperCase().trim(); 
+                                let h2 = String(nextRow[c]||'').toUpperCase().trim(); 
+                                
+                                if(h1==='DITEMUKAN' || h2==='DITEMUKAN') cIdx.d=c; 
+                                else if(h1==='BARU' || h2==='BARU') cIdx.b=c; 
+                                else if(h1==='TUTUP' || h2==='TUTUP') cIdx.tu=c; 
+                                else if(h1==='GANDA' || h2==='GANDA') cIdx.g=c; 
+                                else if(h1==='TIDAK DITEMUKAN' || h2==='TIDAK DITEMUKAN') cIdx.t=c; 
+                            } 
+                        } 
+                        continue; 
+                    } 
+                    
+                    if(String(row[0]||'').trim().length === 16) {
+                        rK.push([String(row[0]).trim(), Number(row[cIdx.d]||0), Number(row[cIdx.b]||0), Number(row[cIdx.tu]||0), Number(row[cIdx.g]||0), Number(row[cIdx.t]||0)]); 
+                    }
+                } 
+            }
+            resolve({bku: rB, kel: rK}); 
+          } catch(err) { reject(err); }
+        }; 
+        r.readAsArrayBuffer(f); 
+      });
   }
 
   function exportDashboardExcel() {
@@ -1945,134 +1932,134 @@ function parseExcelUsahaAll(f) {
     XLSX.writeFile(workbook, `Rekap_Monitoring_FASIH_${new Date().toISOString().slice(0,10)}.xlsx`);
   }
 
-function downloadImage() {
-    if (dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
-    
-    const btn = document.getElementById('btnImage'); 
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROSES...';
-    btn.disabled = true;
+  function downloadImage() {
+      if (dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
+      
+      const btn = document.getElementById('btnImage'); 
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROSES...';
+      btn.disabled = true;
 
-    const element = document.getElementById('captureArea');
-    const watermarkHeader = document.getElementById('watermarkHeader');
+      const element = document.getElementById('captureArea');
+      const watermarkHeader = document.getElementById('watermarkHeader');
 
-    const tabNamesDict = { 
-        1: "Detail SLS", 2: "Progress PPL", 3: "Progress PML", 
-        4: "Progress Kecamatan", 5: "Visualisasi Data", 
-        6: "Rekap. Keluarga", 7: "Rekap. BKU", 8: "Rekap. Usaha Keluarga",
-        9: "Evaluasi Dokumen PPL" 
-    };
-    const actTabName = tabNamesDict[activeTabId] || "Progress Pendataan FASIH";
-    document.getElementById('watermarkTitle').innerText = "LAPORAN " + actTabName.toUpperCase();
-    
-    document.getElementById('watermarkText').innerHTML = 
-        `PENDATAAN HARI KE - <span style="color: #facc15; font-weight: bold;">${timingConfig.x}</span> | ` + 
-        `TARGET PROGRESS : <span style="color: #facc15; font-weight: bold;">${timingConfig.y.toFixed(2)}%</span> | ` + 
-        `TERAKHIR SINKRONISASI: <span style="color: #facc15; font-weight: bold;">${document.getElementById('txtLastUpdate').innerText}</span>`;
+      const tabNamesDict = { 
+          1: "Detail SLS", 2: "Progress PPL", 3: "Progress PML", 
+          4: "Progress Kecamatan", 5: "Visualisasi Data", 
+          6: "Rekap. Keluarga", 7: "Rekap. BKU", 8: "Rekap. Usaha Keluarga",
+          9: "Evaluasi Dokumen PPL", 10: "Progress Harian"
+      };
+      const actTabName = tabNamesDict[activeTabId] || "Progress Pendataan FASIH";
+      document.getElementById('watermarkTitle').innerText = "LAPORAN " + actTabName.toUpperCase();
+      
+      document.getElementById('watermarkText').innerHTML = 
+          `PENDATAAN HARI KE - <span style="color: #facc15; font-weight: bold;">${timingConfig.x}</span> | ` + 
+          `TARGET PROGRESS : <span style="color: #facc15; font-weight: bold;">${timingConfig.y.toFixed(2)}%</span> | ` + 
+          `TERAKHIR SINKRONISASI: <span style="color: #facc15; font-weight: bold;">${document.getElementById('txtLastUpdate').innerText}</span>`;
 
-    watermarkHeader.classList.remove('hidden');
-    watermarkHeader.classList.add('flex');
+      watermarkHeader.classList.remove('hidden');
+      watermarkHeader.classList.add('flex');
 
-    const styleFix = document.createElement('style');
-    styleFix.id = 'html2canvas-fix-scroll';
-    styleFix.innerHTML = `
-        html, body, #halaman-dashboard { height: auto !important; min-height: 100% !important; overflow: visible !important; }
-        .flex-1, #captureArea, #captureArea > div, #captureArea table, #captureArea tbody { height: auto !important; max-height: none !important; overflow: visible !important; }
-        .badge-prioritas, svg, img, i { display: inline-block !important; vertical-align: middle !important; }
-    `;
-    document.head.appendChild(styleFix);
+      const styleFix = document.createElement('style');
+      styleFix.id = 'html2canvas-fix-scroll';
+      styleFix.innerHTML = `
+          html, body, #halaman-dashboard { height: auto !important; min-height: 100% !important; overflow: visible !important; }
+          .flex-1, #captureArea, #captureArea > div, #captureArea table, #captureArea tbody { height: auto !important; max-height: none !important; overflow: visible !important; }
+          .badge-prioritas, svg, img, i { display: inline-block !important; vertical-align: middle !important; }
+      `;
+      document.head.appendChild(styleFix);
 
-    const tableHeaders = element.querySelectorAll('th');
-    tableHeaders.forEach(th => th.style.position = 'relative');
+      const tableHeaders = element.querySelectorAll('th');
+      tableHeaders.forEach(th => th.style.position = 'relative');
 
-    window.scrollTo(0, 0);
+      window.scrollTo(0, 0);
 
-    html2canvas(element, { 
-        scale: 2, 
-        useCORS: true,
-        windowHeight: element.scrollHeight,
-        scrollY: 0
-    }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = `Dashboard_FASIH_${new Date().toISOString().slice(0,10)}.jpg`;
-        link.href = canvas.toDataURL('image/jpeg', 0.98);
-        link.click();
-    }).catch(err => {
-        Swal.fire('Error', 'Gagal memproses gambar.', 'error');
-    }).finally(() => {
-        document.getElementById('html2canvas-fix-scroll')?.remove(); 
-        tableHeaders.forEach(th => th.style.position = 'sticky'); 
-        watermarkHeader.classList.add('hidden');
-        watermarkHeader.classList.remove('flex');
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-    });
-}
+      html2canvas(element, { 
+          scale: 2, 
+          useCORS: true,
+          windowHeight: element.scrollHeight,
+          scrollY: 0
+      }).then(canvas => {
+          const link = document.createElement('a');
+          link.download = `Dashboard_FASIH_${new Date().toISOString().slice(0,10)}.jpg`;
+          link.href = canvas.toDataURL('image/jpeg', 0.98);
+          link.click();
+      }).catch(err => {
+          Swal.fire('Error', 'Gagal memproses gambar.', 'error');
+      }).finally(() => {
+          document.getElementById('html2canvas-fix-scroll')?.remove(); 
+          tableHeaders.forEach(th => th.style.position = 'sticky'); 
+          watermarkHeader.classList.add('hidden');
+          watermarkHeader.classList.remove('flex');
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+      });
+  }
 
-function downloadPDF() {
-    if (dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
-    
-    const btn = document.getElementById('btnScreenshot'); 
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROSES...';
-    btn.disabled = true;
+  function downloadPDF() {
+      if (dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
+      
+      const btn = document.getElementById('btnScreenshot'); 
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROSES...';
+      btn.disabled = true;
 
-    const element = document.getElementById('captureArea');
-    const watermarkHeader = document.getElementById('watermarkHeader');
+      const element = document.getElementById('captureArea');
+      const watermarkHeader = document.getElementById('watermarkHeader');
 
-    const tabNamesDict = { 
-        1: "Detail SLS", 2: "Progress PPL", 3: "Progress PML", 
-        4: "Progress Kecamatan", 5: "Visualisasi Data", 
-        6: "Rekap. Keluarga", 7: "Rekap. BKU", 8: "Rekap. Usaha Keluarga",
-        9: "Evaluasi Dokumen PPL"
-    };
-    const actTabName = tabNamesDict[activeTabId] || "Progress Pendataan FASIH";
-    document.getElementById('watermarkTitle').innerText = "LAPORAN " + actTabName.toUpperCase();
-    
-    document.getElementById('watermarkText').innerHTML = 
-        `PENDATAAN HARI KE - <span style="color: #facc15; font-weight: bold;">${timingConfig.x}</span> | ` + 
-        `TARGET PROGRESS : <span style="color: #facc15; font-weight: bold;">${timingConfig.y.toFixed(2)}%</span> | ` + 
-        `TERAKHIR SINKRONISASI: <span style="color: #facc15; font-weight: bold;">${document.getElementById('txtLastUpdate').innerText}</span>`;
+      const tabNamesDict = { 
+          1: "Detail SLS", 2: "Progress PPL", 3: "Progress PML", 
+          4: "Progress Kecamatan", 5: "Visualisasi Data", 
+          6: "Rekap. Keluarga", 7: "Rekap. BKU", 8: "Rekap. Usaha Keluarga",
+          9: "Evaluasi Dokumen PPL", 10: "Progress Harian"
+      };
+      const actTabName = tabNamesDict[activeTabId] || "Progress Pendataan FASIH";
+      document.getElementById('watermarkTitle').innerText = "LAPORAN " + actTabName.toUpperCase();
+      
+      document.getElementById('watermarkText').innerHTML = 
+          `PENDATAAN HARI KE - <span style="color: #facc15; font-weight: bold;">${timingConfig.x}</span> | ` + 
+          `TARGET PROGRESS : <span style="color: #facc15; font-weight: bold;">${timingConfig.y.toFixed(2)}%</span> | ` + 
+          `TERAKHIR SINKRONISASI: <span style="color: #facc15; font-weight: bold;">${document.getElementById('txtLastUpdate').innerText}</span>`;
 
-    watermarkHeader.classList.remove('hidden');
-    watermarkHeader.classList.add('flex');
+      watermarkHeader.classList.remove('hidden');
+      watermarkHeader.classList.add('flex');
 
-    const styleFix = document.createElement('style');
-    styleFix.id = 'html2canvas-fix-scroll-pdf';
-    styleFix.innerHTML = `
-        html, body, #halaman-dashboard { height: auto !important; min-height: 100% !important; overflow: visible !important; }
-        .flex-1, #captureArea, #captureArea > div, #captureArea table, #captureArea tbody { height: auto !important; max-height: none !important; overflow: visible !important; }
-        .badge-prioritas, svg, img, i { display: inline-block !important; vertical-align: middle !important; }
-    `;
-    document.head.appendChild(styleFix);
+      const styleFix = document.createElement('style');
+      styleFix.id = 'html2canvas-fix-scroll-pdf';
+      styleFix.innerHTML = `
+          html, body, #halaman-dashboard { height: auto !important; min-height: 100% !important; overflow: visible !important; }
+          .flex-1, #captureArea, #captureArea > div, #captureArea table, #captureArea tbody { height: auto !important; max-height: none !important; overflow: visible !important; }
+          .badge-prioritas, svg, img, i { display: inline-block !important; vertical-align: middle !important; }
+      `;
+      document.head.appendChild(styleFix);
 
-    const tableHeaders = element.querySelectorAll('th');
-    tableHeaders.forEach(th => th.style.position = 'relative');
+      const tableHeaders = element.querySelectorAll('th');
+      tableHeaders.forEach(th => th.style.position = 'relative');
 
-    window.scrollTo(0, 0);
+      window.scrollTo(0, 0);
 
-    const opt = {
-        margin:       0.2,
-        filename:     `Dashboard_FASIH_${new Date().toISOString().slice(0,10)}.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, windowHeight: element.scrollHeight, scrollY: 0 },
-        jsPDF:        { unit: 'in', format: 'legal', orientation: 'landscape' }
-    };
+      const opt = {
+          margin:       0.2,
+          filename:     `Dashboard_FASIH_${new Date().toISOString().slice(0,10)}.pdf`,
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2, useCORS: true, windowHeight: element.scrollHeight, scrollY: 0 },
+          jsPDF:        { unit: 'in', format: 'legal', orientation: 'landscape' }
+      };
 
-    html2pdf().set(opt).from(element).save().then(() => {
-    }).catch(err => {
-        Swal.fire('Error', 'Gagal membuat PDF', 'error');
-    }).finally(() => {
-        document.getElementById('html2canvas-fix-scroll-pdf')?.remove(); 
-        tableHeaders.forEach(th => th.style.position = 'sticky'); 
-        watermarkHeader.classList.add('hidden');
-        watermarkHeader.classList.remove('flex');
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-    });
-}
+      html2pdf().set(opt).from(element).save().then(() => {
+      }).catch(err => {
+          Swal.fire('Error', 'Gagal membuat PDF', 'error');
+      }).finally(() => {
+          document.getElementById('html2canvas-fix-scroll-pdf')?.remove(); 
+          tableHeaders.forEach(th => th.style.position = 'sticky'); 
+          watermarkHeader.classList.add('hidden');
+          watermarkHeader.classList.remove('flex');
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+      });
+  }
 
-function switchDailyMode(mode) {
+  function switchDailyMode(mode) {
       dailyProgressMode = mode;
       let btnPpl = document.getElementById('btnTogglePpl');
       let btnPml = document.getElementById('btnTogglePml');
@@ -2099,7 +2086,7 @@ function switchDailyMode(mode) {
       return d.getDate() + " " + months[d.getMonth()];
   }
 
-function getTab10Config(mode) {
+  function getTab10Config(mode) {
       let clBg = mode === 'ppl' ? 'bg-amber-50' : 'bg-blue-50';
       let clBorder = mode === 'ppl' ? 'border-amber-200' : 'border-blue-200';
       let clText = mode === 'ppl' ? 'text-amber-900' : 'text-blue-900';
@@ -2109,14 +2096,14 @@ function getTab10Config(mode) {
       document.getElementById('headTab10').className = `text-[10px] uppercase ${clText} font-bold tracking-wider ${clBgHead}`;
 
       let base = [
-          { k:'petugas', n:(mode === 'ppl' ? 'Nama PPL' : 'Nama PML'), c:`${clBg} border-r ${clBorder} ${clText}`, w:'200px' }
+          { k:'petugas', n:(mode === 'ppl' ? 'Nama PPL' : 'Nama PML'), c:`${clBg} border-r ${clBorder} ${clText}`, w:'200px', f:true }
       ];
       if (mode === 'ppl') {
-          base.push({ k:'pml', n:'Nama PML', c:`${clBg} border-r ${clBorder} text-gray-700`, w:'200px' });
+          base.push({ k:'pml', n:'Nama PML', c:`${clBg} border-r ${clBorder} text-gray-700`, w:'200px', f:true });
       }
       base.push(
-          { k:'kec', n:'Kecamatan', c:`${clBg} border-r ${clBorder} text-gray-700` },
-          { k:'pj', n:'PJ Kuda', c:`${clBg} border-r ${clBorder} text-gray-700` },
+          { k:'kec', n:'Kecamatan', c:`${clBg} border-r ${clBorder} text-gray-700`, f:true },
+          { k:'pj', n:'PJ Kuda', c:`${clBg} border-r ${clBorder} text-gray-700`, f:true },
           { k:'t', n:'Total<br>Assign.', c:'text-center border-l border-gray-200 bg-gray-100 text-gray-800', f:true },
           { k:'avg_vel', n:`Rata² ${txtTipe}<br>Harian`, c:'text-center border-l border-gray-200 bg-slate-100 text-slate-800 font-bold', f:true },
           { k:'h2', n:`Total ${txtTipe}<br>H-2`, c:'text-center border-l border-indigo-200 bg-indigo-50 text-indigo-800', f:true },
