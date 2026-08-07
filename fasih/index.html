@@ -1115,14 +1115,14 @@ dashFilteredData.forEach(r => {
       });
 
 // KALKULASI TAB 10 (PROGRESS HARIAN)
+// KALKULASI TAB 10 (PROGRESS HARIAN)
       TAB_STATE[10] = [];
       let sortedHist = [...HISTORY_DATA].sort((a,b) => a.date < b.date ? 1 : -1);
       
       let dateH1 = sortedHist[1] ? formatTanggalIndo(sortedHist[1].date) : "H-1";
       let dateH2 = sortedHist[2] ? formatTanggalIndo(sortedHist[2].date) : "H-2";
-      window.tab10DateH1 = dateH1; window.tab10DateH2 = dateH2; // Simpan ke global
+      window.tab10DateH1 = dateH1; window.tab10DateH2 = dateH2; 
       
-      // Update struktur kolom di antarmuka web
       TABS_CONFIG[10] = getTab10Config(dailyProgressMode, dateH1, dateH2);
       buildTableHeaders(); 
 
@@ -1130,19 +1130,49 @@ dashFilteredData.forEach(r => {
       let h1Data = sortedHist[1] ? sortedHist[1].data : {ppl:{}, pml:{}};
       let h2Data = sortedHist[2] ? sortedHist[2].data : {ppl:{}, pml:{}};
 
-      // Fungsi Pembantu Kalkulasi Matematika
+      // Fungsi Badge Tren Kinerja
       function getTrenLogic(d1, d2) {
-          let trenVal = 0, trenText = "Stagnan", trenColor = "text-gray-400";
-          if (d1 === 0 && d2 > 0) { trenText = "🔥 Melesat (Baru)"; trenColor = "text-blue-600"; trenVal = 999; }
-          else if (d1 === 0 && d2 === 0) { trenText = "Stagnan"; trenColor = "text-gray-400"; trenVal = 0; }
-          else if (d1 > 0) {
-              let pct = ((d2 - d1) / d1) * 100;
-              trenVal = pct;
-              if (pct > 0) { trenText = `🚀 +${pct.toFixed(1)}%`; trenColor = "text-green-600"; }
-              else if (pct < 0) { trenText = `🔻 ${pct.toFixed(1)}%`; trenColor = "text-red-600"; }
-              else { trenText = "Konsisten"; trenColor = "text-sky-500"; }
+          let pct = 0;
+          if (d1 === 0 && d2 === 0) { pct = 0; }
+          else if (d1 === 0 && d2 > 0) { pct = 100; } // Asumsi lonjakan awal
+          else { pct = ((d2 - d1) / d1) * 100; }
+
+          let trenText = "", badgeClass = "";
+          if (pct > 0) { 
+              trenText = `NAIK (+${pct.toFixed(1)}%)`; 
+              badgeClass = "bg-green-100 text-green-700 border-green-300"; 
+          } else if (pct < 0) { 
+              trenText = `TURUN (${pct.toFixed(1)}%)`; 
+              badgeClass = "bg-red-100 text-red-700 border-red-300"; 
+          } else { 
+              trenText = `STAGNAN (0%)`; 
+              badgeClass = "bg-gray-100 text-gray-500 border-gray-300"; 
           }
-          return { trenVal, trenText, trenColor };
+          return { trenVal: pct, trenHtml: `<span class="px-2.5 py-1 rounded text-[9px] font-black border tracking-wider whitespace-nowrap ${badgeClass}">${trenText}</span>` };
+      }
+
+      // Fungsi Burn-down Velocity (Estimasi)
+      function getPrediksiSelesai(tTarget, currentCapaian) {
+          if (tTarget === 0) return `<span class="text-gray-400">-</span>`;
+          if (currentCapaian >= tTarget) {
+              return `<span class="px-2 py-0.5 rounded text-[9px] font-black bg-emerald-100 text-emerald-700 border border-emerald-300 uppercase tracking-wider">✅ SELESAI</span>`;
+          }
+          
+          let daysElapsed = timingConfig.x || 1; // Hari berjalan
+          let velocity = currentCapaian / daysElapsed; // Kecepatan rata-rata per hari
+          
+          if (velocity <= 0) {
+              return `<span class="px-2 py-0.5 rounded text-[9px] font-black bg-rose-50 text-rose-600 border border-rose-200 uppercase tracking-wider">⚠️ BELUM JELAS</span>`;
+          }
+          
+          let remainingCapaian = tTarget - currentCapaian;
+          let remainingDays = Math.ceil(remainingCapaian / velocity);
+          
+          let d = new Date(); 
+          d.setDate(d.getDate() + remainingDays); // Hitung tanggal estimasi
+          let dateStr = formatTanggalIndo(d.toISOString());
+          
+          return `<span class="text-[11px] font-black text-fuchsia-800">${dateStr}</span><br><span class="text-[9px] text-fuchsia-600/70 font-bold">${remainingDays} hari lagi</span>`;
       }
 
       Object.values(pplM).forEach(p => {
@@ -1153,8 +1183,9 @@ dashFilteredData.forEach(r => {
           
           let d1 = v1 - v2; let d2 = v0 - v1;
           let tren = getTrenLogic(d1, d2);
+          let prediksi = getPrediksiSelesai(p.t, v0);
           
-          TAB_STATE[10].push({ petugas: p.ppl, pml: p.pml, role: 'PPL', kec: p.kec, pj: p.pj, email: p.email, h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenText: tren.trenText, trenColor: tren.trenColor });
+          TAB_STATE[10].push({ petugas: p.ppl, pml: p.pml, role: 'PPL', kec: p.kec, pj: p.pj, email: p.email, t: p.t, h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenHtml: tren.trenHtml, prediksi: prediksi });
       });
 
       Object.values(pmlM).forEach(p => {
@@ -1165,8 +1196,9 @@ dashFilteredData.forEach(r => {
           
           let d1 = v1 - v2; let d2 = v0 - v1;
           let tren = getTrenLogic(d1, d2);
+          let prediksi = getPrediksiSelesai(p.t, v0);
           
-          TAB_STATE[10].push({ petugas: p.pml, role: 'PML', kec: p.kec, pj: p.pj, email: p.email, h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenText: tren.trenText, trenColor: tren.trenColor });
+          TAB_STATE[10].push({ petugas: p.pml, role: 'PML', kec: p.kec, pj: p.pj, email: p.email, t: p.t, h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenHtml: tren.trenHtml, prediksi: prediksi });
       });
   }
 
@@ -1384,37 +1416,38 @@ else if(activeTabId === 10) {
                let clBorder = isPpl ? 'border-amber-200' : 'border-blue-200';
                let clHover = isPpl ? 'hover:bg-amber-50/80' : 'hover:bg-blue-50/80';
                let clTextStrong = isPpl ? 'text-amber-800' : 'text-blue-800';
-               let clTextDelta1 = isPpl ? 'text-amber-700' : 'text-blue-700';
-               let clTextDelta2 = isPpl ? 'text-amber-900' : 'text-blue-900';
                let clBgDelta1 = isPpl ? 'bg-amber-50/30 border-amber-100' : 'bg-blue-50/30 border-blue-100';
                let clBgH0 = isPpl ? 'bg-amber-100/50 border-amber-200' : 'bg-blue-100/50 border-blue-200';
                let clBgDelta2 = isPpl ? 'bg-amber-200/40 border-amber-300' : 'bg-blue-200/40 border-blue-300';
-               let clBorderTren = isPpl ? 'border-amber-300' : 'border-blue-300';
 
                let pmlCol = isPpl ? `<td class="px-4 py-3 border-r ${clBorder} align-middle font-bold text-gray-500 uppercase tracking-wider text-[10px]">${r.pml}</td>` : '';
                
-               let d1Html = r.delta1 > 0 ? `<span class="${clTextDelta1} font-bold">+${r.delta1}</span>` : (r.delta1 < 0 ? `<span class="text-rose-700 font-bold">${r.delta1}</span>` : `<span class="text-gray-400">-</span>`);
-               let d2Html = r.delta2 > 0 ? `<span class="${clTextDelta2} font-black">+${r.delta2}</span>` : (r.delta2 < 0 ? `<span class="text-rose-700 font-bold">${r.delta2}</span>` : `<span class="text-gray-400">-</span>`);
+               // Delta sekarang menampilkan angka 0 murni jika tidak ada pergerakan (tidak setrip lagi)
+               let d1Html = r.delta1 > 0 ? `<span class="text-emerald-600 font-bold">+${r.delta1}</span>` : (r.delta1 < 0 ? `<span class="text-rose-600 font-bold">${r.delta1}</span>` : `<span class="text-gray-400 font-bold tracking-widest">0</span>`);
+               let d2Html = r.delta2 > 0 ? `<span class="text-emerald-700 font-black">+${r.delta2}</span>` : (r.delta2 < 0 ? `<span class="text-rose-700 font-black">${r.delta2}</span>` : `<span class="text-gray-400 font-bold tracking-widest">0</span>`);
                
                html += `
                  <tr class="border-b transition ${clHover} bg-white">
-                   <td class="px-4 py-3 text-center border-r ${clBorder} align-middle font-bold text-gray-500">${n}</td>
+                   <td class="px-4 py-3 text-center border-r ${clBorder} align-middle font-bold text-gray-400">${n}</td>
                    <td class="px-4 py-3 font-bold border-r ${clBorder} ${clTextStrong} align-middle">
                        ${r.petugas}
-                       ${r.email ? `<br><a href="mailto:${r.email}" class="text-[9px] font-bold text-gray-500 lowercase flex items-center gap-1 mt-0.5 hover:${clTextStrong} hover:underline transition"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.53 4.81a2 2 0 002.94 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>${r.email}</a>` : ''}
+                       ${r.email ? `<br><a href="mailto:${r.email}" class="text-[9px] font-bold text-gray-400 lowercase flex items-center gap-1 mt-0.5 hover:${clTextStrong} hover:underline transition"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.53 4.81a2 2 0 002.94 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>${r.email}</a>` : ''}
                    </td>
                    ${pmlCol}
-                   <td class="px-4 py-3 border-r ${clBorder} align-middle font-bold text-gray-600 uppercase tracking-wider text-[10px]">${r.kec}</td>
-                   <td class="px-4 py-3 border-r ${clBorder} align-middle font-bold text-gray-600 uppercase tracking-wider text-[10px]">${r.pj}</td>
+                   <td class="px-4 py-3 border-r ${clBorder} align-middle font-bold text-gray-500 uppercase tracking-wider text-[10px]">${r.kec}</td>
+                   <td class="px-4 py-3 border-r ${clBorder} align-middle font-bold text-gray-500 uppercase tracking-wider text-[10px]">${r.pj}</td>
                    
-                   <td class="px-4 py-3 text-center font-bold font-mono text-gray-500 border-l border-gray-200 bg-gray-50/50 align-middle">${r.h2}</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono text-gray-600 border-l border-gray-200 bg-gray-50 align-middle">${r.h1}</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono border-l ${clBgDelta1} align-middle text-[12px]">${d1Html}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-gray-600 border-l border-gray-200 bg-gray-50/50 align-middle">${r.t}</td>
+                   
+                   <td class="px-4 py-3 text-center font-bold font-mono text-indigo-700 border-l border-indigo-200 bg-indigo-50/40 align-middle text-[12px]">${r.h2}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-teal-700 border-l border-teal-200 bg-teal-50/40 align-middle text-[12px]">${r.h1}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono border-l ${clBgDelta1} align-middle text-[13px]">${d1Html}</td>
                    
                    <td class="px-4 py-3 text-center font-black font-mono ${clTextStrong} border-l ${clBgH0} align-middle text-[13px]">${r.h0}</td>
-                   <td class="px-4 py-3 text-center font-black font-mono border-l ${clBgDelta2} align-middle text-[14px]">${d2Html}</td>
+                   <td class="px-4 py-3 text-center font-black font-mono border-l ${clBgDelta2} align-middle text-[15px]">${d2Html}</td>
                    
-                   <td class="px-4 py-3 text-center font-bold font-mono border-l ${clBorderTren} bg-slate-50 align-middle text-[11px] ${r.trenColor}">${r.trenText}</td>
+                   <td class="px-4 py-3 text-center align-middle border-l border-violet-200 bg-violet-50/40">${r.trenHtml}</td>
+                   <td class="px-4 py-3 text-center align-middle border-l border-fuchsia-200 bg-fuchsia-50/40 leading-tight">${r.prediksi}</td>
                  </tr>`;
             }
          });
@@ -2058,7 +2091,6 @@ function getTab10Config(mode, dateH1, dateH2) {
       let clText = mode === 'ppl' ? 'text-amber-900' : 'text-blue-900';
       let clBgHead = mode === 'ppl' ? 'bg-amber-100' : 'bg-blue-100';
       
-      // Setel warna background wrapper Thead secara langsung
       document.getElementById('headTab10').className = `text-[10px] uppercase ${clText} font-bold tracking-wider ${clBgHead}`;
 
       let base = [
@@ -2070,12 +2102,16 @@ function getTab10Config(mode, dateH1, dateH2) {
       base.push(
           { k:'kec', n:'Kecamatan', c:`${clBg} border-r ${clBorder} text-gray-700` },
           { k:'pj', n:'PJ Kuda', c:`${clBg} border-r ${clBorder} text-gray-700` },
-          { k:'h2', n:`Capaian<br>${dateH2}`, c:'text-center border-l border-gray-200 bg-gray-50 text-gray-500', f:true },
-          { k:'h1', n:`Capaian<br>${dateH1}`, c:'text-center border-l border-gray-200 bg-gray-50 text-gray-600', f:true },
+          // Total Assignment
+          { k:'t', n:'Total<br>Assign.', c:'text-center border-l border-gray-200 bg-gray-100 text-gray-800', f:true },
+          // Warna warni pastel bebas untuk histori & prediksi
+          { k:'h2', n:`Capaian<br>${dateH2}`, c:'text-center border-l border-indigo-200 bg-indigo-50 text-indigo-800', f:true },
+          { k:'h1', n:`Capaian<br>${dateH1}`, c:'text-center border-l border-teal-200 bg-teal-50 text-teal-800', f:true },
           { k:'delta1', n:`Δ (Selisih)<br>${dateH1}`, c:`text-center border-l ${mode==='ppl'?'border-amber-100 bg-amber-50 text-amber-700':'border-blue-100 bg-blue-50 text-blue-700'}`, f:true },
           { k:'h0', n:'Capaian<br>HARI INI', c:`text-center border-l ${mode==='ppl'?'border-amber-200 bg-amber-100 text-amber-900':'border-blue-200 bg-blue-100 text-blue-900'} font-bold`, f:true },
           { k:'delta2', n:'Δ (Selisih)<br>HARI INI', c:`text-center border-l ${mode==='ppl'?'border-amber-300 bg-amber-200 text-amber-900':'border-blue-300 bg-blue-200 text-blue-900'} font-black`, f:true },
-          { k:'trenVal', n:'TREN KINERJA<br>( % )', c:`text-center border-l ${mode==='ppl'?'border-amber-300':'border-blue-300'} bg-slate-50 font-bold`, f:true }
+          { k:'trenVal', n:'TREN KINERJA<br>( % )', c:'text-center border-l border-violet-200 bg-violet-50 font-bold', f:true },
+          { k:'prediksi', n:'PREDIKSI SELESAI<br>(ESTIMASI)', c:'text-center border-l border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900 font-bold', f:true }
       );
       return base;
   }
