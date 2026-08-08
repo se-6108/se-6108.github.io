@@ -1120,6 +1120,9 @@ else if (activeTabId === 10) { sortCol = 'sisa_hari'; sortAsc = true; }
       });
 
       // KALKULASI TAB 10 (PROGRESS HARIAN)
+// ==========================================
+      // KALKULASI TAB 10 (PROGRESS HARIAN)
+      // ==========================================
       TAB_STATE[10] = [];
       let sortedHist = [...HISTORY_DATA].sort((a,b) => a.date < b.date ? 1 : -1);
       
@@ -1129,51 +1132,51 @@ else if (activeTabId === 10) { sortCol = 'sisa_hari'; sortAsc = true; }
       let h0Data = sortedHist[0] ? sortedHist[0].data : {ppl:{}, pml:{}};
       let h1Data = sortedHist[1] ? sortedHist[1].data : {ppl:{}, pml:{}};
       let h2Data = sortedHist[2] ? sortedHist[2].data : {ppl:{}, pml:{}};
+      let h3Data = sortedHist[3] ? sortedHist[3].data : {ppl:{}, pml:{}}; // Tambahan untuk Rata-rata 3 hari
 
-function getTrenLogic(d1, d2) {
+      function getTrenLogic(d1, d2) {
           let pct = 0;
-          if (d1 === 0 && d2 === 0) { 
-              pct = 0; 
-          } else if (d1 === 0 && d2 > 0) { 
-              pct = 100; 
-          } else if (d1 === 0 && d2 < 0) { 
-              pct = -100; // PERBAIKAN: Tangani jika d1 = 0 dan d2 turun (negatif)
-          } else { 
-              pct = ((d2 - d1) / Math.abs(d1)) * 100; // PERBAIKAN: Gunakan Math.abs agar pembagi aman
-          }
+          if (d1 === 0 && d2 === 0) { pct = 0; } 
+          else if (d1 === 0 && d2 > 0) { pct = 100; } 
+          else if (d1 === 0 && d2 < 0) { pct = -100; } 
+          else { pct = ((d2 - d1) / Math.abs(d1)) * 100; }
 
           let trenText = "", badgeClass = "";
-          if (pct > 0) { 
-              trenText = `NAIK (+${pct.toFixed(1)}%)`; 
-              badgeClass = "bg-green-100 text-green-700 border-green-300"; 
-          } else if (pct < 0) { 
-              trenText = `TURUN (${pct.toFixed(1)}%)`; 
-              badgeClass = "bg-red-100 text-red-700 border-red-300"; 
-          } else { 
-              trenText = `STAGNAN (0%)`; 
-              badgeClass = "bg-gray-100 text-gray-500 border-gray-300"; 
-          }
+          if (pct > 0) { trenText = `NAIK (+${pct.toFixed(1)}%)`; badgeClass = "bg-green-100 text-green-700 border-green-300"; } 
+          else if (pct < 0) { trenText = `TURUN (${pct.toFixed(1)}%)`; badgeClass = "bg-red-100 text-red-700 border-red-300"; } 
+          else { trenText = `STAGNAN (0%)`; badgeClass = "bg-gray-100 text-gray-500 border-gray-300"; }
           return { trenVal: pct, trenHtml: `<span class="px-2.5 py-1 rounded text-[9px] font-black border tracking-wider whitespace-nowrap shadow-sm ${badgeClass}">${trenText}</span>` };
       }
 
-      function getPrediksiSelesai(tTarget, currentCapaian) {
+      // FUNGSI KHUSUS TAB 10: Hitung Rata-rata 3 Hari
+      function get3DayVelocity(key, roleType, currentTotal) {
+          let daysAvail = Math.min(3, sortedHist.length - 1);
+          if (daysAvail < 1) return currentTotal / (timingConfig.x || 1); 
+
+          let v0 = h0Data[roleType] && h0Data[roleType][key] !== undefined ? h0Data[roleType][key] : currentTotal;
+          let v1 = h1Data[roleType] && h1Data[roleType][key] !== undefined ? h1Data[roleType][key] : v0;
+          let v2 = h2Data[roleType] && h2Data[roleType][key] !== undefined ? h2Data[roleType][key] : v1;
+          let v3 = h3Data[roleType] && h3Data[roleType][key] !== undefined ? h3Data[roleType][key] : v2;
+          
+          let baseV = daysAvail === 3 ? v3 : (daysAvail === 2 ? v2 : v1);
+          let vel = (v0 - baseV) / daysAvail;
+          return vel > 0 ? vel : 0; 
+      }
+
+      function getPrediksiSelesai(tTarget, currentCapaian, currentVelocity) {
           if (tTarget === 0) return { html: `<span class="text-gray-400">-</span>`, sisa_hari: 0, isLate: false };
           if (currentCapaian >= tTarget) return { html: `<span class="px-2 py-0.5 rounded text-[9px] font-black bg-emerald-100 text-emerald-700 border border-emerald-300 uppercase tracking-wider shadow-sm">✅ SELESAI</span>`, sisa_hari: 0, isLate: false };
           
-          let daysElapsed = timingConfig.x || 1;
-          let velocity = currentCapaian / daysElapsed;
-          
-          if (velocity <= 0) return { html: `<span class="px-2 py-0.5 rounded text-[9px] font-black bg-rose-50 text-rose-600 border border-rose-200 uppercase tracking-wider shadow-sm">⚠️ BLM JELAS</span>`, sisa_hari: 999999, isLate: true };
+          if (currentVelocity <= 0) return { html: `<span class="px-2 py-0.5 rounded text-[9px] font-black bg-rose-50 text-rose-600 border border-rose-200 uppercase tracking-wider shadow-sm">⚠️ BLM JELAS</span>`, sisa_hari: 999999, isLate: true };
           
           let remainingCapaian = tTarget - currentCapaian;
-          let remainingDays = Math.ceil(remainingCapaian / velocity);
+          let remainingDays = Math.ceil(remainingCapaian / currentVelocity);
           
           let d = new Date(); 
           d.setDate(d.getDate() + remainingDays); 
           let dateStr = formatTanggalIndo(d.toISOString());
           
-          // DETEKSI TERLAMBAT (Di atas 31 Agustus 2026)
-          let deadline = new Date(2026, 7, 31); // 31 Agustus 2026
+          let deadline = new Date(2026, 7, 31); 
           let isLate = d.getTime() > deadline.getTime();
           let lateBadge = isLate ? `<br><span class="px-1.5 py-0.5 mt-1.5 inline-block rounded text-[8px] bg-red-600 text-white font-bold tracking-widest shadow-sm">TERLAMBAT</span>` : '';
           
@@ -1190,26 +1193,30 @@ function getTrenLogic(d1, d2) {
           
           let d1 = v1 - v2; let d2 = v0 - v1;
           let tren = getTrenLogic(d1, d2);
-          let prediksi = getPrediksiSelesai(p.t, v0);
-          let velocity = p.t > 0 ? (v0 / (timingConfig.x || 1)).toFixed(1) : 0;
           
-          TAB_STATE[10].push({ petugas: p.ppl, pml: p.pml, role: 'PPL', kec: p.kec, pj: p.pj, email: p.email, t: p.t, avg_vel: velocity, h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenHtml: tren.trenHtml, sisa_hari: prediksi.sisa_hari, prediksiHtml: prediksi.html, isLate: prediksi.isLate });
+          // Gunakan Velocity 3 Hari di sini
+          let velocity = get3DayVelocity(key, 'ppl', p.agg_s);
+          let prediksi = getPrediksiSelesai(p.t, v0, velocity);
+          
+          TAB_STATE[10].push({ petugas: p.ppl, pml: p.pml, role: 'PPL', kec: p.kec, pj: p.pj, email: p.email, t: p.t, avg_vel: velocity.toFixed(1), h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenHtml: tren.trenHtml, sisa_hari: prediksi.sisa_hari, prediksiHtml: prediksi.html, isLate: prediksi.isLate });
       });
 
       Object.values(pmlM).forEach(p => {
-         let key = p.pml + "_" + String(p.kec).toUpperCase();
+          let key = p.pml + "_" + String(p.kec).toUpperCase();
           let v0 = h0Data.pml && h0Data.pml[key] !== undefined ? h0Data.pml[key] : p.app; 
           let v1 = h1Data.pml && h1Data.pml[key] !== undefined ? h1Data.pml[key] : v0;
           let v2 = h2Data.pml && h2Data.pml[key] !== undefined ? h2Data.pml[key] : v1;
           
           let d1 = v1 - v2; let d2 = v0 - v1;
           let tren = getTrenLogic(d1, d2);
-          let prediksi = getPrediksiSelesai(p.t, v0);
-          let velocity = p.t > 0 ? (v0 / (timingConfig.x || 1)).toFixed(1) : 0;
           
-          TAB_STATE[10].push({ petugas: p.pml, role: 'PML', kec: p.kec, pj: p.pj, email: p.email, t: p.t, avg_vel: velocity, h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenHtml: tren.trenHtml, sisa_hari: prediksi.sisa_hari, prediksiHtml: prediksi.html, isLate: prediksi.isLate });
+          // Gunakan Velocity 3 Hari di sini
+          let velocity = get3DayVelocity(key, 'pml', p.app);
+          let prediksi = getPrediksiSelesai(p.t, v0, velocity);
+          
+          TAB_STATE[10].push({ petugas: p.pml, role: 'PML', kec: p.kec, pj: p.pj, email: p.email, t: p.t, avg_vel: velocity.toFixed(1), h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenHtml: tren.trenHtml, sisa_hari: prediksi.sisa_hari, prediksiHtml: prediksi.html, isLate: prediksi.isLate });
       });
-  }
+  } // Akhir dari fungsi buildTabStates()
 
   function renderCurrentTab() {
       if(activeTabId === 5) return renderVisualisasi();
@@ -2099,7 +2106,7 @@ function getTab10Config(mode) {
           { k:'kec', n:'Kecamatan', c:`${clBg} border-r ${clBorder} text-gray-700`, f:true },
           { k:'pj', n:'PJ Kuda', c:`${clBg} border-r ${clBorder} text-gray-700`, f:true },
           { k:'t', n:'Total<br>Assign.', c:'text-center border-l border-gray-200 bg-gray-100 text-gray-800', f:true },
-          { k:'avg_vel', n:`Rata² ${txtTipe}<br>Harian`, c:'text-center border-l border-gray-200 bg-slate-100 text-slate-800 font-bold', f:true },
+          { k:'avg_vel', n:`Rata² ${txtTipe}<br>(3 Hari)`, c:'text-center border-l border-gray-200 bg-slate-100 text-slate-800 font-bold', f:true },
           { k:'h2', n:`Total ${txtTipe}<br>H-2`, c:'text-center border-l border-indigo-200 bg-indigo-50 text-indigo-800', f:true },
           { k:'h1', n:`Total ${txtTipe}<br>H-1`, c:'text-center border-l border-teal-200 bg-teal-50 text-teal-800', f:true },
           { k:'delta1', n:`Δ ${txtTipe}<br>(H-1 - H-2)`, c:`text-center border-l ${mode==='ppl'?'border-amber-100 bg-amber-50 text-amber-700':'border-blue-100 bg-blue-50 text-blue-700'}`, f:true },
