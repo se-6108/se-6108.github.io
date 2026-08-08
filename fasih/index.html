@@ -1177,7 +1177,7 @@ else if (activeTabId === 10) { sortCol = 'sisa_hari'; sortAsc = true; }
       }
 
       Object.values(pplM).forEach(p => {
-          let key = p.ppl + "_" + p.kec;
+          let key = p.ppl + "_" + String(p.kec).toUpperCase();
           let v0 = h0Data.ppl && h0Data.ppl[key] !== undefined ? h0Data.ppl[key] : p.agg_s; 
           let v1 = h1Data.ppl && h1Data.ppl[key] !== undefined ? h1Data.ppl[key] : v0;
           let v2 = h2Data.ppl && h2Data.ppl[key] !== undefined ? h2Data.ppl[key] : v1;
@@ -1191,7 +1191,7 @@ else if (activeTabId === 10) { sortCol = 'sisa_hari'; sortAsc = true; }
       });
 
       Object.values(pmlM).forEach(p => {
-          let key = p.pml + "_" + p.kec;
+         let key = p.pml + "_" + String(p.kec).toUpperCase();
           let v0 = h0Data.pml && h0Data.pml[key] !== undefined ? h0Data.pml[key] : p.app; 
           let v1 = h1Data.pml && h1Data.pml[key] !== undefined ? h1Data.pml[key] : v0;
           let v2 = h2Data.pml && h2Data.pml[key] !== undefined ? h2Data.pml[key] : v1;
