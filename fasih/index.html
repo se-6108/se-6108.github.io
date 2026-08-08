@@ -1130,11 +1130,17 @@ else if (activeTabId === 10) { sortCol = 'sisa_hari'; sortAsc = true; }
       let h1Data = sortedHist[1] ? sortedHist[1].data : {ppl:{}, pml:{}};
       let h2Data = sortedHist[2] ? sortedHist[2].data : {ppl:{}, pml:{}};
 
-      function getTrenLogic(d1, d2) {
+function getTrenLogic(d1, d2) {
           let pct = 0;
-          if (d1 === 0 && d2 === 0) { pct = 0; }
-          else if (d1 === 0 && d2 > 0) { pct = 100; } 
-          else { pct = ((d2 - d1) / d1) * 100; }
+          if (d1 === 0 && d2 === 0) { 
+              pct = 0; 
+          } else if (d1 === 0 && d2 > 0) { 
+              pct = 100; 
+          } else if (d1 === 0 && d2 < 0) { 
+              pct = -100; // PERBAIKAN: Tangani jika d1 = 0 dan d2 turun (negatif)
+          } else { 
+              pct = ((d2 - d1) / Math.abs(d1)) * 100; // PERBAIKAN: Gunakan Math.abs agar pembagi aman
+          }
 
           let trenText = "", badgeClass = "";
           if (pct > 0) { 
