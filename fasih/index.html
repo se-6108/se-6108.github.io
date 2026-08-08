@@ -887,7 +887,7 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
       else if (activeTabId === 3) { sortCol = 'pct_app'; sortAsc = false; } 
       else if (activeTabId === 4) { sortCol = 'pct_submit'; sortAsc = false; } 
       else if (activeTabId === 9) { sortCol = 'selisih'; sortAsc = true; }
-      else if (activeTabId === 10) { sortCol = 'delta2'; sortAsc = false; }
+else if (activeTabId === 10) { sortCol = 'sisa_hari'; sortAsc = true; }
       
       renderCurrentTab();
   }
@@ -1412,11 +1412,10 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
                    <td class="px-4 py-3 text-center font-black font-mono text-slate-800 border-l border-slate-300 bg-slate-100/50 align-middle text-sm">${r.selisih}</td>
                  </tr>`;
             }
-            else if(activeTabId === 10) {
+else if(activeTabId === 10) {
                let isPpl = dailyProgressMode === 'ppl';
                let isLate = r.isLate;
 
-               // Format Kondisional Baris Merah vs Normal
                let clBorder = isLate ? 'border-rose-200' : (isPpl ? 'border-amber-200' : 'border-blue-200');
                let clHover = isLate ? 'hover:bg-rose-100/80 bg-rose-50/40' : (isPpl ? 'hover:bg-amber-50/80 bg-white' : 'hover:bg-blue-50/80 bg-white');
                let clTextStrong = isLate ? 'text-rose-900' : (isPpl ? 'text-amber-800' : 'text-blue-800');
@@ -1435,8 +1434,6 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
                    clBgH0 = 'bg-rose-200/40 border-rose-300';
                    clBgDelta2 = 'bg-rose-300/40 border-rose-400';
                }
-
-               let pmlCol = isPpl ? `<td class="px-4 py-3 border-r ${clBorder} align-middle font-bold text-gray-500 uppercase tracking-wider text-[10px]">${r.pml}</td>` : '';
                
                let d1Html = r.delta1 > 0 ? `<span class="${isLate?'text-rose-700':'text-emerald-600'} font-bold">+${r.delta1}</span>` : (r.delta1 < 0 ? `<span class="text-red-600 font-bold">${r.delta1}</span>` : `<span class="${isLate?'text-rose-400':'text-gray-400'} font-bold tracking-widest">0</span>`);
                let d2Html = r.delta2 > 0 ? `<span class="${isLate?'text-rose-800':'text-emerald-700'} font-black">+${r.delta2}</span>` : (r.delta2 < 0 ? `<span class="text-red-700 font-black">${r.delta2}</span>` : `<span class="${isLate?'text-rose-400':'text-gray-400'} font-bold tracking-widest">0</span>`);
@@ -1448,7 +1445,6 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
                        ${r.petugas}
                        ${r.email ? `<br><a href="mailto:${r.email}" class="text-[9px] font-bold ${isLate?'text-rose-500':'text-gray-400'} lowercase flex items-center gap-1 mt-0.5 hover:${clTextStrong} hover:underline transition"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.53 4.81a2 2 0 002.94 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>${r.email}</a>` : ''}
                    </td>
-                   ${pmlCol}
                    <td class="px-4 py-3 border-r ${clBorder} align-middle font-bold ${isLate?'text-rose-600':'text-gray-500'} uppercase tracking-wider text-[10px]">${r.kec}</td>
                    <td class="px-4 py-3 border-r ${clBorder} align-middle font-bold ${isLate?'text-rose-600':'text-gray-500'} uppercase tracking-wider text-[10px]">${r.pj}</td>
                    
@@ -2083,7 +2079,7 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
       return d.getDate() + " " + months[d.getMonth()];
   }
 
-  function getTab10Config(mode) {
+function getTab10Config(mode) {
       let clBg = mode === 'ppl' ? 'bg-amber-50' : 'bg-blue-50';
       let clBorder = mode === 'ppl' ? 'border-amber-200' : 'border-blue-200';
       let clText = mode === 'ppl' ? 'text-amber-900' : 'text-blue-900';
@@ -2093,12 +2089,7 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
       document.getElementById('headTab10').className = `text-[10px] uppercase ${clText} font-bold tracking-wider ${clBgHead}`;
 
       let base = [
-          { k:'petugas', n:(mode === 'ppl' ? 'Nama PPL' : 'Nama PML'), c:`${clBg} border-r ${clBorder} ${clText}`, w:'200px', f:true }
-      ];
-      if (mode === 'ppl') {
-          base.push({ k:'pml', n:'Nama PML', c:`${clBg} border-r ${clBorder} text-gray-700`, w:'200px', f:true });
-      }
-      base.push(
+          { k:'petugas', n:(mode === 'ppl' ? 'Nama PPL' : 'Nama PML'), c:`${clBg} border-r ${clBorder} ${clText}`, w:'200px', f:true },
           { k:'kec', n:'Kecamatan', c:`${clBg} border-r ${clBorder} text-gray-700`, f:true },
           { k:'pj', n:'PJ Kuda', c:`${clBg} border-r ${clBorder} text-gray-700`, f:true },
           { k:'t', n:'Total<br>Assign.', c:'text-center border-l border-gray-200 bg-gray-100 text-gray-800', f:true },
@@ -2110,7 +2101,7 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
           { k:'delta2', n:`Δ ${txtTipe}<br>(Hari Ini - H-1)`, c:`text-center border-l ${mode==='ppl'?'border-amber-300 bg-amber-200 text-amber-900':'border-blue-300 bg-blue-200 text-blue-900'} font-black`, f:true },
           { k:'trenVal', n:`Tren ${txtTipe}<br>2 Hari Terakhir`, c:'text-center border-l border-violet-200 bg-violet-50 font-bold', w:'160px', f:true },
           { k:'sisa_hari', n:'PREDIKSI SELESAI<br>(ESTIMASI)', c:'text-center border-l border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900 font-bold', w:'140px', f:true }
-      );
+      ];
       return base;
   }
 </script>
