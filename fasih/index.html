@@ -1451,7 +1451,7 @@ else if(activeTabId === 10) {
                let d1Html = r.delta1 > 0 ? `<span class="${isLate?'text-rose-700':'text-emerald-600'} font-bold">+${r.delta1}</span>` : (r.delta1 < 0 ? `<span class="text-red-600 font-bold">${r.delta1}</span>` : `<span class="${isLate?'text-rose-400':'text-gray-400'} font-bold tracking-widest">0</span>`);
                let d2Html = r.delta2 > 0 ? `<span class="${isLate?'text-rose-800':'text-emerald-700'} font-black">+${r.delta2}</span>` : (r.delta2 < 0 ? `<span class="text-red-700 font-black">${r.delta2}</span>` : `<span class="${isLate?'text-rose-400':'text-gray-400'} font-bold tracking-widest">0</span>`);
                
-               html += `
+html += `
                  <tr class="border-b transition ${clHover}">
                    <td class="px-4 py-3 text-center border-r ${clBorder} align-middle font-bold ${isLate?'text-rose-400':'text-gray-400'}">${n}</td>
                    <td class="px-4 py-3 font-bold border-r ${clBorder} ${clTextStrong} align-middle">
@@ -1462,7 +1462,6 @@ else if(activeTabId === 10) {
                    <td class="px-4 py-3 border-r ${clBorder} align-middle font-bold ${isLate?'text-rose-600':'text-gray-500'} uppercase tracking-wider text-[10px]">${r.pj}</td>
                    
                    <td class="px-4 py-3 text-center font-bold font-mono border-l ${bgT} align-middle text-[12px]">${r.t}</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono border-l ${bgVel} align-middle text-[12px]">${r.avg_vel}</td>
                    
                    <td class="px-4 py-3 text-center font-bold font-mono border-l ${bgH2} align-middle text-[12px]">${r.h2}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono border-l ${bgH1} align-middle text-[12px]">${r.h1}</td>
@@ -1470,6 +1469,8 @@ else if(activeTabId === 10) {
                    
                    <td class="px-4 py-3 text-center font-black font-mono ${clTextStrong} border-l ${clBgH0} align-middle text-[13px]">${r.h0}</td>
                    <td class="px-4 py-3 text-center font-black font-mono border-l ${clBgDelta2} align-middle text-[15px]">${d2Html}</td>
+                   
+                   <td class="px-4 py-3 text-center font-bold font-mono border-l ${bgVel} align-middle text-[12px]">${r.avg_vel}</td>
                    
                    <td class="px-4 py-3 text-center align-middle border-l ${isLate?'border-rose-300 bg-rose-50':'border-violet-200 bg-violet-50/40'}">${r.trenHtml}</td>
                    <td class="px-4 py-3 text-center align-middle border-l ${isLate?'border-rose-300 bg-rose-100/50':'border-fuchsia-200 bg-fuchsia-50/40'} leading-tight">${r.prediksiHtml}</td>
@@ -2101,17 +2102,22 @@ function getTab10Config(mode) {
       
       document.getElementById('headTab10').className = `text-[10px] uppercase ${clText} font-bold tracking-wider ${clBgHead}`;
 
+      // EKSTRAK TANGGAL DINAMIS DARI HISTORY DATA
+      let sortedHist = [...HISTORY_DATA].sort((a,b) => a.date < b.date ? 1 : -1);
+      let dateH1 = sortedHist[1] ? formatTanggalIndo(sortedHist[1].date) : 'H-1';
+      let dateH2 = sortedHist[2] ? formatTanggalIndo(sortedHist[2].date) : 'H-2';
+
       let base = [
           { k:'petugas', n:(mode === 'ppl' ? 'Nama PPL' : 'Nama PML'), c:`${clBg} border-r ${clBorder} ${clText}`, w:'200px', f:true },
           { k:'kec', n:'Kecamatan', c:`${clBg} border-r ${clBorder} text-gray-700`, f:true },
           { k:'pj', n:'PJ Kuda', c:`${clBg} border-r ${clBorder} text-gray-700`, f:true },
           { k:'t', n:'Total<br>Assign.', c:'text-center border-l border-gray-200 bg-gray-100 text-gray-800', f:true },
-          { k:'avg_vel', n:`Rata² ${txtTipe}<br>(3 Hari)`, c:'text-center border-l border-gray-200 bg-slate-100 text-slate-800 font-bold', f:true },
-          { k:'h2', n:`Total ${txtTipe}<br>H-2`, c:'text-center border-l border-indigo-200 bg-indigo-50 text-indigo-800', f:true },
-          { k:'h1', n:`Total ${txtTipe}<br>H-1`, c:'text-center border-l border-teal-200 bg-teal-50 text-teal-800', f:true },
-          { k:'delta1', n:`Δ ${txtTipe}<br>(H-1 - H-2)`, c:`text-center border-l ${mode==='ppl'?'border-amber-100 bg-amber-50 text-amber-700':'border-blue-100 bg-blue-50 text-blue-700'}`, f:true },
+          { k:'h2', n:`Total ${txtTipe}<br>${dateH2}`, c:'text-center border-l border-indigo-200 bg-indigo-50 text-indigo-800', f:true },
+          { k:'h1', n:`Total ${txtTipe}<br>${dateH1}`, c:'text-center border-l border-teal-200 bg-teal-50 text-teal-800', f:true },
+          { k:'delta1', n:`Penambahan ${txtTipe}<br>${dateH1}`, c:`text-center border-l ${mode==='ppl'?'border-amber-100 bg-amber-50 text-amber-700':'border-blue-100 bg-blue-50 text-blue-700'}`, f:true },
           { k:'h0', n:`Total ${txtTipe}<br>HARI INI`, c:`text-center border-l ${mode==='ppl'?'border-amber-200 bg-amber-100 text-amber-900':'border-blue-200 bg-blue-100 text-blue-900'} font-bold`, f:true },
-          { k:'delta2', n:`Δ ${txtTipe}<br>(Hari Ini - H-1)`, c:`text-center border-l ${mode==='ppl'?'border-amber-300 bg-amber-200 text-amber-900':'border-blue-300 bg-blue-200 text-blue-900'} font-black`, f:true },
+          { k:'delta2', n:`Penambahan ${txtTipe}<br>Hari Ini`, c:`text-center border-l ${mode==='ppl'?'border-amber-300 bg-amber-200 text-amber-900':'border-blue-300 bg-blue-200 text-blue-900'} font-black`, f:true },
+          { k:'avg_vel', n:`Rata² ${txtTipe}<br>(3 Hari)`, c:'text-center border-l border-gray-200 bg-slate-100 text-slate-800 font-bold', f:true },
           { k:'trenVal', n:`Tren ${txtTipe}<br>2 Hari Terakhir`, c:'text-center border-l border-violet-200 bg-violet-50 font-bold', w:'160px', f:true },
           { k:'sisa_hari', n:'PREDIKSI SELESAI<br>(ESTIMASI)', c:'text-center border-l border-fuchsia-200 bg-fuchsia-50 text-fuchsia-900 font-bold', w:'140px', f:true }
       ];
