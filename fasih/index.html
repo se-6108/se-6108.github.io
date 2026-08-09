@@ -42,12 +42,14 @@
       overflow: hidden !important; 
       text-align: left !important; 
     } 
-    .custom-spinner { 
-      width: 3.5rem; height: 3.5rem; 
-      border: 4px solid #bfdbfe; border-top-color: #2563eb; 
-      border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; 
+/* TAMBAHKAN INI DI DALAM TAG <style> */
+    .animate-fade-in-up {
+      animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(15px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
     
     .dashboard-table th { 
       position: sticky; top: 0; z-index: 20; 
@@ -67,10 +69,40 @@
 </head>
 <body class="h-screen overflow-hidden bg-blue-50/30 flex flex-col text-gray-800">
 
-  <div id="globalLoading" class="fixed inset-0 z-[100] bg-white/95 flex flex-col items-center justify-center transition-opacity duration-300">
-      <div class="custom-spinner"></div>
-      <span class="text-sm text-blue-600 mt-4 font-black tracking-widest animate-pulse">MEMUAT DASHBOARD FASIH...</span>
+<!-- START LOADING SCREEN MODERN -->
+  <div id="globalLoading" class="fixed inset-0 z-[100] bg-gradient-to-br from-blue-50/95 to-white/95 backdrop-blur-sm flex flex-col items-center justify-center transition-opacity duration-500">
+      
+      <!-- Animasi Logo Modern -->
+      <div class="relative flex justify-center items-center mb-8">
+          <!-- Lingkaran spin tipis di luar -->
+          <div class="absolute border-[3px] border-blue-100 border-t-blue-600 rounded-full animate-spin" style="width: 110px; height: 110px;"></div>
+          <!-- Logo berdenyut (pulse) di tengah -->
+          <img src="https://i.ibb.co.com/jv8y1FSq/unnamed.png" class="w-20 h-20 drop-shadow-xl rounded-full animate-pulse bg-white p-1">
+      </div>
+      
+      <!-- Area Quotes Acak -->
+      <div class="max-w-lg px-8 text-center animate-fade-in-up">
+          <p id="loadingQuoteText" class="text-sm md:text-[15px] text-indigo-900 font-semibold italic mb-3 leading-relaxed opacity-90"></p>
+          <p id="loadingQuoteAuthor" class="text-[10px] md:text-xs text-blue-600 font-black uppercase tracking-[0.2em]"></p>
+      </div>
+
+      <!-- Script langsung jalan saat loading muncul -->
+      <script>
+        const loadingQuotes = [
+          { q: "Sukses bukanlah milik mereka yang pintar, tapi milik mereka yang berjuang mati-matian.", a: "Merry Riana" },
+          { q: "Kegagalan itu seperti pupuk. Memang bau, tapi ia membuat pertumbuhan lebih cepat di masa depan.", a: "Raditya Dika" },
+          { q: "Istirahatlah jika kamu lelah, tapi jangan pernah menyerah dan berhenti melangkah.", a: "Najwa Shihab" },
+          { q: "Gagal itu makanan sehari-hari. Itu biasa, yang terpenting adalah bagaimana kamu bangkit.", a: "Chairul Tanjung" },
+          { q: "Mulai aja dulu, sempurnakan sambil jalan. Kalau nunggu sempurna, nggak akan pernah mulai.", a: "William Tanuwijaya" },
+          { q: "Kerja keras dan kerja cerdas menentukan hasil, namun doa dan kebaikan hati akan memudahkannya.", a: "Sandiaga Uno" },
+          { q: "Jangan biarkan keraguan masa kini membatasi pencapaian masa depanmu.", a: "Bong Chandra" }
+        ];
+        const randomQ = loadingQuotes[Math.floor(Math.random() * loadingQuotes.length)];
+        document.getElementById('loadingQuoteText').innerText = `"${randomQ.q}"`;
+        document.getElementById('loadingQuoteAuthor').innerText = randomQ.a;
+      </script>
   </div>
+  <!-- END LOADING SCREEN MODERN -->
 
   <div id="halaman-dashboard" class="flex flex-col h-full w-full relative z-10">
     <div class="bg-white border-b border-blue-200 shadow-sm flex-none z-40 relative flex flex-col">
