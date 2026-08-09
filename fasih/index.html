@@ -887,7 +887,7 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
       else if (activeTabId === 3) { sortCol = 'pct_app'; sortAsc = false; } 
       else if (activeTabId === 4) { sortCol = 'pct_submit'; sortAsc = false; } 
       else if (activeTabId === 9) { sortCol = 'selisih'; sortAsc = true; }
-else if (activeTabId === 10) { sortCol = 'sisa_hari'; sortAsc = true; }
+      else if (activeTabId === 10) { sortCol = 'delta2'; sortAsc = false; }
       
       renderCurrentTab();
   }
@@ -1434,7 +1434,6 @@ else if(activeTabId === 10) {
                let clHover = isPpl ? 'hover:bg-amber-50/80 bg-white' : 'hover:bg-blue-50/80 bg-white';
                let clTextStrong = isPpl ? 'text-amber-800' : 'text-blue-800';
                
-               // Warna identitas kiri memerah jika statusnya terlambat
                if (isLate) {
                    clBorder = 'border-rose-200';
                    clHover = 'hover:bg-rose-50/80 bg-white';
@@ -1445,15 +1444,20 @@ else if(activeTabId === 10) {
                let bgT = isLate ? 'bg-gray-100 border-gray-300 text-red-700' : 'bg-gray-50 border-gray-200 text-gray-800';
                let bgH2 = 'bg-indigo-50 border-indigo-200 text-indigo-900';
                let bgH1 = 'bg-teal-50 border-teal-200 text-teal-900';
-               let bgDelta1 = 'bg-cyan-50 border-cyan-200 text-cyan-900';
                let bgH0 = 'bg-orange-50 border-orange-300 text-orange-900';
-               let bgDelta2 = 'bg-pink-50 border-pink-200 text-pink-900';
+               let bgDelta1 = 'bg-cyan-50 border-cyan-200 text-cyan-900';
+               
+               // HIGHLIGHT POSITIF (EMERALD) UNTUK PENAMBAHAN HARI INI
+               let bgDelta2 = 'bg-emerald-100 border-emerald-300 text-emerald-900 shadow-sm'; 
+               
                let bgVel = 'bg-slate-100 border-slate-300 text-slate-800';
                let bgTren = 'bg-violet-50 border-violet-200';
                let bgPrediksi = isLate ? 'bg-rose-100 border-rose-300' : 'bg-fuchsia-50 border-fuchsia-200';
                
                let d1Html = r.delta1 > 0 ? `<span class="text-emerald-600 font-bold">+${r.delta1}</span>` : (r.delta1 < 0 ? `<span class="text-red-600 font-bold">${r.delta1}</span>` : `<span class="text-gray-400 font-bold tracking-widest">0</span>`);
-               let d2Html = r.delta2 > 0 ? `<span class="text-emerald-700 font-black">+${r.delta2}</span>` : (r.delta2 < 0 ? `<span class="text-red-700 font-black">${r.delta2}</span>` : `<span class="text-gray-400 font-bold tracking-widest">0</span>`);
+               
+               // Angka pada Delta 2 diperbesar dan warnanya disesuaikan agar padu dengan background Emerald
+               let d2Html = r.delta2 > 0 ? `<span class="text-emerald-800 font-black text-[16px] drop-shadow-sm">+${r.delta2}</span>` : (r.delta2 < 0 ? `<span class="text-red-600 font-black text-[16px]">${r.delta2}</span>` : `<span class="text-emerald-700/50 font-bold tracking-widest text-[14px]">0</span>`);
                
                html += `
                  <tr class="border-b transition ${clHover}">
@@ -1467,11 +1471,12 @@ else if(activeTabId === 10) {
                    
                    <td class="px-4 py-3 text-center font-bold font-mono border-l ${bgT} align-middle text-[12px]">${r.t}</td>
                    
+                   <!-- URUTAN BARU: H2, H1, H0, Delta1, Delta2, Rata2 -->
                    <td class="px-4 py-3 text-center font-bold font-mono border-l ${bgH2} align-middle text-[12px]">${r.h2}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono border-l ${bgH1} align-middle text-[12px]">${r.h1}</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono border-l ${bgDelta1} align-middle text-[13px]">${d1Html}</td>
-                   
                    <td class="px-4 py-3 text-center font-black font-mono border-l ${bgH0} align-middle text-[13px]">${r.h0}</td>
+                   
+                   <td class="px-4 py-3 text-center font-bold font-mono border-l ${bgDelta1} align-middle text-[13px]">${d1Html}</td>
                    <td class="px-4 py-3 text-center font-black font-mono border-l ${bgDelta2} align-middle text-[15px]">${d2Html}</td>
                    
                    <td class="px-4 py-3 text-center font-bold font-mono border-l ${bgVel} align-middle text-[12px]">${r.avg_vel}</td>
@@ -2108,21 +2113,23 @@ function getTab10Config(mode) {
 
       // EKSTRAK TANGGAL DINAMIS DARI HISTORY DATA
       let sortedHist = [...HISTORY_DATA].sort((a,b) => a.date < b.date ? 1 : -1);
-      let dateH1 = sortedHist[1] ? formatTanggalIndo(sortedHist[1].date) : 'H-1';
       let dateH2 = sortedHist[2] ? formatTanggalIndo(sortedHist[2].date) : 'H-2';
 
-      // WARNA HEADER DIBUAT UNIK & KONTRAST
+      // URUTAN DAN NAMA KOLOM BARU (DIKELOMPOKKAN & HIGHLIGHT POSITIF)
       let base = [
           { k:'petugas', n:(mode === 'ppl' ? 'Nama PPL' : 'Nama PML'), c:`${clBg} border-r ${clBorder} ${clText}`, w:'200px', f:true },
           { k:'kec', n:'Kecamatan', c:`${clBg} border-r ${clBorder} text-gray-700`, f:true },
           { k:'pj', n:'PJ Kuda', c:`${clBg} border-r ${clBorder} text-gray-700`, f:true },
           { k:'t', n:'Total<br>Assign.', c:'text-center border-l border-gray-300 bg-gray-200 text-gray-800', f:true },
+          
           { k:'h2', n:`Total ${txtTipe}<br>${dateH2}`, c:'text-center border-l border-indigo-200 bg-indigo-100 text-indigo-900', f:true },
-          { k:'h1', n:`Total ${txtTipe}<br>${dateH1}`, c:'text-center border-l border-teal-200 bg-teal-100 text-teal-900', f:true },
-          { k:'delta1', n:`Penambahan ${txtTipe}<br>${dateH1}`, c:'text-center border-l border-cyan-200 bg-cyan-100 text-cyan-900', f:true },
+          { k:'h1', n:`Total ${txtTipe}<br>KEMARIN`, c:'text-center border-l border-teal-200 bg-teal-100 text-teal-900', f:true },
           { k:'h0', n:`Total ${txtTipe}<br>HARI INI`, c:'text-center border-l border-orange-300 bg-orange-100 text-orange-900 font-bold', f:true },
-          { k:'delta2', n:`Penambahan ${txtTipe}<br>Hari Ini`, c:'text-center border-l border-pink-200 bg-pink-100 text-pink-900 font-black', f:true },
-          { k:'avg_vel', n:`Rata² ${txtTipe}<br>(3 Hari)`, c:'text-center border-l border-slate-300 bg-slate-200 text-slate-900 font-bold', f:true },
+          
+          { k:'delta1', n:`Penambahan ${txtTipe}<br>KEMARIN`, c:'text-center border-l border-cyan-200 bg-cyan-100 text-cyan-900', f:true },
+          { k:'delta2', n:`Penambahan ${txtTipe}<br>HARI INI`, c:'text-center border-l border-emerald-400 bg-emerald-200 text-emerald-900 font-black shadow-inner', f:true },
+          
+          { k:'avg_vel', n:`Rata² ${txtTipe}<br>3 Hari Terakhir`, c:'text-center border-l border-slate-300 bg-slate-200 text-slate-900 font-bold', f:true },
           { k:'trenVal', n:`Tren ${txtTipe}<br>2 Hari Terakhir`, c:'text-center border-l border-violet-200 bg-violet-100 text-violet-900 font-bold', w:'160px', f:true },
           { k:'sisa_hari', n:'PREDIKSI SELESAI<br>(ESTIMASI)', c:'text-center border-l border-fuchsia-200 bg-fuchsia-100 text-fuchsia-900 font-bold', w:'140px', f:true }
       ];
