@@ -68,6 +68,10 @@
   </style>
 </head>
 <body class="h-screen overflow-hidden bg-blue-50/30 flex flex-col text-gray-800">
+ <!-- AUDIO TERSEMBUNYI UNTUK BACKSOUND -->
+  <audio id="bgMusic" loop preload="auto">
+      <source src="backsound.mp3" type="audio/mpeg">
+  </audio>
 
 <!-- START LOADING SCREEN MODERN -->
   <div id="globalLoading" class="fixed inset-0 z-[100] bg-gradient-to-br from-blue-50/95 to-white/95 backdrop-blur-sm flex flex-col items-center justify-center transition-opacity duration-500">
@@ -77,7 +81,7 @@
           <!-- Lingkaran spin tipis di luar -->
           <div class="absolute border-[3px] border-blue-100 border-t-blue-600 rounded-full animate-spin" style="width: 110px; height: 110px;"></div>
           <!-- Logo berdenyut (pulse) di tengah -->
-          <img src="icon.png?v=mataenggang_1" class="w-20 h-20 drop-shadow-xl rounded-full animate-pulse bg-white p-1">
+         <img src="icon.png?v=mataenggang_1" onclick="toggleMusic()" class="w-14 h-14 drop-shadow-md bg-white rounded-full p-1 border-2 border-blue-200 cursor-pointer hover:scale-110 hover:border-blue-400 transition-all duration-300" title="Klik untuk memutar/menghentikan musik 🎵">
       </div>
       
       <!-- Area Quotes Acak -->
@@ -593,11 +597,19 @@
                                   <li>Target kemajuan <b>PML</b> dinilai murni berdasarkan capaian dokumen <b>Approved</b>.</li>
                               </ul>
                               
-                              <div class="mt-3 p-2.5 bg-amber-100 text-amber-900 border border-amber-300 rounded-lg shadow-sm">
+                   <div class="mt-3 p-2.5 bg-amber-100 text-amber-900 border border-amber-300 rounded-lg shadow-sm">
                                  <b class="flex items-center gap-1 text-[13px] mb-1">💰 Syarat Pencairan Termin 1:</b>
                                  Sebagai informasi, per tanggal <b>15 Juli 2026</b> minimal capaian persentase <b>APPROVED</b> harus menyentuh angka <b>40%</b> agar dapat dilakukan pencairan termin 1.
                               </div>
                           </div>
+
+                          <!-- TAMBAHAN PETUNJUK MUSIK -->
+                          <div class="mt-4 text-center animate-pulse">
+                              <span class="text-[11px] text-indigo-600 font-bold italic bg-indigo-50 px-3 py-1.5 rounded-full border border-indigo-100 shadow-sm">
+                                 💡 Psst... Coba klik Logo Mata Enggang di pojok kiri atas untuk memutar musik! 🎵
+                              </span>
+                          </div>
+                          
                       </div>
                   `,
                   icon: 'info',
@@ -2190,6 +2202,26 @@ function downloadImage() {
       renderCurrentTab();
   }
 
+// =========================================================================
+  // FITUR BACKSOUND MUSIC (EASTER EGG LOGO)
+  // =========================================================================
+  let isMusicPlaying = false;
+  function toggleMusic() {
+      let bgAudio = document.getElementById('bgMusic');
+      
+      // Mengatur volume menjadi 30% agar nyaman dan tidak mengagetkan
+      bgAudio.volume = 0.3; 
+
+      if (isMusicPlaying) {
+          bgAudio.pause();
+          Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: 'Musik Dihentikan 🔇', showConfirmButton: false, timer: 1500 });
+      } else {
+          bgAudio.play();
+          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Memutar Musik 🎵', showConfirmButton: false, timer: 1500 });
+      }
+      isMusicPlaying = !isMusicPlaying;
+  }
+  
   function formatTanggalIndo(dateStr) {
       if (!dateStr) return "";
       let d = new Date(dateStr);
