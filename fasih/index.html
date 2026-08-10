@@ -416,7 +416,9 @@
              </div>
          </div>
       
-      <!-- AREA PAGINASI -->
+      </div> <!-- KUNCI PERBAIKAN: Tag penutup #captureArea digeser ke sini! -->
+
+      <!-- AREA PAGINASI (Sekarang merdeka dan berada di luar area scroll tabel) -->
       <div id="paginasiArea" class="bg-white border border-gray-200 px-5 py-3 rounded-xl mt-3 shadow-sm flex justify-between items-center shrink-0">
          <div class="flex items-center gap-3">
             <select id="perPageSelect" onchange="changePerPage()" class="text-xs font-bold text-gray-600 bg-gray-50 border border-gray-300 rounded-md px-2 py-1.5 outline-none cursor-pointer shadow-sm">
@@ -431,8 +433,9 @@
          </div>
          <div id="paginationDashContainer"></div>
       </div>
-    </div>
-  </div>
+      
+    </div> <!-- Penutup Main Dashboard Area -->
+  </div> <!-- Penutup Halaman Dashboard -->
 
 <script>
   // =========================================================================
