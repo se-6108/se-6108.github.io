@@ -230,8 +230,17 @@
         </div>
       </div>
       
-      <div class="px-6 pt-3 bg-white flex gap-6 border-b border-gray-200 overflow-x-auto scrollbar-hide">
+<div class="px-6 pt-3 bg-white flex gap-6 border-b border-gray-200 overflow-x-auto scrollbar-hide">
+         <!-- TAB 1 -->
          <button id="btnTab1" onclick="switchTab(1)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-blue-500 text-blue-700 transition">Detail SLS</button>
+         
+         <!-- TAB 10 (DIPINDAH KE SINI + BADGE NEW) -->
+         <button id="btnTab10" onclick="switchTab(10)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-amber-600 transition flex items-center gap-1.5">
+             Progress Harian
+             <span class="bg-red-500 text-white text-[9px] px-1.5 py-0.5 rounded animate-pulse shadow-sm">NEW</span>
+         </button>
+
+         <!-- TAB 2 SAMPAI 9 -->
          <button id="btnTab2" onclick="switchTab(2)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Progress PPL</button>
          <button id="btnTab3" onclick="switchTab(3)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Progress PML</button>
          <button id="btnTab4" onclick="switchTab(4)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-500 transition">Progress Kecamatan</button>
@@ -240,7 +249,6 @@
          <button id="btnTab7" onclick="switchTab(7)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-purple-600 transition flex gap-1 items-center">Pendataan BKU</button>
          <button id="btnTab8" onclick="switchTab(8)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-blue-600 transition flex gap-1 items-center">Pendataan Usaha Keluarga</button>
          <button id="btnTab9" onclick="switchTab(9)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-slate-700 transition flex gap-1 items-center">Evaluasi Dokumen PPL</button>
-         <button id="btnTab10" onclick="switchTab(10)" class="whitespace-nowrap pb-2 text-xs font-bold uppercase tracking-wide border-b-[3px] border-transparent text-gray-500 hover:text-amber-600 transition flex gap-1 items-center">Progress Harian</button>
       </div>
 
       <div class="px-6 py-3 bg-gray-50/50 flex gap-2 items-center border-b border-blue-100 flex-wrap" id="filterArea">
