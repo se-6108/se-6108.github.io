@@ -1413,18 +1413,18 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
                    <td class="px-4 py-3 text-center border-l border-gray-200 align-middle whitespace-nowrap">${bd}</td>
                  </tr>`;
             }
-           else if(activeTabId === 4) {
-                // LOGIKA CONDITIONAL FORMATTING
+else if(activeTabId === 4) {
                 // Mengecek apakah % submit kecamatan di bawah batas target hari ini
                 let isBelowTarget = parseFloat(r.pct_submit) < timingConfig.y;
                 
-                // Menentukan kelas CSS (Merah jika di bawah target, Biru muda jika aman)
-                let classPctSubmit = isBelowTarget 
-                    ? 'text-center font-black font-mono border-l border-red-300 bg-red-100 text-red-700 align-middle shadow-inner' 
-                    : 'text-center font-bold font-mono border-l border-sky-100 text-sky-700 align-middle';
+                // KUNCI: Menentukan kelas CSS untuk BARIS (TR) secara penuh
+                // Jika di bawah target: Background merah tipis. Jika aman: Background putih biasa.
+                let trClass = isBelowTarget 
+                    ? 'bg-red-50/70 hover:bg-red-100 transition' 
+                    : 'bg-white hover:bg-blue-50/50 transition';
 
                 html += `
-                  <tr class="border-b hover:bg-blue-50/50 transition">
+                  <tr class="border-b border-gray-100 ${trClass}">
                     <td class="px-4 py-3 text-center border-r border-blue-100 align-middle font-bold">${n}</td>
                     <td class="px-4 py-3 font-bold border-r border-blue-100 text-gray-800 uppercase tracking-wider text-[10px] align-middle">${r.kec}</td>
                     <td class="px-4 py-3 font-bold border-r border-blue-100 align-middle">${r.pj}</td>
@@ -1436,8 +1436,8 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
                     <td class="px-4 py-3 text-center font-bold font-mono text-indigo-900 border-l border-indigo-200 align-middle">${r.t}</td>
                     <td class="px-4 py-3 text-center font-bold font-mono border-l border-fuchsia-100 text-fuchsia-700 align-middle">${r.pct_pendataan}%</td>
                     
-                    <!-- SEL INI YANG BERUBAH WARNANYA SECARA OTOMATIS -->
-                    <td class="px-4 py-3 ${classPctSubmit}">${r.pct_submit}%</td>
+                    <!-- Warna teks % Submit dipertegas merah jika ia penyebab baris ini merah -->
+                    <td class="px-4 py-3 text-center font-mono border-l border-sky-100 align-middle ${isBelowTarget ? 'text-red-700 font-black' : 'text-sky-700 font-bold'}">${r.pct_submit}%</td>
                     
                     <td class="px-4 py-3 text-center font-bold font-mono border-l border-emerald-100 text-emerald-700 align-middle">${r.pct_approve}%</td>
                   </tr>`;
