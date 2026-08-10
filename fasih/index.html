@@ -2028,7 +2028,7 @@ else if(activeTabId === 10) {
     XLSX.writeFile(workbook, `Rekap_Monitoring_FASIH_${new Date().toISOString().slice(0,10)}.xlsx`);
   }
 
-  function downloadImage() {
+function downloadImage() {
       if (dashFilteredData.length === 0) return Swal.fire('Info', 'Data kosong, tidak ada yang dicetak', 'info');
       
       const btn = document.getElementById('btnImage'); 
@@ -2056,25 +2056,29 @@ else if(activeTabId === 10) {
       watermarkHeader.classList.remove('hidden');
       watermarkHeader.classList.add('flex');
 
+      // KUNCI PERBAIKAN: Membunuh paksa posisi Sticky dan offset Top menjadi Static
       const styleFix = document.createElement('style');
       styleFix.id = 'html2canvas-fix-scroll';
       styleFix.innerHTML = `
-          html, body, #halaman-dashboard { height: auto !important; min-height: 100% !important; overflow: visible !important; }
+          html, body, #halaman-dashboard { height: auto !important; min-height: 100% !important; overflow: visible !important; width: auto !important; }
           .flex-1, #captureArea, #captureArea > div, #captureArea table, #captureArea tbody { height: auto !important; max-height: none !important; overflow: visible !important; }
+          #captureArea { width: max-content !important; min-width: 100% !important; }
+          /* --- PENAWAR TUMPANG TINDIH HEADER & SWITCHER --- */
+          #captureArea th, #captureArea .sticky { position: static !important; top: auto !important; left: auto !important; transform: none !important; max-width: none !important; }
           .badge-prioritas, svg, img, i { display: inline-block !important; vertical-align: middle !important; }
       `;
       document.head.appendChild(styleFix);
 
-      const tableHeaders = element.querySelectorAll('th');
-      tableHeaders.forEach(th => th.style.position = 'relative');
-
+      const elementWidth = element.scrollWidth;
       window.scrollTo(0, 0);
 
       html2canvas(element, { 
           scale: 2, 
           useCORS: true,
+          windowWidth: elementWidth, 
           windowHeight: element.scrollHeight,
-          scrollY: 0
+          scrollY: 0,
+          scrollX: 0
       }).then(canvas => {
           const link = document.createElement('a');
           link.download = `Dashboard_FASIH_${new Date().toISOString().slice(0,10)}.jpg`;
@@ -2084,7 +2088,6 @@ else if(activeTabId === 10) {
           Swal.fire('Error', 'Gagal memproses gambar.', 'error');
       }).finally(() => {
           document.getElementById('html2canvas-fix-scroll')?.remove(); 
-          tableHeaders.forEach(th => th.style.position = 'sticky'); 
           watermarkHeader.classList.add('hidden');
           watermarkHeader.classList.remove('flex');
           btn.innerHTML = originalText;
@@ -2120,25 +2123,27 @@ else if(activeTabId === 10) {
       watermarkHeader.classList.remove('hidden');
       watermarkHeader.classList.add('flex');
 
+      // KUNCI PERBAIKAN: Membunuh paksa posisi Sticky dan offset Top menjadi Static
       const styleFix = document.createElement('style');
       styleFix.id = 'html2canvas-fix-scroll-pdf';
       styleFix.innerHTML = `
-          html, body, #halaman-dashboard { height: auto !important; min-height: 100% !important; overflow: visible !important; }
+          html, body, #halaman-dashboard { height: auto !important; min-height: 100% !important; overflow: visible !important; width: auto !important; }
           .flex-1, #captureArea, #captureArea > div, #captureArea table, #captureArea tbody { height: auto !important; max-height: none !important; overflow: visible !important; }
+          #captureArea { width: max-content !important; min-width: 100% !important; }
+          /* --- PENAWAR TUMPANG TINDIH HEADER & SWITCHER --- */
+          #captureArea th, #captureArea .sticky { position: static !important; top: auto !important; left: auto !important; transform: none !important; max-width: none !important; }
           .badge-prioritas, svg, img, i { display: inline-block !important; vertical-align: middle !important; }
       `;
       document.head.appendChild(styleFix);
 
-      const tableHeaders = element.querySelectorAll('th');
-      tableHeaders.forEach(th => th.style.position = 'relative');
-
+      const elementWidth = element.scrollWidth;
       window.scrollTo(0, 0);
 
       const opt = {
           margin:       0.2,
           filename:     `Dashboard_FASIH_${new Date().toISOString().slice(0,10)}.pdf`,
           image:        { type: 'jpeg', quality: 0.98 },
-          html2canvas:  { scale: 2, useCORS: true, windowHeight: element.scrollHeight, scrollY: 0 },
+          html2canvas:  { scale: 2, useCORS: true, windowWidth: elementWidth, windowHeight: element.scrollHeight, scrollX: 0, scrollY: 0 },
           jsPDF:        { unit: 'in', format: 'legal', orientation: 'landscape' }
       };
 
@@ -2147,7 +2152,6 @@ else if(activeTabId === 10) {
           Swal.fire('Error', 'Gagal membuat PDF', 'error');
       }).finally(() => {
           document.getElementById('html2canvas-fix-scroll-pdf')?.remove(); 
-          tableHeaders.forEach(th => th.style.position = 'sticky'); 
           watermarkHeader.classList.add('hidden');
           watermarkHeader.classList.remove('flex');
           btn.innerHTML = originalText;
