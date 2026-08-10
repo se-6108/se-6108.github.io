@@ -1185,11 +1185,9 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
       });
 
       // KALKULASI TAB 10 (PROGRESS HARIAN)
-// ==========================================
-      // KALKULASI TAB 10 (PROGRESS HARIAN)
       // ==========================================
       TAB_STATE[10] = [];
-      let sortedHist = [...HISTORY_DATA].sort((a,b) => a.date < b.date ? 1 : -1);
+      let sortedHist = [...HISTORY_DATA].sort((a,b) => new Date(b.date) - new Date(a.date));
       
       TABS_CONFIG[10] = getTab10Config(dailyProgressMode);
       buildTableHeaders(); 
@@ -2176,11 +2174,18 @@ function getTab10Config(mode) {
       
       document.getElementById('headTab10').className = `text-[10px] uppercase ${clText} font-bold tracking-wider ${clBgHead}`;
 
-      // EKSTRAK TANGGAL DINAMIS DARI HISTORY DATA
-      let sortedHist = [...HISTORY_DATA].sort((a,b) => a.date < b.date ? 1 : -1);
-      let dateH2 = sortedHist[2] ? formatTanggalIndo(sortedHist[2].date) : 'H-2';
+      // PERBAIKAN: Hitung H-2 murni secara matematis dari waktu WIB (Anti-Bug Spreadsheet)
+      let now = new Date();
+      let utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+      let wib = new Date(utc + (3600000 * 7));
+      
+      let dH2 = new Date(wib); 
+      dH2.setDate(dH2.getDate() - 2); 
+      
+      let months = ["Jan.", "Feb.", "Maret", "April", "Mei", "Juni", "Juli", "Ags.", "Sept.", "Okt.", "Nov.", "Des."];
+      let dateH2 = dH2.getDate() + " " + months[dH2.getMonth()];
 
-      // URUTAN DAN NAMA KOLOM BARU (DIKELOMPOKKAN & HIGHLIGHT POSITIF)
+      // URUTAN DAN NAMA KOLOM BARU
       let base = [
           { k:'petugas', n:(mode === 'ppl' ? 'Nama PPL' : 'Nama PML'), c:`${clBg} border-r ${clBorder} ${clText}`, w:'200px', f:true },
           { k:'kec', n:'Kecamatan', c:`${clBg} border-r ${clBorder} text-gray-700`, f:true },
