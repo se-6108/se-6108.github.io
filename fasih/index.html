@@ -1762,8 +1762,7 @@ function authAdminPanel() {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({ type: 'verify_auth', password: loginPin }),
-                redirect: 'follow',
-                credentials: 'omit' // <--- KUNCI ANTI-ERROR MULTI AKUN
+                redirect: 'follow'
             })
             .then(response => {
                 if (!response.ok) throw new Error("Terjadi gangguan pada server Google.");
@@ -1893,8 +1892,7 @@ function sendToGAS(tipe, dataArray) {
            method: 'POST', 
            headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
            body: JSON.stringify({ type: tipe, data: dataArray }),
-           redirect: 'follow',
-           credentials: 'omit' // <--- KUNCI ANTI-ERROR MULTI AKUN
+           redirect: 'follow'
        }).then(r => {
            if (!r.ok) throw new Error("Server Google menolak permintaan.");
            return r.json();
