@@ -110,15 +110,11 @@
           { q: "Sudah ya, jangan ditangisi lagi. Yang patah akan tumbuh, yang hilang akan berganti.", a: "Banda Neira" },
           { q: "Luka yang paling dalam adalah luka yang tidak berdarah. Dan rindu yang paling sunyi adalah rindu yang tak bertuan.", a: "Wira Nagara" },
           { q: "Untuk apa bertahan pada rasa sakit yang sama, jika di luar sana ada tawa yang menunggumu?", a: "Wira Nagara" },        
-
-          // --- KHUSUS KHALIL GIBRAN (TAMBAHAN) ---
           { q: "Di antara apa yang diucapkan namun tak dimaksudkan, dan apa yang dirasakan namun tak diucapkan, di situlah cinta perlahan hilang.", a: "Khalil Gibran" },
           { q: "Aku belajar arti keheningan dari mereka yang banyak bicara, dan belajar kebaikan dari mereka yang berhati kejam.", a: "Khalil Gibran" },
           { q: "Kecantikan tidak pernah bersemayam pada raut wajah, ia adalah cahaya yang memancar murni dari kedalaman hati.", a: "Khalil Gibran" },
           { q: "Terkadang, hati membutuhkan waktu jauh lebih lama untuk menerima apa yang sebenarnya sudah lama disadari oleh pikiran.", a: "Khalil Gibran" },
           { q: "Pohon-pohon adalah barisan puisi abadi yang digoreskan bumi secara diam-diam pada hamparan langit yang luas.", a: "Khalil Gibran" },
-
-          // --- KHUSUS MAHMOUD DARWISH ---
           { q: "Aku tak berani menatap matamu terlalu lama, karena di sanalah kulihat seluruh tanah airku yang hilang.", a: "Mahmoud Darwish" },
           { q: "Aku memikirkanmu dalam sunyi, dan seketika seisi dunia menahan napasnya.", a: "Mahmoud Darwish" },
           { q: "Ia tak benar-benar mencintaimu, ia hanya jatuh cinta pada versi dirimu yang tercipta saat kau bersamanya.", a: "Mahmoud Darwish" },
@@ -126,7 +122,6 @@
           { q: "Di manakah kita akan berlabuh, ketika perbatasan terakhir dari sebuah kerinduan telah lama terlewati?", a: "Mahmoud Darwish" },
           { q: "Hatiku adalah sekuntum mawar yang layu, dan bibirku hanyalah sebuah luka yang membiarkan dirinya terbuka.", a: "Mahmoud Darwish" },
           { q: "Jangan biarkan ingatan membunuhmu, biarkan ia menjadi alasan mengapa kau masih mampu untuk hidup hari ini.", a: "Mahmoud Darwish" }
-        
         ];
         const randomQ = loadingQuotes[Math.floor(Math.random() * loadingQuotes.length)];
         document.getElementById('loadingQuoteText').innerText = `"${randomQ.q}"`;
@@ -445,6 +440,7 @@
   // =========================================================================
   // KONFIGURASI URL API GAS
   // =========================================================================
+  // GAS_API_URL ini HANYA dipakai untuk verifikasi password Admin & Upload CSV.
   const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxSfOmssbzxzyoNXRdRtFFkXLxyFNJc7KNdPpL8h63H2p-7htGTtj7L7EXZ8QzhnUSP/exec";
  
   // State Variables
@@ -486,7 +482,7 @@
       }
   });
 
-  // Dropdown Checklist Listener (Klik di luar menu untuk menutup)
+  // Dropdown Checklist Listener
   document.addEventListener('click', (e) => {
       if(!e.target.closest('.filter-dropdown')) {
           document.querySelectorAll('.filter-menu').forEach(menu => menu.classList.add('hidden'));
@@ -536,12 +532,10 @@
       let targetPercentage = Math.min(effectiveDiffDays * 1.34, 100);
       return { x: actualDiffDays, y: targetPercentage, effDay: effectiveDiffDays };
   }
-// =========================================================================
-  // KONFIGURASI SMART CACHE FRONTEND
-  // =========================================================================
-  const CACHE_NAME = 'DASHBOARD_FASIH_DATA';
-  const CACHE_VERSION_KEY = 'DASHBOARD_FASIH_VERSION';
 
+  // =========================================================================
+  // BACA DATA LANGSUNG DARI FILE STATIS GITHUB (ANTI-ERROR & SUPER CEPAT)
+  // =========================================================================
   function initDashboard() {
       const globalLoader = document.getElementById('globalLoading');
       timingConfig = getHariPendataan();
@@ -549,57 +543,25 @@
       if (document.getElementById('badgeHari')) document.getElementById('badgeHari').innerText = `PENDATAAN HARI KE - ${timingConfig.x}`;
       if (document.getElementById('badgeTarget')) document.getElementById('badgeTarget').innerText = `TARGET % SUBMIT : ${timingConfig.y.toFixed(2)}%`;
 
-      // 1. Tembakan "Ping" super ringan ke server untuk mengecek versi data terbaru
-      fetch(GAS_API_URL + "?action=ping", { redirect: 'follow' })
-        .then(res => res.json())
-        .then(pingRes => {
-            const serverVersion = pingRes.version;
-            const localVersion = localStorage.getItem(CACHE_VERSION_KEY);
-            const cachedDataStr = localStorage.getItem(CACHE_NAME);
+      // Mengambil file data.json yang ditaruh oleh GAS di repository ini
+      const DATA_URL = "./data.json?t=" + new Date().getTime();
 
-            // 2. Jika versi server sama dengan versi memori browser, gunakan Cache (Loading Instan!)
-            if (cachedDataStr && serverVersion === localVersion) {
-                console.log("⚡ Data belum berubah, memuat instan dari memori Browser!");
-                processAndRenderData(JSON.parse(cachedDataStr), globalLoader);
-            } 
-            // 3. Jika versi beda (ada yang upload/edit sheet), tarik ulang semua data dari GAS
-            else {
-                console.log("☁️ Ada update baru di Server! Mengambil data...");
-                fetchFullData(serverVersion, globalLoader);
-            }
-        })
-        .catch(err => {
-            console.error("Gagal melakukan ping:", err);
-            // Fallback: Jika sinyal jelek dan ping gagal, coba tampilkan cache lokal
-            const cachedDataStr = localStorage.getItem(CACHE_NAME);
-            if (cachedDataStr) {
-                processAndRenderData(JSON.parse(cachedDataStr), globalLoader);
-            } else {
-                if(globalLoader) globalLoader.classList.add('hidden');
-                Swal.fire("Gagal Terhubung", "Sistem tidak dapat menghubungi server. Cek koneksi internet Anda.", "error");
-            }
-        });
-  }
-
-  function fetchFullData(newVersion, globalLoader) {
-      fetch(GAS_API_URL, { redirect: 'follow' })
+      console.log("Membaca data statis dari GitHub...");
+      fetch(DATA_URL)
         .then(response => {
-           if (!response.ok) throw new Error("Jaringan bermasalah.");
+           if (!response.ok) throw new Error("File data.json belum tersedia. Menunggu update dari GAS...");
            return response.json();
         })
         .then(res => {
-           // Simpan data & versi terbaru ke memori browser untuk akses selanjutnya
-           localStorage.setItem(CACHE_NAME, JSON.stringify(res));
-           localStorage.setItem(CACHE_VERSION_KEY, newVersion);
            processAndRenderData(res, globalLoader);
         })
         .catch(err => {
            if(globalLoader) globalLoader.classList.add('hidden');
-           Swal.fire("Gagal Memuat Data Full", err.message, "error");
+           Swal.fire("Data Belum Siap", "Sistem belum menemukan data.json. Pastikan GAS sudah berhasil melakukan push ke GitHub. (Silakan tekan Refresh nanti).", "info");
         });
   }
 
-  // FUNGSI BANTUAN UNTUK MEMROSES DATA (Mengurangi duplikasi kode)
+  // FUNGSI BANTUAN UNTUK MEMROSES DATA
   function processAndRenderData(res, globalLoader) {
       if (res.status === 'error') {
           if(globalLoader) globalLoader.classList.add('hidden');
@@ -630,7 +592,7 @@
 
       setTimeout(() => {
           if(globalLoader) globalLoader.classList.add('hidden');
-          // (Pop-up SweetAlert Info Target Pendataan Anda tetap sama persis seperti sebelumnya)
+          
           Swal.fire({
               title: '<span class="text-lg font-black text-gray-800 tracking-wide uppercase">Info Target Pendataan</span>',
               html: `
@@ -667,7 +629,7 @@
                   confirmButton: 'bg-blue-600 text-white px-8 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition w-full mt-2 shadow-sm text-xs tracking-wide uppercase'
               }
           });
-      }, 2500);
+      }, 2500); 
   }
 
   function initCustomDropdowns() {
@@ -944,7 +906,6 @@
       });
   }
 
-  // PERBAIKAN DUKUNGAN FILTER TEKS & ANGKA UNTUK SEMUA TAB
   function applyHeaderFilters(dataArr, tId) {
       let filtered = dataArr;
       let colFilters = COLUMN_FILTERS[tId] || {};
@@ -1012,7 +973,7 @@
 let currentContent = document.getElementById('tab'+tabId+'-content');
       if(currentContent) {
           currentContent.classList.remove('hidden');
-          currentContent.classList.add('block'); // Pastikan SEMUA tab menggunakan block
+          currentContent.classList.add('block'); 
       }
 
       if(document.getElementById('paginasiArea')) document.getElementById('paginasiArea').style.display = ([1,2,3,4,6,7,8,9,10].includes(tabId)) ? 'flex' : 'none';
@@ -1254,8 +1215,6 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
           return { ...p, pct_submit, pct_approve, pct_reject, kolomA, kolomB, selisih, pctA, pctB };
       });
 
-      // KALKULASI TAB 10 (PROGRESS HARIAN)
-      // ==========================================
       TAB_STATE[10] = [];
       let sortedHist = [...HISTORY_DATA].sort((a,b) => new Date(b.date) - new Date(a.date));
       
@@ -1265,7 +1224,7 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
       let h0Data = sortedHist[0] ? sortedHist[0].data : {ppl:{}, pml:{}};
       let h1Data = sortedHist[1] ? sortedHist[1].data : {ppl:{}, pml:{}};
       let h2Data = sortedHist[2] ? sortedHist[2].data : {ppl:{}, pml:{}};
-      let h3Data = sortedHist[3] ? sortedHist[3].data : {ppl:{}, pml:{}}; // Tambahan untuk Rata-rata 3 hari
+      let h3Data = sortedHist[3] ? sortedHist[3].data : {ppl:{}, pml:{}}; 
 
       function getTrenLogic(d1, d2) {
           let pct = 0;
@@ -1281,7 +1240,6 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
           return { trenVal: pct, trenHtml: `<span class="px-2.5 py-1 rounded text-[9px] font-black border tracking-wider whitespace-nowrap shadow-sm ${badgeClass}">${trenText}</span>` };
       }
 
-      // FUNGSI KHUSUS TAB 10: Hitung Rata-rata 3 Hari
       function get3DayVelocity(key, roleType, currentTotal) {
           let daysAvail = Math.min(3, sortedHist.length - 1);
           if (daysAvail < 1) return currentTotal / (timingConfig.x || 1); 
@@ -1327,7 +1285,6 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
           let d1 = v1 - v2; let d2 = v0 - v1;
           let tren = getTrenLogic(d1, d2);
           
-          // Gunakan Velocity 3 Hari di sini
           let velocity = get3DayVelocity(key, 'ppl', p.agg_s);
           let prediksi = getPrediksiSelesai(p.t, v0, velocity);
           
@@ -1343,13 +1300,12 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
           let d1 = v1 - v2; let d2 = v0 - v1;
           let tren = getTrenLogic(d1, d2);
           
-          // Gunakan Velocity 3 Hari di sini
           let velocity = get3DayVelocity(key, 'pml', p.app);
           let prediksi = getPrediksiSelesai(p.t, v0, velocity);
           
           TAB_STATE[10].push({ petugas: p.pml, role: 'PML', kec: p.kec, pj: p.pj, email: p.email, t: p.t, avg_vel: velocity.toFixed(1), h2: v2, h1: v1, h0: v0, delta1: d1, delta2: d2, trenVal: tren.trenVal, trenHtml: tren.trenHtml, sisa_hari: prediksi.sisa_hari, prediksiHtml: prediksi.html, isLate: prediksi.isLate });
       });
-  } // Akhir dari fungsi buildTabStates()
+  } 
 
   function renderCurrentTab() {
       if(activeTabId === 5) return renderVisualisasi();
@@ -1467,11 +1423,7 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
                  </tr>`;
             }
 else if(activeTabId === 4) {
-                // Mengecek apakah % submit kecamatan di bawah batas target hari ini
                 let isBelowTarget = parseFloat(r.pct_submit) < timingConfig.y;
-                
-                // KUNCI: Menentukan kelas CSS untuk BARIS (TR) secara penuh
-                // Jika di bawah target: Background merah tipis. Jika aman: Background putih biasa.
                 let trClass = isBelowTarget 
                     ? 'bg-red-50/70 hover:bg-red-100 transition' 
                     : 'bg-white hover:bg-blue-50/50 transition';
@@ -1489,7 +1441,6 @@ else if(activeTabId === 4) {
                     <td class="px-4 py-3 text-center font-bold font-mono text-indigo-900 border-l border-indigo-200 align-middle">${r.t}</td>
                     <td class="px-4 py-3 text-center font-bold font-mono border-l border-fuchsia-100 text-fuchsia-700 align-middle">${r.pct_pendataan}%</td>
                     
-                    <!-- Warna teks % Submit dipertegas merah jika ia penyebab baris ini merah -->
                     <td class="px-4 py-3 text-center font-mono border-l border-sky-100 align-middle ${isBelowTarget ? 'text-red-700 font-black' : 'text-sky-700 font-bold'}">${r.pct_submit}%</td>
                     
                     <td class="px-4 py-3 text-center font-bold font-mono border-l border-emerald-100 text-emerald-700 align-middle">${r.pct_approve}%</td>
@@ -1574,7 +1525,6 @@ else if(activeTabId === 10) {
                let isPpl = dailyProgressMode === 'ppl';
                let isLate = r.isLate;
 
-               // Warna dasar kolom identitas kiri
                let clBorder = isPpl ? 'border-amber-200' : 'border-blue-200';
                let clHover = isPpl ? 'hover:bg-amber-50/80 bg-white' : 'hover:bg-blue-50/80 bg-white';
                let clTextStrong = isPpl ? 'text-amber-800' : 'text-blue-800';
@@ -1585,14 +1535,12 @@ else if(activeTabId === 10) {
                    clTextStrong = 'text-rose-900';
                }
 
-               // WARNA UNIK BODY UNTUK SETIAP KOLOM NILAI
                let bgT = isLate ? 'bg-gray-100 border-gray-300 text-red-700' : 'bg-gray-50 border-gray-200 text-gray-800';
                let bgH2 = 'bg-indigo-50 border-indigo-200 text-indigo-900';
                let bgH1 = 'bg-teal-50 border-teal-200 text-teal-900';
                let bgH0 = 'bg-orange-50 border-orange-300 text-orange-900';
                let bgDelta1 = 'bg-cyan-50 border-cyan-200 text-cyan-900';
                
-               // HIGHLIGHT POSITIF (EMERALD) UNTUK PENAMBAHAN HARI INI
                let bgDelta2 = 'bg-emerald-100 border-emerald-300 text-emerald-900 shadow-sm'; 
                
                let bgVel = 'bg-slate-100 border-slate-300 text-slate-800';
@@ -1601,7 +1549,6 @@ else if(activeTabId === 10) {
                
                let d1Html = r.delta1 > 0 ? `<span class="text-emerald-600 font-bold">+${r.delta1}</span>` : (r.delta1 < 0 ? `<span class="text-red-600 font-bold">${r.delta1}</span>` : `<span class="text-gray-400 font-bold tracking-widest">0</span>`);
                
-               // Angka pada Delta 2 diperbesar dan warnanya disesuaikan agar padu dengan background Emerald
                let d2Html = r.delta2 > 0 ? `<span class="text-emerald-800 font-black text-[16px] drop-shadow-sm">+${r.delta2}</span>` : (r.delta2 < 0 ? `<span class="text-red-600 font-black text-[16px]">${r.delta2}</span>` : `<span class="text-emerald-700/50 font-bold tracking-widest text-[14px]">0</span>`);
                
                html += `
@@ -1885,7 +1832,7 @@ else if(activeTabId === 10) {
   async function processUploads(fKel, fUsa, fFasih) {
        Swal.fire({
            title: 'Memproses Data...', 
-           html: '<b>Sistem</b> sedang mengekstrak ribuan baris data Anda di belakang layar...<br><span class="text-xs text-red-500 italic mt-2 block">Dilarang menutup browser!</span>', 
+           html: '<b>Sistem</b> sedang mengekstrak dan mengirim data Anda ke GitHub Server...<br><span class="text-xs text-red-500 italic mt-2 block">Dilarang menutup browser!</span>', 
            allowOutsideClick: false, 
            didOpen: () => Swal.showLoading()
        });
@@ -1903,10 +1850,12 @@ else if(activeTabId === 10) {
              let dataFasih = await parseCSV(fFasih);
              await sendToGAS('fasih', dataFasih);
          }
-         // Di dalam fungsi processUploads, tambahkan ini tepat SEBELUM Swal.fire('Integrasi Berhasil...'):
-        localStorage.removeItem(CACHE_NAME);
-        localStorage.removeItem(CACHE_VERSION_KEY);
-         Swal.fire('Integrasi Berhasil!', 'Data Eksternal telah tersimpan ke Database dan siap dianalisa.', 'success').then(()=>{ location.reload(); });
+         Swal.fire({
+             title: 'Integrasi Berhasil!',
+             html: 'Data terbaru berhasil di-push ke GitHub.<br><br><span class="text-[11px] text-amber-700 font-bold bg-amber-50 p-2 rounded-lg border border-amber-200 block text-left">PENTING: Server GitHub (Pages) butuh waktu 1 hingga 2 menit untuk merefresh file baru secara publik. Silakan refresh web Anda sebentar lagi.</span>',
+             icon: 'success',
+             confirmButtonText: 'Oke, Saya Paham'
+         }).then(()=>{ location.reload(); });
        } catch (err) { 
            Swal.fire('Gagal Ekstrak', 'Terjadi kesalahan format: ' + String(err), 'error'); 
        }
@@ -2124,14 +2073,12 @@ function downloadImage() {
       watermarkHeader.classList.remove('hidden');
       watermarkHeader.classList.add('flex');
 
-      // KUNCI PERBAIKAN: Membunuh paksa posisi Sticky dan offset Top menjadi Static
       const styleFix = document.createElement('style');
       styleFix.id = 'html2canvas-fix-scroll';
       styleFix.innerHTML = `
           html, body, #halaman-dashboard { height: auto !important; min-height: 100% !important; overflow: visible !important; width: auto !important; }
           .flex-1, #captureArea, #captureArea > div, #captureArea table, #captureArea tbody { height: auto !important; max-height: none !important; overflow: visible !important; }
           #captureArea { width: max-content !important; min-width: 100% !important; }
-          /* --- PENAWAR TUMPANG TINDIH HEADER & SWITCHER --- */
           #captureArea th, #captureArea .sticky { position: static !important; top: auto !important; left: auto !important; transform: none !important; max-width: none !important; }
           .badge-prioritas, svg, img, i { display: inline-block !important; vertical-align: middle !important; }
       `;
@@ -2191,14 +2138,12 @@ function downloadImage() {
       watermarkHeader.classList.remove('hidden');
       watermarkHeader.classList.add('flex');
 
-      // KUNCI PERBAIKAN: Membunuh paksa posisi Sticky dan offset Top menjadi Static
       const styleFix = document.createElement('style');
       styleFix.id = 'html2canvas-fix-scroll-pdf';
       styleFix.innerHTML = `
           html, body, #halaman-dashboard { height: auto !important; min-height: 100% !important; overflow: visible !important; width: auto !important; }
           .flex-1, #captureArea, #captureArea > div, #captureArea table, #captureArea tbody { height: auto !important; max-height: none !important; overflow: visible !important; }
           #captureArea { width: max-content !important; min-width: 100% !important; }
-          /* --- PENAWAR TUMPANG TINDIH HEADER & SWITCHER --- */
           #captureArea th, #captureArea .sticky { position: static !important; top: auto !important; left: auto !important; transform: none !important; max-width: none !important; }
           .badge-prioritas, svg, img, i { display: inline-block !important; vertical-align: middle !important; }
       `;
@@ -2233,11 +2178,11 @@ function downloadImage() {
       let btnPml = document.getElementById('btnTogglePml');
       
       if (mode === 'ppl') {
-          btnPpl.className = "px-6 py-2 text-[11px] font-black rounded-lg bg-amber-500 text-white shadow-md transition tracking-wider";
-          btnPml.className = "px-6 py-2 text-[11px] font-black rounded-lg text-gray-500 hover:bg-gray-100 transition tracking-wider";
+          btnPpl.className = "px-6 py-2 text-[11px] font-black rounded-lg bg-amber-500 text-white shadow-md transition tracking-wider whitespace-nowrap";
+          btnPml.className = "px-6 py-2 text-[11px] font-black rounded-lg text-gray-500 hover:bg-gray-100 transition tracking-wider whitespace-nowrap";
       } else {
-          btnPml.className = "px-6 py-2 text-[11px] font-black rounded-lg bg-blue-600 text-white shadow-md transition tracking-wider";
-          btnPpl.className = "px-6 py-2 text-[11px] font-black rounded-lg text-gray-500 hover:bg-gray-100 transition tracking-wider";
+          btnPml.className = "px-6 py-2 text-[11px] font-black rounded-lg bg-blue-600 text-white shadow-md transition tracking-wider whitespace-nowrap";
+          btnPpl.className = "px-6 py-2 text-[11px] font-black rounded-lg text-gray-500 hover:bg-gray-100 transition tracking-wider whitespace-nowrap";
       }
       
       TABS_CONFIG[10] = getTab10Config(mode);
@@ -2252,8 +2197,6 @@ function downloadImage() {
   let isMusicPlaying = false;
   function toggleMusic() {
       let bgAudio = document.getElementById('bgMusic');
-      
-      // Mengatur volume menjadi 30% agar nyaman dan tidak mengagetkan
       bgAudio.volume = 0.3; 
 
       if (isMusicPlaying) {
@@ -2283,7 +2226,6 @@ function getTab10Config(mode) {
       
       document.getElementById('headTab10').className = `text-[10px] uppercase ${clText} font-bold tracking-wider ${clBgHead}`;
 
-      // PERBAIKAN: Hitung H-2 murni secara matematis dari waktu WIB (Anti-Bug Spreadsheet)
       let now = new Date();
       let utc = now.getTime() + (now.getTimezoneOffset() * 60000);
       let wib = new Date(utc + (3600000 * 7));
@@ -2294,7 +2236,6 @@ function getTab10Config(mode) {
       let months = ["Jan.", "Feb.", "Maret", "April", "Mei", "Juni", "Juli", "Ags.", "Sept.", "Okt.", "Nov.", "Des."];
       let dateH2 = dH2.getDate() + " " + months[dH2.getMonth()];
 
-      // URUTAN DAN NAMA KOLOM BARU
       let base = [
           { k:'petugas', n:(mode === 'ppl' ? 'Nama PPL' : 'Nama PML'), c:`${clBg} border-r ${clBorder} ${clText}`, w:'200px', f:true },
           { k:'kec', n:'Kecamatan', c:`${clBg} border-r ${clBorder} text-gray-700`, f:true },
