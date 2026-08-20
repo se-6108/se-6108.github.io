@@ -326,7 +326,7 @@
          </div>
          
          <div id="tab1-content" class="flex-1 w-full dashboard-table block">
-             <table class="w-full text-left border-collapse min-w-[1300px]">
+             <table class="w-full text-left border-collapse min-w-[1500px]">
                  <thead id="headTab1" class="text-[10px] uppercase text-gray-500 font-bold tracking-wider bg-blue-50"></thead>
                  <tbody id="tableBodyDash" class="text-xs divide-y divide-gray-100 text-gray-700 tags-upper"></tbody>
              </table>
@@ -717,14 +717,17 @@
   }
 
   const TABS_CONFIG = {
-      1: [
+     1: [
          { k:'idSls', n:'ID SLS', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'140px' },
          { k:'nmsls', n:'Wilayah', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'200px' },
          { k:'petugas', n:'Petugas (PPL / PML)', c:'bg-blue-50 border-r border-blue-100 text-gray-700', w:'250px' }, 
          { k:'pj', n:'PJ Kuda', c:'bg-blue-50 text-gray-700', w:'100px' },
          { k:'open', n:'Open', c:'bg-blue-100 text-blue-800 text-center border-l border-blue-200', f:true },
          { k:'draft', n:'Draft', c:'bg-amber-100 text-amber-800 text-center border-l border-amber-200', f:true },
-         { k:'agg_submit', n:'Submit', c:'bg-purple-100 text-purple-800 text-center border-l border-purple-200', f:true },
+         { k:'submit', n:'Submit', c:'bg-purple-100 text-purple-800 text-center border-l border-purple-200', f:true },
+         // DUA KOLOM BARU DI BAWAH INI
+         { k:'reject', n:'Reject', c:'bg-red-100 text-red-800 text-center border-l border-red-200', f:true },
+         { k:'approve', n:'Approve', c:'bg-green-100 text-green-800 text-center border-l border-green-200', f:true },
          { k:'calcTotal', n:'Total', c:'bg-indigo-100 text-indigo-900 text-center border-l border-indigo-200', f:true }
       ],
       2: [
@@ -1358,7 +1361,7 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
              ? `<span class="ml-1 bg-amber-100 text-amber-700 border border-amber-300 px-1.5 py-0.5 rounded text-[8px] font-black tracking-wider shadow-sm">PRIORITAS</span>` 
              : '';
            
-            if(activeTabId === 1) {
+      if(activeTabId === 1) {
                html += `
                  <tr class="border-b transition hover:bg-blue-50/50 ${r.isMismatch?'bg-red-50/30':''}">
                    <td class="px-4 py-3 text-center border-r border-blue-100 font-bold text-gray-500 align-middle">${n}${r.isMismatch?'<br><span class="text-red-500 text-[10px]">⚠️</span>':''}</td>
@@ -1368,7 +1371,11 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
                    <td class="px-4 py-3 font-bold text-[10px] uppercase align-middle">${r.pj}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono text-blue-700 border-l border-blue-100 bg-blue-50/10 align-middle">${r.open}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono text-amber-700 border-l border-amber-100 bg-amber-50/10 align-middle">${r.draft}</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono text-purple-700 border-l border-purple-100 bg-purple-50/30 align-middle">${r.agg_submit}</td>
+                   <!-- Ubah r.agg_submit menjadi r.submit murni -->
+                   <td class="px-4 py-3 text-center font-bold font-mono text-purple-700 border-l border-purple-100 bg-purple-50/30 align-middle">${r.submit}</td>
+                   <!-- Suntikkan Data Reject & Approve -->
+                   <td class="px-4 py-3 text-center font-bold font-mono text-red-700 border-l border-red-100 bg-red-50/30 align-middle">${r.reject}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-green-700 border-l border-green-100 bg-green-50/30 align-middle">${r.approve}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono text-indigo-900 border-l border-indigo-200 bg-indigo-50/30 align-middle">${r.calcTotal}</td>
                  </tr>`;
             }
