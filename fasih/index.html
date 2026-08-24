@@ -1443,10 +1443,14 @@ TAB_STATE[3] = Object.values(pmlM).map(p => {
                    <td class="px-4 py-3 text-center font-bold font-mono text-purple-700 border-l border-purple-100 bg-purple-50/20 align-middle">${r.agg_s}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono text-indigo-900 border-l border-indigo-200 bg-indigo-50/20 align-middle">${r.t}</td>
       <td class="px-4 py-3 text-center font-bold font-mono text-orange-700 border-l border-orange-100 bg-orange-50/20 align-middle">${intervalAvg}</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono text-fuchsia-700 border-l border-fuchsia-100 bg-fuchsia-50/10 align-middle">${r.pct_pendataan}%</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono text-sky-700 border-l border-sky-100 bg-sky-50/10 align-middle">${r.pct_submit}%</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono text-emerald-700 border-l border-emerald-100 bg-emerald-50/10 align-middle">${r.pct_approve}%</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono text-rose-700 border-l border-rose-100 bg-rose-50/20 align-middle">${r.kekurangan}</td>
+<td class="px-4 py-3 text-center font-bold font-mono text-fuchsia-700 border-l border-fuchsia-100 bg-fuchsia-50/10 align-middle">${r.pct_pendataan}%</td>
+<td class="px-4 py-3 text-center font-bold font-mono text-sky-700 border-l border-sky-100 bg-sky-50/10 align-middle">${r.pct_submit}%</td>
+
+<!-- TAMBAHKAN BARIS INI (TERLEWAT SEBELUMNYA) -->
+<td class="px-4 py-3 text-center font-bold font-mono text-red-700 border-l border-red-100 bg-red-50/10 align-middle">${r.pct_reject}%</td>
+
+<td class="px-4 py-3 text-center font-bold font-mono text-emerald-700 border-l border-emerald-100 bg-emerald-50/10 align-middle">${r.pct_approve}%</td>
+<td class="px-4 py-3 text-center font-bold font-mono text-rose-700 border-l border-rose-100 bg-rose-50/20 align-middle">${r.kekurangan}</td>
                    <td class="px-4 py-3 text-center border-l border-gray-200 align-middle whitespace-nowrap">${bd}</td>
                  </tr>`;
             }
