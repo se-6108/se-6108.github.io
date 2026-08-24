@@ -306,6 +306,7 @@
             <div id="dropStatus" class="filter-menu hidden absolute left-0 mt-2 min-w-full w-max z-50 bg-white border border-gray-200 rounded-2xl shadow-xl max-h-60 overflow-y-auto">
                 <label class="flex items-center px-4 py-3 hover:bg-slate-50 cursor-pointer border-b border-gray-100 font-bold text-slate-700 text-xs uppercase whitespace-nowrap"><input type="checkbox" class="mr-2 rounded" value="Tercapai" onchange="updateFilter('statusPetugas', this)"> TERCAPAI</label>
                 <label class="flex items-center px-4 py-3 hover:bg-slate-50 cursor-pointer font-bold text-slate-700 text-xs uppercase whitespace-nowrap"><input type="checkbox" class="mr-2 rounded" value="Belum Tercapai" onchange="updateFilter('statusPetugas', this)"> BELUM TERCAPAI</label>
+                <label class="flex items-center px-4 py-3 hover:bg-slate-50 cursor-pointer border-b border-gray-100 font-bold text-slate-700 text-xs uppercase whitespace-nowrap"><input type="checkbox" class="mr-2 rounded" value="Selesai" onchange="updateFilter('statusPetugas', this)"> SELESAI</label>            
             </div>
          </div>
 
@@ -437,6 +438,14 @@
   </div> <!-- Penutup Halaman Dashboard -->
 
 <script>
+  function getSafePct(val, total) {
+    if (total <= 0) return '0.0';
+    if (val >= total) return '100.0';
+    
+    // Potong desimal ke bawah (contoh: 99.99 tetap 99.9, bukan 100.0)
+    let rawPct = (val / total) * 100;
+    return (Math.floor(rawPct * 10) / 10).toFixed(1);
+}
   // =========================================================================
   // KONFIGURASI URL API GAS
   // =========================================================================
@@ -634,7 +643,7 @@
                   confirmButton: 'bg-blue-600 text-white px-8 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition w-full mt-2 shadow-sm text-xs tracking-wide uppercase'
               }
           });
-      }, 500); 
+      }, 3000); 
   }
 
   function initCustomDropdowns() {
@@ -1149,11 +1158,22 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
       TAB_STATE[2] = Object.values(pplM).map(p => {
           p.target_absolut = Math.ceil((timingConfig.y/100)*p.t); 
           p.kekurangan = Math.max(0, p.target_absolut-p.agg_s);
-          p.statusTarget = p.kekurangan<=0 ? 'Tercapai' : 'Belum Tercapai'; 
+          
+          // --- LOGIKA STATUS BARU ---
+          if (p.agg_s >= p.t && p.t > 0) {
+              p.statusTarget = 'Selesai';
+              p.kekurangan = 0;
+          } else {
+              p.statusTarget = p.kekurangan <= 0 ? 'Tercapai' : 'Belum Tercapai'; 
+          }
+          
           p.avg_raw = Math.round((timingConfig.x>0 ? p.agg_s/timingConfig.x : 0)*100)/100;
-          p.pct_pendataan = p.t>0 ? (((p.d+p.agg_s)/p.t)*100).toFixed(1) : '0.0'; 
-          p.pct_submit = p.t>0 ? ((p.agg_s/p.t)*100).toFixed(1) : '0.0'; 
-          p.pct_approve = p.t>0 ? ((p.app/p.t)*100).toFixed(1) : '0.0';
+          
+          // --- GUNAKAN FUNGSI GETSAFEPCT ---
+          p.pct_pendataan = getSafePct(p.d + p.agg_s, p.t); 
+          p.pct_submit = getSafePct(p.agg_s, p.t); 
+          p.pct_approve = getSafePct(p.app, p.t);
+          
           return p;
       });
 
@@ -1380,8 +1400,20 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
                  </tr>`;
             }
             else if(activeTabId === 2) {
-               let cl = r.statusTarget === 'Tercapai' ? 'hover:bg-blue-50/50' : 'bg-red-50/40 text-red-900 hover:bg-red-100/50';
-               let bd = r.statusTarget === 'Tercapai' ? '<span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[9px] font-bold">TERCAPAI</span>' : '<span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[9px] font-bold">BELUM</span>';
+               let cl = '';
+               let bd = '';
+               
+               if (r.statusTarget === 'Selesai') {
+                   cl = 'bg-emerald-50/60 hover:bg-emerald-100 transition';
+                   bd = '<span class="px-2 py-0.5 bg-emerald-500 text-white rounded text-[9px] font-bold shadow-sm">SELESAI</span>';
+               } else if (r.statusTarget === 'Tercapai') {
+                   cl = 'hover:bg-blue-50/50 transition';
+                   bd = '<span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[9px] font-bold">TERCAPAI</span>';
+               } else {
+                   cl = 'bg-red-50/40 text-red-900 hover:bg-red-100/50 transition';
+                   bd = '<span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[9px] font-bold">BELUM</span>';
+               }
+               
                let batasBawah = Math.floor(r.avg_raw);
                let intervalAvg = batasBawah + " - " + (batasBawah + 1); 
               
