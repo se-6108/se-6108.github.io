@@ -1088,13 +1088,13 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
           tSls++; tOpen+=r.open; tDraft+=r.draft; tSub+=r.submit; tRej+=r.reject; tApp+=r.approve; tTot+=r.calcTotal;
       });
 
-      let pPend = tTot>0 ? (((tDraft+tSub+tRej+tApp)/tTot)*100).toFixed(1)+'%' : '0%';
-      let pSubm = tTot>0 ? (((tSub+tRej+tApp)/tTot)*100).toFixed(1)+'%' : '0%';
-      let pOpen = tTot>0 ? ((tOpen/tTot)*100).toFixed(1)+'%' : '0%';
-      let pDraft = tTot>0 ? ((tDraft/tTot)*100).toFixed(1)+'%' : '0%';
-      let pSubPure = tTot>0 ? ((tSub/tTot)*100).toFixed(1)+'%' : '0%';
-      let pRej = tTot>0 ? ((tRej/tTot)*100).toFixed(1)+'%' : '0%';
-      let pApp = tTot>0 ? ((tApp/tTot)*100).toFixed(1)+'%' : '0%';
+      let pPend = getSafePct(tDraft+tSub+tRej+tApp, tTot) + '%';
+      let pSubm = getSafePct(tSub+tRej+tApp, tTot) + '%';
+      let pOpen = getSafePct(tOpen, tTot) + '%';
+      let pDraft = getSafePct(tDraft, tTot) + '%';
+      let pSubPure = getSafePct(tSub, tTot) + '%';
+      let pRej = getSafePct(tRej, tTot) + '%';
+      let pApp = getSafePct(tApp, tTot) + '%';
 
       document.getElementById('dashTotSls').innerText = tSls.toLocaleString('id-ID');
       document.getElementById('dashTotTarget').innerText = tTot.toLocaleString('id-ID');
@@ -1198,9 +1198,9 @@ TAB_STATE[3] = Object.values(pmlM).map(p => {
       });
 
       TAB_STATE[4] = Object.values(kecM).map(p => {
-          p.pct_pendataan = p.t>0 ? (((p.d+p.agg_sra)/p.t)*100).toFixed(1) : '0.0'; 
-          p.pct_submit = p.t>0 ? ((p.agg_sra/p.t)*100).toFixed(1) : '0.0'; 
-          p.pct_approve = p.t>0 ? ((p.app/p.t)*100).toFixed(1) : '0.0';
+          p.pct_pendataan = getSafePct(p.d + p.agg_sra, p.t); 
+          p.pct_submit = getSafePct(p.agg_sra, p.t); 
+          p.pct_approve = getSafePct(p.app, p.t);
           return p;
       });
 
