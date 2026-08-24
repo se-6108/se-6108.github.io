@@ -739,7 +739,7 @@
          { k:'approve', n:'Approve', c:'bg-green-100 text-green-800 text-center border-l border-green-200', f:true },
          { k:'calcTotal', n:'Total', c:'bg-indigo-100 text-indigo-900 text-center border-l border-indigo-200', f:true }
       ],
-      2: [
+2: [
          { k:'ppl', n:'Nama PPL', c:'bg-blue-50 border-r border-blue-100 text-blue-900', w:'200px' },
          { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
          { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true },
@@ -749,6 +749,7 @@
          { k:'avg_raw', n:'Rata² Submit Harian', c:'text-center bg-orange-100 text-orange-800 border-l border-orange-200', f:true },
          { k:'pct_pendataan', n:'% Pendataan', c:'text-center bg-fuchsia-100 text-fuchsia-800 border-l border-fuchsia-200', f:true },
          { k:'pct_submit', n:'% Submit', c:'text-center bg-sky-100 text-sky-800 border-l border-sky-200', f:true },
+         { k:'pct_reject', n:'% Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200', f:true }, // <--- INI BARIS BARUNYA
          { k:'pct_approve', n:'% Approved', c:'text-center bg-emerald-100 text-emerald-800 border-l border-emerald-200', f:true },
          { k:'kekurangan', n:'Kekurangan', c:'text-center bg-rose-100 text-rose-800 border-l border-rose-200', f:true },
          { k:'statusTarget', n:'Status Capaian', c:'text-center bg-gray-100 text-gray-800 border-l border-gray-300' }
@@ -1118,9 +1119,12 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
       
       let pplM={}, pmlM={}, kecM={}, evalM={};
       dashFilteredData.forEach(r => {
-          let kPpl = r.ppl+"_"+r.kec; 
-          if(!pplM[kPpl]) pplM[kPpl]={ppl:r.ppl, pml:r.pml, kec:r.kec, pj:r.pj, email:r.emailPpl, o:0, d:0, agg_s:0, t:0, app:0};
-          pplM[kPpl].o+=r.open; pplM[kPpl].d+=r.draft; pplM[kPpl].agg_s+=r.agg_submit; pplM[kPpl].t+=r.calcTotal; pplM[kPpl].app+=r.approve;
+      let kPpl = r.ppl+"_"+r.kec; 
+          // Tambahkan rej: 0 di dalam objek awal
+          if(!pplM[kPpl]) pplM[kPpl]={ppl:r.ppl, pml:r.pml, kec:r.kec, pj:r.pj, email:r.emailPpl, o:0, d:0, agg_s:0, t:0, app:0, rej:0};
+          
+          // Tambahkan pplM[kPpl].rej+=r.reject; di baris penjumlahan
+          pplM[kPpl].o+=r.open; pplM[kPpl].d+=r.draft; pplM[kPpl].agg_s+=r.agg_submit; pplM[kPpl].t+=r.calcTotal; pplM[kPpl].app+=r.approve; pplM[kPpl].rej+=r.reject;
           
           let kPml = r.pml+"_"+r.kec; 
           if(!pmlM[kPml]) pmlM[kPml]={pml:r.pml, kec:r.kec, pj:r.pj, email:r.emailPml, o:0, d:0, sub:0, rej:0, app:0, t:0};
@@ -1170,6 +1174,7 @@ TAB_STATE[2] = Object.values(pplM).map(p => {
           p.avg_raw = Math.round((timingConfig.x>0 ? p.agg_s/timingConfig.x : 0)*100)/100;
           p.pct_pendataan = getSafePct(p.d + p.agg_s, p.t); 
           p.pct_submit = getSafePct(p.agg_s, p.t); 
+          p.pct_reject = getSafePct(p.rej, p.t); // <--- BARIS BARU UNTUK % REJECT
           p.pct_approve = getSafePct(p.app, p.t);
           
           return p;
