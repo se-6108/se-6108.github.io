@@ -744,7 +744,9 @@
          { k:'kec', n:'Kecamatan', c:'bg-blue-50 border-r border-blue-100 text-gray-700' },
          { k:'o', n:'Open', c:'text-center bg-blue-100 text-blue-800 border-l border-blue-200', f:true },
          { k:'d', n:'Draft', c:'text-center bg-amber-100 text-amber-800 border-l border-amber-200', f:true },
-         { k:'agg_s', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true },
+         { k:'sub', n:'Submit', c:'text-center bg-purple-100 text-purple-800 border-l border-purple-200', f:true },
+         { k:'rej', n:'Reject', c:'text-center bg-red-100 text-red-800 border-l border-red-200', f:true },
+         { k:'app', n:'Approve', c:'text-center bg-green-100 text-green-800 border-l border-green-200', f:true },
          { k:'t', n:'Total', c:'text-center bg-indigo-100 text-indigo-900 border-l border-indigo-200', f:true },
          { k:'avg_raw', n:'Rata² Submit Harian', c:'text-center bg-orange-100 text-orange-800 border-l border-orange-200', f:true },
          { k:'pct_pendataan', n:'% Pendataan', c:'text-center bg-fuchsia-100 text-fuchsia-800 border-l border-fuchsia-200', f:true },
@@ -1120,11 +1122,11 @@ let currentContent = document.getElementById('tab'+tabId+'-content');
       let pplM={}, pmlM={}, kecM={}, evalM={};
       dashFilteredData.forEach(r => {
       let kPpl = r.ppl+"_"+r.kec; 
-          // Tambahkan rej: 0 di dalam objek awal
-          if(!pplM[kPpl]) pplM[kPpl]={ppl:r.ppl, pml:r.pml, kec:r.kec, pj:r.pj, email:r.emailPpl, o:0, d:0, agg_s:0, t:0, app:0, rej:0};
+// Tambahkan sub: 0 di dalam objek awal
+          if(!pplM[kPpl]) pplM[kPpl]={ppl:r.ppl, pml:r.pml, kec:r.kec, pj:r.pj, email:r.emailPpl, o:0, d:0, sub:0, agg_s:0, t:0, app:0, rej:0};
           
-          // Tambahkan pplM[kPpl].rej+=r.reject; di baris penjumlahan
-          pplM[kPpl].o+=r.open; pplM[kPpl].d+=r.draft; pplM[kPpl].agg_s+=r.agg_submit; pplM[kPpl].t+=r.calcTotal; pplM[kPpl].app+=r.approve; pplM[kPpl].rej+=r.reject;
+          // Tambahkan pplM[kPpl].sub+=r.submit; di baris penjumlahan
+          pplM[kPpl].o+=r.open; pplM[kPpl].d+=r.draft; pplM[kPpl].sub+=r.submit; pplM[kPpl].agg_s+=r.agg_submit; pplM[kPpl].t+=r.calcTotal; pplM[kPpl].app+=r.approve; pplM[kPpl].rej+=r.reject;
           
           let kPml = r.pml+"_"+r.kec; 
           if(!pmlM[kPml]) pmlM[kPml]={pml:r.pml, kec:r.kec, pj:r.pj, email:r.emailPml, o:0, d:0, sub:0, rej:0, app:0, t:0};
@@ -1438,9 +1440,11 @@ TAB_STATE[3] = Object.values(pmlM).map(p => {
                         ${r.email ? `<br><a href="mailto:${r.email}" class="text-[9px] font-bold text-gray-500 lowercase flex items-center gap-1 mt-0.5 hover:text-blue-600 hover:underline transition"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.53 4.81a2 2 0 002.94 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>${r.email}</a>` : ''}
                     </td>
                    <td class="px-4 py-3 border-r border-blue-100 align-middle font-bold text-gray-500 uppercase tracking-wider text-[10px]">${r.kec}</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono text-blue-700 border-l border-blue-100 bg-blue-50/10 align-middle">${r.o}</td>
+                <td class="px-4 py-3 text-center font-bold font-mono text-blue-700 border-l border-blue-100 bg-blue-50/10 align-middle">${r.o}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono text-amber-700 border-l border-amber-100 bg-amber-50/10 align-middle">${r.d}</td>
-                   <td class="px-4 py-3 text-center font-bold font-mono text-purple-700 border-l border-purple-100 bg-purple-50/20 align-middle">${r.agg_s}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-purple-700 border-l border-purple-100 bg-purple-50/20 align-middle">${r.sub}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-red-700 border-l border-red-100 bg-red-50/20 align-middle">${r.rej}</td>
+                   <td class="px-4 py-3 text-center font-bold font-mono text-green-700 border-l border-green-100 bg-green-50/20 align-middle">${r.app}</td>
                    <td class="px-4 py-3 text-center font-bold font-mono text-indigo-900 border-l border-indigo-200 bg-indigo-50/20 align-middle">${r.t}</td>
       <td class="px-4 py-3 text-center font-bold font-mono text-orange-700 border-l border-orange-100 bg-orange-50/20 align-middle">${intervalAvg}</td>
 <td class="px-4 py-3 text-center font-bold font-mono text-fuchsia-700 border-l border-fuchsia-100 bg-fuchsia-50/10 align-middle">${r.pct_pendataan}%</td>
