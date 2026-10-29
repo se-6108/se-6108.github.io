@@ -199,7 +199,7 @@
                         
                         <div class="grid grid-cols-2 gap-3 text-xs mb-4">
                             <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-                                <span class="block text-slate-400 text-[10px]">Output (Omzet - 26c)[cite: 3]</span>
+                                <span class="block text-slate-400 text-[10px]">Output (Omzet - 26c)</span>
                                 <span id="res-output" class="font-bold text-sm text-slate-100">Rp 0</span>
                             </div>
                             <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
@@ -207,7 +207,7 @@
                                 <span id="res-ntb" class="font-bold text-sm text-slate-100">Rp 0</span>
                             </div>
                             <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-                                <span class="block text-slate-400 text-[10px]">Rasio NTB (NTB / Output)[cite: 3]</span>
+                                <span class="block text-slate-400 text-[10px]">Rasio NTB (NTB / Output)</span>
                                 <span id="res-rasio" class="font-bold text-base text-amber-400">0.0000</span>
                             </div>
                             <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
@@ -517,8 +517,8 @@
             }
 
             const omzet = v27a + v27b;
-            const output = omzet - v26c;[cite: 3]
-            const nilaiTambah = output - v26b - v26d;[cite: 3]
+            const output = omzet - v26c;
+            const nilaiTambah = output - v26b - v26d;
             const rasioNtb = output > 0 ? nilaiTambah / output : 0;
 
             document.getElementById('res-output').textContent = formatRupiah(output);
