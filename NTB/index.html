@@ -4,30 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalkulator & Penyesuaian NTB KBLI Multi-Sektor</title>
-
-    <!-- Favicon Sync dengan icon.png di Repo GitHub -->
     <link rel="icon" type="image/png" href="icon.png">
-
     <!-- Tailwind CSS v4 -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
     <!-- Google Fonts: Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <!-- SheetJS for Excel Processing -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
+    <!-- Chart.js for Donut Chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { font-family: 'Poppins', sans-serif; }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans">
 
-    <!-- Sticky Header Elegan -->
+    <!-- Header Sticky -->
     <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 text-white shadow-lg px-4 py-3.5">
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
             <div class="flex items-center gap-3">
-                <!-- Sync icon.png dari Repo -->
                 <img src="icon.png" alt="Logo" class="w-10 h-10 rounded-xl object-cover bg-slate-800 p-1 border border-slate-700 shadow-sm" onerror="this.src='https://img.icons8.com/fluency/48/calculator.png'">
                 <div>
                     <h1 class="text-lg font-bold tracking-tight text-slate-100">Kalkulator & Penyesuaian NTB KBLI</h1>
@@ -42,13 +37,11 @@
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="max-w-6xl mx-auto w-full p-4 md:p-6 flex-grow space-y-6">
 
-        <!-- SINGLE MODE -->
         <div id="tab-single" class="space-y-6">
             
-            <!-- Step 1: Kategori KBLI & Operasional -->
+            <!-- Step 1: Kategori KBLI & Periode -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6">
                 <h2 class="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2.5">
                     <span class="bg-indigo-100 text-indigo-700 w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold">1</span>
@@ -57,8 +50,8 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Pilih Kategori KBLI Usaha:</label>
-                        <select id="kbli-category" onchange="onCategoryChange()" class="w-full border border-slate-300 rounded-xl p-3 text-xs bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Pilih Kategori KBLI Usaha (Wajib Dipilih Terlebih Dahulu):</label>
+                        <select id="kbli-category" onchange="onCategoryChange()" class="w-full border border-slate-300 rounded-xl p-3 text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all font-medium">
                             <option value="">-- Pilih Kategori KBLI --</option>
                             <option value="A">Kategori A: Pertanian, Kehutanan, dan Perikanan (0.51 - 0.94)</option>
                             <option value="B">Kategori B: Pertambangan dan Penggalian (0.28 - 0.81)</option>
@@ -85,114 +78,95 @@
 
                     <div class="flex flex-col justify-center bg-slate-50/80 border border-slate-200/80 rounded-xl p-4">
                         <label class="flex items-center cursor-pointer select-none">
-                            <input type="checkbox" id="is-year-2026" onchange="calculateNTB()" class="sr-only peer">
+                            <input type="checkbox" id="is-year-2026" onchange="calculateNTB()" class="sr-only peer" disabled>
                             <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600 relative"></div>
                             <span class="ml-3 text-xs font-semibold text-slate-700">Usaha Mulai Beroperasi Tahun 2026</span>
                         </label>
-                        <p class="text-[11px] text-slate-500 mt-1.5 leading-relaxed">Jika aktif, data diisi untuk periode 1 bulan terakhir. Sistem otomatis melakukan perkalian 12 bulan.</p>
+                        <p class="text-[11px] text-slate-500 mt-1.5 leading-relaxed">Aktifkan setelah memilih kategori KBLI jika data diisi untuk periode 1 bulan terakhir.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Step 2: Input Forms -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Container Form & Analisis -->
+            <div id="form-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-40 pointer-events-none transition-opacity duration-300">
                 
-                <!-- Rincian 26 -->
+                <!-- Rincian 26 Input -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
                     <h2 class="text-base font-semibold text-slate-800 flex items-center gap-2.5 mb-2">
                         <span class="bg-amber-100 text-amber-700 w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold">2</span>
                         Pengeluaran Usaha (Rincian 26)
                     </h2>
 
-                    <!-- 26a -->
                     <div>
                         <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">26a. Total upah & gaji pekerja</label>
                         <div class="relative">
-                            <input type="text" id="val-26a" placeholder="Contoh: 5.000.000" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-10 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <button onclick="copyFieldValue('val-26a')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-indigo-600 transition cursor-pointer">
-                                📋
-                            </button>
+                            <input type="text" id="val-26a" placeholder="" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-12 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <button onclick="copyFieldValue('val-26a')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-100 hover:bg-indigo-50 text-slate-600 text-[10px] font-medium rounded-lg transition cursor-pointer">Salin</button>
                         </div>
                     </div>
 
-                    <!-- 26b -->
                     <div>
                         <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">26b. Biaya produksi</label>
                         <div class="relative">
-                            <input type="text" id="val-26b" placeholder="Contoh: 10.000.000" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-10 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <button onclick="copyFieldValue('val-26b')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-indigo-600 transition cursor-pointer">
-                                📋
-                            </button>
+                            <input type="text" id="val-26b" placeholder="" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-12 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <button onclick="copyFieldValue('val-26b')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-100 hover:bg-indigo-50 text-slate-600 text-[10px] font-medium rounded-lg transition cursor-pointer">Salin</button>
                         </div>
                     </div>
 
-                    <!-- 26c -->
                     <div>
                         <label id="label-26c" class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">26c. Biaya pembelian barang yang terjual</label>
                         <div class="relative">
-                            <input type="text" id="val-26c" placeholder="Contoh: 0" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-10 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <button onclick="copyFieldValue('val-26c')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-indigo-600 transition cursor-pointer">
-                                📋
-                            </button>
+                            <input type="text" id="val-26c" placeholder="" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-12 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <button onclick="copyFieldValue('val-26c')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-100 hover:bg-indigo-50 text-slate-600 text-[10px] font-medium rounded-lg transition cursor-pointer">Salin</button>
                         </div>
-                        <p id="note-26c" class="text-[11px] text-rose-500 mt-1 hidden font-medium">⚠️ Wajib terisi untuk Kategori G (Perdagangan).</p>
+                        <p id="note-26c" class="text-[11px] text-rose-500 mt-1 hidden font-medium">Peringatan: Khusus Kategori G, rincian 26c wajib diisi.</p>
                     </div>
 
-                    <!-- 26d -->
                     <div>
                         <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">26d. Biaya operasional</label>
                         <div class="relative">
-                            <input type="text" id="val-26d" placeholder="Contoh: 2.000.000" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-10 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <button onclick="copyFieldValue('val-26d')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-indigo-600 transition cursor-pointer">
-                                📋
-                            </button>
+                            <input type="text" id="val-26d" placeholder="" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-12 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <button onclick="copyFieldValue('val-26d')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-100 hover:bg-indigo-50 text-slate-600 text-[10px] font-medium rounded-lg transition cursor-pointer">Salin</button>
                         </div>
                     </div>
 
-                    <!-- 26e -->
                     <div>
                         <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">26e. Biaya non operasional</label>
                         <div class="relative">
-                            <input type="text" id="val-26e" placeholder="Contoh: 500.000" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-10 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <button onclick="copyFieldValue('val-26e')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-indigo-600 transition cursor-pointer">
-                                📋
-                            </button>
+                            <input type="text" id="val-26e" placeholder="" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-12 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <button onclick="copyFieldValue('val-26e')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-100 hover:bg-indigo-50 text-slate-600 text-[10px] font-medium rounded-lg transition cursor-pointer">Salin</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Rincian 27 & Panel Ringkasan -->
+                <!-- Column Kanan: Rincian 27, Hasil, & Grafik -->
                 <div class="space-y-6">
+                    
+                    <!-- Rincian 27 Input -->
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
                         <h2 class="text-base font-semibold text-slate-800 flex items-center gap-2.5 mb-2">
                             <span class="bg-emerald-100 text-emerald-700 w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold">3</span>
                             Pendapatan Usaha (Rincian 27)
                         </h2>
 
-                        <!-- 27a -->
                         <div>
-                            <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">27a. Nilai produksi / penjualan / pendapatan</label>
+                            <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">27a. Omzet / Nilai produksi / penjualan</label>
                             <div class="relative">
-                                <input type="text" id="val-27a" placeholder="Contoh: 25.000.000" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-10 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                                <button onclick="copyFieldValue('val-27a')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-indigo-600 transition cursor-pointer">
-                                    📋
-                                </button>
+                                <input type="text" id="val-27a" placeholder="" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-12 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                <button onclick="copyFieldValue('val-27a')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-100 hover:bg-indigo-50 text-slate-600 text-[10px] font-medium rounded-lg transition cursor-pointer">Salin</button>
                             </div>
                         </div>
 
-                        <!-- 27b -->
                         <div>
                             <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">27b. Pendapatan lainnya</label>
                             <div class="relative">
-                                <input type="text" id="val-27b" placeholder="Contoh: 0" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-10 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                                <button onclick="copyFieldValue('val-27b')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-indigo-600 transition cursor-pointer">
-                                    📋
-                                </button>
+                                <input type="text" id="val-27b" placeholder="" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-12 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                <button onclick="copyFieldValue('val-27b')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-100 hover:bg-indigo-50 text-slate-600 text-[10px] font-medium rounded-lg transition cursor-pointer">Salin</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Panel Ringkasan NTB -->
+                    <!-- Panel Evaluasi Ringkas -->
                     <div class="bg-slate-900 text-white rounded-2xl shadow-md p-6 border border-slate-800">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-sm font-semibold">Hasil Evaluasi NTB</h3>
@@ -201,30 +175,65 @@
                         
                         <div class="grid grid-cols-2 gap-3 text-xs mb-4">
                             <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-                                <span class="block text-slate-400 text-[10px]">Total Output</span>
+                                <span class="block text-slate-400 text-[10px]">Output (Omzet - 26c)[cite: 3]</span>
                                 <span id="res-output" class="font-bold text-sm text-slate-100">Rp 0</span>
-                            </div>
-                            <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-                                <span class="block text-slate-400 text-[10px]">Konsumsi Antara</span>
-                                <span id="res-antara" class="font-bold text-sm text-slate-100">Rp 0</span>
                             </div>
                             <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
                                 <span class="block text-slate-400 text-[10px]">Nilai Tambah Bruto (NTB)</span>
                                 <span id="res-ntb" class="font-bold text-sm text-slate-100">Rp 0</span>
                             </div>
                             <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-                                <span class="block text-slate-400 text-[10px]">Rasio NTB Aktif</span>
+                                <span class="block text-slate-400 text-[10px]">Rasio NTB (NTB / Output)[cite: 3]</span>
                                 <span id="res-rasio" class="font-bold text-base text-amber-400">0.0000</span>
+                            </div>
+                            <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
+                                <span class="block text-slate-400 text-[10px]">Rentang Wajar KBLI</span>
+                                <span id="res-rentang" class="font-bold text-xs text-slate-200">-</span>
                             </div>
                         </div>
 
                         <p id="recommendation-text" class="text-xs text-slate-300 bg-slate-800/50 p-3 rounded-xl border border-slate-700/50 mb-4 leading-relaxed">
-                            Silakan pilih Kategori KBLI dan isi data pengeluaran/pendapatan.
+                            Silakan isi data keuangan di atas.
                         </p>
 
-                        <button id="btn-apply-adj" onclick="applyAdjustment()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-xl text-xs transition shadow-sm cursor-pointer hidden flex items-center justify-center gap-2">
-                            ✨ Terapkan Penyesuaian Otomatis (Aman ± 0.01 Rentang)
+                        <button id="btn-apply-adj" onclick="applyAdjustment()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-xl text-xs transition shadow-sm cursor-pointer hidden">
+                            Klik untuk melakukan proportional adjustment
                         </button>
+                    </div>
+
+                    <!-- Panel Grafik Proporsi Pengeluaran Usaha -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Proporsi Pengeluaran Usaha</h3>
+                            <span class="text-slate-400 text-xs">📊</span>
+                        </div>
+                        
+                        <div class="relative w-48 h-48 mx-auto mb-4">
+                            <canvas id="expenseChart"></canvas>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] pt-2 border-t border-slate-100">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
+                                <span class="text-slate-600">26a. Upah/Gaji: <strong id="pct-26a" class="text-slate-800">0.0%</strong></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
+                                <span class="text-slate-600">26b. Biaya Produksi: <strong id="pct-26b" class="text-slate-800">0.0%</strong></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
+                                <span class="text-slate-600">26c. Barang Terjual: <strong id="pct-26c" class="text-slate-800">0.0%</strong></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 inline-block"></span>
+                                <span class="text-slate-600">26d. Operasional: <strong id="pct-26d" class="text-slate-800">0.0%</strong></span>
+                            </div>
+                            <div class="flex items-center gap-2 sm:col-span-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-pink-500 inline-block"></span>
+                                <span class="text-slate-600">26e. Non-Operasional: <strong id="pct-26e" class="text-slate-800">0.0%</strong></span>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -232,30 +241,29 @@
 
         </div>
 
-        <!-- BULK MODE -->
+        <!-- Mode Bulk Excel -->
         <div id="tab-bulk" class="space-y-6 hidden">
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6">
                 <h2 class="text-base font-semibold text-slate-800 mb-1.5">Pengolahan Data Massal (Excel)</h2>
-                <p class="text-xs text-slate-500 mb-6 leading-relaxed">Unduh templat Excel, isi daftar unit usaha, lalu unggah untuk menghitung dan menyesuaikan rasio NTB secara otomatis dengan pengaman ± 0.01.</p>
+                <p class="text-xs text-slate-500 mb-6 leading-relaxed">Unduh templat Excel, isi daftar unit usaha, lalu unggah untuk menghitung dan menyesuaikan rasio NTB secara otomatis.</p>
 
                 <div class="flex flex-wrap gap-3 items-center">
                     <button onclick="downloadTemplate()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-xl text-xs transition flex items-center gap-2 cursor-pointer shadow-sm">
-                        📥 Download Template Excel
+                        Download Template Excel
                     </button>
                     
                     <label class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-xl text-xs transition flex items-center gap-2 cursor-pointer shadow-sm">
-                        📤 Upload & Proses Excel
+                        Upload & Proses Excel
                         <input type="file" id="excel-file-input" accept=".xlsx, .xls" onchange="processExcel(event)" class="hidden">
                     </label>
                 </div>
             </div>
 
-            <!-- Tabel Rekap Bulk -->
             <div id="bulk-results-container" class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 hidden">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-sm font-semibold text-slate-800">Hasil Rekapitulasi & Auto-Adjustment</h3>
                     <button onclick="downloadResultExcel()" class="bg-slate-900 hover:bg-slate-800 text-white font-medium py-2 px-3.5 rounded-xl text-xs transition cursor-pointer">
-                        💾 Download Hasil (Excel)
+                        Download Hasil (Excel)
                     </button>
                 </div>
                 <div class="overflow-x-auto max-h-[500px]">
@@ -265,7 +273,7 @@
                                 <th class="p-2.5 border-b">No</th>
                                 <th class="p-2.5 border-b">Nama Usaha</th>
                                 <th class="p-2.5 border-b text-center">KBLI</th>
-                                <th class="p-2.5 border-b">Total Output</th>
+                                <th class="p-2.5 border-b">Output</th>
                                 <th class="p-2.5 border-b">NTB Awal</th>
                                 <th class="p-2.5 border-b">Rasio Awal</th>
                                 <th class="p-2.5 border-b">Status Awal</th>
@@ -282,14 +290,11 @@
 
     </main>
 
-    <!-- Footer -->
     <footer class="bg-white border-t border-slate-200/80 py-4 text-center text-xs text-slate-500 mt-auto">
         Kalkulator Rasio NTB Multi-Kategori KBLI &bull; Standar Perhitungan BPS
     </footer>
 
-    <!-- JavaScript Logic -->
     <script>
-        // Tabel Batas Rasio KBLI Min & Max
         const kbliLimits = {
             'A': { min: 0.51, max: 0.94 },
             'B': { min: 0.28, max: 0.81 },
@@ -314,6 +319,42 @@
 
         let lastCalculatedData = null;
         let processedBulkData = [];
+        let expenseChart = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initChart();
+        });
+
+        function initChart() {
+            const ctx = document.getElementById('expenseChart').getContext('2d');
+            expenseChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['26a. Upah/Gaji', '26b. Biaya Produksi', '26c. Barang Terjual', '26d. Operasional', '26e. Non-Operasional'],
+                    datasets: [{
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#6366f1', '#ec4899'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    cutout: '70%',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw.toFixed(1)}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
 
         function switchTab(tab) {
             if (tab === 'single') {
@@ -354,21 +395,23 @@
             const input = document.getElementById(fieldId);
             if (!input || !input.value) return;
             navigator.clipboard.writeText(input.value);
-            
-            // Visual Feedback
             const btn = input.nextElementSibling;
             const originalText = btn.innerHTML;
-            btn.innerHTML = '✅';
+            btn.innerHTML = 'Disalin';
             setTimeout(() => { btn.innerHTML = originalText; }, 1000);
         }
 
         function onCategoryChange() {
             const cat = document.getElementById('kbli-category').value;
             const info = document.getElementById('kbli-range-info');
+            const formContainer = document.getElementById('form-container');
+            const checkbox2026 = document.getElementById('is-year-2026');
             const note26c = document.getElementById('note-26c');
             
             if (cat && kbliLimits[cat]) {
-                info.textContent = `Rentang Rasio Wajar: MIN = ${kbliLimits[cat].min} | MAX = ${kbliLimits[cat].max}`;
+                info.textContent = `Rentang Wajar: MIN = ${kbliLimits[cat].min} | MAX = ${kbliLimits[cat].max}`;
+                formContainer.classList.remove('opacity-40', 'pointer-events-none');
+                checkbox2026.disabled = false;
                 if (cat === 'G') {
                     note26c.classList.remove('hidden');
                 } else {
@@ -376,6 +419,9 @@
                 }
             } else {
                 info.textContent = '';
+                formContainer.classList.add('opacity-40', 'pointer-events-none');
+                checkbox2026.disabled = true;
+                checkbox2026.checked = false;
                 note26c.classList.add('hidden');
             }
             calculateNTB();
@@ -395,34 +441,51 @@
             const v27a = parseNumber(document.getElementById('val-27a').value) * multiplier;
             const v27b = parseNumber(document.getElementById('val-27b').value) * multiplier;
 
-            const totalOutput = v27a + v27b;
-            const konsumsiAntara = v26b + v26c + v26d + v26e;
-            const ntb = totalOutput - konsumsiAntara;
-            const rasioNtb = totalOutput > 0 ? ntb / totalOutput : 0;
+            const totalPengeluaran = v26a + v26b + v26c + v26d + v26e;
 
-            document.getElementById('res-output').textContent = formatRupiah(totalOutput);
-            document.getElementById('res-antara').textContent = formatRupiah(konsumsiAntara);
-            document.getElementById('res-ntb').textContent = formatRupiah(ntb);
+            // Update Chart Proporsi
+            if (expenseChart) {
+                let p26a = totalPengeluaran > 0 ? (v26a / totalPengeluaran) * 100 : 0;
+                let p26b = totalPengeluaran > 0 ? (v26b / totalPengeluaran) * 100 : 0;
+                let p26c = totalPengeluaran > 0 ? (v26c / totalPengeluaran) * 100 : 0;
+                let p26d = totalPengeluaran > 0 ? (v26d / totalPengeluaran) * 100 : 0;
+                let p26e = totalPengeluaran > 0 ? (v26e / totalPengeluaran) * 100 : 0;
+
+                expenseChart.data.datasets[0].data = [p26a, p26b, p26c, p26d, p26e];
+                expenseChart.update();
+
+                document.getElementById('pct-26a').textContent = p26a.toFixed(1) + '%';
+                document.getElementById('pct-26b').textContent = p26b.toFixed(1) + '%';
+                document.getElementById('pct-26c').textContent = p26c.toFixed(1) + '%';
+                document.getElementById('pct-26d').textContent = p26d.toFixed(1) + '%';
+                document.getElementById('pct-26e').textContent = p26e.toFixed(1) + '%';
+            }
+
+            const omzet = v27a + v27b;
+            const output = omzet - v26c; // Konsep output: omzet - 26c[cite: 3]
+            const nilaiTambah = output - v26b - v26d; // Konsep NTB: output - 26b - 26d[cite: 3]
+            const rasioNtb = output > 0 ? nilaiTambah / output : 0;
+
+            document.getElementById('res-output').textContent = formatRupiah(output);
+            document.getElementById('res-ntb').textContent = formatRupiah(nilaiTambah);
             document.getElementById('res-rasio').textContent = rasioNtb.toFixed(4);
+            
+            if(cat && kbliLimits[cat]) {
+                document.getElementById('res-rentang').textContent = `${kbliLimits[cat].min} - ${kbliLimits[cat].max}`;
+            } else {
+                document.getElementById('res-rentang').textContent = '-';
+            }
 
             const badge = document.getElementById('badge-status');
             const recText = document.getElementById('recommendation-text');
             const btnApply = document.getElementById('btn-apply-adj');
 
-            lastCalculatedData = { cat, v26a, v26b, v26c, v26d, v26e, v27a, v27b, totalOutput, konsumsiAntara, ntb, rasioNtb, multiplier };
+            lastCalculatedData = { cat, v26a, v26b, v26c, v26d, v26e, v27a, v27b, omzet, output, nilaiTambah, rasioNtb, multiplier };
 
             if (!cat) {
                 badge.className = 'px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase bg-slate-800 text-slate-300';
                 badge.textContent = 'Pilih KBLI';
-                recText.textContent = 'Pilih Kategori KBLI terlebih dahulu untuk memulai verifikasi rasio.';
-                btnApply.classList.add('hidden');
-                return;
-            }
-
-            if (cat === 'G' && v26c <= 0) {
-                badge.className = 'px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase bg-rose-900/80 text-rose-200 border border-rose-700';
-                badge.textContent = 'Data Tidak Valid';
-                recText.textContent = '⚠️ Khusus Kategori G (Perdagangan), Rincian 26c (Biaya Pembelian Barang yang Terjual) wajib terisi.';
+                recText.textContent = 'Pilih Kategori KBLI terlebih dahulu.';
                 btnApply.classList.add('hidden');
                 return;
             }
@@ -437,62 +500,52 @@
             } else if (rasioNtb < limits.min) {
                 badge.className = 'px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase bg-amber-900/80 text-amber-200 border border-amber-700';
                 badge.textContent = 'Di Bawah Minimum';
-                const targetRasioAman = limits.max - 0.01; // Penyesuaian aman -0.01 dari MAX
-                const targetAntara = totalOutput * (1 - targetRasioAman);
-                recText.textContent = `Rasio NTB terlalu rendah (${rasioNtb.toFixed(4)} < ${limits.min}). Rekomendasi: Kurangi konsumsi antara dari ${formatRupiah(konsumsiAntara)} menjadi ${formatRupiah(targetAntara)} agar rasio berada di angka aman ${targetRasioAman.toFixed(2)}.`;
+                recText.textContent = `Rasio NTB di bawah minimum (${rasioNtb.toFixed(4)} < ${limits.min}).`;
                 btnApply.classList.remove('hidden');
             } else {
                 badge.className = 'px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase bg-rose-900/80 text-rose-200 border border-rose-700';
                 badge.textContent = 'Di Atas Maksimum';
-                const targetRasioAman = limits.min + 0.01; // Penyesuaian aman +0.01 dari MIN
-                const targetAntara = totalOutput * (1 - targetRasioAman);
-                recText.textContent = `Rasio NTB terlalu tinggi (${rasioNtb.toFixed(4)} > ${limits.max}). Rekomendasi: Tambah konsumsi antara dari ${formatRupiah(konsumsiAntara)} menjadi ${formatRupiah(targetAntara)} agar rasio berada di angka aman ${targetRasioAman.toFixed(2)}.`;
+                recText.textContent = `Rasio NTB di atas maksimum (${rasioNtb.toFixed(4)} > ${limits.max}).`;
                 btnApply.classList.remove('hidden');
             }
         }
 
         function applyAdjustment() {
             if (!lastCalculatedData) return;
-            const { cat, v26b, v26c, v26d, v26e, totalOutput, rasioNtb, multiplier } = lastCalculatedData;
-            const limits = kbliLimits[cat];
-
-            // Penyesuaian toleransi aman +- 0.01
-            let targetRasio = (rasioNtb < limits.min) ? (limits.max - 0.01) : (limits.min + 0.01);
+            const { cat, v26b, v26c, v26d, output, rasioNtb, multiplier } = lastCalculatedData;
             
-            const targetAntara = totalOutput * (1 - targetRasio);
-            const currentAntara = v26b + v26c + v26d + v26e;
-
-            if (currentAntara <= 0) return;
-
-            let ratio = targetAntara / currentAntara;
-
-            let n26b = v26b * ratio;
-            let n26c = v26c * ratio;
-            let n26d = v26d * ratio;
-            let n26e = v26e * ratio;
-
-            if (cat === 'G' && n26c <= 0) {
-                n26c = targetAntara * 0.6;
-                const sisa = targetAntara - n26c;
-                n26b = sisa * 0.3;
-                n26d = sisa * 0.6;
-                n26e = sisa * 0.1;
+            if (cat === 'G' && v26c <= 0) {
+                alert('Peringatan: Untuk Kategori G, rincian 26c wajib diisi sebelum melakukan penyesuaian.');
+                return;
             }
 
-            document.getElementById('val-26b').value = Math.round(n26b / multiplier).toLocaleString('id-ID');
-            document.getElementById('val-26c').value = Math.round(n26c / multiplier).toLocaleString('id-ID');
-            document.getElementById('val-26d').value = Math.round(n26d / multiplier).toLocaleString('id-ID');
-            document.getElementById('val-26e').value = Math.round(n26e / multiplier).toLocaleString('id-ID');
+            const limits = kbliLimits[cat];
+            let targetRasio = (rasioNtb < limits.min) ? (limits.max - 0.01) : (limits.min + 0.01);
+            
+            let targetNTB = output * targetRasio;
+            let targetPengeluaranLain = output - targetNTB;
+            let currentPengeluaranLain = v26b + v26d;
+
+            if (currentPengeluaranLain <= 0) {
+                document.getElementById('val-26b').value = Math.round(targetPengeluaranLain / multiplier).toLocaleString('id-ID');
+                document.getElementById('val-26d').value = 0;
+            } else {
+                let ratio = targetPengeluaranLain / currentPengeluaranLain;
+                let n26b = v26b * ratio;
+                let n26d = v26d * ratio;
+
+                document.getElementById('val-26b').value = Math.round(n26b / multiplier).toLocaleString('id-ID');
+                document.getElementById('val-26d').value = Math.round(n26d / multiplier).toLocaleString('id-ID');
+            }
 
             calculateNTB();
         }
 
-        // --- BULK EXCEL LOGIC ---
         function downloadTemplate() {
             const ws_data = [
-                ["Nama Usaha", "Kategori KBLI (A-T)", "Mulai 2026 (1=Ya, 0=Tidak)", "26a_Gaji", "26b_Prod", "26c_Jual", "26d_Ops", "26e_NonOps", "27a_Pendapatan", "27b_PendLain"],
-                ["Toko Usaha Jaya", "G", 0, 5000000, 10000000, 25000000, 2000000, 500000, 45000000, 0],
-                ["CV Konstruksi Utama", "F", 1, 1500000, 3000000, 0, 1000000, 200000, 12000000, 0]
+                ["Nama Usaha", "Kategori KBLI (A-T)", "Mulai 2026 (1=Ya, 0=Tidak)", "26a_Gaji", "26b_Prod", "26c_Jual", "26d_Ops", "26e_NonOps", "27a_Omzet", "27b_PendLain"],
+                ["Toko Makmur", "G", 0, 5000000, 10000000, 25000000, 2000000, 500000, 45000000, 0],
+                ["CV Konstruksi", "F", 1, 1500000, 3000000, 0, 1000000, 200000, 12000000, 0]
             ];
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.aoa_to_sheet(ws_data);
@@ -533,10 +586,10 @@
                     const v27a = Number(r[8] || 0) * mult;
                     const v27b = Number(r[9] || 0) * mult;
 
-                    const totalOutput = v27a + v27b;
-                    const antaraAwal = v26b + v26c + v26d + v26e;
-                    const ntbAwal = totalOutput - antaraAwal;
-                    const rasioAwal = totalOutput > 0 ? ntbAwal / totalOutput : 0;
+                    const omzet = v27a + v27b;
+                    const output = omzet - v26c;
+                    const ntbAwal = output - v26b - v26d;
+                    const rasioAwal = output > 0 ? ntbAwal / output : 0;
 
                     let statusAwal = 'Valid';
                     let rasioAkhir = rasioAwal;
@@ -552,21 +605,22 @@
                         const limits = kbliLimits[cat];
                         if (rasioAwal < limits.min || rasioAwal > limits.max) {
                             const targetRasio = (rasioAwal < limits.min) ? (limits.max - 0.01) : (limits.min + 0.01);
-                            const targetAntara = totalOutput * (1 - targetRasio);
-                            if (antaraAwal > 0) {
-                                let ratio = targetAntara / antaraAwal;
-                                v26c = v26c * ratio;
-                                if (cat === 'G' && v26c <= 0) v26c = targetAntara * 0.6;
+                            const targetNTB = output * targetRasio;
+                            const targetPengeluaranLain = output - targetNTB;
+                            const currentPengeluaranLain = v26b + v26d;
+                            if (currentPengeluaranLain > 0) {
+                                let ratio = targetPengeluaranLain / currentPengeluaranLain;
+                                let nb = v26b * ratio;
+                                let nd = v26d * ratio;
+                                const ntbAkhir = output - nb - nd;
+                                rasioAkhir = output > 0 ? ntbAkhir / output : 0;
                             }
-                            const antaraAkhir = v26b + v26c + v26d + v26e;
-                            const ntbAkhir = totalOutput - antaraAkhir;
-                            rasioAkhir = totalOutput > 0 ? ntbAkhir / totalOutput : 0;
-                            statusAkhir = 'Disesuaikan (±0.01)';
+                            statusAkhir = 'Disesuaikan';
                         }
                     }
 
                     processedBulkData.push({
-                        nama, cat, totalOutput, ntbAwal, rasioAwal, statusAwal, rasioAkhir, statusAkhir
+                        nama, cat, output, ntbAwal, rasioAwal, statusAwal, rasioAkhir, statusAkhir
                     });
 
                     const tr = document.createElement('tr');
@@ -575,7 +629,7 @@
                         <td class="p-2.5 border-b text-slate-500">${i}</td>
                         <td class="p-2.5 border-b font-medium text-slate-800">${nama}</td>
                         <td class="p-2.5 border-b text-center font-bold text-slate-700">${cat}</td>
-                        <td class="p-2.5 border-b">${formatRupiah(totalOutput)}</td>
+                        <td class="p-2.5 border-b">${formatRupiah(output)}</td>
                         <td class="p-2.5 border-b">${formatRupiah(ntbAwal)}</td>
                         <td class="p-2.5 border-b font-semibold text-indigo-600">${rasioAwal.toFixed(4)}</td>
                         <td class="p-2.5 border-b"><span class="px-2 py-0.5 rounded-lg text-[10px] font-bold ${statusAwal === 'Valid' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${statusAwal}</span></td>
@@ -593,10 +647,10 @@
         function downloadResultExcel() {
             if (processedBulkData.length === 0) return;
             const ws_data = [
-                ["Nama Usaha", "Kategori", "Total Output", "NTB Awal", "Rasio Awal", "Status Awal", "Rasio Sesudah", "Status Akhir"]
+                ["Nama Usaha", "Kategori", "Output", "NTB Awal", "Rasio Awal", "Status Awal", "Rasio Sesudah", "Status Akhir"]
             ];
             processedBulkData.forEach(d => {
-                ws_data.push([d.nama, d.cat, d.totalOutput, d.ntbAwal, d.rasioAwal, d.statusAwal, d.rasioAkhir, d.statusAkhir]);
+                ws_data.push([d.nama, d.cat, d.output, d.ntbAwal, d.rasioAwal, d.statusAwal, d.rasioAkhir, d.statusAkhir]);
             });
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.aoa_to_sheet(ws_data);
