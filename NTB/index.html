@@ -12,7 +12,6 @@
            TEMA BIRU MATA ENGGANG (CYAN & SAPPHIRE) + DARK MODE
         ================================================== */
         :root {
-            /* Tema Light */
             --bg-body: #f0f9ff;
             --bg-card: #ffffff;
             --bg-header: #ffffff;
@@ -39,7 +38,6 @@
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
         }
 
-        /* Tema Dark Mode */
         [data-theme="dark"] {
             --bg-body: #08121f; 
             --bg-card: #0f1c2e;
@@ -112,7 +110,7 @@
         .btn-copy { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color); padding: 4px 10px; font-size: 0.7rem; border-radius: var(--radius-pill); cursor: pointer; font-weight: 600; transition: 0.2s; }
         .btn-copy:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
-        .btn-copy-sm { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 12px; font-size: 0.65rem; border-radius: var(--radius-pill); cursor: pointer; font-weight: 600; transition: 0.2s; font-family: inherit; margin-left: 8px; flex-shrink: 0; }
+        .btn-copy-sm { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 12px; font-size: 0.65rem; border-radius: var(--radius-pill); cursor: pointer; font-weight: 600; transition: 0.2s; font-family: inherit; margin-left: 12px; flex-shrink: 0; box-shadow: var(--shadow-sm); }
         .btn-copy-sm:hover { background: var(--primary); color: white; border-color: var(--primary); }
         
         .toggle-container { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; justify-content: center; transition: 0.3s; }
@@ -146,30 +144,27 @@
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; padding: 20px; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-content { background: var(--bg-card); width: 100%; max-width: 600px; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); transform: translateY(20px) scale(0.98); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--border-color); }
+        .modal-content { background: var(--bg-card); width: 100%; max-width: 620px; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); transform: translateY(20px) scale(0.98); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--border-color); display: flex; flex-direction: column; max-height: 90vh; }
         .modal-overlay.active .modal-content { transform: translateY(0) scale(1); }
         
-        .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: flex-start; }
-        .modal-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+        .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: flex-start; flex-shrink: 0; }
+        .modal-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
         
-        /* Chip Label KBLI */
-        .chip-kbli { background: var(--primary); color: white; padding: 4px 12px; border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.3px; display: inline-block; white-space: nowrap; }
+        .chip-kbli { background: var(--primary); color: white; padding: 4px 12px; border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.3px; display: inline-block; white-space: nowrap; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2); }
         
-        .modal-body { padding: 24px; }
-        .modal-footer { padding: 16px 24px; background: var(--bg-body); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; }
+        .modal-body { padding: 24px; overflow-y: auto; }
+        .modal-footer { padding: 16px 24px; background: var(--bg-body); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; flex-shrink: 0; }
         
-        /* Auto-Fit & Anti-Wrap Table Fix */
-        .compare-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: clamp(0.75rem, 2.5vw, 0.9rem); }
+        /* Auto-Fit & Anti-Wrap Fix */
+        .compare-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: clamp(0.75rem, 2vw, 0.9rem); }
         .compare-table th, .compare-table td { padding: 14px 8px; border-bottom: 1px solid var(--border-color); color: var(--text-main); vertical-align: middle; }
-        .compare-table td:first-child { text-align: left; padding-left: 0; padding-right: 12px; width: 45%; line-height: 1.4; }
-        .compare-table th { color: var(--text-muted); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; text-align: right; }
+        .compare-table td:first-child { text-align: left; padding-left: 0; padding-right: 16px; width: 45%; line-height: 1.5; }
+        .compare-table th { color: var(--text-muted); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; text-align: right; white-space: nowrap; }
         .compare-table th:first-child { text-align: left; padding-left: 0; }
         
-        /* No-Wrap Containers for Values */
         .val-old { color: var(--text-muted); text-decoration: line-through; text-align: right; white-space: nowrap; }
-        .val-flex { display: flex; align-items: center; justify-content: flex-end; white-space: nowrap; }
-        .val-new { color: var(--primary); font-weight: 700; }
-        .val-lock { color: var(--text-main); font-weight: 700; }
+        .val-flex { display: flex; align-items: center; justify-content: flex-end; white-space: nowrap; width: 100%; }
+        .val-new { color: var(--text-main); font-weight: 700; }
         
         .icon { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     </style>
@@ -195,7 +190,7 @@
     </header>
 
     <main>
-        <!-- Seksi 1: KBLI -->
+        <!-- Seksi 1 -->
         <section class="card">
             <div class="card-header" style="border:none; padding:0; margin-bottom: 20px;">
                 <div class="card-title"><div class="step-badge">1</div> Kategori KBLI & Periode</div>
@@ -237,6 +232,7 @@
             </div>
         </section>
 
+        <!-- Seksi 2 & 3 -->
         <div id="main-forms" class="grid-auto disabled-area">
             <section class="card flex-col">
                 <div class="card-header">
@@ -388,10 +384,10 @@
             </div>
             <div class="modal-body">
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6;" id="modal-desc">
-                    Berikut simulasi perubahan agar rasio mendarat mulus di <strong style="color:var(--primary)">MAX - 1%</strong>. Salin nominal mentah di bawah ini, atau klik Terapkan untuk mengunci nilai di form.
+                    Berikut simulasi perubahan agar rasio mendarat di <strong style="color:var(--primary)">MAX - 1%</strong> tanpa menurunkan NTB awal. Salin nominal di bawah ini, atau klik Terapkan.
                 </p>
                 
-                <!-- Table Wrapper for Responsiveness -->
+                <!-- Table Wrapper -->
                 <div style="overflow-x: auto;">
                     <table class="compare-table">
                         <thead>
@@ -418,7 +414,6 @@
     </div>
 
     <script>
-        // Init Theme
         const moonIcon = `<svg class="icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
         const sunIcon = `<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
         
@@ -600,7 +595,7 @@
             if (!currentData) return;
             let { cat, v26d, v26c, v27b, output, ntb, rasio, biayaAntara, multiplier } = currentData;
             
-            // Set Chip Label KBLI & hapus titik dua
+            // Set Chip Label 
             const selectEl = document.getElementById('kbli-category');
             document.getElementById('modal-kbli-label').innerHTML = `Untuk <span class="chip-kbli">${selectEl.options[selectEl.selectedIndex].text}</span>`;
 
@@ -614,6 +609,7 @@
                 kasus: rasio < limits.min ? 'UNDER' : 'OVER',
                 omzetBaru: omzetLama, 
                 v26dBaru: v26d,
+                v26cBaru: v26c,
                 ntbBaru: 0,
                 rasioBaruPct: targetPct
             };
@@ -640,10 +636,10 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Otomatis menyesuaikan</span></td>
+                        <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Otomatis naik menyesuaikan</span></td>
                         <td class="val-old">Rp ${toRp(ntb)}</td>
                         <td>
-                            <div class="val-flex val-lock">
+                            <div class="val-flex val-new" style="color:var(--text-main);">
                                 <span>Rp ${toRp(ntbBaruRaw)}</span>
                             </div>
                         </td>
@@ -651,55 +647,108 @@
                 `;
             } else {
                 let targetOutput = ntb / targetRasio;
-                pendingAdjustments.omzetBaru = targetOutput + v26c - v27b;
                 let selisihOutput = targetOutput - output;
-                
-                if(selisihOutput > 0) pendingAdjustments.v26dBaru = v26d + selisihOutput;
-                pendingAdjustments.ntbBaru = ntb; 
+                pendingAdjustments.ntbBaru = ntb;
 
-                let omzetBaruRaw = Math.round(pendingAdjustments.omzetBaru / multiplier);
-                let opsBaruRaw = Math.round(pendingAdjustments.v26dBaru / multiplier);
-                let ntbBaruRaw = Math.round(pendingAdjustments.ntbBaru);
+                if (cat === 'G') {
+                    // LOGIKA KHUSUS KBLI G (PERDAGANGAN) - 26c diubah proporsional
+                    let asumsiMargin = 0.25; 
+                    let targetOmzet = targetOutput / asumsiMargin; 
+                    pendingAdjustments.omzetBaru = targetOmzet;
+                    pendingAdjustments.v26cBaru = targetOmzet - targetOutput;
+                    
+                    if(selisihOutput > 0) pendingAdjustments.v26dBaru = v26d + selisihOutput;
+                    
+                    let omzetBaruRaw = Math.round(pendingAdjustments.omzetBaru / multiplier);
+                    let cBaruRaw = Math.round(pendingAdjustments.v26cBaru / multiplier);
+                    let opsBaruRaw = Math.round(pendingAdjustments.v26dBaru / multiplier);
 
-                tbodyHtml = `
+                    tbodyHtml += `
+                        <tr>
+                            <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Diekspansi menekan rasio</span></td>
+                            <td class="val-old">Rp ${toRp(omzetLama / multiplier)}</td>
+                            <td>
+                                <div class="val-flex val-new">
+                                    <span>Rp ${toRp(omzetBaruRaw)}</span>
+                                    <button class="btn-copy-sm" onclick="copyRawText('${omzetBaruRaw}', this)">Salin</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Pembelian Terjual (26c)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">HPP disesuaikan (Logika Trade)</span></td>
+                            <td class="val-old">Rp ${toRp(v26c / multiplier)}</td>
+                            <td>
+                                <div class="val-flex val-new">
+                                    <span>Rp ${toRp(cBaruRaw)}</span>
+                                    <button class="btn-copy-sm" onclick="copyRawText('${cBaruRaw}', this)">Salin</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Biaya Operasional (26d)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Amortisasi pengunci NTB</span></td>
+                            <td class="val-old">Rp ${toRp(v26d / multiplier)}</td>
+                            <td>
+                                <div class="val-flex val-new">
+                                    <span>Rp ${toRp(opsBaruRaw)}</span>
+                                    <button class="btn-copy-sm" onclick="copyRawText('${opsBaruRaw}', this)">Salin</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+
+                } else {
+                    // KBLI UMUM - Hanya 27a dan 26d
+                    pendingAdjustments.omzetBaru = targetOutput + v26c - v27b;
+                    if(selisihOutput > 0) pendingAdjustments.v26dBaru = v26d + selisihOutput;
+                    
+                    let omzetBaruRaw = Math.round(pendingAdjustments.omzetBaru / multiplier);
+                    let opsBaruRaw = Math.round(pendingAdjustments.v26dBaru / multiplier);
+
+                    tbodyHtml += `
+                        <tr>
+                            <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Diekspansi menekan rasio</span></td>
+                            <td class="val-old">Rp ${toRp(omzetLama / multiplier)}</td>
+                            <td>
+                                <div class="val-flex val-new">
+                                    <span>Rp ${toRp(omzetBaruRaw)}</span>
+                                    <button class="btn-copy-sm" onclick="copyRawText('${omzetBaruRaw}', this)">Salin</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Biaya Operasional (26d)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Amortisasi pengunci NTB</span></td>
+                            <td class="val-old">Rp ${toRp(v26d / multiplier)}</td>
+                            <td>
+                                <div class="val-flex val-new">
+                                    <span>Rp ${toRp(opsBaruRaw)}</span>
+                                    <button class="btn-copy-sm" onclick="copyRawText('${opsBaruRaw}', this)">Salin</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                // Row NTB (Tanpa tombol salin)
+                tbodyHtml += `
                     <tr>
-                        <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Diekspansi untuk menekan rasio</span></td>
-                        <td class="val-old">Rp ${toRp(omzetLama / multiplier)}</td>
-                        <td>
-                            <div class="val-flex val-new">
-                                <span>Rp ${toRp(omzetBaruRaw)}</span>
-                                <button class="btn-copy-sm" onclick="copyRawText('${omzetBaruRaw}', this)">Salin</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Biaya Operasional (26d)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Menyerap selisih demi mengunci NTB</span></td>
-                        <td class="val-old">Rp ${toRp(v26d / multiplier)}</td>
-                        <td>
-                            <div class="val-flex val-new">
-                                <span>Rp ${toRp(opsBaruRaw)}</span>
-                                <button class="btn-copy-sm" onclick="copyRawText('${opsBaruRaw}', this)">Salin</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Terkunci absolut / Tidak berkurang</span></td>
+                        <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Terkunci mutlak / Tidak turun</span></td>
                         <td class="val-old">Rp ${toRp(ntb)}</td>
                         <td>
-                            <div class="val-flex val-lock">
-                                <span>Rp ${toRp(ntbBaruRaw)}</span>
+                            <div class="val-flex val-new" style="color:var(--text-main);">
+                                <span>Rp ${toRp(Math.round(ntb))}</span>
                             </div>
                         </td>
                     </tr>
                 `;
             }
 
+            // Row Rasio
             tbodyHtml += `
                 <tr style="background: rgba(14, 165, 233, 0.05);">
                     <td style="font-weight:700; color:var(--primary);">Rasio Evaluasi</td>
                     <td class="val-old">${rasioAwalPct.toFixed(2)}%</td>
                     <td>
-                        <div class="val-flex val-new" style="justify-content: flex-end;">
+                        <div class="val-flex val-new" style="color:var(--primary);">
                             <span>${targetPct.toFixed(2)}%</span>
                         </div>
                     </td>
@@ -723,6 +772,10 @@
             
             if(pendingAdjustments.kasus === 'OVER') {
                 document.getElementById('val-26d').value = toRp(pendingAdjustments.v26dBaru / mult);
+                // Terapkan 26c jika diubah (Khusus KBLI G)
+                if(currentData.cat === 'G') {
+                    document.getElementById('val-26c').value = toRp(pendingAdjustments.v26cBaru / mult);
+                }
             }
 
             closeModal();
