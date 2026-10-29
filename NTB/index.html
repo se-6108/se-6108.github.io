@@ -476,17 +476,17 @@
                 if (v27a > 0) {
                     let pct26c = v26c / v27a;
                     if (v26c <= 0) {
-                        note26c.textContent = "Peringatan: Untuk Perdagangan (Kategori G), rincian 26c wajib diisi (umumnya 60% - 80% dari omzet).";
+                        note26c.textContent = "Peringatan: Untuk Perdagangan (Kategori G), rincian 26c wajib diisi.";
                         note26c.className = "text-[11px] text-rose-500 mt-1 font-medium";
                     } else if (pct26c < 0.60 || pct26c > 0.80) {
-                        note26c.textContent = `Perhatian: Proporsi 26c saat ini ${(pct26c * 100).toFixed(1)}% dari omzet. Standar wajar Perdagangan adalah 60% - 80%.`;
+                        note26c.textContent = `Perhatian: Proporsi 26c saat ini ${(pct26c * 100).toFixed(1)}% dari omzet.`;
                         note26c.className = "text-[11px] text-amber-600 mt-1 font-medium";
                     } else {
                         note26c.textContent = `Proporsi 26c ideal (${(pct26c * 100).toFixed(1)}% dari omzet).`;
                         note26c.className = "text-[11px] text-emerald-600 mt-1 font-medium";
                     }
                 } else {
-                    note26c.textContent = "Peringatan: Khusus Kategori G, rincian 26c wajib diisi (60% - 80% omzet).";
+                    note26c.textContent = "Peringatan: Khusus Kategori G, rincian 26c wajib diisi.";
                     note26c.className = "text-[11px] text-amber-600 mt-1 font-medium";
                 }
             } else {
@@ -567,12 +567,14 @@
 
         function applyAdjustment() {
             if (!lastCalculatedData) return;
-            let { cat, v26b, v26c, v26d, v27a, v27b, nilaiTambah, rasioNtb, multiplier } = lastCalculatedData;
+            let { cat, v26c, v27a, v27b, nilaiTambah, rasioNtb, multiplier } = lastCalculatedData;
             const limits = kbliLimits[cat];
             
+            // Target Rasio Presisi: MAX - 0.01
             const targetRasio = limits.max - 0.01;
 
             if (rasioNtb < limits.min) {
+                // KASUS DEFISIT: Naikkan NTB secara rasional & sesuaikan Omzet 27a
                 let ntbTargetBaru = Math.max(nilaiTambah * 1.15, nilaiTambah + (500000 * multiplier));
                 let targetOutput = ntbTargetBaru / targetRasio;
                 let omzetBaru = targetOutput + v26c - v27b;
@@ -580,6 +582,7 @@
                 document.getElementById('val-27a').value = Math.round(omzetBaru / multiplier).toLocaleString('id-ID');
 
             } else {
+                // KASUS SURPLUS: Lock NTB (NTB sesudah >= NTB sebelum), adjust rincian 26c
                 let ntbTargetBaru = nilaiTambah;
                 let omzetAktual = v27a + v27b;
                 let targetOutputBaru = ntbTargetBaru / targetRasio;
