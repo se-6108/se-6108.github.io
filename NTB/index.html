@@ -22,7 +22,7 @@
                 <img src="icon.png" alt="Logo" class="w-10 h-10 rounded-xl object-cover bg-slate-800 p-1 border border-slate-700 shadow-sm" onerror="this.src='https://img.icons8.com/fluency/48/calculator.png'">
                 <div>
                     <h1 class="text-lg font-bold tracking-tight text-slate-100">Kalkulator & Penyesuaian NTB KBLI</h1>
-                    <p class="text-xs text-slate-400">Analisis Rasio Sektor Usaha & Auto-Adjustment Proporsional (Target: MAX - 0.01)</p>
+                    <p class="text-xs text-slate-400">Analisis Rasio Sektor Usaha & Auto-Adjustment Presisi (Target: MAX - 0.01)</p>
                 </div>
             </div>
             
@@ -93,7 +93,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-900 mb-1">Penyesuaian Berhasil Diterapkan</h4>
-                        <p class="text-xs text-indigo-700">Sistem secara cerdas menyesuaikan entrian sehingga Rasio NTB berada di batas presisi (Target: <strong>MAX - 0.01</strong>) tanpa mengurangi NTB. Gunakan tombol <strong>Salin</strong> untuk menyalin data.</p>
+                        <p id="banner-msg" class="text-xs text-indigo-700">Nilai pada form telah disesuaikan dengan mengunci NTB ($\ge$ nilai awal) dan mencapai target rasio presisi (MAX - 0.01). Gunakan tombol <strong>Salin</strong> untuk menyalin data.</p>
                     </div>
                     <button onclick="document.getElementById('copy-instruction-banner').classList.add('hidden')" class="text-xs font-semibold text-indigo-600 hover:text-indigo-900 cursor-pointer">Tutup</button>
                 </div>
@@ -110,7 +110,7 @@
                     </h2>
 
                     <div>
-                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">26a. Total upah & gaji pekerja (Upah Dikunci)</label>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">26a. Total upah & gaji pekerja</label>
                         <div class="relative">
                             <input type="text" id="val-26a" placeholder="0" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-14 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                             <button onclick="copyFieldValue('val-26a')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-100 hover:bg-indigo-50 text-slate-600 text-[10px] font-medium rounded-lg transition cursor-pointer">Salin</button>
@@ -199,7 +199,7 @@
                         
                         <div class="grid grid-cols-2 gap-3 text-xs mb-4">
                             <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-                                <span class="block text-slate-400 text-[10px]">Output (Omzet - 26c)</span>
+                                <span class="block text-slate-400 text-[10px]">Output (Omzet - 26c)[cite: 3]</span>
                                 <span id="res-output" class="font-bold text-sm text-slate-100">Rp 0</span>
                             </div>
                             <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
@@ -207,7 +207,7 @@
                                 <span id="res-ntb" class="font-bold text-sm text-slate-100">Rp 0</span>
                             </div>
                             <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-                                <span class="block text-slate-400 text-[10px]">Rasio NTB (NTB / Output)</span>
+                                <span class="block text-slate-400 text-[10px]">Rasio NTB (NTB / Output)[cite: 3]</span>
                                 <span id="res-rasio" class="font-bold text-base text-amber-400">0.0000</span>
                             </div>
                             <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
@@ -470,7 +470,7 @@
 
             const note26c = document.getElementById('note-26c');
             
-            // Peringatan Khusus Kategori G (Perdagangan): Proporsi 26c idealnya 60%-80% dari Omzet
+            // Validasi interaktif rincian 26c untuk Perdagangan (Kategori G)
             if (cat === 'G') {
                 note26c.classList.remove('hidden');
                 if (v27a > 0) {
@@ -517,8 +517,8 @@
             }
 
             const omzet = v27a + v27b;
-            const output = omzet - v26c; //[cite: 3]
-            const nilaiTambah = output - v26b - v26d; //[cite: 3]
+            const output = omzet - v26c;[cite: 3]
+            const nilaiTambah = output - v26b - v26d;[cite: 3]
             const rasioNtb = output > 0 ? nilaiTambah / output : 0;
 
             document.getElementById('res-output').textContent = formatRupiah(output);
@@ -555,12 +555,12 @@
             } else if (rasioNtb < limits.min) {
                 badge.className = 'px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase bg-amber-900/80 text-amber-200 border border-amber-700';
                 badge.textContent = 'Di Bawah Minimum (Defisit)';
-                recText.textContent = `Rasio NTB di bawah minimum (${rasioNtb.toFixed(4)} < ${limits.min}). Klik tombol di bawah untuk adjust otomatis menuju target presisi (MAX - 0.01).`;
+                recText.textContent = `Rasio NTB di bawah minimum (${rasioNtb.toFixed(4)} < ${limits.min}). Klik tombol untuk menyesuaikan Pendapatan Usaha (Omzet) dan mengunci NTB.`;
                 btnApply.classList.remove('hidden');
             } else {
                 badge.className = 'px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase bg-rose-900/80 text-rose-200 border border-rose-700';
                 badge.textContent = 'Di Atas Maksimum (Surplus)';
-                recText.textContent = `Rasio NTB di atas maksimum (${rasioNtb.toFixed(4)} > ${limits.max}). Klik tombol di bawah untuk adjust otomatis menuju target presisi (MAX - 0.01).`;
+                recText.textContent = `Rasio NTB di atas maksimum (${rasioNtb.toFixed(4)} > ${limits.max}). Klik tombol untuk menyesuaikan rincian 26c dan mengunci NTB (NTB sesudah >= NTB sebelum).`;
                 btnApply.classList.remove('hidden');
             }
         }
@@ -570,48 +570,35 @@
             let { cat, v26b, v26c, v26d, v27a, v27b, nilaiTambah, rasioNtb, multiplier } = lastCalculatedData;
             const limits = kbliLimits[cat];
             
-            // Kunci target mutlak di MAX - 0.01
+            // Objektif target rasio presisi: MAX - 0.01
             const targetRasio = limits.max - 0.01;
 
-            // 1. Khusus Kategori G: Pastikan 26c terisi rasional (70% omzet jika kosong/di luar rentang)
-            if (cat === 'G') {
-                if (v27a <= 0) v27a = 10000000 * multiplier;
-                if (v26c <= 0 || (v26c / v27a) < 0.60 || (v26c / v27a) > 0.80) {
-                    v26c = v27a * 0.70; // Set 70% omzet
-                    document.getElementById('val-26c').value = Math.round(v26c / multiplier).toLocaleString('id-ID');
-                }
-            }
-
-            // Hitung ulang output aktual berdasar 26c
-            let omzetAktual = v27a + v27b;
-            let outputAktual = omzetAktual - v26c;
-            
-            // NTB minimal dipertahankan (tidak boleh berkurang)
-            let ntbTarget = Math.max(nilaiTambah, 1000000 * multiplier);
-
             if (rasioNtb < limits.min) {
-                // KASUS UNDER/DEFISIT: Adjust Omzet (27a) naik agar Rasio NTB = MAX - 0.01
-                let targetOutput = ntbTarget / targetRasio;
-                let targetOmzetAwal = targetOutput + v26c - v27b;
+                // KASUS UNDER / DEFISIT: NTB dinaikkan/dikunci, pandu user adjust pendapatan (27a/Omzet)
+                let ntbTargetBaru = Math.max(nilaiTambah * 1.15, nilaiTambah + (500000 * multiplier));
+                let targetOutput = ntbTargetBaru / targetRasio;
+                let omzetBaru = targetOutput + v26c - v27b;
 
-                document.getElementById('val-27a').value = Math.round(targetOmzetAwal / multiplier).toLocaleString('id-ID');
+                document.getElementById('val-27a').value = Math.round(omzetBaru / multiplier).toLocaleString('id-ID');
 
             } else {
-                // KASUS OVER/SURPLUS: Lock NTB, adjust Biaya Antara (26b & 26d) naik agar Rasio NTB = MAX - 0.01
-                let targetBiayaAntara = outputAktual - (outputAktual * targetRasio);
-                let currentBiayaAntara = v26b + v26d;
+                // KASUS OVER / SURPLUS: NTB dikunci (NTB sesudah >= NTB sebelum, tidak terlalu besar), kurangi 26c
+                let ntbTargetBaru = nilaiTambah; // Lock NTB tidak kurang dari sebelum
+                let omzetAktual = v27a + v27b;
 
-                if (currentBiayaAntara <= 0) {
-                    document.getElementById('val-26b').value = Math.round(targetBiayaAntara / multiplier).toLocaleString('id-ID');
-                    document.getElementById('val-26d').value = 0;
+                // Kurangi 26c agar output membesar dan rasio turun pas ke targetRasio
+                let targetOutputBaru = ntbTargetBaru / targetRasio;
+                let rekomendasi26c = omzetAktual - targetOutputBaru;
+
+                // Batasi pengurangan 26c agar tetap wajar (misal minimal 30% dari omzet awal jika kategori G)
+                if (cat === 'G') {
+                    let min26c = omzetAktual * 0.40;
+                    rekomendasi26c = Math.max(rekomendasi26c, min26c);
                 } else {
-                    let ratio = targetBiayaAntara / currentBiayaAntara;
-                    let n26b = v26b * ratio;
-                    let n26d = v26d * ratio;
-
-                    document.getElementById('val-26b').value = Math.round(n26b / multiplier).toLocaleString('id-ID');
-                    document.getElementById('val-26d').value = Math.round(n26d / multiplier).toLocaleString('id-ID');
+                    rekomendasi26c = Math.max(rekomendasi26c, 0);
                 }
+
+                document.getElementById('val-26c').value = Math.round(rekomendasi26c / multiplier).toLocaleString('id-ID');
             }
 
             calculateNTB();
@@ -660,16 +647,12 @@
                     const mult = is2026 ? 12 : 1;
 
                     const v26a = Number(r[3] || 0) * mult;
-                    let v26b = Number(r[4] || 0) * mult;
+                    const v26b = Number(r[4] || 0) * mult;
                     let v26c = Number(r[5] || 0) * mult;
-                    let v26d = Number(r[6] || 0) * mult;
+                    const v26d = Number(r[6] || 0) * mult;
                     const v26e = Number(r[7] || 0) * mult;
                     let v27a = Number(r[8] || 0) * mult;
                     const v27b = Number(r[9] || 0) * mult;
-
-                    if (cat === 'G' && (v26c <= 0 || (v26c / v27a) < 0.60 || (v26c / v27a) > 0.80)) {
-                        if (v27a > 0) v26c = v27a * 0.70;
-                    }
 
                     const omzet = v27a + v27b;
                     const output = omzet - v26c;
@@ -688,16 +671,14 @@
                         if (rasioAwal < limits.min || rasioAwal > limits.max) {
                             const targetRasio = limits.max - 0.01;
                             if (rasioAwal < limits.min) {
-                                let targetOutput = Math.max(ntbAwal, 1000000 * mult) / targetRasio;
+                                let ntbTargetBaru = Math.max(ntbAwal * 1.15, ntbAwal + (500000 * mult));
+                                let targetOutput = ntbTargetBaru / targetRasio;
                                 v27a = targetOutput + v26c - v27b;
                             } else {
-                                let targetBiayaAntara = output - (output * targetRasio);
-                                let currAntara = v26b + v26d;
-                                if (currAntara > 0) {
-                                    let ratio = targetBiayaAntara / currAntara;
-                                    v26b *= ratio;
-                                    v26d *= ratio;
-                                }
+                                let ntbTargetBaru = ntbAwal;
+                                let omzetAktual = v27a + v27b;
+                                let targetOutputBaru = ntbTargetBaru / targetRasio;
+                                v26c = Math.max(omzetAktual - targetOutputBaru, cat === 'G' ? omzetAktual * 0.40 : 0);
                             }
                             let finalOutput = ((v27a + v27b) - v26c);
                             let finalNTB = finalOutput - v26b - v26d;
