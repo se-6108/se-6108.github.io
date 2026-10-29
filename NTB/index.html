@@ -93,7 +93,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-900 mb-1">Penyesuaian Berhasil Diterapkan</h4>
-                        <p id="banner-msg" class="text-xs text-indigo-700">Nilai pada form telah disesuaikan dengan mengunci NTB ($\ge$ nilai awal) dan mencapai target rasio presisi (MAX - 0.01). Gunakan tombol <strong>Salin</strong> untuk menyalin data.</p>
+                        <p id="banner-msg" class="text-xs text-indigo-700">Nilai pada form telah disesuaikan dengan mengunci NTB (>= nilai awal) dan mencapai target rasio presisi (MAX - 0.01). Gunakan tombol <strong>Salin</strong> untuk menyalin data.</p>
                     </div>
                     <button onclick="document.getElementById('copy-instruction-banner').classList.add('hidden')" class="text-xs font-semibold text-indigo-600 hover:text-indigo-900 cursor-pointer">Tutup</button>
                 </div>
@@ -347,7 +347,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             initChart();
-            onCategoryChange(); // Inisialisasi status form awal berdasar pilihan select
+            onCategoryChange();
         });
 
         function initChart() {
