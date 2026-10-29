@@ -39,10 +39,16 @@
             
             <!-- Step 1: Kategori KBLI & Periode -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6">
-                <h2 class="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2.5">
-                    <span class="bg-indigo-100 text-indigo-700 w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold">1</span>
-                    Klasifikasi KBLI & Periode Operasional
-                </h2>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                    <h2 class="text-base font-semibold text-slate-800 flex items-center gap-2.5">
+                        <span class="bg-indigo-100 text-indigo-700 w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold">1</span>
+                        Klasifikasi KBLI & Periode Operasional
+                    </h2>
+                    <!-- Tombol Reset Form Tunggal -->
+                    <button onclick="resetFormFields()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium py-1.5 px-3.5 rounded-xl text-xs transition cursor-pointer">
+                        Reset Isian Form
+                    </button>
+                </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -88,7 +94,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-900 mb-1">Penyesuaian Berhasil Diterapkan</h4>
-                        <p class="text-xs text-indigo-700">Nilai pengeluaran pada form di bawah telah diperbarui ke rasio aman (MAX - 0.01). Gunakan tombol <strong>Salin</strong> pada setiap field untuk memindahkan data ke platform lain.</p>
+                        <p class="text-xs text-indigo-700">Nilai pada form di bawah telah disesuaikan (NTB terkunci/naik rasional & rasio aman MAX - 0.01). Gunakan tombol <strong>Salin</strong> untuk memindahkan data.</p>
                     </div>
                     <button onclick="document.getElementById('copy-instruction-banner').classList.add('hidden')" class="text-xs font-semibold text-indigo-600 hover:text-indigo-900 cursor-pointer">Tutup</button>
                 </div>
@@ -99,15 +105,13 @@
                 
                 <!-- Rincian 26 Input -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
-                    <h2 class="text-base font-semibold text-slate-800 flex items-center justify-between mb-2">
-                        <span class="flex items-center gap-2.5">
-                            <span class="bg-amber-100 text-amber-700 w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold">2</span>
-                            Pengeluaran Usaha (Rincian 26)
-                        </span>
+                    <h2 class="text-base font-semibold text-slate-800 mb-2 flex items-center gap-2.5">
+                        <span class="bg-amber-100 text-amber-700 w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold">2</span>
+                        Pengeluaran Usaha (Rincian 26)
                     </h2>
 
                     <div>
-                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">26a. Total upah & gaji pekerja</label>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">26a. Total upah & gaji pekerja (Dikunci saat Defisit)</label>
                         <div class="relative">
                             <input type="text" id="val-26a" placeholder="0" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-14 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                             <button onclick="copyFieldValue('val-26a')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-100 hover:bg-indigo-50 text-slate-600 text-[10px] font-medium rounded-lg transition cursor-pointer">Salin</button>
@@ -159,11 +163,9 @@
                     
                     <!-- Rincian 27 Input -->
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
-                        <h2 class="text-base font-semibold text-slate-800 flex items-center justify-between mb-2">
-                            <span class="flex items-center gap-2.5">
-                                <span class="bg-emerald-100 text-emerald-700 w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold">3</span>
-                                Pendapatan Usaha (Rincian 27)
-                            </span>
+                        <h2 class="text-base font-semibold text-slate-800 mb-2 flex items-center gap-2.5">
+                            <span class="bg-emerald-100 text-emerald-700 w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold">3</span>
+                            Pendapatan Usaha (Rincian 27)
                         </h2>
 
                         <div>
@@ -425,6 +427,15 @@
             setTimeout(() => { btn.innerHTML = originalText; }, 1000);
         }
 
+        function resetFormFields() {
+            ['val-26a', 'val-26b', 'val-26c', 'val-26d', 'val-26e', 'val-27a', 'val-27b'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('is-year-2026').checked = false;
+            calculateNTB();
+            document.getElementById('copy-instruction-banner').classList.add('hidden');
+        }
+
         function onCategoryChange() {
             const cat = document.getElementById('kbli-category').value;
             const info = document.getElementById('kbli-range-info');
@@ -465,14 +476,19 @@
             const v27a = parseNumber(document.getElementById('val-27a').value) * multiplier;
             const v27b = parseNumber(document.getElementById('val-27b').value) * multiplier;
 
-            // Total Pengeluaran & Pendapatan Readonly Update
+            // Hilangkan warning 26c otomatis begitu terisi > 0
+            if (cat === 'G' && v26c > 0) {
+                document.getElementById('note-26c').classList.add('hidden');
+            } else if (cat === 'G' && v26c <= 0) {
+                document.getElementById('note-26c').classList.remove('hidden');
+            }
+
             const totalPengeluaran = v26a + v26b + v26c + v26d + v26e;
             const totalPendapatan = v27a + v27b;
 
             document.getElementById('total-pengeluaran').value = formatRupiah(totalPengeluaran / multiplier);
             document.getElementById('total-pendapatan').value = formatRupiah(totalPendapatan / multiplier);
 
-            // Update Chart Proporsi
             if (expenseChart) {
                 let p26a = totalPengeluaran > 0 ? (v26a / totalPengeluaran) * 100 : 0;
                 let p26b = totalPengeluaran > 0 ? (v26b / totalPengeluaran) * 100 : 0;
@@ -491,8 +507,8 @@
             }
 
             const omzet = v27a + v27b;
-            const output = omzet - v26c; // Konsep output: omzet - 26c[cite: 3]
-            const nilaiTambah = output - v26b - v26d; // Konsep NTB: output - 26b - 26d[cite: 3]
+            const output = omzet - v26c; //[cite: 3]
+            const nilaiTambah = output - v26b - v26d; //[cite: 3]
             const rasioNtb = output > 0 ? nilaiTambah / output : 0;
 
             document.getElementById('res-output').textContent = formatRupiah(output);
@@ -528,20 +544,20 @@
                 btnApply.classList.add('hidden');
             } else if (rasioNtb < limits.min) {
                 badge.className = 'px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase bg-amber-900/80 text-amber-200 border border-amber-700';
-                badge.textContent = 'Di Bawah Minimum';
-                recText.textContent = `Rasio NTB di bawah minimum (${rasioNtb.toFixed(4)} < ${limits.min}).`;
+                badge.textContent = 'Di Bawah Minimum (Defisit)';
+                recText.textContent = `Rasio NTB di bawah minimum (${rasioNtb.toFixed(4)} < ${limits.min}). Adjustment akan mengunci upah (26a), menjaga NTB, dan menaikkan omzet (27a) ke rentang aman.`;
                 btnApply.classList.remove('hidden');
             } else {
                 badge.className = 'px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase bg-rose-900/80 text-rose-200 border border-rose-700';
                 badge.textContent = 'Di Atas Maksimum';
-                recText.textContent = `Rasio NTB di atas maksimum (${rasioNtb.toFixed(4)} > ${limits.max}).`;
+                recText.textContent = `Rasio NTB di atas maksimum (${rasioNtb.toFixed(4)} > ${limits.max}). Adjustment akan mengunci NTB dan menyesuaikan pengeluaran konsumsi antara.`;
                 btnApply.classList.remove('hidden');
             }
         }
 
         function applyAdjustment() {
             if (!lastCalculatedData) return;
-            const { cat, v26b, v26c, v26d, output, multiplier } = lastCalculatedData;
+            const { cat, v26b, v26c, v26d, v27a, nilaiTambah, rasioNtb, multiplier } = lastCalculatedData;
             
             if (cat === 'G' && v26c <= 0) {
                 alert('Peringatan: Untuk Kategori G, rincian 26c wajib diisi sebelum melakukan penyesuaian.');
@@ -549,24 +565,45 @@
             }
 
             const limits = kbliLimits[cat];
-            
-            // Konstan disesuaikan langsung ke batas MAX - 0.01
-            let targetRasio = limits.max - 0.01;
-            
-            let targetNTB = output * targetRasio;
-            let targetPengeluaranLain = output - targetNTB;
-            let currentPengeluaranLain = v26b + v26d;
+            let targetRasio = limits.max - 0.01; // Kunci di MAX - 0.01
 
-            if (currentPengeluaranLain <= 0) {
-                document.getElementById('val-26b').value = Math.round(targetPengeluaranLain / multiplier).toLocaleString('id-ID');
-                document.getElementById('val-26d').value = 0;
+            if (rasioNtb < limits.min) {
+                // KASUS DEFISIT NTB: Lock upah (26a), lock/naikkan NTB, adjust 26c dikurangi jika besar, lalu adjust omzet (27a)
+                let adjusted26c = v26c;
+                if (v26c > 0 && v26c > nilaiTambah * 0.5) {
+                    adjusted26c = v26c * 0.8; // Kurangi 26c
+                    let diff26c = v26c - adjusted26c;
+                    // Tambahkan sisa pengurangan ke biaya produksi (26b) agar balance
+                    let new26b = v26b + diff26c;
+                    document.getElementById('val-26c').value = Math.round(adjusted26c / multiplier).toLocaleString('id-ID');
+                    document.getElementById('val-26b').value = Math.round(new26b / multiplier).toLocaleString('id-ID');
+                }
+
+                // Hitung ulang output target agar rasio pas di MAX - 0.01 dengan NTB minimal tidak berkurang
+                let targetOutput = nilaiTambah / targetRasio;
+                let current26c = parseNumber(document.getElementById('val-26c').value) * multiplier;
+                let targetOmzet = targetOutput + current26c;
+
+                document.getElementById('val-27a').value = Math.round(targetOmzet / multiplier).toLocaleString('id-ID');
+
             } else {
-                let ratio = targetPengeluaranLain / currentPengeluaranLain;
-                let n26b = v26b * ratio;
-                let n26d = v26d * ratio;
+                // KASUS SURPLUS NTB: Lock NTB, adjust pengeluaran konsumsi antara (26b & 26d)
+                let output = (parseNumber(document.getElementById('val-27a').value) * multiplier) - (parseNumber(document.getElementById('val-26c').value) * multiplier);
+                let targetNTB = nilaiTambah; // Lock NTB tidak boleh berkurang
+                let targetPengeluaranLain = output - targetNTB;
+                let currentPengeluaranLain = v26b + v26d;
 
-                document.getElementById('val-26b').value = Math.round(n26b / multiplier).toLocaleString('id-ID');
-                document.getElementById('val-26d').value = Math.round(n26d / multiplier).toLocaleString('id-ID');
+                if (currentPengeluaranLain <= 0) {
+                    document.getElementById('val-26b').value = Math.round(targetPengeluaranLain / multiplier).toLocaleString('id-ID');
+                    document.getElementById('val-26d').value = 0;
+                } else {
+                    let ratio = targetPengeluaranLain / currentPengeluaranLain;
+                    let n26b = v26b * ratio;
+                    let n26d = v26d * ratio;
+
+                    document.getElementById('val-26b').value = Math.round(n26b / multiplier).toLocaleString('id-ID');
+                    document.getElementById('val-26d').value = Math.round(n26d / multiplier).toLocaleString('id-ID');
+                }
             }
 
             calculateNTB();
@@ -615,11 +652,11 @@
                     const mult = is2026 ? 12 : 1;
 
                     const v26a = Number(r[3] || 0) * mult;
-                    const v26b = Number(r[4] || 0) * mult;
+                    let v26b = Number(r[4] || 0) * mult;
                     let v26c = Number(r[5] || 0) * mult;
-                    const v26d = Number(r[6] || 0) * mult;
+                    let v26d = Number(r[6] || 0) * mult;
                     const v26e = Number(r[7] || 0) * mult;
-                    const v27a = Number(r[8] || 0) * mult;
+                    let v27a = Number(r[8] || 0) * mult;
                     const v27b = Number(r[9] || 0) * mult;
 
                     const omzet = v27a + v27b;
@@ -640,18 +677,29 @@
                     } else {
                         const limits = kbliLimits[cat];
                         if (rasioAwal < limits.min || rasioAwal > limits.max) {
-                            // Selalu kunci penyesuaian di MAX - 0.01
                             const targetRasio = limits.max - 0.01;
-                            const targetNTB = output * targetRasio;
-                            const targetPengeluaranLain = output - targetNTB;
-                            const currentPengeluaranLain = v26b + v26d;
-                            if (currentPengeluaranLain > 0) {
-                                let ratio = targetPengeluaranLain / currentPengeluaranLain;
-                                let nb = v26b * ratio;
-                                let nd = v26d * ratio;
-                                const ntbAkhir = output - nb - nd;
-                                rasioAkhir = output > 0 ? ntbAkhir / output : 0;
+                            if (rasioAwal < limits.min) {
+                                if (v26c > 0 && v26c > ntbAwal * 0.5) {
+                                    let diff = v26c * 0.2;
+                                    v26c -= diff;
+                                    v26b += diff;
+                                }
+                                let targetOutput = ntbAwal / targetRasio;
+                                v27a = targetOutput + v26c - v27b;
+                            } else {
+                                let targetNTB = ntbAwal;
+                                let currOutput = ((v27a + v27b) - v26c);
+                                let targetPengeluaranLain = currOutput - targetNTB;
+                                let currPengeluaranLain = v26b + v26d;
+                                if (currPengeluaranLain > 0) {
+                                    let ratio = targetPengeluaranLain / currPengeluaranLain;
+                                    v26b *= ratio;
+                                    v26d *= ratio;
+                                }
                             }
+                            let finalOutput = ((v27a + v27b) - v26c);
+                            let finalNTB = finalOutput - v26b - v26d;
+                            rasioAkhir = finalOutput > 0 ? finalNTB / finalOutput : 0;
                             statusAkhir = 'Disesuaikan (MAX-0.01)';
                         }
                     }
