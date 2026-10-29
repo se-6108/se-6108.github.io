@@ -347,7 +347,7 @@
 
                     <div class="stats-grid">
                         <div class="stat-box">
-                            <span class="stat-label">Output (omzet - 26c)</span>
+                            <span class="stat-label">Output (omzet - 26c, biaya pembelian barang yang terjual)</span>
                             <span class="stat-value" id="res-output">Rp 0</span>
                         </div>
                         <div class="stat-box">
@@ -467,7 +467,6 @@
         let currentData = null;
         let pendingAdjustments = null;
 
-        // PARSER V4: ANTI-LONCAT & ANTI-REMARKS
         function parseFasihData() {
             const text = document.getElementById('fasih-input').value;
             if (!text.trim()) {
@@ -476,7 +475,6 @@
             }
 
             try {
-                // Ekstrak KBLI
                 const kbliMatch = text.match(/13\.\s*h\.\s*Kategori\s*Lapangan\s*Usaha:\s*([A-Z])/i);
                 if (kbliMatch && kbliMatch[1]) {
                     const selectEl = document.getElementById('kbli-category');
@@ -484,26 +482,23 @@
                     onCategoryChange();
                 }
 
-                // Ekstrak Toggle Tahun
                 const tahunMatch = text.match(/25\.\s*Tahun.*?beroperasi.*?\n(\d{4})/i);
                 if (tahunMatch && tahunMatch[1]) {
                     const is2026 = tahunMatch[1] === "2026";
                     document.getElementById('is-year-2026').checked = is2026;
                 }
 
-                // Parser v4: Tangkap angka mulai dari awalan, berhenti di pola "XX. y." BERIKUTNYA atau EOF
                 const extractRealValue = (prefix) => {
                     const regex = new RegExp(`${prefix}[\\s\\S]*?\\*([\\s\\S]*?)(?=\\n\\s*2[6-9]\\.\\s*[a-z]\\.|$)`, 'i');
                     const blockMatch = text.match(regex);
                     if (blockMatch && blockMatch[1]) {
-                        // Cari semua bilangan berderet, ambil yang string-nya paling panjang (mengabaikan remarks "1")
                         const numbers = blockMatch[1].match(/[\d.,]+/g);
                         if (numbers) {
                             const longestNum = numbers.reduce((a, b) => a.length > b.length ? a : b);
                             return longestNum.replace(/[,.]/g, ''); 
                         }
                     }
-                    return ''; // Kembalikan kosong jika rincian (misal 26c) tidak ada di teks paste
+                    return ''; 
                 };
 
                 const v26a = extractRealValue("26\\.\\s*a\\.");
@@ -639,10 +634,11 @@
                 });
             }
 
-            const omzet = v27a + v27b;
+            // PERBAIKAN LOGIKA MATH (Omzet murni 27a)
+            const omzet = v27a;
             const output = omzet - v26c;
             const biayaAntara = v26b + v26d;
-            const ntb = output - biayaAntara;
+            const ntb = output - biayaAntara; // Atau: omzet - 26b - 26c - 26d
             const rasio = output > 0 ? (ntb / output) : 0;
             const rasioPct = rasio * 100;
 
@@ -650,7 +646,7 @@
             document.getElementById('res-ntb').innerText = 'Rp ' + toRp(ntb);
             document.getElementById('res-rasio').innerText = rasioPct.toFixed(2) + '%';
 
-            currentData = { cat, v26d, v26c, v27b, output, ntb, rasio, biayaAntara, multiplier };
+            currentData = { cat, v26d, v26c, v27a, output, ntb, rasio, biayaAntara, multiplier };
 
             const limits = kbliLimits[cat];
             const badge = document.getElementById('badge-status');
@@ -680,7 +676,7 @@
 
         function prepareAdjustment() {
             if (!currentData) return;
-            let { cat, v26d, v26c, v27b, output, ntb, rasio, biayaAntara, multiplier } = currentData;
+            let { cat, v26d, v26c, v27a, output, ntb, rasio, biayaAntara, multiplier } = currentData;
             
             const selectEl = document.getElementById('kbli-category');
             document.getElementById('modal-kbli-label').innerHTML = `Untuk <span class="chip-kbli">${selectEl.options[selectEl.selectedIndex].text}</span>`;
@@ -689,7 +685,7 @@
             const targetRasio = limits.max - 0.01;
             const targetPct = targetRasio * 100;
             const rasioAwalPct = rasio * 100;
-            const omzetLama = getNum('val-27a') * multiplier;
+            const omzetLama = v27a;
 
             pendingAdjustments = { 
                 kasus: rasio < limits.min ? 'UNDER' : 'OVER',
@@ -704,7 +700,8 @@
 
             if (rasio < limits.min) {
                 let targetOutput = biayaAntara / (1 - targetRasio);
-                pendingAdjustments.omzetBaru = targetOutput + v26c - v27b;
+                
+                pendingAdjustments.omzetBaru = targetOutput + v26c; 
                 pendingAdjustments.ntbBaru = targetOutput - biayaAntara; 
                 
                 let omzetBaruRaw = Math.round(pendingAdjustments.omzetBaru / multiplier);
@@ -739,6 +736,7 @@
                 if (cat === 'G') {
                     let asumsiMargin = 0.25; 
                     let targetOmzet = targetOutput / asumsiMargin; 
+                    
                     pendingAdjustments.omzetBaru = targetOmzet;
                     pendingAdjustments.v26cBaru = targetOmzet - targetOutput;
                     
@@ -782,7 +780,7 @@
                     `;
 
                 } else {
-                    pendingAdjustments.omzetBaru = targetOutput + v26c - v27b;
+                    pendingAdjustments.omzetBaru = targetOutput + v26c;
                     if(selisihOutput > 0) pendingAdjustments.v26dBaru = v26d + selisihOutput;
                     
                     let omzetBaruRaw = Math.round(pendingAdjustments.omzetBaru / multiplier);
