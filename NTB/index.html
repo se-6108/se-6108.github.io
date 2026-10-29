@@ -474,7 +474,6 @@
 
         document.addEventListener('DOMContentLoaded', initTheme);
 
-        // Custom UI Alert Function
         function showCustomAlert(title, message, type = 'success') {
             const iconEl = document.getElementById('alert-icon');
             if(type === 'warning') {
@@ -513,7 +512,6 @@
             }
 
             try {
-                // 1. Ekstrak KBLI
                 const kbliMatch = text.match(/13\.\s*h\.\s*Kategori\s*Lapangan\s*Usaha:[\s\S]*?([A-Z])/i);
                 if (kbliMatch && kbliMatch[1]) {
                     if(/^[A-T]$/i.test(kbliMatch[1])) {
@@ -523,7 +521,6 @@
                     }
                 }
 
-                // 2. Deteksi Tahun 2026 (Mode Bulanan)
                 let is2026 = false;
                 if (text.match(/30\.\s*a\.\s*Total upah/i)) {
                     is2026 = true;
@@ -541,7 +538,6 @@
                     document.getElementById('is-year-2026').checked = false;
                 }
 
-                // 3. Ekstrak Nilai Rincian (Auto-Correct angka "1")
                 const extractRealValue = (prefix2025, prefix2026) => {
                     const prefix = is2026 ? prefix2026 : prefix2025;
                     const regex = new RegExp(`${prefix}[\\s\\S]*?\\*([\\s\\S]*?)(?=(?:2[6-9]|3[0-3])\\.\\s*[a-z]\\.|$)`, 'i');
@@ -730,7 +726,6 @@
             }
         }
 
-        // Helper untuk render Cell Review agar memuat info 1 Bulan & 1 Tahun
         function buildAdjustedCell(adjustedMonthlyRaw, isNtb = false, multiplier = 1) {
             let adjustedAnnualRaw = adjustedMonthlyRaw * multiplier;
             let valClass = isNtb ? 'val-lock' : 'val-new';
@@ -744,7 +739,6 @@
                 </div>
             `;
             
-            // Jika mode 2026 (x12), tambahkan baris keterangan 1 tahun di bawahnya
             if (multiplier === 12) {
                 html += `
                     <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; text-align: right;">
@@ -790,18 +784,46 @@
                 let omzetBaruRaw = Math.round(pendingAdjustments.omzetBaru / multiplier);
                 let ntbBaruRaw = Math.round(pendingAdjustments.ntbBaru / multiplier); 
 
-                tbodyHtml = `
-                    <tr>
-                        <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dinaikkan proporsional</span>${isBulananText}</td>
-                        <td class="val-old">Rp ${toRp(omzetLamaRaw)}</td>
-                        <td>${buildAdjustedCell(omzetBaruRaw, false, multiplier)}</td>
-                    </tr>
-                    <tr>
-                        <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Otomatis naik menyesuaikan</span>${isBulananText}</td>
-                        <td class="val-old">Rp ${toRp(ntb / multiplier)}</td>
-                        <td>${buildAdjustedCell(ntbBaruRaw, true, multiplier)}</td>
-                    </tr>
-                `;
+                if (cat === 'G') {
+                    let asumsiMargin = 0.25;
+                    let targetTotalPendapatan = targetOutput / asumsiMargin;
+                    pendingAdjustments.omzetBaru = targetTotalPendapatan;
+                    pendingAdjustments.v26cBaru = targetTotalPendapatan - targetOutput;
+                    
+                    let cBaruRaw = Math.round(pendingAdjustments.v26cBaru / multiplier);
+                    omzetBaruRaw = Math.round(pendingAdjustments.omzetBaru / multiplier);
+
+                    tbodyHtml = `
+                        <tr>
+                            <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dinaikkan proporsional</span>${isBulananText}</td>
+                            <td class="val-old">Rp ${toRp(omzetLamaRaw)}</td>
+                            <td>${buildAdjustedCell(omzetBaruRaw, false, multiplier)}</td>
+                        </tr>
+                        <tr>
+                            <td>Pembelian Terjual (26c)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">HPP disesuaikan proporsional</span>${isBulananText}</td>
+                            <td class="val-old">Rp ${toRp(v26c / multiplier)}</td>
+                            <td>${buildAdjustedCell(cBaruRaw, false, multiplier)}</td>
+                        </tr>
+                        <tr>
+                            <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Otomatis naik menyesuaikan</span>${isBulananText}</td>
+                            <td class="val-old">Rp ${toRp(ntb / multiplier)}</td>
+                            <td>${buildAdjustedCell(ntbBaruRaw, true, multiplier)}</td>
+                        </tr>
+                    `;
+                } else {
+                    tbodyHtml = `
+                        <tr>
+                            <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dinaikkan proporsional</span>${isBulananText}</td>
+                            <td class="val-old">Rp ${toRp(omzetLamaRaw)}</td>
+                            <td>${buildAdjustedCell(omzetBaruRaw, false, multiplier)}</td>
+                        </tr>
+                        <tr>
+                            <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Otomatis naik menyesuaikan</span>${isBulananText}</td>
+                            <td class="val-old">Rp ${toRp(ntb / multiplier)}</td>
+                            <td>${buildAdjustedCell(ntbBaruRaw, true, multiplier)}</td>
+                        </tr>
+                    `;
+                }
             } else {
                 let targetOutput = ntb / targetRasio;
                 let selisihOutput = targetOutput - output;
@@ -898,11 +920,12 @@
 
             document.getElementById('val-27a').value = toRp(pendingAdjustments.omzetBaru / mult);
             
-            if(pendingAdjustments.kasus === 'OVER') {
+            if (currentData.cat === 'G') {
+                document.getElementById('val-26c').value = toRp(pendingAdjustments.v26cBaru / mult);
+            }
+
+            if (pendingAdjustments.kasus === 'OVER') {
                 document.getElementById('val-26d').value = toRp(pendingAdjustments.v26dBaru / mult);
-                if(currentData.cat === 'G') {
-                    document.getElementById('val-26c').value = toRp(pendingAdjustments.v26cBaru / mult);
-                }
             }
 
             closeModal();
