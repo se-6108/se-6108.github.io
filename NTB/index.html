@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EnigmaStat | Adjustment Matrix</title>
-    <!-- Favicon diset ke icon.png di GitHub Pages -->
     <link rel="icon" type="image/png" href="icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+    
     <style>
         /* ==================================================
            TEMA BIRU MATA ENGGANG (CYAN & SAPPHIRE) + DARK MODE
         ================================================== */
         :root {
-            /* Tema Light (Default) */
+            /* Tema Light */
             --bg-body: #f0f9ff;
             --bg-card: #ffffff;
             --bg-header: #ffffff;
@@ -22,7 +22,7 @@
             --text-muted: #64748b;
             --border-color: #bae6fd;
             
-            --primary: #0284c7; /* Enggang Blue */
+            --primary: #0284c7; 
             --primary-hover: #0369a1;
             --input-bg: #f8fafc;
             --focus-ring: rgba(2, 132, 199, 0.15);
@@ -41,7 +41,7 @@
 
         /* Tema Dark Mode */
         [data-theme="dark"] {
-            --bg-body: #08121f; /* Deep Dark Sapphire */
+            --bg-body: #08121f; 
             --bg-card: #0f1c2e;
             --bg-header: #0f1c2e;
             --bg-dark: #06111d;
@@ -50,7 +50,7 @@
             --text-muted: #94a3b8;
             --border-color: #1e3656;
             
-            --primary: #0ea5e9; /* Vivid Cyan Enggang */
+            --primary: #0ea5e9; 
             --primary-hover: #38bdf8;
             --input-bg: #06111d;
             --focus-ring: rgba(14, 165, 233, 0.2);
@@ -60,23 +60,11 @@
             --danger: #f87171;
             
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Montserrat', sans-serif; 
-            background-color: var(--bg-body); 
-            color: var(--text-main); 
-            font-size: 14px; 
-            line-height: 1.5; 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            transition: background-color 0.3s, color 0.3s;
-        }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-body); color: var(--text-main); font-size: 14px; line-height: 1.5; min-height: 100vh; display: flex; flex-direction: column; transition: background-color 0.3s, color 0.3s; }
         
-        /* Header */
         header { position: sticky; top: 0; z-index: 50; background: var(--bg-header); border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-sm); padding: 14px 20px; transition: 0.3s; }
         .header-content { max-width: 1000px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
         .brand-group { display: flex; align-items: center; gap: 14px; }
@@ -87,7 +75,6 @@
         
         main { max-width: 1000px; width: 100%; margin: 32px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 24px; flex-grow: 1; }
         
-        /* Cards */
         .card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); transition: 0.3s; }
         .card-dark { background: var(--bg-dark); border-radius: var(--radius-lg); padding: 24px; color: #f1f5f9; border: 1px solid var(--border-color); transition: 0.3s; }
         
@@ -95,15 +82,12 @@
         .card-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--text-main); }
         .step-badge { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; background: var(--primary); color: white; }
         
-        /* Layout */
         .grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
         .flex-col { display: flex; flex-direction: column; gap: 16px; }
         
-        /* Typography & Forms */
         label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
         .input-group { position: relative; }
         
-        /* Input Fintech Style */
         .currency-wrapper { position: relative; display: flex; align-items: center; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); transition: 0.2s; overflow: hidden; }
         .currency-wrapper:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
         .currency-symbol { position: absolute; left: 16px; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; pointer-events: none; }
@@ -115,7 +99,6 @@
         .readonly-wrapper { background: var(--bg-body); opacity: 0.9; }
         input[readonly].text-right { font-weight: 700; color: var(--primary); cursor: not-allowed; }
         
-        /* Buttons */
         .btn { padding: 10px 20px; border-radius: var(--radius-pill); font-weight: 600; font-size: 0.85rem; cursor: pointer; border: none; transition: 0.2s; font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
         .btn-outline:hover { background: var(--bg-body); border-color: var(--primary); color: var(--primary); }
@@ -128,8 +111,10 @@
         
         .btn-copy { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color); padding: 4px 10px; font-size: 0.7rem; border-radius: var(--radius-pill); cursor: pointer; font-weight: 600; transition: 0.2s; }
         .btn-copy:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .btn-copy-sm { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 3px 10px; font-size: 0.65rem; border-radius: var(--radius-pill); cursor: pointer; font-weight: 600; transition: 0.2s; font-family: inherit; }
+        .btn-copy-sm:hover { background: var(--primary); color: white; border-color: var(--primary); }
         
-        /* Toggle */
         .toggle-container { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; justify-content: center; transition: 0.3s; }
         .toggle-label { display: flex; align-items: center; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
         .toggle-label input { display: none; }
@@ -141,7 +126,6 @@
         .disabled-area { opacity: 0.3; pointer-events: none; filter: grayscale(100%); transition: 0.4s; }
         .hidden { display: none !important; }
         
-        /* Stats Panel */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 16px; margin-top: 16px; }
         .stat-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 16px; border-radius: var(--radius-md); display: flex; flex-direction: column; justify-content: space-between; }
         .stat-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
@@ -154,20 +138,19 @@
         .badge-surplus { background: rgba(220, 38, 38, 0.1); color: var(--danger); border-color: rgba(220, 38, 38, 0.2); }
         .badge-default { background: rgba(255,255,255,0.05); color: var(--text-muted); border-color: rgba(255,255,255,0.1); }
 
-        /* Proportion Bar */
         .proportion-bar { display: flex; width: 100%; height: 12px; border-radius: var(--radius-pill); overflow: hidden; margin: 16px 0; background: var(--bg-body); }
         .prop-segment { height: 100%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         .legend-grid { display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
         .legend-item { display: flex; align-items: center; gap: 8px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; }
 
-        /* Modal Overlay */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; padding: 20px; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-content { background: var(--bg-card); width: 100%; max-width: 550px; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); transform: translateY(20px) scale(0.98); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--border-color); }
+        .modal-content { background: var(--bg-card); width: 100%; max-width: 580px; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); transform: translateY(20px) scale(0.98); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--border-color); }
         .modal-overlay.active .modal-content { transform: translateY(0) scale(1); }
-        .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: flex-start; }
         .modal-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
+        .modal-header p { font-size: 0.8rem; color: var(--primary); font-weight: 600; margin-top: 4px; }
         .modal-body { padding: 24px; }
         .modal-footer { padding: 16px 24px; background: var(--bg-body); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; }
         
@@ -176,10 +159,9 @@
         .compare-table th:first-child, .compare-table td:first-child { text-align: left; padding-right: 16px; }
         .compare-table th { color: var(--text-muted); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         .val-old { color: var(--text-muted); text-decoration: line-through; }
-        .val-new { color: var(--primary); font-weight: 700; }
-        .val-lock { color: var(--text-main); font-weight: 700; }
+        .val-new { color: var(--primary); font-weight: 700; display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+        .val-lock { color: var(--text-main); font-weight: 700; display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
         
-        /* SVG Icons */
         .icon { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     </style>
 </head>
@@ -188,11 +170,10 @@
     <header>
         <div class="header-content">
             <div class="brand-group">
-                <!-- Favicon image in header -->
                 <img src="icon.png" alt="Logo" class="brand-icon" onerror="this.style.display='none'">
                 <div class="header-title">
                     <h1>EnigmaStat</h1>
-                    <p>Adjust like it never enough..</p>
+                    <p>Adjust like it's never enough...</p>
                 </div>
             </div>
             <div class="action-group">
@@ -250,7 +231,6 @@
         <!-- Area Input -->
         <div id="main-forms" class="grid-auto disabled-area">
             
-            <!-- Kolom Kiri: Rincian 26 -->
             <section class="card flex-col">
                 <div class="card-header">
                     <div class="card-title"><div class="step-badge" style="background:var(--bg-dark);">2</div> Rincian 26 (Pengeluaran)</div>
@@ -306,7 +286,6 @@
                 </div>
             </section>
 
-            <!-- Kolom Kanan: Rincian 27 & Evaluasi -->
             <div class="flex-col">
                 <section class="card flex-col">
                     <div class="card-header">
@@ -372,7 +351,6 @@
             </div>
         </div>
 
-        <!-- Visualisasi -->
         <section class="card" id="section-visual" style="display: none; padding: 20px 24px;">
             <label style="margin-bottom: 0; color: var(--text-main);">Proporsi Pengeluaran (Rincian 26)</label>
             <div class="proportion-bar">
@@ -396,14 +374,17 @@
     <div id="adjust-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Review Hasil Penyesuaian</h3>
+                <div>
+                    <h3>Review Hasil Penyesuaian</h3>
+                    <p id="modal-kbli-label">Kategori KBLI Terpilih</p>
+                </div>
                 <button onclick="closeModal()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; padding:4px;">
                     <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
             <div class="modal-body">
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6;" id="modal-desc">
-                    Berikut simulasi perubahan agar rasio mendarat mulus di <strong style="color:var(--primary)">MAX - 1%</strong>. Klik terapkan jika simulasi angka masuk akal, atau tutup pop-up untuk kembali ke form awal.
+                    Berikut simulasi perubahan agar rasio mendarat mulus di <strong style="color:var(--primary)">MAX - 1%</strong>. Salin nominal mentah di bawah ini, atau klik Terapkan untuk mengunci nilai di form.
                 </p>
                 <table class="compare-table">
                     <thead>
@@ -450,7 +431,6 @@
 
         document.addEventListener('DOMContentLoaded', initTheme);
 
-        // Batas Rasio KBLI
         const kbliLimits = {
             'A': { min: 0.51, max: 0.94 }, 'B': { min: 0.28, max: 0.81 },
             'C': { min: 0.15, max: 0.61 }, 'D': { min: 0.13, max: 0.68 },
@@ -484,10 +464,17 @@
 
         function copyVal(id, btn) {
             let val = document.getElementById(id).value || '0';
-            navigator.clipboard.writeText(val);
+            navigator.clipboard.writeText(val.replace(/\./g, '')); // Copy raw int
             let oriText = btn.innerText;
             btn.innerText = 'Tersalin';
             setTimeout(() => { btn.innerText = oriText; }, 1000);
+        }
+
+        function copyRawText(text, btn) {
+            navigator.clipboard.writeText(text);
+            let ori = btn.innerText;
+            btn.innerText = 'Tersalin';
+            setTimeout(() => { btn.innerText = ori; }, 1000);
         }
 
         function resetForm() {
@@ -604,8 +591,12 @@
         function prepareAdjustment() {
             if (!currentData) return;
             let { cat, v26d, v26c, v27b, output, ntb, rasio, biayaAntara, multiplier } = currentData;
-            const limits = kbliLimits[cat];
             
+            // Set Modal KBLI Title
+            const selectEl = document.getElementById('kbli-category');
+            document.getElementById('modal-kbli-label').innerText = "Untuk: " + selectEl.options[selectEl.selectedIndex].text;
+
+            const limits = kbliLimits[cat];
             const targetRasio = limits.max - 0.01;
             const targetPct = targetRasio * 100;
             const rasioAwalPct = rasio * 100;
@@ -626,16 +617,25 @@
                 pendingAdjustments.omzetBaru = targetOutput + v26c - v27b;
                 pendingAdjustments.ntbBaru = targetOutput - biayaAntara; 
                 
+                let omzetBaruRaw = Math.round(pendingAdjustments.omzetBaru / multiplier);
+                let ntbBaruRaw = Math.round(pendingAdjustments.ntbBaru);
+
                 tbodyHtml = `
                     <tr>
                         <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dinaikkan proporsional</span></td>
                         <td class="val-old">Rp ${toRp(omzetLama / multiplier)}</td>
-                        <td class="val-new">Rp ${toRp(pendingAdjustments.omzetBaru / multiplier)}</td>
+                        <td class="val-new">
+                            Rp ${toRp(omzetBaruRaw)}
+                            <button class="btn-copy-sm" onclick="copyRawText('${omzetBaruRaw}', this)">Salin</button>
+                        </td>
                     </tr>
                     <tr>
                         <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Otomatis menyesuaikan</span></td>
                         <td class="val-old">Rp ${toRp(ntb)}</td>
-                        <td class="val-new">Rp ${toRp(pendingAdjustments.ntbBaru)}</td>
+                        <td class="val-new">
+                            Rp ${toRp(ntbBaruRaw)}
+                            <button class="btn-copy-sm" onclick="copyRawText('${ntbBaruRaw}', this)">Salin</button>
+                        </td>
                     </tr>
                 `;
             } else {
@@ -646,21 +646,34 @@
                 if(selisihOutput > 0) pendingAdjustments.v26dBaru = v26d + selisihOutput;
                 pendingAdjustments.ntbBaru = ntb; 
 
+                let omzetBaruRaw = Math.round(pendingAdjustments.omzetBaru / multiplier);
+                let opsBaruRaw = Math.round(pendingAdjustments.v26dBaru / multiplier);
+                let ntbBaruRaw = Math.round(pendingAdjustments.ntbBaru);
+
                 tbodyHtml = `
                     <tr>
                         <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Diekspansi untuk menekan rasio</span></td>
                         <td class="val-old">Rp ${toRp(omzetLama / multiplier)}</td>
-                        <td class="val-new">Rp ${toRp(pendingAdjustments.omzetBaru / multiplier)}</td>
+                        <td class="val-new">
+                            Rp ${toRp(omzetBaruRaw)}
+                            <button class="btn-copy-sm" onclick="copyRawText('${omzetBaruRaw}', this)">Salin</button>
+                        </td>
                     </tr>
                     <tr>
                         <td>Biaya Operasional (26d)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Menyerap selisih demi mengunci NTB</span></td>
                         <td class="val-old">Rp ${toRp(v26d / multiplier)}</td>
-                        <td class="val-new">Rp ${toRp(pendingAdjustments.v26dBaru / multiplier)}</td>
+                        <td class="val-new">
+                            Rp ${toRp(opsBaruRaw)}
+                            <button class="btn-copy-sm" onclick="copyRawText('${opsBaruRaw}', this)">Salin</button>
+                        </td>
                     </tr>
                     <tr>
                         <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Terkunci absolut / Tidak berkurang</span></td>
                         <td class="val-old">Rp ${toRp(ntb)}</td>
-                        <td class="val-lock">Rp ${toRp(pendingAdjustments.ntbBaru)}</td>
+                        <td class="val-lock">
+                            Rp ${toRp(ntbBaruRaw)}
+                            <button class="btn-copy-sm" onclick="copyRawText('${ntbBaruRaw}', this)">Salin</button>
+                        </td>
                     </tr>
                 `;
             }
@@ -669,7 +682,7 @@
                 <tr style="background: rgba(14, 165, 233, 0.05);">
                     <td style="font-weight:700; color:var(--primary);">Rasio Evaluasi</td>
                     <td class="val-old">${rasioAwalPct.toFixed(2)}%</td>
-                    <td class="val-new">${targetPct.toFixed(2)}%</td>
+                    <td class="val-new" style="justify-content:flex-end;">${targetPct.toFixed(2)}%</td>
                 </tr>
             `;
 
