@@ -467,6 +467,7 @@
         let currentData = null;
         let pendingAdjustments = null;
 
+        // PARSER V5: DETEKSI 2026 DAN ANTI-BOCOR REMARKS 
         function parseFasihData() {
             const text = document.getElementById('fasih-input').value;
             if (!text.trim()) {
@@ -475,40 +476,63 @@
             }
 
             try {
-                const kbliMatch = text.match(/13\.\s*h\.\s*Kategori\s*Lapangan\s*Usaha:\s*([A-Z])/i);
+                // 1. Ekstrak KBLI
+                const kbliMatch = text.match(/13\.\s*h\.\s*Kategori\s*Lapangan\s*Usaha:[\s\S]*?([A-Z])/i);
                 if (kbliMatch && kbliMatch[1]) {
-                    const selectEl = document.getElementById('kbli-category');
-                    selectEl.value = kbliMatch[1].toUpperCase();
-                    onCategoryChange();
+                    if(/^[A-T]$/i.test(kbliMatch[1])) {
+                        const selectEl = document.getElementById('kbli-category');
+                        selectEl.value = kbliMatch[1].toUpperCase();
+                        onCategoryChange();
+                    }
                 }
 
-                const tahunMatch = text.match(/25\.\s*Tahun.*?beroperasi.*?\n(\d{4})/i);
-                if (tahunMatch && tahunMatch[1]) {
-                    const is2026 = tahunMatch[1] === "2026";
-                    document.getElementById('is-year-2026').checked = is2026;
+                // 2. Deteksi Tahun 2026 (Mode Bulanan)
+                let is2026 = false;
+                if (text.match(/30\.\s*a\.\s*Total upah/i)) {
+                    is2026 = true;
+                } else {
+                    const tahunMatch = text.match(/25\.\s*Tahun.*?beroperasi[\s\S]*?\*\s*(\d{4})/i);
+                    if (tahunMatch && tahunMatch[1] === "2026") {
+                        is2026 = true;
+                    }
                 }
 
-                const extractRealValue = (prefix) => {
-                    const regex = new RegExp(`${prefix}[\\s\\S]*?\\*([\\s\\S]*?)(?=\\n\\s*2[6-9]\\.\\s*[a-z]\\.|$)`, 'i');
+                if (is2026) {
+                    document.getElementById('is-year-2026').checked = true;
+                    alert("✅ Terdeteksi Usaha Berdiri Tahun 2026!\n\nSistem otomatis mengaktifkan mode 'Satu Bulan Terakhir'. Semua isian akan dikali 12 (disetahunkan).");
+                } else {
+                    document.getElementById('is-year-2026').checked = false;
+                }
+
+                // 3. Ekstrak Nilai Rincian
+                const extractRealValue = (prefix2025, prefix2026) => {
+                    const prefix = is2026 ? prefix2026 : prefix2025;
+                    const regex = new RegExp(`${prefix}[\\s\\S]*?\\*([\\s\\S]*?)(?=(?:2[6-9]|3[0-3])\\.\\s*[a-z]\\.|$)`, 'i');
                     const blockMatch = text.match(regex);
                     if (blockMatch && blockMatch[1]) {
                         const numbers = blockMatch[1].match(/[\d.,]+/g);
                         if (numbers) {
                             const longestNum = numbers.reduce((a, b) => a.length > b.length ? a : b);
-                            return longestNum.replace(/[,.]/g, ''); 
+                            let cleanNum = longestNum.replace(/[,.]/g, ''); 
+                            
+                            // Auto-Correct: Cegah kebocoran angka "1" dari Remarks
+                            if (cleanNum === "1") {
+                                return "0";
+                            }
+                            return cleanNum;
                         }
                     }
                     return ''; 
                 };
 
-                const v26a = extractRealValue("26\\.\\s*a\\.");
-                const v26b = extractRealValue("26\\.\\s*b\\.");
-                const v26c = extractRealValue("26\\.\\s*c\\.");
-                const v26d = extractRealValue("26\\.\\s*d\\.");
-                const v26e = extractRealValue("26\\.\\s*e\\.");
+                const v26a = extractRealValue("26\\.\\s*a\\.", "30\\.\\s*a\\.");
+                const v26b = extractRealValue("26\\.\\s*b\\.", "30\\.\\s*b\\.");
+                const v26c = extractRealValue("26\\.\\s*c\\.", "30\\.\\s*c\\.");
+                const v26d = extractRealValue("26\\.\\s*d\\.", "30\\.\\s*d\\.");
+                const v26e = extractRealValue("26\\.\\s*e\\.", "30\\.\\s*e\\.");
                 
-                const v27a = extractRealValue("27\\.\\s*a\\.");
-                const v27b = extractRealValue("27\\.\\s*b\\.");
+                const v27a = extractRealValue("27\\.\\s*a\\.", "31\\.\\s*a\\.");
+                const v27b = extractRealValue("27\\.\\s*b\\.", "31\\.\\s*b\\.");
 
                 const setAndFormat = (id, val) => {
                     const el = document.getElementById(id);
@@ -634,11 +658,10 @@
                 });
             }
 
-            // PERBAIKAN LOGIKA MATH (Omzet murni 27a)
             const omzet = v27a;
             const output = omzet - v26c;
             const biayaAntara = v26b + v26d;
-            const ntb = output - biayaAntara; // Atau: omzet - 26b - 26c - 26d
+            const ntb = output - biayaAntara; 
             const rasio = output > 0 ? (ntb / output) : 0;
             const rasioPct = rasio * 100;
 
