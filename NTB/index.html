@@ -78,7 +78,7 @@
         
         .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; }
         .card-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--text-main); }
-        .step-badge { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; background: var(--primary); color: white; }
+        .step-badge { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; background: var(--primary); color: white; flex-shrink: 0; }
         
         .grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
         .flex-col { display: flex; flex-direction: column; gap: 16px; }
@@ -155,7 +155,6 @@
         .modal-body { padding: 24px; overflow-y: auto; }
         .modal-footer { padding: 16px 24px; background: var(--bg-body); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; flex-shrink: 0; }
         
-        /* Auto-Fit & Anti-Wrap Fix */
         .compare-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: clamp(0.75rem, 2vw, 0.9rem); }
         .compare-table th, .compare-table td { padding: 14px 8px; border-bottom: 1px solid var(--border-color); color: var(--text-main); vertical-align: middle; }
         .compare-table td:first-child { text-align: left; padding-left: 0; padding-right: 16px; width: 45%; line-height: 1.5; }
@@ -167,6 +166,9 @@
         .val-new { color: var(--text-main); font-weight: 700; }
         
         .icon { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+        .parser-textarea { width: 100%; height: 80px; padding: 12px; border: 1px dashed var(--primary); border-radius: var(--radius-md); background: var(--input-bg); color: var(--text-main); font-family: monospace; font-size: 0.8rem; resize: none; outline: none; transition: 0.2s; }
+        .parser-textarea:focus { border-style: solid; box-shadow: 0 0 0 3px var(--focus-ring); }
     </style>
 </head>
 <body>
@@ -190,6 +192,22 @@
     </header>
 
     <main>
+        <!-- SEKSI PARSER FASIH -->
+        <section class="card" style="border: 2px solid var(--border-color);">
+            <div class="card-header" style="border:none; padding:0; margin-bottom: 12px;">
+                <div class="card-title">
+                    <div class="step-badge" style="background:var(--success);">⚡</div> 
+                    Fasih Smart Parser (Ctrl+A & Ctrl+V)
+                </div>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Paste (Ctrl+V) seluruh isi halaman web FASIH BPS di bawah ini, lalu klik ekstrak. Form KBLI dan Rincian 26-27 akan terisi otomatis secara presisi.</p>
+            <textarea id="fasih-input" class="parser-textarea" placeholder="Paste (Ctrl+V) isi teks FASIH di sini..."></textarea>
+            <button class="btn btn-primary" style="margin-top: 12px; width: 100%; padding: 12px;" onclick="parseFasihData()">
+                <svg class="icon" viewBox="0 0 24 24"><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path></svg>
+                Ekstrak & Isi Form
+            </button>
+        </section>
+
         <!-- Seksi 1 -->
         <section class="card">
             <div class="card-header" style="border:none; padding:0; margin-bottom: 20px;">
@@ -387,7 +405,6 @@
                     Berikut simulasi perubahan agar rasio mendarat di <strong style="color:var(--primary)">MAX - 1%</strong> tanpa menurunkan NTB awal. Salin nominal di bawah ini, atau klik Terapkan.
                 </p>
                 
-                <!-- Table Wrapper -->
                 <div style="overflow-x: auto;">
                     <table class="compare-table">
                         <thead>
@@ -449,6 +466,76 @@
 
         let currentData = null;
         let pendingAdjustments = null;
+
+        // PARSER V4: ANTI-LONCAT & ANTI-REMARKS
+        function parseFasihData() {
+            const text = document.getElementById('fasih-input').value;
+            if (!text.trim()) {
+                alert("Silakan paste data FASIH terlebih dahulu.");
+                return;
+            }
+
+            try {
+                // Ekstrak KBLI
+                const kbliMatch = text.match(/13\.\s*h\.\s*Kategori\s*Lapangan\s*Usaha:\s*([A-Z])/i);
+                if (kbliMatch && kbliMatch[1]) {
+                    const selectEl = document.getElementById('kbli-category');
+                    selectEl.value = kbliMatch[1].toUpperCase();
+                    onCategoryChange();
+                }
+
+                // Ekstrak Toggle Tahun
+                const tahunMatch = text.match(/25\.\s*Tahun.*?beroperasi.*?\n(\d{4})/i);
+                if (tahunMatch && tahunMatch[1]) {
+                    const is2026 = tahunMatch[1] === "2026";
+                    document.getElementById('is-year-2026').checked = is2026;
+                }
+
+                // Parser v4: Tangkap angka mulai dari awalan, berhenti di pola "XX. y." BERIKUTNYA atau EOF
+                const extractRealValue = (prefix) => {
+                    const regex = new RegExp(`${prefix}[\\s\\S]*?\\*([\\s\\S]*?)(?=\\n\\s*2[6-9]\\.\\s*[a-z]\\.|$)`, 'i');
+                    const blockMatch = text.match(regex);
+                    if (blockMatch && blockMatch[1]) {
+                        // Cari semua bilangan berderet, ambil yang string-nya paling panjang (mengabaikan remarks "1")
+                        const numbers = blockMatch[1].match(/[\d.,]+/g);
+                        if (numbers) {
+                            const longestNum = numbers.reduce((a, b) => a.length > b.length ? a : b);
+                            return longestNum.replace(/[,.]/g, ''); 
+                        }
+                    }
+                    return ''; // Kembalikan kosong jika rincian (misal 26c) tidak ada di teks paste
+                };
+
+                const v26a = extractRealValue("26\\.\\s*a\\.");
+                const v26b = extractRealValue("26\\.\\s*b\\.");
+                const v26c = extractRealValue("26\\.\\s*c\\.");
+                const v26d = extractRealValue("26\\.\\s*d\\.");
+                const v26e = extractRealValue("26\\.\\s*e\\.");
+                
+                const v27a = extractRealValue("27\\.\\s*a\\.");
+                const v27b = extractRealValue("27\\.\\s*b\\.");
+
+                const setAndFormat = (id, val) => {
+                    const el = document.getElementById(id);
+                    el.value = val;
+                    formatAndCalc(el);
+                };
+
+                setAndFormat('val-26a', v26a);
+                setAndFormat('val-26b', v26b);
+                setAndFormat('val-26c', v26c);
+                setAndFormat('val-26d', v26d);
+                setAndFormat('val-26e', v26e);
+                setAndFormat('val-27a', v27a);
+                setAndFormat('val-27b', v27b);
+
+                document.getElementById('fasih-input').value = "";
+                
+            } catch (err) {
+                alert("Gagal mem-parse data. Pastikan format teks yang di-paste sesuai dengan halaman FASIH BPS.");
+                console.error(err);
+            }
+        }
 
         function formatAndCalc(input) {
             let val = input.value.replace(/[^0-9]/g, '');
@@ -595,7 +682,6 @@
             if (!currentData) return;
             let { cat, v26d, v26c, v27b, output, ntb, rasio, biayaAntara, multiplier } = currentData;
             
-            // Set Chip Label 
             const selectEl = document.getElementById('kbli-category');
             document.getElementById('modal-kbli-label').innerHTML = `Untuk <span class="chip-kbli">${selectEl.options[selectEl.selectedIndex].text}</span>`;
 
@@ -651,7 +737,6 @@
                 pendingAdjustments.ntbBaru = ntb;
 
                 if (cat === 'G') {
-                    // LOGIKA KHUSUS KBLI G (PERDAGANGAN) - 26c diubah proporsional
                     let asumsiMargin = 0.25; 
                     let targetOmzet = targetOutput / asumsiMargin; 
                     pendingAdjustments.omzetBaru = targetOmzet;
@@ -697,7 +782,6 @@
                     `;
 
                 } else {
-                    // KBLI UMUM - Hanya 27a dan 26d
                     pendingAdjustments.omzetBaru = targetOutput + v26c - v27b;
                     if(selisihOutput > 0) pendingAdjustments.v26dBaru = v26d + selisihOutput;
                     
@@ -728,7 +812,6 @@
                     `;
                 }
 
-                // Row NTB (Tanpa tombol salin)
                 tbodyHtml += `
                     <tr>
                         <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Terkunci mutlak / Tidak turun</span></td>
@@ -742,13 +825,12 @@
                 `;
             }
 
-            // Row Rasio
             tbodyHtml += `
                 <tr style="background: rgba(14, 165, 233, 0.05);">
                     <td style="font-weight:700; color:var(--primary);">Rasio Evaluasi</td>
                     <td class="val-old">${rasioAwalPct.toFixed(2)}%</td>
                     <td>
-                        <div class="val-flex val-new" style="color:var(--primary);">
+                        <div class="val-flex val-new" style="justify-content: flex-end; color:var(--primary);">
                             <span>${targetPct.toFixed(2)}%</span>
                         </div>
                     </td>
@@ -772,7 +854,6 @@
             
             if(pendingAdjustments.kasus === 'OVER') {
                 document.getElementById('val-26d').value = toRp(pendingAdjustments.v26dBaru / mult);
-                // Terapkan 26c jika diubah (Khusus KBLI G)
                 if(currentData.cat === 'G') {
                     document.getElementById('val-26c').value = toRp(pendingAdjustments.v26cBaru / mult);
                 }
