@@ -169,6 +169,15 @@
 
         .parser-textarea { width: 100%; height: 80px; padding: 12px; border: 1px dashed var(--primary); border-radius: var(--radius-md); background: var(--input-bg); color: var(--text-main); font-family: monospace; font-size: 0.8rem; resize: none; outline: none; transition: 0.2s; }
         .parser-textarea:focus { border-style: solid; box-shadow: 0 0 0 3px var(--focus-ring); }
+        
+        /* Custom Native Notification Alert */
+        .custom-alert-box { background: var(--bg-card); width: 100%; max-width: 400px; border-radius: var(--radius-lg); padding: 24px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); transform: translateY(20px) scale(0.98); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--border-color); }
+        .modal-overlay.active .custom-alert-box { transform: translateY(0) scale(1); }
+        .alert-icon { width: 48px; height: 48px; margin: 0 auto 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .alert-icon.success { background: rgba(5, 150, 105, 0.1); color: var(--success); }
+        .alert-icon.warning { background: rgba(217, 119, 6, 0.1); color: var(--warning); }
+        .alert-title { font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+        .alert-message { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; }
     </style>
 </head>
 <body>
@@ -196,7 +205,9 @@
         <section class="card" style="border: 2px solid var(--border-color);">
             <div class="card-header" style="border:none; padding:0; margin-bottom: 12px;">
                 <div class="card-title">
-                    <div class="step-badge" style="background:var(--success);">⚡</div> 
+                    <div class="step-badge" style="background:var(--success);">
+                        <svg class="icon" viewBox="0 0 24 24" style="width: 14px; height: 14px;"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg>
+                    </div> 
                     Fasih Smart Parser (Ctrl+A & Ctrl+V)
                 </div>
             </div>
@@ -241,7 +252,7 @@
                 </div>
                 <div class="toggle-container">
                     <label class="toggle-label">
-                        <input type="checkbox" id="is-year-2026" onchange="calculateNTB()" disabled>
+                        <input type="checkbox" id="is-year-2026" onchange="calculateNTB()">
                         <div class="slider"></div>
                         Usaha mulai beroperasi tahun ini
                     </label>
@@ -430,6 +441,18 @@
         </div>
     </div>
 
+    <!-- NATIVE NOTIFICATION MODAL -->
+    <div id="alert-modal" class="modal-overlay">
+        <div class="custom-alert-box">
+            <div id="alert-icon" class="alert-icon success">
+                <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <h3 id="alert-title" class="alert-title">Notifikasi</h3>
+            <p id="alert-message" class="alert-message">Pesan notifikasi di sini.</p>
+            <button class="btn btn-primary" style="width:100%;" onclick="document.getElementById('alert-modal').classList.remove('active')">Mengerti</button>
+        </div>
+    </div>
+
     <script>
         const moonIcon = `<svg class="icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
         const sunIcon = `<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
@@ -451,6 +474,21 @@
 
         document.addEventListener('DOMContentLoaded', initTheme);
 
+        // Custom UI Alert Function
+        function showCustomAlert(title, message, type = 'success') {
+            const iconEl = document.getElementById('alert-icon');
+            if(type === 'warning') {
+                iconEl.className = 'alert-icon warning';
+                iconEl.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
+            } else {
+                iconEl.className = 'alert-icon success';
+                iconEl.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+            }
+            document.getElementById('alert-title').innerText = title;
+            document.getElementById('alert-message').innerHTML = message;
+            document.getElementById('alert-modal').classList.add('active');
+        }
+
         const kbliLimits = {
             'A': { min: 0.51, max: 0.94 }, 'B': { min: 0.28, max: 0.81 },
             'C': { min: 0.15, max: 0.61 }, 'D': { min: 0.13, max: 0.68 },
@@ -467,11 +505,10 @@
         let currentData = null;
         let pendingAdjustments = null;
 
-        // PARSER V5: DETEKSI 2026 DAN ANTI-BOCOR REMARKS 
         function parseFasihData() {
             const text = document.getElementById('fasih-input').value;
             if (!text.trim()) {
-                alert("Silakan paste data FASIH terlebih dahulu.");
+                showCustomAlert("Input Kosong", "Silakan paste data FASIH terlebih dahulu ke dalam kotak.", "warning");
                 return;
             }
 
@@ -499,12 +536,12 @@
 
                 if (is2026) {
                     document.getElementById('is-year-2026').checked = true;
-                    alert("✅ Terdeteksi Usaha Berdiri Tahun 2026!\n\nSistem otomatis mengaktifkan mode 'Satu Bulan Terakhir'. Semua isian akan dikali 12 (disetahunkan).");
+                    showCustomAlert("Tahun 2026 Terdeteksi", "Sistem otomatis mengaktifkan mode <strong>Satu Bulan Terakhir</strong>.<br>Semua isian akan dikali 12 (disetahunkan).", "success");
                 } else {
                     document.getElementById('is-year-2026').checked = false;
                 }
 
-                // 3. Ekstrak Nilai Rincian
+                // 3. Ekstrak Nilai Rincian (Auto-Correct angka "1")
                 const extractRealValue = (prefix2025, prefix2026) => {
                     const prefix = is2026 ? prefix2026 : prefix2025;
                     const regex = new RegExp(`${prefix}[\\s\\S]*?\\*([\\s\\S]*?)(?=(?:2[6-9]|3[0-3])\\.\\s*[a-z]\\.|$)`, 'i');
@@ -514,11 +551,7 @@
                         if (numbers) {
                             const longestNum = numbers.reduce((a, b) => a.length > b.length ? a : b);
                             let cleanNum = longestNum.replace(/[,.]/g, ''); 
-                            
-                            // Auto-Correct: Cegah kebocoran angka "1" dari Remarks
-                            if (cleanNum === "1") {
-                                return "0";
-                            }
+                            if (cleanNum === "1") return "0";
                             return cleanNum;
                         }
                     }
@@ -551,7 +584,7 @@
                 document.getElementById('fasih-input').value = "";
                 
             } catch (err) {
-                alert("Gagal mem-parse data. Pastikan format teks yang di-paste sesuai dengan halaman FASIH BPS.");
+                showCustomAlert("Gagal Parse", "Format teks tidak dikenali. Pastikan Anda menekan Ctrl+A lalu Ctrl+V tepat dari halaman pengisian FASIH BPS.", "warning");
                 console.error(err);
             }
         }
@@ -697,6 +730,31 @@
             }
         }
 
+        // Helper untuk render Cell Review agar memuat info 1 Bulan & 1 Tahun
+        function buildAdjustedCell(adjustedMonthlyRaw, isNtb = false, multiplier = 1) {
+            let adjustedAnnualRaw = adjustedMonthlyRaw * multiplier;
+            let valClass = isNtb ? 'val-lock' : 'val-new';
+            let colorStyle = isNtb ? 'color:var(--text-main);' : '';
+            let btnHtml = isNtb ? '' : `<button class="btn-copy-sm" onclick="copyRawText('${adjustedMonthlyRaw}', this)">Salin</button>`;
+
+            let html = `
+                <div class="val-flex ${valClass}" style="${colorStyle}">
+                    <span>Rp ${toRp(adjustedMonthlyRaw)}</span>
+                    ${btnHtml}
+                </div>
+            `;
+            
+            // Jika mode 2026 (x12), tambahkan baris keterangan 1 tahun di bawahnya
+            if (multiplier === 12) {
+                html += `
+                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; text-align: right;">
+                        <span style="opacity:0.7;">Satu Tahun:</span> Rp ${toRp(adjustedAnnualRaw)}
+                    </div>
+                `;
+            }
+            return html;
+        }
+
         function prepareAdjustment() {
             if (!currentData) return;
             let { cat, v26d, v26c, v27a, output, ntb, rasio, biayaAntara, multiplier } = currentData;
@@ -708,11 +766,12 @@
             const targetRasio = limits.max - 0.01;
             const targetPct = targetRasio * 100;
             const rasioAwalPct = rasio * 100;
-            const omzetLama = v27a;
+            
+            const omzetLamaRaw = Math.round(v27a / multiplier);
 
             pendingAdjustments = { 
                 kasus: rasio < limits.min ? 'UNDER' : 'OVER',
-                omzetBaru: omzetLama, 
+                omzetBaru: v27a, 
                 v26dBaru: v26d,
                 v26cBaru: v26c,
                 ntbBaru: 0,
@@ -720,6 +779,7 @@
             };
 
             let tbodyHtml = '';
+            const isBulananText = multiplier === 12 ? '<br><span style="font-size:0.65rem; color:var(--primary); font-weight:600;">(Angka Salin = 1 Bulan)</span>' : '';
 
             if (rasio < limits.min) {
                 let targetOutput = biayaAntara / (1 - targetRasio);
@@ -728,27 +788,18 @@
                 pendingAdjustments.ntbBaru = targetOutput - biayaAntara; 
                 
                 let omzetBaruRaw = Math.round(pendingAdjustments.omzetBaru / multiplier);
-                let ntbBaruRaw = Math.round(pendingAdjustments.ntbBaru);
+                let ntbBaruRaw = Math.round(pendingAdjustments.ntbBaru / multiplier); 
 
                 tbodyHtml = `
                     <tr>
-                        <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dinaikkan proporsional</span></td>
-                        <td class="val-old">Rp ${toRp(omzetLama / multiplier)}</td>
-                        <td>
-                            <div class="val-flex val-new">
-                                <span>Rp ${toRp(omzetBaruRaw)}</span>
-                                <button class="btn-copy-sm" onclick="copyRawText('${omzetBaruRaw}', this)">Salin</button>
-                            </div>
-                        </td>
+                        <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dinaikkan proporsional</span>${isBulananText}</td>
+                        <td class="val-old">Rp ${toRp(omzetLamaRaw)}</td>
+                        <td>${buildAdjustedCell(omzetBaruRaw, false, multiplier)}</td>
                     </tr>
                     <tr>
-                        <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Otomatis naik menyesuaikan</span></td>
-                        <td class="val-old">Rp ${toRp(ntb)}</td>
-                        <td>
-                            <div class="val-flex val-new" style="color:var(--text-main);">
-                                <span>Rp ${toRp(ntbBaruRaw)}</span>
-                            </div>
-                        </td>
+                        <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Otomatis naik menyesuaikan</span>${isBulananText}</td>
+                        <td class="val-old">Rp ${toRp(ntb / multiplier)}</td>
+                        <td>${buildAdjustedCell(ntbBaruRaw, true, multiplier)}</td>
                     </tr>
                 `;
             } else {
@@ -762,43 +813,33 @@
                     
                     pendingAdjustments.omzetBaru = targetOmzet;
                     pendingAdjustments.v26cBaru = targetOmzet - targetOutput;
-                    
                     if(selisihOutput > 0) pendingAdjustments.v26dBaru = v26d + selisihOutput;
                     
                     let omzetBaruRaw = Math.round(pendingAdjustments.omzetBaru / multiplier);
                     let cBaruRaw = Math.round(pendingAdjustments.v26cBaru / multiplier);
                     let opsBaruRaw = Math.round(pendingAdjustments.v26dBaru / multiplier);
+                    let ntbBaruRaw = Math.round(pendingAdjustments.ntbBaru / multiplier);
 
                     tbodyHtml += `
                         <tr>
-                            <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Diekspansi menekan rasio</span></td>
-                            <td class="val-old">Rp ${toRp(omzetLama / multiplier)}</td>
-                            <td>
-                                <div class="val-flex val-new">
-                                    <span>Rp ${toRp(omzetBaruRaw)}</span>
-                                    <button class="btn-copy-sm" onclick="copyRawText('${omzetBaruRaw}', this)">Salin</button>
-                                </div>
-                            </td>
+                            <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Diekspansi menekan rasio</span>${isBulananText}</td>
+                            <td class="val-old">Rp ${toRp(omzetLamaRaw)}</td>
+                            <td>${buildAdjustedCell(omzetBaruRaw, false, multiplier)}</td>
                         </tr>
                         <tr>
-                            <td>Pembelian Terjual (26c)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">HPP disesuaikan (Logika Trade)</span></td>
+                            <td>Pembelian Terjual (26c)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">HPP disesuaikan (Logika Trade)</span>${isBulananText}</td>
                             <td class="val-old">Rp ${toRp(v26c / multiplier)}</td>
-                            <td>
-                                <div class="val-flex val-new">
-                                    <span>Rp ${toRp(cBaruRaw)}</span>
-                                    <button class="btn-copy-sm" onclick="copyRawText('${cBaruRaw}', this)">Salin</button>
-                                </div>
-                            </td>
+                            <td>${buildAdjustedCell(cBaruRaw, false, multiplier)}</td>
                         </tr>
                         <tr>
-                            <td>Biaya Operasional (26d)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Amortisasi pengunci NTB</span></td>
+                            <td>Biaya Operasional (26d)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Amortisasi pengunci NTB</span>${isBulananText}</td>
                             <td class="val-old">Rp ${toRp(v26d / multiplier)}</td>
-                            <td>
-                                <div class="val-flex val-new">
-                                    <span>Rp ${toRp(opsBaruRaw)}</span>
-                                    <button class="btn-copy-sm" onclick="copyRawText('${opsBaruRaw}', this)">Salin</button>
-                                </div>
-                            </td>
+                            <td>${buildAdjustedCell(opsBaruRaw, false, multiplier)}</td>
+                        </tr>
+                        <tr>
+                            <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Terkunci mutlak / Tidak turun</span>${isBulananText}</td>
+                            <td class="val-old">Rp ${toRp(ntb / multiplier)}</td>
+                            <td>${buildAdjustedCell(ntbBaruRaw, true, multiplier)}</td>
                         </tr>
                     `;
 
@@ -808,47 +849,31 @@
                     
                     let omzetBaruRaw = Math.round(pendingAdjustments.omzetBaru / multiplier);
                     let opsBaruRaw = Math.round(pendingAdjustments.v26dBaru / multiplier);
+                    let ntbBaruRaw = Math.round(pendingAdjustments.ntbBaru / multiplier);
 
                     tbodyHtml += `
                         <tr>
-                            <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Diekspansi menekan rasio</span></td>
-                            <td class="val-old">Rp ${toRp(omzetLama / multiplier)}</td>
-                            <td>
-                                <div class="val-flex val-new">
-                                    <span>Rp ${toRp(omzetBaruRaw)}</span>
-                                    <button class="btn-copy-sm" onclick="copyRawText('${omzetBaruRaw}', this)">Salin</button>
-                                </div>
-                            </td>
+                            <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Diekspansi menekan rasio</span>${isBulananText}</td>
+                            <td class="val-old">Rp ${toRp(omzetLamaRaw)}</td>
+                            <td>${buildAdjustedCell(omzetBaruRaw, false, multiplier)}</td>
                         </tr>
                         <tr>
-                            <td>Biaya Operasional (26d)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Amortisasi pengunci NTB</span></td>
+                            <td>Biaya Operasional (26d)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Amortisasi pengunci NTB</span>${isBulananText}</td>
                             <td class="val-old">Rp ${toRp(v26d / multiplier)}</td>
-                            <td>
-                                <div class="val-flex val-new">
-                                    <span>Rp ${toRp(opsBaruRaw)}</span>
-                                    <button class="btn-copy-sm" onclick="copyRawText('${opsBaruRaw}', this)">Salin</button>
-                                </div>
-                            </td>
+                            <td>${buildAdjustedCell(opsBaruRaw, false, multiplier)}</td>
+                        </tr>
+                        <tr>
+                            <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Terkunci mutlak / Tidak turun</span>${isBulananText}</td>
+                            <td class="val-old">Rp ${toRp(ntb / multiplier)}</td>
+                            <td>${buildAdjustedCell(ntbBaruRaw, true, multiplier)}</td>
                         </tr>
                     `;
                 }
-
-                tbodyHtml += `
-                    <tr>
-                        <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Terkunci mutlak / Tidak turun</span></td>
-                        <td class="val-old">Rp ${toRp(ntb)}</td>
-                        <td>
-                            <div class="val-flex val-new" style="color:var(--text-main);">
-                                <span>Rp ${toRp(Math.round(ntb))}</span>
-                            </div>
-                        </td>
-                    </tr>
-                `;
             }
 
             tbodyHtml += `
                 <tr style="background: rgba(14, 165, 233, 0.05);">
-                    <td style="font-weight:700; color:var(--primary);">Rasio Evaluasi</td>
+                    <td style="font-weight:700; color:var(--primary);">Rasio Evaluasi BPS</td>
                     <td class="val-old">${rasioAwalPct.toFixed(2)}%</td>
                     <td>
                         <div class="val-flex val-new" style="justify-content: flex-end; color:var(--primary);">
