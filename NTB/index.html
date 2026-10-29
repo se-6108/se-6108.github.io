@@ -1,725 +1,700 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator & Penyesuaian NTB KBLI Multi-Sektor</title>
+    <title>EnigmaStat | Adjustment Matrix</title>
+    <!-- Favicon diset ke icon.png di GitHub Pages -->
     <link rel="icon" type="image/png" href="icon.png">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Poppins', sans-serif; }
+        /* ==================================================
+           TEMA BIRU MATA ENGGANG (CYAN & SAPPHIRE) + DARK MODE
+        ================================================== */
+        :root {
+            /* Tema Light (Default) */
+            --bg-body: #f0f9ff;
+            --bg-card: #ffffff;
+            --bg-header: #ffffff;
+            --bg-dark: #082f49;
+            
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #bae6fd;
+            
+            --primary: #0284c7; /* Enggang Blue */
+            --primary-hover: #0369a1;
+            --input-bg: #f8fafc;
+            --focus-ring: rgba(2, 132, 199, 0.15);
+            
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-pill: 9999px;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Tema Dark Mode */
+        [data-theme="dark"] {
+            --bg-body: #08121f; /* Deep Dark Sapphire */
+            --bg-card: #0f1c2e;
+            --bg-header: #0f1c2e;
+            --bg-dark: #06111d;
+            
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: #1e3656;
+            
+            --primary: #0ea5e9; /* Vivid Cyan Enggang */
+            --primary-hover: #38bdf8;
+            --input-bg: #06111d;
+            --focus-ring: rgba(14, 165, 233, 0.2);
+            
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            font-size: 14px; 
+            line-height: 1.5; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        /* Header */
+        header { position: sticky; top: 0; z-index: 50; background: var(--bg-header); border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-sm); padding: 14px 20px; transition: 0.3s; }
+        .header-content { max-width: 1000px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+        .brand-group { display: flex; align-items: center; gap: 14px; }
+        .brand-icon { width: 36px; height: 36px; border-radius: 10px; object-fit: cover; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); }
+        .header-title h1 { font-size: 1.1rem; font-weight: 700; color: var(--primary); letter-spacing: -0.5px; }
+        .header-title p { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; font-style: italic; }
+        .action-group { display: flex; gap: 8px; }
+        
+        main { max-width: 1000px; width: 100%; margin: 32px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 24px; flex-grow: 1; }
+        
+        /* Cards */
+        .card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); transition: 0.3s; }
+        .card-dark { background: var(--bg-dark); border-radius: var(--radius-lg); padding: 24px; color: #f1f5f9; border: 1px solid var(--border-color); transition: 0.3s; }
+        
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; }
+        .card-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--text-main); }
+        .step-badge { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; background: var(--primary); color: white; }
+        
+        /* Layout */
+        .grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+        .flex-col { display: flex; flex-direction: column; gap: 16px; }
+        
+        /* Typography & Forms */
+        label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+        .input-group { position: relative; }
+        
+        /* Input Fintech Style */
+        .currency-wrapper { position: relative; display: flex; align-items: center; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); transition: 0.2s; overflow: hidden; }
+        .currency-wrapper:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
+        .currency-symbol { position: absolute; left: 16px; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; pointer-events: none; }
+        input[type="text"].text-right { width: 100%; padding: 12px 64px 12px 40px; border: none; background: transparent; font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 600; text-align: right; color: var(--text-main); outline: none; transition: 0.3s; }
+        
+        select { width: 100%; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--input-bg); font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 500; color: var(--text-main); transition: 0.2s; outline: none; cursor: pointer; }
+        select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
+        
+        .readonly-wrapper { background: var(--bg-body); opacity: 0.9; }
+        input[readonly].text-right { font-weight: 700; color: var(--primary); cursor: not-allowed; }
+        
+        /* Buttons */
+        .btn { padding: 10px 20px; border-radius: var(--radius-pill); font-weight: 600; font-size: 0.85rem; cursor: pointer; border: none; transition: 0.2s; font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+        .btn-outline:hover { background: var(--bg-body); border-color: var(--primary); color: var(--primary); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-icon { padding: 10px; border-radius: 12px; }
+        
+        .btn-action { background: var(--primary); color: white; width: 100%; padding: 14px; margin-top: 16px; font-size: 0.95rem; box-shadow: var(--shadow-sm); }
+        .btn-action:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        
+        .btn-copy { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color); padding: 4px 10px; font-size: 0.7rem; border-radius: var(--radius-pill); cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn-copy:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        
+        /* Toggle */
+        .toggle-container { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; justify-content: center; transition: 0.3s; }
+        .toggle-label { display: flex; align-items: center; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+        .toggle-label input { display: none; }
+        .slider { width: 44px; height: 24px; background: var(--text-muted); border-radius: 24px; margin-right: 12px; position: relative; transition: 0.3s; opacity: 0.6; }
+        .slider::after { content: ""; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: 0.3s; }
+        .toggle-label input:checked + .slider { background: var(--primary); opacity: 1; }
+        .toggle-label input:checked + .slider::after { transform: translateX(20px); }
+        
+        .disabled-area { opacity: 0.3; pointer-events: none; filter: grayscale(100%); transition: 0.4s; }
+        .hidden { display: none !important; }
+        
+        /* Stats Panel */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 16px; margin-top: 16px; }
+        .stat-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 16px; border-radius: var(--radius-md); display: flex; flex-direction: column; justify-content: space-between; }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
+        .stat-value { font-size: 1rem; font-weight: 700; color: #f1f5f9; }
+        .text-highlight { color: var(--primary); font-size: 1.25rem; text-shadow: 0 0 10px rgba(14, 165, 233, 0.2); }
+        
+        .badge { padding: 6px 12px; border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 600; border: 1px solid; display: inline-flex; align-items: center; gap: 6px; }
+        .badge-ideal { background: rgba(5, 150, 105, 0.1); color: var(--success); border-color: rgba(5, 150, 105, 0.2); }
+        .badge-defisit { background: rgba(217, 119, 6, 0.1); color: var(--warning); border-color: rgba(217, 119, 6, 0.2); }
+        .badge-surplus { background: rgba(220, 38, 38, 0.1); color: var(--danger); border-color: rgba(220, 38, 38, 0.2); }
+        .badge-default { background: rgba(255,255,255,0.05); color: var(--text-muted); border-color: rgba(255,255,255,0.1); }
+
+        /* Proportion Bar */
+        .proportion-bar { display: flex; width: 100%; height: 12px; border-radius: var(--radius-pill); overflow: hidden; margin: 16px 0; background: var(--bg-body); }
+        .prop-segment { height: 100%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .legend-grid { display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+        .legend-item { display: flex; align-items: center; gap: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        /* Modal Overlay */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; padding: 20px; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content { background: var(--bg-card); width: 100%; max-width: 550px; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); transform: translateY(20px) scale(0.98); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--border-color); }
+        .modal-overlay.active .modal-content { transform: translateY(0) scale(1); }
+        .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
+        .modal-body { padding: 24px; }
+        .modal-footer { padding: 16px 24px; background: var(--bg-body); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; }
+        
+        .compare-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 0.9rem; }
+        .compare-table th, .compare-table td { padding: 12px 0; border-bottom: 1px solid var(--border-color); text-align: right; color: var(--text-main); }
+        .compare-table th:first-child, .compare-table td:first-child { text-align: left; padding-right: 16px; }
+        .compare-table th { color: var(--text-muted); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .val-old { color: var(--text-muted); text-decoration: line-through; }
+        .val-new { color: var(--primary); font-weight: 700; }
+        .val-lock { color: var(--text-main); font-weight: 700; }
+        
+        /* SVG Icons */
+        .icon { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans">
+<body>
 
-    <!-- Header Sticky -->
-    <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 text-white shadow-lg px-4 py-3.5">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
-            <div class="flex items-center gap-3">
-                <img src="icon.png" alt="Logo" class="w-10 h-10 rounded-xl object-cover bg-slate-800 p-1 border border-slate-700 shadow-sm" onerror="this.src='https://img.icons8.com/fluency/48/calculator.png'">
-                <div>
-                    <h1 class="text-lg font-bold tracking-tight text-slate-100">Kalkulator & Penyesuaian NTB KBLI</h1>
-                    <p class="text-xs text-slate-400">Analisis Rasio Sektor Usaha & Auto-Adjustment Presisi (Target: MAX - 0.01)</p>
+    <header>
+        <div class="header-content">
+            <div class="brand-group">
+                <!-- Favicon image in header -->
+                <img src="icon.png" alt="Logo" class="brand-icon" onerror="this.style.display='none'">
+                <div class="header-title">
+                    <h1>EnigmaStat</h1>
+                    <p>Adjust like it never enough.</p>
                 </div>
             </div>
-            
-            <div class="flex items-center gap-2 bg-slate-800/80 p-1.5 rounded-2xl border border-slate-700/60">
-                <button onclick="switchTab('single')" id="btn-tab-single" class="px-4 py-1.5 bg-indigo-600 text-white font-medium rounded-xl text-xs shadow-sm transition-all cursor-pointer">Mode Satuan</button>
-                <button onclick="switchTab('bulk')" id="btn-tab-bulk" class="px-4 py-1.5 text-slate-300 font-medium rounded-xl text-xs hover:text-white transition-all cursor-pointer">Mode Bulk (Excel)</button>
+            <div class="action-group">
+                <button class="btn btn-outline btn-icon" onclick="toggleTheme()" id="theme-toggle" aria-label="Toggle Dark Mode"></button>
+                <button class="btn btn-outline btn-icon" onclick="resetForm()" aria-label="Reset Form">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto w-full p-4 md:p-6 flex-grow space-y-6">
-
-        <div id="tab-single" class="space-y-6">
-            
-            <!-- Step 1: Kategori KBLI & Periode -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-                    <h2 class="text-base font-semibold text-slate-800 flex items-center gap-2.5">
-                        <span class="bg-indigo-100 text-indigo-700 w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold">1</span>
-                        Klasifikasi KBLI & Periode Operasional
-                    </h2>
-                    <button onclick="resetFormFields()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium py-1.5 px-3.5 rounded-xl text-xs transition cursor-pointer">
-                        Reset Isian Form
-                    </button>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Pilih Kategori KBLI Usaha (Wajib Dipilih Terlebih Dahulu):</label>
-                        <select id="kbli-category" onchange="onCategoryChange()" class="w-full border border-slate-300 rounded-xl p-3 text-xs bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all font-medium">
-                            <option value="">-- Pilih Kategori KBLI --</option>
-                            <option value="A">Kategori A: Pertanian, Kehutanan, dan Perikanan (0.51 - 0.94)</option>
-                            <option value="B">Kategori B: Pertambangan dan Penggalian (0.28 - 0.81)</option>
-                            <option value="C">Kategori C: Industri Pengolahan (0.15 - 0.61)</option>
-                            <option value="D">Kategori D: Pengadaan Listrik, Gas, Uap/Air Panas (0.13 - 0.68)</option>
-                            <option value="E">Kategori E: Pengelolaan Air, Air Limbah, Sampah (0.29 - 0.47)</option>
-                            <option value="F">Kategori F: Konstruksi (0.34 - 0.44)</option>
-                            <option value="G">Kategori G: Perdagangan Besar dan Eceran (0.64 - 0.78)</option>
-                            <option value="H">Kategori H: Pengangkutan dan Pergudangan (0.29 - 0.64)</option>
-                            <option value="I">Kategori I: Penyediaan Akomodasi & Makan Minum (0.36 - 0.69)</option>
-                            <option value="J">Kategori J: Informasi dan Komunikasi (0.36 - 0.73)</option>
-                            <option value="K">Kategori K: Aktivitas Keuangan dan Asuransi (0.50 - 0.72)</option>
-                            <option value="L">Kategori L: Real Estat (0.46 - 0.86)</option>
-                            <option value="M">Kategori M: Aktivitas Profesional, Ilmiah, Teknis (0.50 - 0.99)</option>
-                            <option value="N">Kategori N: Aktivitas Penyewaan & Jasa Lainnya (0.44 - 0.57)</option>
-                            <option value="O">Kategori O: Administrasi Pemerintahan (0.54 - 0.66)</option>
-                            <option value="Q">Kategori Q: Aktivitas Kesehatan Manusia (0.27 - 0.82)</option>
-                            <option value="R">Kategori R: Kesenian, Hiburan, dan Rekreasi (0.20 - 0.60)</option>
-                            <option value="S">Kategori S: Aktivitas Jasa Lainnya (0.21 - 0.57)</option>
-                            <option value="T">Kategori T: Aktivitas Rumah Tangga (0.30 - 0.69)</option>
-                        </select>
-                        <p id="kbli-range-info" class="text-xs text-indigo-600 mt-2 font-medium"></p>
-                    </div>
-
-                    <div class="flex flex-col justify-center bg-slate-50/80 border border-slate-200/80 rounded-xl p-4">
-                        <label class="flex items-center cursor-pointer select-none">
-                            <input type="checkbox" id="is-year-2026" onchange="calculateNTB()" class="sr-only peer" disabled>
-                            <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600 relative"></div>
-                            <span class="ml-3 text-xs font-semibold text-slate-700">Usaha Mulai Beroperasi Tahun 2026</span>
-                        </label>
-                        <p class="text-[11px] text-slate-500 mt-1.5 leading-relaxed">Aktifkan setelah memilih kategori KBLI jika data diisi untuk periode 1 bulan terakhir.</p>
-                    </div>
-                </div>
+    <main>
+        <!-- Seksi 1: KBLI -->
+        <section class="card">
+            <div class="card-header" style="border:none; padding:0; margin-bottom: 20px;">
+                <div class="card-title"><div class="step-badge">1</div> Kategori KBLI & Periode</div>
             </div>
-
-            <!-- Banner Notifikasi Auto-Adjust -->
-            <div id="copy-instruction-banner" class="hidden bg-indigo-50 border border-indigo-200 text-indigo-800 rounded-2xl p-4 shadow-sm transition-all">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-900 mb-1">Penyesuaian Berhasil Diterapkan</h4>
-                        <p id="banner-msg" class="text-xs text-indigo-700">Nilai pada form telah disesuaikan dengan mengunci NTB (>= nilai awal) dan mencapai target rasio presisi (MAX - 0.01). Gunakan tombol <strong>Salin</strong> untuk menyalin data.</p>
-                    </div>
-                    <button onclick="document.getElementById('copy-instruction-banner').classList.add('hidden')" class="text-xs font-semibold text-indigo-600 hover:text-indigo-900 cursor-pointer">Tutup</button>
+            <div class="grid-auto">
+                <div>
+                    <select id="kbli-category" onchange="onCategoryChange()">
+                        <option value="">Pilih kategori KBLI usaha...</option>
+                        <option value="A">Kategori A: Pertanian (51% - 94%)</option>
+                        <option value="B">Kategori B: Pertambangan (28% - 81%)</option>
+                        <option value="C">Kategori C: Industri Pengolahan (15% - 61%)</option>
+                        <option value="D">Kategori D: Pengadaan Listrik (13% - 68%)</option>
+                        <option value="E">Kategori E: Pengelolaan Air (29% - 47%)</option>
+                        <option value="F">Kategori F: Konstruksi (34% - 44%)</option>
+                        <option value="G">Kategori G: Perdagangan (64% - 78%)</option>
+                        <option value="H">Kategori H: Pengangkutan (29% - 64%)</option>
+                        <option value="I">Kategori I: Penyediaan Akomodasi (36% - 69%)</option>
+                        <option value="J">Kategori J: Informasi & Komunikasi (36% - 73%)</option>
+                        <option value="K">Kategori K: Aktivitas Keuangan (50% - 72%)</option>
+                        <option value="L">Kategori L: Real Estat (46% - 86%)</option>
+                        <option value="M">Kategori M: Profesional, Ilmiah (50% - 99%)</option>
+                        <option value="N">Kategori N: Penyewaan & Jasa (44% - 57%)</option>
+                        <option value="O">Kategori O: Administrasi Pemerintahan (54% - 66%)</option>
+                        <option value="Q">Kategori Q: Aktivitas Kesehatan (27% - 82%)</option>
+                        <option value="R">Kategori R: Kesenian, Hiburan (20% - 60%)</option>
+                        <option value="S">Kategori S: Aktivitas Jasa Lainnya (21% - 57%)</option>
+                        <option value="T">Kategori T: Aktivitas Rumah Tangga (30% - 69%)</option>
+                    </select>
+                    <div id="kbli-info" style="font-size: 0.75rem; color: var(--primary); margin-top: 10px; font-weight: 500;">Pilih Kategori KBLI terlebih dahulu untuk memulai.</div>
                 </div>
-            </div>
-
-            <!-- Form Container -->
-            <div id="form-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-40 pointer-events-none transition-opacity duration-300">
-                
-                <!-- Rincian 26 Input -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
-                    <h2 class="text-base font-semibold text-slate-800 mb-2 flex items-center gap-2.5">
-                        <span class="bg-amber-100 text-amber-700 w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold">2</span>
-                        Pengeluaran Usaha (Rincian 26)
-                    </h2>
-
-                    <div>
-                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">26a. Total upah & gaji pekerja</label>
-                        <div class="relative">
-                            <input type="text" id="val-26a" placeholder="0" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-14 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <button onclick="copyFieldValue('val-26a')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-100 hover:bg-indigo-50 text-slate-600 text-[10px] font-medium rounded-lg transition cursor-pointer">Salin</button>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">26b. Biaya produksi</label>
-                        <div class="relative">
-                            <input type="text" id="val-26b" placeholder="0" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-14 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <button onclick="copyFieldValue('val-26b')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-100 hover:bg-indigo-50 text-slate-600 text-[10px] font-medium rounded-lg transition cursor-pointer">Salin</button>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label id="label-26c" class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">26c. Biaya pembelian barang yang terjual</label>
-                        <div class="relative">
-                            <input type="text" id="val-26c" placeholder="0" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-14 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <button onclick="copyFieldValue('val-26c')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-100 hover:bg-indigo-50 text-slate-600 text-[10px] font-medium rounded-lg transition cursor-pointer">Salin</button>
-                        </div>
-                        <p id="note-26c" class="text-[11px] text-amber-600 mt-1 hidden font-medium"></p>
-                    </div>
-
-                    <div>
-                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">26d. Biaya operasional</label>
-                        <div class="relative">
-                            <input type="text" id="val-26d" placeholder="0" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-14 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <button onclick="copyFieldValue('val-26d')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-100 hover:bg-indigo-50 text-slate-600 text-[10px] font-medium rounded-lg transition cursor-pointer">Salin</button>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">26e. Biaya non operasional</label>
-                        <div class="relative">
-                            <input type="text" id="val-26e" placeholder="0" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-14 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <button onclick="copyFieldValue('val-26e')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-100 hover:bg-indigo-50 text-slate-600 text-[10px] font-medium rounded-lg transition cursor-pointer">Salin</button>
-                        </div>
-                    </div>
-
-                    <!-- Total Pengeluaran Readonly -->
-                    <div class="pt-2 border-t border-slate-200">
-                        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1">Total Pengeluaran Usaha (26a s/d 26e)</label>
-                        <input type="text" id="total-pengeluaran" placeholder="Rp 0" readonly class="w-full border border-slate-200 bg-slate-100 text-slate-800 font-bold rounded-xl p-2.5 text-xs focus:outline-none">
-                    </div>
-                </div>
-
-                <!-- Column Kanan -->
-                <div class="space-y-6">
-                    
-                    <!-- Rincian 27 Input -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 space-y-4">
-                        <h2 class="text-base font-semibold text-slate-800 mb-2 flex items-center gap-2.5">
-                            <span class="bg-emerald-100 text-emerald-700 w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold">3</span>
-                            Pendapatan Usaha (Rincian 27)
-                        </h2>
-
-                        <div>
-                            <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">27a. Omzet / Nilai produksi / penjualan</label>
-                            <div class="relative">
-                                <input type="text" id="val-27a" placeholder="0" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-14 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                                <button onclick="copyFieldValue('val-27a')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-100 hover:bg-indigo-50 text-slate-600 text-[10px] font-medium rounded-lg transition cursor-pointer">Salin</button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">27b. Pendapatan lainnya</label>
-                            <div class="relative">
-                                <input type="text" id="val-27b" placeholder="0" oninput="formatAndCalculate(this)" class="w-full border border-slate-300 rounded-xl p-2.5 pr-14 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                                <button onclick="copyFieldValue('val-27b')" title="Salin Nilai" class="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-100 hover:bg-indigo-50 text-slate-600 text-[10px] font-medium rounded-lg transition cursor-pointer">Salin</button>
-                            </div>
-                        </div>
-
-                        <!-- Total Pendapatan Readonly -->
-                        <div class="pt-2 border-t border-slate-200">
-                            <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1">Total Pendapatan Usaha (27a + 27b)</label>
-                            <input type="text" id="total-pendapatan" placeholder="Rp 0" readonly class="w-full border border-slate-200 bg-slate-100 text-slate-800 font-bold rounded-xl p-2.5 text-xs focus:outline-none">
-                        </div>
-                    </div>
-
-                    <!-- Panel Evaluasi NTB -->
-                    <div class="bg-slate-900 text-white rounded-2xl shadow-md p-6 border border-slate-800">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-sm font-semibold">Hasil Evaluasi NTB</h3>
-                            <span id="badge-status" class="px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase bg-slate-800 text-slate-300">Belum Dihitung</span>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-3 text-xs mb-4">
-                            <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-                                <span class="block text-slate-400 text-[10px]">Output (Omzet - 26c)</span>
-                                <span id="res-output" class="font-bold text-sm text-slate-100">Rp 0</span>
-                            </div>
-                            <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-                                <span class="block text-slate-400 text-[10px]">Nilai Tambah Bruto (NTB)</span>
-                                <span id="res-ntb" class="font-bold text-sm text-slate-100">Rp 0</span>
-                            </div>
-                            <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-                                <span class="block text-slate-400 text-[10px]">Rasio NTB (NTB / Output)</span>
-                                <span id="res-rasio" class="font-bold text-base text-amber-400">0.0000</span>
-                            </div>
-                            <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/60">
-                                <span class="block text-slate-400 text-[10px]">Rentang Wajar KBLI</span>
-                                <span id="res-rentang" class="font-bold text-xs text-slate-200">-</span>
-                            </div>
-                        </div>
-
-                        <p id="recommendation-text" class="text-xs text-slate-300 bg-slate-800/50 p-3 rounded-xl border border-slate-700/50 mb-4 leading-relaxed">
-                            Silakan pilih kategori KBLI di atas untuk memulai pengisian.
-                        </p>
-
-                        <button id="btn-apply-adj" onclick="applyAdjustment()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-xl text-xs transition shadow-sm cursor-pointer hidden">
-                            Klik untuk melakukan proportional adjustment (Target: MAX - 0.01)
-                        </button>
-                    </div>
-
-                    <!-- Panel Grafik Donut Proporsi Pengeluaran -->
-                    <div class="bg-slate-900 text-white rounded-2xl shadow-md p-6 border border-slate-800 space-y-4">
-                        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200">Proporsi Pengeluaran Usaha</h3>
-                            <span class="text-[10px] font-semibold text-indigo-400 bg-indigo-950/80 px-2.5 py-1 rounded-lg border border-indigo-800">Rincian 26</span>
-                        </div>
-                        
-                        <div class="relative w-44 h-44 mx-auto my-2">
-                            <canvas id="expenseChart"></canvas>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] pt-2 border-t border-slate-800/80">
-                            <div class="flex items-center gap-2 bg-slate-800/50 p-2 rounded-xl border border-slate-800">
-                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
-                                <span class="text-slate-400">26a. Upah/Gaji: <strong id="pct-26a" class="text-slate-100">0.0%</strong></span>
-                            </div>
-                            <div class="flex items-center gap-2 bg-slate-800/50 p-2 rounded-xl border border-slate-800">
-                                <span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>
-                                <span class="text-slate-400">26b. Biaya Prod: <strong id="pct-26b" class="text-slate-100">0.0%</strong></span>
-                            </div>
-                            <div class="flex items-center gap-2 bg-slate-800/50 p-2 rounded-xl border border-slate-800">
-                                <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
-                                <span class="text-slate-400">26c. Beli Terjual: <strong id="pct-26c" class="text-slate-100">0.0%</strong></span>
-                            </div>
-                            <div class="flex items-center gap-2 bg-slate-800/50 p-2 rounded-xl border border-slate-800">
-                                <span class="w-2.5 h-2.5 rounded-full bg-violet-500 inline-block"></span>
-                                <span class="text-slate-400">26d. Operasional: <strong id="pct-26d" class="text-slate-100">0.0%</strong></span>
-                            </div>
-                            <div class="flex items-center gap-2 bg-slate-800/50 p-2 rounded-xl border border-slate-800 sm:col-span-2">
-                                <span class="w-2.5 h-2.5 rounded-full bg-pink-500 inline-block"></span>
-                                <span class="text-slate-400">26e. Non-Operasional: <strong id="pct-26e" class="text-slate-100">0.0%</strong></span>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Mode Bulk Excel -->
-        <div id="tab-bulk" class="space-y-6 hidden">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6">
-                <h2 class="text-base font-semibold text-slate-800 mb-1.5">Pengolahan Data Massal (Excel)</h2>
-                <p class="text-xs text-slate-500 mb-6 leading-relaxed">Unduh templat Excel, isi daftar unit usaha, lalu unggah untuk menghitung dan menyesuaikan rasio NTB secara otomatis.</p>
-
-                <div class="flex flex-wrap gap-3 items-center">
-                    <button onclick="downloadTemplate()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-xl text-xs transition flex items-center gap-2 cursor-pointer shadow-sm">
-                        Download Template Excel
-                    </button>
-                    
-                    <label class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-xl text-xs transition flex items-center gap-2 cursor-pointer shadow-sm">
-                        Upload & Proses Excel
-                        <input type="file" id="excel-file-input" accept=".xlsx, .xls" onchange="processExcel(event)" class="hidden">
+                <div class="toggle-container">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="is-year-2026" onchange="calculateNTB()" disabled>
+                        <div class="slider"></div>
+                        Usaha mulai beroperasi tahun ini
                     </label>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; margin-left: 56px; font-weight: 500;">Aktifkan jika input berupa data bulanan (otomatis x12).</div>
                 </div>
             </div>
+        </section>
 
-            <div id="bulk-results-container" class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 hidden">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-sm font-semibold text-slate-800">Hasil Rekapitulasi & Auto-Adjustment</h3>
-                    <button onclick="downloadResultExcel()" class="bg-slate-900 hover:bg-slate-800 text-white font-medium py-2 px-3.5 rounded-xl text-xs transition cursor-pointer">
-                        Download Hasil (Excel)
+        <!-- Area Input -->
+        <div id="main-forms" class="grid-auto disabled-area">
+            
+            <!-- Kolom Kiri: Rincian 26 -->
+            <section class="card flex-col">
+                <div class="card-header">
+                    <div class="card-title"><div class="step-badge" style="background:var(--bg-dark);">2</div> Rincian 26 (Pengeluaran)</div>
+                </div>
+                
+                <div class="input-group">
+                    <label>26a. Total upah, gaji & jaminan</label>
+                    <div class="currency-wrapper">
+                        <span class="currency-symbol">Rp</span>
+                        <input type="text" id="val-26a" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                        <button class="btn-copy" onclick="copyVal('val-26a', this)">Salin</button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>26b. Biaya produksi</label>
+                    <div class="currency-wrapper">
+                        <span class="currency-symbol">Rp</span>
+                        <input type="text" id="val-26b" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                        <button class="btn-copy" onclick="copyVal('val-26b', this)">Salin</button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>26c. Biaya pembelian barang terjual</label>
+                    <div class="currency-wrapper">
+                        <span class="currency-symbol">Rp</span>
+                        <input type="text" id="val-26c" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                        <button class="btn-copy" onclick="copyVal('val-26c', this)">Salin</button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>26d. Biaya operasional</label>
+                    <div class="currency-wrapper">
+                        <span class="currency-symbol">Rp</span>
+                        <input type="text" id="val-26d" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                        <button class="btn-copy" onclick="copyVal('val-26d', this)">Salin</button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>26e. Biaya non operasional</label>
+                    <div class="currency-wrapper">
+                        <span class="currency-symbol">Rp</span>
+                        <input type="text" id="val-26e" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                        <button class="btn-copy" onclick="copyVal('val-26e', this)">Salin</button>
+                    </div>
+                </div>
+                
+                <div style="border-top: 1px solid var(--border-color); padding-top: 16px;">
+                    <label style="color: var(--text-main); font-weight: 600;">Total Pengeluaran Usaha</label>
+                    <div class="currency-wrapper readonly-wrapper">
+                        <span class="currency-symbol" style="color:var(--primary);">Rp</span>
+                        <input type="text" id="tot-pengeluaran" placeholder="0" class="text-right" readonly>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Kolom Kanan: Rincian 27 & Evaluasi -->
+            <div class="flex-col">
+                <section class="card flex-col">
+                    <div class="card-header">
+                        <div class="card-title"><div class="step-badge" style="background:var(--bg-dark);">3</div> Rincian 27 (Pendapatan)</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>27a. Nilai produksi / Omzet usaha</label>
+                        <div class="currency-wrapper">
+                            <span class="currency-symbol">Rp</span>
+                            <input type="text" id="val-27a" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                            <button class="btn-copy" onclick="copyVal('val-27a', this)">Salin</button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>27b. Pendapatan lainnya</label>
+                        <div class="currency-wrapper">
+                            <span class="currency-symbol">Rp</span>
+                            <input type="text" id="val-27b" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                            <button class="btn-copy" onclick="copyVal('val-27b', this)">Salin</button>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid var(--border-color); padding-top: 16px;">
+                        <label style="color: var(--text-main); font-weight: 600;">Total Pendapatan Usaha</label>
+                        <div class="currency-wrapper readonly-wrapper">
+                            <span class="currency-symbol" style="color:var(--primary);">Rp</span>
+                            <input type="text" id="tot-pendapatan" placeholder="0" class="text-right" readonly>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card-dark flex-col" style="flex-grow: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-size: 1rem; font-weight: 600;">Evaluasi Statistik</h3>
+                        <span id="badge-status" class="badge badge-default">Menunggu input...</span>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <span class="stat-label">Output Usaha</span>
+                            <span class="stat-value" id="res-output">Rp 0</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Nilai Tambah (NTB)</span>
+                            <span class="stat-value" id="res-ntb">Rp 0</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Rasio (NTB / Output)</span>
+                            <span class="stat-value text-highlight" id="res-rasio">0.00%</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Target (MAX - 1%)</span>
+                            <span class="stat-value" id="res-target" style="color:var(--text-muted);">-</span>
+                        </div>
+                    </div>
+
+                    <button id="btn-adjust" class="btn btn-action hidden" onclick="prepareAdjustment()">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                        Review penyesuaian rasio
                     </button>
-                </div>
-                <div class="overflow-x-auto max-h-[500px]">
-                    <table id="bulk-table" class="w-full text-left border-collapse text-xs">
-                        <thead class="bg-slate-100 text-slate-700 sticky top-0 font-semibold">
-                            <tr>
-                                <th class="p-2.5 border-b">No</th>
-                                <th class="p-2.5 border-b">Nama Usaha</th>
-                                <th class="p-2.5 border-b text-center">KBLI</th>
-                                <th class="p-2.5 border-b">Output</th>
-                                <th class="p-2.5 border-b">NTB Awal</th>
-                                <th class="p-2.5 border-b">Rasio Awal</th>
-                                <th class="p-2.5 border-b">Status Awal</th>
-                                <th class="p-2.5 border-b">Rasio Sesudah</th>
-                                <th class="p-2.5 border-b">Status Akhir</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bulk-table-body" class="divide-y divide-slate-200/80">
-                        </tbody>
-                    </table>
-                </div>
+                </section>
             </div>
         </div>
 
+        <!-- Visualisasi -->
+        <section class="card" id="section-visual" style="display: none; padding: 20px 24px;">
+            <label style="margin-bottom: 0; color: var(--text-main);">Proporsi Pengeluaran (Rincian 26)</label>
+            <div class="proportion-bar">
+                <div id="bar-26a" class="prop-segment" style="width: 0%; background: var(--success);"></div>
+                <div id="bar-26b" class="prop-segment" style="width: 0%; background: var(--primary);"></div>
+                <div id="bar-26c" class="prop-segment" style="width: 0%; background: var(--warning);"></div>
+                <div id="bar-26d" class="prop-segment" style="width: 0%; background: #8b5cf6;"></div>
+                <div id="bar-26e" class="prop-segment" style="width: 0%; background: #ec4899;"></div>
+            </div>
+            <div class="legend-grid">
+                <div class="legend-item"><div class="dot" style="background: var(--success);"></div>Gaji: <strong id="pct-26a">0%</strong></div>
+                <div class="legend-item"><div class="dot" style="background: var(--primary);"></div>Produksi: <strong id="pct-26b">0%</strong></div>
+                <div class="legend-item"><div class="dot" style="background: var(--warning);"></div>Barang Terjual: <strong id="pct-26c">0%</strong></div>
+                <div class="legend-item"><div class="dot" style="background: #8b5cf6;"></div>Operasional: <strong id="pct-26d">0%</strong></div>
+                <div class="legend-item"><div class="dot" style="background: #ec4899;"></div>Non-Ops: <strong id="pct-26e">0%</strong></div>
+            </div>
+        </section>
     </main>
 
-    <footer class="bg-white border-t border-slate-200/80 py-4 text-center text-xs text-slate-500 mt-auto">
-        Kalkulator Rasio NTB Multi-Kategori KBLI &bull; Standar Perhitungan BPS
-    </footer>
+    <!-- Modal Review Auto Adjust -->
+    <div id="adjust-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Review Hasil Penyesuaian</h3>
+                <button onclick="closeModal()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; padding:4px;">
+                    <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6;" id="modal-desc">
+                    Berikut simulasi perubahan agar rasio mendarat mulus di <strong style="color:var(--primary)">MAX - 1%</strong>. Klik terapkan jika simulasi angka masuk akal, atau tutup pop-up untuk kembali ke form awal.
+                </p>
+                <table class="compare-table">
+                    <thead>
+                        <tr>
+                            <th>Rincian</th>
+                            <th>Nilai Awal</th>
+                            <th>Setelah Disesuaikan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modal-tbody">
+                        <!-- Injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal()">Batal</button>
+                <button class="btn btn-primary" onclick="applyAdjustment()">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg>
+                    Terapkan Penyesuaian
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script>
+        // Init Theme
+        const moonIcon = `<svg class="icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+        const sunIcon = `<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+        
+        function initTheme() {
+            const saved = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', saved);
+            document.getElementById('theme-toggle').innerHTML = saved === 'dark' ? sunIcon : moonIcon;
+        }
+        
+        function toggleTheme() {
+            const root = document.documentElement;
+            const current = root.getAttribute('data-theme');
+            const target = current === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-theme', target);
+            localStorage.setItem('theme', target);
+            document.getElementById('theme-toggle').innerHTML = target === 'dark' ? sunIcon : moonIcon;
+        }
+
+        document.addEventListener('DOMContentLoaded', initTheme);
+
+        // Batas Rasio KBLI
         const kbliLimits = {
-            'A': { min: 0.51, max: 0.94 },
-            'B': { min: 0.28, max: 0.81 },
-            'C': { min: 0.15, max: 0.61 },
-            'D': { min: 0.13, max: 0.68 },
-            'E': { min: 0.29, max: 0.47 },
-            'F': { min: 0.34, max: 0.44 },
-            'G': { min: 0.64, max: 0.78 },
-            'H': { min: 0.29, max: 0.64 },
-            'I': { min: 0.36, max: 0.69 },
-            'J': { min: 0.36, max: 0.73 },
-            'K': { min: 0.50, max: 0.72 },
-            'L': { min: 0.46, max: 0.86 },
-            'M': { min: 0.50, max: 0.99 },
-            'N': { min: 0.44, max: 0.57 },
-            'O': { min: 0.54, max: 0.66 },
-            'Q': { min: 0.27, max: 0.82 },
-            'R': { min: 0.20, max: 0.60 },
-            'S': { min: 0.21, max: 0.57 },
+            'A': { min: 0.51, max: 0.94 }, 'B': { min: 0.28, max: 0.81 },
+            'C': { min: 0.15, max: 0.61 }, 'D': { min: 0.13, max: 0.68 },
+            'E': { min: 0.29, max: 0.47 }, 'F': { min: 0.34, max: 0.44 },
+            'G': { min: 0.64, max: 0.78 }, 'H': { min: 0.29, max: 0.64 },
+            'I': { min: 0.36, max: 0.69 }, 'J': { min: 0.36, max: 0.73 },
+            'K': { min: 0.50, max: 0.72 }, 'L': { min: 0.46, max: 0.86 },
+            'M': { min: 0.50, max: 0.99 }, 'N': { min: 0.44, max: 0.57 },
+            'O': { min: 0.54, max: 0.66 }, 'Q': { min: 0.27, max: 0.82 },
+            'R': { min: 0.20, max: 0.60 }, 'S': { min: 0.21, max: 0.57 },
             'T': { min: 0.30, max: 0.69 }
         };
 
-        let lastCalculatedData = null;
-        let processedBulkData = [];
-        let expenseChart = null;
+        let currentData = null;
+        let pendingAdjustments = null;
 
-        window.addEventListener('DOMContentLoaded', () => {
-            initChart();
-            onCategoryChange();
-        });
-
-        function initChart() {
-            const ctx = document.getElementById('expenseChart').getContext('2d');
-            expenseChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['26a. Upah/Gaji', '26b. Biaya Produksi', '26c. Barang Terjual', '26d. Operasional', '26e. Non-Operasional'],
-                    datasets: [{
-                        data: [0, 0, 0, 0, 0],
-                        backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899'],
-                        borderWidth: 2,
-                        borderColor: '#0f172a'
-                    }]
-                },
-                options: {
-                    cutout: '72%',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `${context.label}: ${context.raw.toFixed(1)}%`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function switchTab(tab) {
-            if (tab === 'single') {
-                document.getElementById('tab-single').classList.remove('hidden');
-                document.getElementById('tab-bulk').classList.add('hidden');
-                document.getElementById('btn-tab-single').className = 'px-4 py-1.5 bg-indigo-600 text-white font-medium rounded-xl text-xs shadow-sm transition-all cursor-pointer';
-                document.getElementById('btn-tab-bulk').className = 'px-4 py-1.5 text-slate-300 font-medium rounded-xl text-xs hover:text-white transition-all cursor-pointer';
-            } else {
-                document.getElementById('tab-single').classList.add('hidden');
-                document.getElementById('tab-bulk').classList.remove('hidden');
-                document.getElementById('btn-tab-bulk').className = 'px-4 py-1.5 bg-indigo-600 text-white font-medium rounded-xl text-xs shadow-sm transition-all cursor-pointer';
-                document.getElementById('btn-tab-single').className = 'px-4 py-1.5 text-slate-300 font-medium rounded-xl text-xs hover:text-white transition-all cursor-pointer';
-            }
-        }
-
-        function formatRupiah(angka) {
-            if (isNaN(angka)) return 'Rp 0';
-            return 'Rp ' + Math.round(angka).toLocaleString('id-ID');
-        }
-
-        function parseNumber(val) {
-            if (!val) return 0;
-            const clean = val.toString().replace(/[^0-9]/g, '');
-            return clean === '' ? 0 : parseFloat(clean);
-        }
-
-        function formatAndCalculate(input) {
+        function formatAndCalc(input) {
             let val = input.value.replace(/[^0-9]/g, '');
-            if (val !== '') {
-                input.value = parseInt(val, 10).toLocaleString('id-ID');
-            } else {
-                input.value = '';
-            }
+            input.value = val ? parseInt(val, 10).toLocaleString('id-ID') : '';
             calculateNTB();
         }
 
-        function copyFieldValue(fieldId) {
-            const input = document.getElementById(fieldId);
-            const valToCopy = input.value !== '' ? input.value : '0';
-            navigator.clipboard.writeText(valToCopy);
-            
-            const btn = input.nextElementSibling;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = 'Disalin';
-            setTimeout(() => { btn.innerHTML = originalText; }, 1000);
+        function getNum(id) {
+            let val = document.getElementById(id).value.replace(/[^0-9]/g, '');
+            return val ? parseFloat(val) : 0;
         }
 
-        function resetFormFields() {
-            ['val-26a', 'val-26b', 'val-26c', 'val-26d', 'val-26e', 'val-27a', 'val-27b'].forEach(id => {
+        function toRp(num) {
+            return Math.round(num).toLocaleString('id-ID');
+        }
+
+        function copyVal(id, btn) {
+            let val = document.getElementById(id).value || '0';
+            navigator.clipboard.writeText(val);
+            let oriText = btn.innerText;
+            btn.innerText = 'Tersalin';
+            setTimeout(() => { btn.innerText = oriText; }, 1000);
+        }
+
+        function resetForm() {
+            ['val-26a','val-26b','val-26c','val-26d','val-26e','val-27a','val-27b'].forEach(id => {
                 document.getElementById(id).value = '';
             });
             document.getElementById('is-year-2026').checked = false;
             calculateNTB();
-            document.getElementById('copy-instruction-banner').classList.add('hidden');
         }
 
         function onCategoryChange() {
             const cat = document.getElementById('kbli-category').value;
-            const info = document.getElementById('kbli-range-info');
-            const formContainer = document.getElementById('form-container');
-            const checkbox2026 = document.getElementById('is-year-2026');
+            const info = document.getElementById('kbli-info');
+            const mainForms = document.getElementById('main-forms');
+            const toggle = document.getElementById('is-year-2026');
             
             if (cat && kbliLimits[cat]) {
-                info.textContent = `Rentang Wajar: MIN = ${kbliLimits[cat].min} | MAX = ${kbliLimits[cat].max}`;
-                formContainer.classList.remove('opacity-40', 'pointer-events-none');
-                checkbox2026.disabled = false;
+                const limit = kbliLimits[cat];
+                const minPct = (limit.min * 100).toFixed(0);
+                const maxPct = (limit.max * 100).toFixed(0);
+                const targetPct = ((limit.max - 0.01) * 100).toFixed(2);
+                
+                info.innerText = `Rentang aman: ${minPct}% - ${maxPct}%. (Target presisi: ${targetPct}%)`;
+                document.getElementById('res-target').innerText = targetPct + '%';
+                mainForms.classList.remove('disabled-area');
+                toggle.disabled = false;
+                document.getElementById('section-visual').style.display = 'block';
             } else {
-                info.textContent = 'Silakan pilih Kategori KBLI terlebih dahulu untuk membuka form pengisian.';
-                formContainer.classList.add('opacity-40', 'pointer-events-none');
-                checkbox2026.disabled = true;
-                checkbox2026.checked = false;
+                info.innerText = 'Pilih Kategori KBLI terlebih dahulu untuk memulai.';
+                document.getElementById('res-target').innerText = '-';
+                mainForms.classList.add('disabled-area');
+                toggle.disabled = true;
+                toggle.checked = false;
+                document.getElementById('section-visual').style.display = 'none';
             }
             calculateNTB();
         }
 
         function calculateNTB() {
             const cat = document.getElementById('kbli-category').value;
-            const is2026 = document.getElementById('is-year-2026').checked;
-            const multiplier = is2026 ? 12 : 1;
+            if (!cat) return;
 
-            const v26a = parseNumber(document.getElementById('val-26a').value) * multiplier;
-            const v26b = parseNumber(document.getElementById('val-26b').value) * multiplier;
-            const v26c = parseNumber(document.getElementById('val-26c').value) * multiplier;
-            const v26d = parseNumber(document.getElementById('val-26d').value) * multiplier;
-            const v26e = parseNumber(document.getElementById('val-26e').value) * multiplier;
+            const isTahunan = document.getElementById('is-year-2026').checked;
+            const multiplier = isTahunan ? 12 : 1;
 
-            const v27a = parseNumber(document.getElementById('val-27a').value) * multiplier;
-            const v27b = parseNumber(document.getElementById('val-27b').value) * multiplier;
+            const v26a = getNum('val-26a') * multiplier;
+            const v26b = getNum('val-26b') * multiplier;
+            const v26c = getNum('val-26c') * multiplier;
+            const v26d = getNum('val-26d') * multiplier;
+            const v26e = getNum('val-26e') * multiplier;
+            const v27a = getNum('val-27a') * multiplier;
+            const v27b = getNum('val-27b') * multiplier;
 
-            const note26c = document.getElementById('note-26c');
+            const totKeluar = v26a + v26b + v26c + v26d + v26e;
+            const totDapat = v27a + v27b;
             
-            if (cat === 'G') {
-                note26c.classList.remove('hidden');
-                if (v27a > 0) {
-                    let pct26c = v26c / v27a;
-                    if (v26c <= 0) {
-                        note26c.textContent = "Peringatan: Untuk Perdagangan (Kategori G), rincian 26c wajib diisi.";
-                        note26c.className = "text-[11px] text-rose-500 mt-1 font-medium";
-                    } else if (pct26c < 0.60 || pct26c > 0.80) {
-                        note26c.textContent = `Perhatian: Proporsi 26c saat ini ${(pct26c * 100).toFixed(1)}% dari omzet.`;
-                        note26c.className = "text-[11px] text-amber-600 mt-1 font-medium";
-                    } else {
-                        note26c.textContent = `Proporsi 26c ideal (${(pct26c * 100).toFixed(1)}% dari omzet).`;
-                        note26c.className = "text-[11px] text-emerald-600 mt-1 font-medium";
-                    }
-                } else {
-                    note26c.textContent = "Peringatan: Khusus Kategori G, rincian 26c wajib diisi.";
-                    note26c.className = "text-[11px] text-amber-600 mt-1 font-medium";
-                }
+            document.getElementById('tot-pengeluaran').value = toRp(totKeluar / multiplier);
+            document.getElementById('tot-pendapatan').value = toRp(totDapat / multiplier);
+
+            if (totKeluar > 0) {
+                const setProp = (id, val) => {
+                    let pct = (val / totKeluar) * 100;
+                    document.getElementById(`bar-${id}`).style.width = `${pct}%`;
+                    document.getElementById(`pct-${id}`).innerText = `${pct.toFixed(0)}%`;
+                };
+                setProp('26a', v26a); setProp('26b', v26b); setProp('26c', v26c);
+                setProp('26d', v26d); setProp('26e', v26e);
             } else {
-                note26c.classList.add('hidden');
-            }
-
-            const totalPengeluaran = v26a + v26b + v26c + v26d + v26e;
-            const totalPendapatan = v27a + v27b;
-
-            document.getElementById('total-pengeluaran').value = formatRupiah(totalPengeluaran / multiplier);
-            document.getElementById('total-pendapatan').value = formatRupiah(totalPendapatan / multiplier);
-
-            if (expenseChart) {
-                let p26a = totalPengeluaran > 0 ? (v26a / totalPengeluaran) * 100 : 0;
-                let p26b = totalPengeluaran > 0 ? (v26b / totalPengeluaran) * 100 : 0;
-                let p26c = totalPengeluaran > 0 ? (v26c / totalPengeluaran) * 100 : 0;
-                let p26d = totalPengeluaran > 0 ? (v26d / totalPengeluaran) * 100 : 0;
-                let p26e = totalPengeluaran > 0 ? (v26e / totalPengeluaran) * 100 : 0;
-
-                expenseChart.data.datasets[0].data = [p26a, p26b, p26c, p26d, p26e];
-                expenseChart.update();
-
-                document.getElementById('pct-26a').textContent = p26a.toFixed(1) + '%';
-                document.getElementById('pct-26b').textContent = p26b.toFixed(1) + '%';
-                document.getElementById('pct-26c').textContent = p26c.toFixed(1) + '%';
-                document.getElementById('pct-26d').textContent = p26d.toFixed(1) + '%';
-                document.getElementById('pct-26e').textContent = p26e.toFixed(1) + '%';
+                ['26a','26b','26c','26d','26e'].forEach(id => {
+                    document.getElementById(`bar-${id}`).style.width = '0%';
+                    document.getElementById(`pct-${id}`).innerText = '0%';
+                });
             }
 
             const omzet = v27a + v27b;
             const output = omzet - v26c;
-            const nilaiTambah = output - v26b - v26d;
-            const rasioNtb = output > 0 ? nilaiTambah / output : 0;
+            const biayaAntara = v26b + v26d;
+            const ntb = output - biayaAntara;
+            const rasio = output > 0 ? (ntb / output) : 0;
+            const rasioPct = rasio * 100;
 
-            document.getElementById('res-output').textContent = formatRupiah(output);
-            document.getElementById('res-ntb').textContent = formatRupiah(nilaiTambah);
-            document.getElementById('res-rasio').textContent = rasioNtb.toFixed(4);
-            
-            if(cat && kbliLimits[cat]) {
-                document.getElementById('res-rentang').textContent = `${kbliLimits[cat].min} - ${kbliLimits[cat].max}`;
-            } else {
-                document.getElementById('res-rentang').textContent = '-';
-            }
+            document.getElementById('res-output').innerText = 'Rp ' + toRp(output);
+            document.getElementById('res-ntb').innerText = 'Rp ' + toRp(ntb);
+            document.getElementById('res-rasio').innerText = rasioPct.toFixed(2) + '%';
 
+            currentData = { cat, v26d, v26c, v27b, output, ntb, rasio, biayaAntara, multiplier };
+
+            const limits = kbliLimits[cat];
             const badge = document.getElementById('badge-status');
-            const recText = document.getElementById('recommendation-text');
-            const btnApply = document.getElementById('btn-apply-adj');
+            const btn = document.getElementById('btn-adjust');
 
-            lastCalculatedData = { cat, v26a, v26b, v26c, v26d, v26e, v27a, v27b, omzet, output, nilaiTambah, rasioNtb, multiplier };
-
-            if (!cat) {
-                badge.className = 'px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase bg-slate-800 text-slate-300';
-                badge.textContent = 'Pilih KBLI';
-                recText.textContent = 'Pilih Kategori KBLI terlebih dahulu di atas.';
-                btnApply.classList.add('hidden');
+            if (totKeluar === 0 && totDapat === 0) {
+                badge.className = 'badge badge-default';
+                badge.innerHTML = 'Menunggu input...';
+                btn.classList.add('hidden');
                 return;
             }
 
-            const limits = kbliLimits[cat];
-
-            if (rasioNtb >= limits.min && rasioNtb <= limits.max) {
-                badge.className = 'px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase bg-emerald-900/80 text-emerald-200 border border-emerald-700';
-                badge.textContent = 'Ideal (Dalam Rentang)';
-                recText.textContent = `Rasio NTB (${rasioNtb.toFixed(4)}) sudah berada di dalam rentang wajar (${limits.min} - ${limits.max}).`;
-                btnApply.classList.add('hidden');
-            } else if (rasioNtb < limits.min) {
-                badge.className = 'px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase bg-amber-900/80 text-amber-200 border border-amber-700';
-                badge.textContent = 'Di Bawah Minimum (Defisit)';
-                recText.textContent = `Rasio NTB di bawah minimum (${rasioNtb.toFixed(4)} < ${limits.min}). Klik tombol untuk menyesuaikan Pendapatan Usaha (Omzet) dan mengunci NTB.`;
-                btnApply.classList.remove('hidden');
+            if (rasio >= limits.min && rasio <= limits.max) {
+                badge.className = 'badge badge-ideal';
+                badge.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Rasio Aman (Ideal)';
+                btn.classList.add('hidden');
+            } else if (rasio < limits.min) {
+                badge.className = 'badge badge-defisit';
+                badge.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 19 19 12"></polyline></svg> Rasio Under (Defisit)';
+                btn.classList.remove('hidden');
             } else {
-                badge.className = 'px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase bg-rose-900/80 text-rose-200 border border-rose-700';
-                badge.textContent = 'Di Atas Maksimum (Surplus)';
-                recText.textContent = `Rasio NTB di atas maksimum (${rasioNtb.toFixed(4)} > ${limits.max}). Klik tombol untuk menyesuaikan rincian 26c dan mengunci NTB (NTB sesudah >= NTB sebelum).`;
-                btnApply.classList.remove('hidden');
+                badge.className = 'badge badge-surplus';
+                badge.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 5 5 12"></polyline></svg> Rasio Over (Surplus)';
+                btn.classList.remove('hidden');
             }
+        }
+
+        function prepareAdjustment() {
+            if (!currentData) return;
+            let { cat, v26d, v26c, v27b, output, ntb, rasio, biayaAntara, multiplier } = currentData;
+            const limits = kbliLimits[cat];
+            
+            const targetRasio = limits.max - 0.01;
+            const targetPct = targetRasio * 100;
+            const rasioAwalPct = rasio * 100;
+            const omzetLama = getNum('val-27a') * multiplier;
+
+            pendingAdjustments = { 
+                kasus: rasio < limits.min ? 'UNDER' : 'OVER',
+                omzetBaru: omzetLama, 
+                v26dBaru: v26d,
+                ntbBaru: 0,
+                rasioBaruPct: targetPct
+            };
+
+            let tbodyHtml = '';
+
+            if (rasio < limits.min) {
+                let targetOutput = biayaAntara / (1 - targetRasio);
+                pendingAdjustments.omzetBaru = targetOutput + v26c - v27b;
+                pendingAdjustments.ntbBaru = targetOutput - biayaAntara; 
+                
+                tbodyHtml = `
+                    <tr>
+                        <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dinaikkan proporsional</span></td>
+                        <td class="val-old">Rp ${toRp(omzetLama / multiplier)}</td>
+                        <td class="val-new">Rp ${toRp(pendingAdjustments.omzetBaru / multiplier)}</td>
+                    </tr>
+                    <tr>
+                        <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Otomatis menyesuaikan</span></td>
+                        <td class="val-old">Rp ${toRp(ntb)}</td>
+                        <td class="val-new">Rp ${toRp(pendingAdjustments.ntbBaru)}</td>
+                    </tr>
+                `;
+            } else {
+                let targetOutput = ntb / targetRasio;
+                pendingAdjustments.omzetBaru = targetOutput + v26c - v27b;
+                let selisihOutput = targetOutput - output;
+                
+                if(selisihOutput > 0) pendingAdjustments.v26dBaru = v26d + selisihOutput;
+                pendingAdjustments.ntbBaru = ntb; 
+
+                tbodyHtml = `
+                    <tr>
+                        <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Diekspansi untuk menekan rasio</span></td>
+                        <td class="val-old">Rp ${toRp(omzetLama / multiplier)}</td>
+                        <td class="val-new">Rp ${toRp(pendingAdjustments.omzetBaru / multiplier)}</td>
+                    </tr>
+                    <tr>
+                        <td>Biaya Operasional (26d)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Menyerap selisih demi mengunci NTB</span></td>
+                        <td class="val-old">Rp ${toRp(v26d / multiplier)}</td>
+                        <td class="val-new">Rp ${toRp(pendingAdjustments.v26dBaru / multiplier)}</td>
+                    </tr>
+                    <tr>
+                        <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Terkunci absolut / Tidak berkurang</span></td>
+                        <td class="val-old">Rp ${toRp(ntb)}</td>
+                        <td class="val-lock">Rp ${toRp(pendingAdjustments.ntbBaru)}</td>
+                    </tr>
+                `;
+            }
+
+            tbodyHtml += `
+                <tr style="background: rgba(14, 165, 233, 0.05);">
+                    <td style="font-weight:700; color:var(--primary);">Rasio Evaluasi</td>
+                    <td class="val-old">${rasioAwalPct.toFixed(2)}%</td>
+                    <td class="val-new">${targetPct.toFixed(2)}%</td>
+                </tr>
+            `;
+
+            document.getElementById('modal-tbody').innerHTML = tbodyHtml;
+            document.getElementById('adjust-modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('adjust-modal').classList.remove('active');
+            pendingAdjustments = null;
         }
 
         function applyAdjustment() {
-            if (!lastCalculatedData) return;
-            let { cat, v26c, v27a, v27b, nilaiTambah, rasioNtb, multiplier } = lastCalculatedData;
-            const limits = kbliLimits[cat];
+            if (!pendingAdjustments || !currentData) return;
+            const mult = currentData.multiplier;
+
+            document.getElementById('val-27a').value = toRp(pendingAdjustments.omzetBaru / mult);
             
-            // Target Rasio Presisi: MAX - 0.01
-            const targetRasio = limits.max - 0.01;
-
-            if (rasioNtb < limits.min) {
-                // KASUS DEFISIT: Naikkan NTB secara rasional & sesuaikan Omzet 27a
-                let ntbTargetBaru = Math.max(nilaiTambah * 1.15, nilaiTambah + (500000 * multiplier));
-                let targetOutput = ntbTargetBaru / targetRasio;
-                let omzetBaru = targetOutput + v26c - v27b;
-
-                document.getElementById('val-27a').value = Math.round(omzetBaru / multiplier).toLocaleString('id-ID');
-
-            } else {
-                // KASUS SURPLUS: Lock NTB (NTB sesudah >= NTB sebelum), adjust rincian 26c
-                let ntbTargetBaru = nilaiTambah;
-                let omzetAktual = v27a + v27b;
-                let targetOutputBaru = ntbTargetBaru / targetRasio;
-                let rekomendasi26c = omzetAktual - targetOutputBaru;
-
-                if (cat === 'G') {
-                    let min26c = omzetAktual * 0.40;
-                    rekomendasi26c = Math.max(rekomendasi26c, min26c);
-                } else {
-                    rekomendasi26c = Math.max(rekomendasi26c, 0);
-                }
-
-                document.getElementById('val-26c').value = Math.round(rekomendasi26c / multiplier).toLocaleString('id-ID');
+            if(pendingAdjustments.kasus === 'OVER') {
+                document.getElementById('val-26d').value = toRp(pendingAdjustments.v26dBaru / mult);
             }
 
-            calculateNTB();
-
-            const banner = document.getElementById('copy-instruction-banner');
-            banner.classList.remove('hidden');
-            banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        function downloadTemplate() {
-            const ws_data = [
-                ["Nama Usaha", "Kategori KBLI (A-T)", "Mulai 2026 (1=Ya, 0=Tidak)", "26a_Gaji", "26b_Prod", "26c_Jual", "26d_Ops", "26e_NonOps", "27a_Omzet", "27b_PendLain"],
-                ["Toko Makmur", "G", 0, 5000000, 10000000, 25000000, 2000000, 500000, 45000000, 0],
-                ["CV Konstruksi", "F", 1, 1500000, 3000000, 0, 1000000, 200000, 12000000, 0]
-            ];
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.aoa_to_sheet(ws_data);
-            XLSX.utils.book_append_sheet(wb, ws, "Template_NTB");
-            XLSX.writeFile(wb, "Template_Kalkulator_NTB.xlsx");
-        }
-
-        function processExcel(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-                processedBulkData = [];
-                const tbody = document.getElementById('bulk-table-body');
-                tbody.innerHTML = '';
-
-                for (let i = 1; i < rows.length; i++) {
-                    const r = rows[i];
-                    if (!r || r.length < 10) continue;
-
-                    const nama = r[0] || `Usaha ${i}`;
-                    const cat = (r[1] || '').toString().toUpperCase().trim();
-                    const is2026 = Number(r[2]) === 1;
-                    const mult = is2026 ? 12 : 1;
-
-                    const v26a = Number(r[3] || 0) * mult;
-                    const v26b = Number(r[4] || 0) * mult;
-                    let v26c = Number(r[5] || 0) * mult;
-                    const v26d = Number(r[6] || 0) * mult;
-                    const v26e = Number(r[7] || 0) * mult;
-                    let v27a = Number(r[8] || 0) * mult;
-                    const v27b = Number(r[9] || 0) * mult;
-
-                    const omzet = v27a + v27b;
-                    const output = omzet - v26c;
-                    const ntbAwal = output - v26b - v26d;
-                    const rasioAwal = output > 0 ? ntbAwal / output : 0;
-
-                    let statusAwal = 'Valid';
-                    let rasioAkhir = rasioAwal;
-                    let statusAkhir = 'Sesuai';
-
-                    if (!kbliLimits[cat]) {
-                        statusAwal = 'KBLI Tidak Valid';
-                        statusAkhir = 'Gagal';
-                    } else {
-                        const limits = kbliLimits[cat];
-                        if (rasioAwal < limits.min || rasioAwal > limits.max) {
-                            const targetRasio = limits.max - 0.01;
-                            if (rasioAwal < limits.min) {
-                                let ntbTargetBaru = Math.max(ntbAwal * 1.15, ntbAwal + (500000 * mult));
-                                let targetOutput = ntbTargetBaru / targetRasio;
-                                v27a = targetOutput + v26c - v27b;
-                            } else {
-                                let ntbTargetBaru = ntbAwal;
-                                let omzetAktual = v27a + v27b;
-                                let targetOutputBaru = ntbTargetBaru / targetRasio;
-                                v26c = Math.max(omzetAktual - targetOutputBaru, cat === 'G' ? omzetAktual * 0.40 : 0);
-                            }
-                            let finalOutput = ((v27a + v27b) - v26c);
-                            let finalNTB = finalOutput - v26b - v26d;
-                            rasioAkhir = finalOutput > 0 ? finalNTB / finalOutput : 0;
-                            statusAkhir = 'Disesuaikan (MAX-0.01)';
-                        }
-                    }
-
-                    processedBulkData.push({
-                        nama, cat, output, ntbAwal, rasioAwal, statusAwal, rasioAkhir, statusAkhir
-                    });
-
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50/80 transition";
-                    tr.innerHTML = `
-                        <td class="p-2.5 border-b text-slate-500">${i}</td>
-                        <td class="p-2.5 border-b font-medium text-slate-800">${nama}</td>
-                        <td class="p-2.5 border-b text-center font-bold text-slate-700">${cat}</td>
-                        <td class="p-2.5 border-b">${formatRupiah(output)}</td>
-                        <td class="p-2.5 border-b">${formatRupiah(ntbAwal)}</td>
-                        <td class="p-2.5 border-b font-semibold text-indigo-600">${rasioAwal.toFixed(4)}</td>
-                        <td class="p-2.5 border-b"><span class="px-2 py-0.5 rounded-lg text-[10px] font-bold ${statusAwal === 'Valid' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${statusAwal}</span></td>
-                        <td class="p-2.5 border-b font-semibold text-emerald-600">${rasioAkhir.toFixed(4)}</td>
-                        <td class="p-2.5 border-b"><span class="px-2 py-0.5 rounded-lg text-[10px] font-bold ${statusAkhir.includes('Disesuaikan') ? 'bg-amber-100 text-amber-700' : 'bg-indigo-100 text-indigo-700'}">${statusAkhir}</span></td>
-                    `;
-                    tbody.appendChild(tr);
-                }
-
-                document.getElementById('bulk-results-container').classList.remove('hidden');
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        function downloadResultExcel() {
-            if (processedBulkData.length === 0) return;
-            const ws_data = [
-                ["Nama Usaha", "Kategori", "Output", "NTB Awal", "Rasio Awal", "Status Awal", "Rasio Sesudah", "Status Akhir"]
-            ];
-            processedBulkData.forEach(d => {
-                ws_data.push([d.nama, d.cat, d.output, d.ntbAwal, d.rasioAwal, d.statusAwal, d.rasioAkhir, d.statusAkhir]);
-            });
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.aoa_to_sheet(ws_data);
-            XLSX.utils.book_append_sheet(wb, ws, "Hasil_Rekap_NTB");
-            XLSX.writeFile(wb, "Hasil_Rekapitulasi_NTB.xlsx");
+            closeModal();
+            calculateNTB(); 
         }
     </script>
 </body>
