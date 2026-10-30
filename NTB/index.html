@@ -291,7 +291,9 @@
                         <button class="btn-copy" onclick="copyVal('val-26b', this)">Salin</button>
                     </div>
                 </div>
-                <div class="input-group">
+
+                <!-- Input HPP 26c: Dinamis Disembunyikan Jika Bukan KBLI G -->
+                <div class="input-group" id="group-26c" style="display: none;">
                     <label id="lbl-26c">26c. Biaya pembelian barang terjual</label>
                     <div class="currency-wrapper">
                         <span class="currency-symbol">Rp</span>
@@ -299,6 +301,7 @@
                         <button class="btn-copy" onclick="copyVal('val-26c', this)">Salin</button>
                     </div>
                 </div>
+
                 <div class="input-group">
                     <label id="lbl-26d">26d. Biaya operasional</label>
                     <div class="currency-wrapper">
@@ -402,7 +405,7 @@
             <div class="legend-grid">
                 <div class="legend-item"><div class="dot" style="background: var(--success);"></div>Gaji: <strong id="pct-26a">0%</strong></div>
                 <div class="legend-item"><div class="dot" style="background: var(--primary);"></div>Produksi: <strong id="pct-26b">0%</strong></div>
-                <div class="legend-item"><div class="dot" style="background: var(--warning);"></div>Barang Terjual: <strong id="pct-26c">0%</strong></div>
+                <div class="legend-item" id="legend-26c" style="display: none;"><div class="dot" style="background: var(--warning);"></div>Barang Terjual: <strong id="pct-26c">0%</strong></div>
                 <div class="legend-item"><div class="dot" style="background: #8b5cf6;"></div>Operasional: <strong id="pct-26d">0%</strong></div>
                 <div class="legend-item"><div class="dot" style="background: #ec4899;"></div>Non-Ops: <strong id="pct-26e">0%</strong></div>
             </div>
@@ -606,7 +609,12 @@
 
                 setAndFormat('val-26a', extractRealValue("26\\.\\s*a\\.", "30\\.\\s*a\\."));
                 setAndFormat('val-26b', extractRealValue("26\\.\\s*b\\.", "30\\.\\s*b\\."));
-                setAndFormat('val-26c', extractRealValue("26\\.\\s*c\\.", "30\\.\\s*c\\."));
+                
+                // Hanya update 26c jika sedang di Kategori G
+                if (document.getElementById('kbli-category').value === 'G') {
+                    setAndFormat('val-26c', extractRealValue("26\\.\\s*c\\.", "30\\.\\s*c\\."));
+                }
+                
                 setAndFormat('val-26d', extractRealValue("26\\.\\s*d\\.", "30\\.\\s*d\\."));
                 setAndFormat('val-26e', extractRealValue("26\\.\\s*e\\.", "30\\.\\s*e\\."));
                 setAndFormat('val-27a', extractRealValue("27\\.\\s*a\\.", "31\\.\\s*a\\."));
@@ -666,6 +674,20 @@
             const mainForms = document.getElementById('main-forms');
             const toggle = document.getElementById('is-year-2026');
             
+            // LOGIKA SMART HIDE UNTUK 26c
+            const group26c = document.getElementById('group-26c');
+            const legend26c = document.getElementById('legend-26c');
+            const input26c = document.getElementById('val-26c');
+
+            if (cat === 'G') {
+                group26c.style.display = 'block';
+                legend26c.style.display = 'flex';
+            } else {
+                group26c.style.display = 'none';
+                input26c.value = ''; // Paksa kosong agar perhitungan aman
+                legend26c.style.display = 'none';
+            }
+            
             if (cat && kbliLimits[cat]) {
                 const limit = kbliLimits[cat];
                 const minPct = (limit.min * 100).toFixed(0);
@@ -703,7 +725,8 @@
 
             const v26a = getNum('val-26a') * multiplier;
             const v26b = getNum('val-26b') * multiplier;
-            const v26c = getNum('val-26c') * multiplier;
+            // Jika KBLI bukan G, paksa v26c menjadi 0 untuk keamanan perhitungan
+            const v26c = cat === 'G' ? (getNum('val-26c') * multiplier) : 0;
             const v26d = getNum('val-26d') * multiplier;
             const v26e = getNum('val-26e') * multiplier;
             const v27a = getNum('val-27a') * multiplier;
@@ -721,7 +744,8 @@
                     document.getElementById(`bar-${id}`).style.width = `${pct}%`;
                     document.getElementById(`pct-${id}`).innerText = `${pct.toFixed(0)}%`;
                 };
-                setProp('26a', v26a); setProp('26b', v26b); setProp('26c', v26c);
+                setProp('26a', v26a); setProp('26b', v26b); 
+                if(cat === 'G') setProp('26c', v26c);
                 setProp('26d', v26d); setProp('26e', v26e);
             } else {
                 ['26a','26b','26c','26d','26e'].forEach(id => {
@@ -802,39 +826,42 @@
             document.getElementById('modal-kbli-label').innerHTML = `${displayBizName} &nbsp;<span class="chip-kbli">${selectEl.options[selectEl.selectedIndex].text}</span>`;
 
             const limits = kbliLimits[cat];
-            
-            let omzetBaru, v26cBaru, v26bBaru, v26dBaru, targetNTB, targetRasio;
             let isUnder = rasio < limits.min;
+            let targetRasio;
+            
+            // Dynamic Targeting: Bidik batas yang relevan agar beban penyesuaian minimal
+            if (isUnder) {
+                targetRasio = limits.min + (0.005 + Math.random() * 0.015);
+            } else {
+                targetRasio = limits.max - (0.005 + Math.random() * 0.015);
+            }
+            targetRasio = Math.max(limits.min + 0.001, Math.min(limits.max - 0.001, targetRasio));
+            
+            let targetNTB = ntb > 0 ? ntb * (1.10 + (Math.random() * 0.10)) : (1000000 * multiplier);
+            
+            let omzetBaru = v27a;
+            let v26cBaru = v26c;
+            let v26bBaru = v26b;
+            let v26dBaru = v26d;
 
             if (isUnder) {
                 // ==========================================
                 // SKENARIO 1: RASIO UNDER (DEFISIT)
                 // ==========================================
-                // Bidik batas rasio BAWAH agar kita tidak perlu mencekik 26d.
-                targetRasio = limits.min + (0.005 + Math.random() * 0.015);
-                targetRasio = Math.min(targetRasio, limits.max - 0.01);
-                
-                // 1. KUNCI pengeluaran asli: Biaya produksi (26b) tetap mutlak.
                 v26bBaru = v26b;
-                
-                // 2. PERTAHANKAN operasional (26d): dinaikkan sangat tipis agar terlihat natural (tidak di-Nol-kan)
                 v26dBaru = v26d > 0 ? v26d * (1.02 + Math.random() * 0.05) : 0;
                 
-                // Fallback ekstrem jika ternyata keduanya kosong
                 if (v26dBaru === 0 && v26bBaru === 0) v26dBaru = 100000 * multiplier;
                 
                 let biayaAntaraBaru = v26bBaru + v26dBaru;
-                
-                // 3. KALKULASI OUTPUT: Hitung berapa target Output yg dibutuhkan untuk mencapai rasio batas bawah
                 let targetOutput = biayaAntaraBaru / (1 - targetRasio);
                 targetNTB = targetOutput - biayaAntaraBaru;
                 
-                // 4. BENTUK OMZET & HPP
-                if (cat === 'C') {
-                    v26cBaru = 0;
-                } else {
+                if (cat === 'G') {
                     let microGrowth = 1.02 + (Math.random() * 0.06); 
                     v26cBaru = v26c > 0 ? v26c * microGrowth : targetOutput * 0.05; 
+                } else {
+                    v26cBaru = 0; // Pastikan Non-G selalu 0
                 }
                 
                 omzetBaru = targetOutput + v26cBaru;
@@ -843,37 +870,28 @@
                 // ==========================================
                 // SKENARIO 2: RASIO OVER (SURPLUS) / IDEAL
                 // ==========================================
-                // Bidik batas rasio ATAS agar Output menjadi serendah mungkin (mengamankan Omzet)
-                targetRasio = limits.max - (0.005 + Math.random() * 0.015);
-                targetRasio = Math.max(limits.min + 0.01, targetRasio);
-                
-                // 1. NAIKKAN NTB secara absolut (Organik 10-20%)
-                targetNTB = ntb > 0 ? ntb * (1.10 + (Math.random() * 0.10)) : (1000000 * multiplier);
                 let targetOutput = targetNTB / targetRasio;
                 
-                // 2. BENTUK HPP & OMZET Minimum
-                if (cat === 'C') {
-                    v26cBaru = 0;
-                } else {
+                if (cat === 'G') {
                     let microGrowth = 1.02 + (Math.random() * 0.06); 
                     v26cBaru = v26c > 0 ? v26c * microGrowth : targetOutput * 0.05; 
+                } else {
+                    v26cBaru = 0; // Pastikan Non-G selalu 0
                 }
                 
                 omzetBaru = targetOutput + v26cBaru;
                 
-                // Jika omzet terhitung lebih rendah dari omzet awal, pertahankan omzet awal
                 if (omzetBaru < v27a) {
                     omzetBaru = v27a;
                     targetOutput = omzetBaru - v26cBaru;
                     targetNTB = targetOutput * targetRasio;
                 }
                 
-                // 3. JADIKAN 26d SEBAGAI ABSORBER SELISIH
                 let biayaAntaraBaru = Math.max(0, targetOutput - targetNTB);
                 
                 if (cat === 'G' || cat === 'C') {
-                    v26bBaru = v26b; // Kunci 26b
-                    v26dBaru = Math.max(0, biayaAntaraBaru - v26bBaru); // 26d menyerap mutlak
+                    v26bBaru = v26b;
+                    v26dBaru = Math.max(0, biayaAntaraBaru - v26bBaru); 
                 } else {
                     let totLama = v26b + v26d;
                     if (totLama > 0) {
@@ -901,10 +919,8 @@
             const l_26c = multiplier === 12 ? '30c' : '26c';
             const l_26d = multiplier === 12 ? '30d' : '26d';
 
-            // Narasi Dinamis Berdasarkan Kondisi Under/Over
             let descOmzet = isUnder ? "Dinaikkan wajar untuk mengimbangi defisit rasio" : "Dipertahankan pada batas natural minimum";
             let desc26b = isUnder ? "Dipertahankan (Terkunci pada profil asli)" : "Terkunci pada profil asli";
-            let desc26c = "HPP dinaikkan tipis (Micro-adjustment)";
             let desc26d = isUnder ? "Dipertahankan (Naik tipis organik)" : "Penyelamat rasio (Spons Absorber)";
             let descNTB = isUnder ? "Disesuaikan otomatis mengimbangi rasio" : "Naik absolut organik (10-20%)";
 
@@ -928,10 +944,11 @@
                 `;
             }
 
-            if (cat === 'G' || Math.round(pendingAdjustments.v26cBaru) !== Math.round(v26c)) {
+            // HANYA RENDER BARIS 26C JIKA KBLI G
+            if (cat === 'G') {
                 tbodyHtml += `
                     <tr>
-                        <td>Pembelian Terjual (${l_26c})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">${desc26c}</span>${isBulananText}</td>
+                        <td>Pembelian Terjual (${l_26c})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">HPP dinaikkan tipis (Micro-adjustment)</span>${isBulananText}</td>
                         <td class="val-old">Rp ${toRp(v26c / multiplier)}</td>
                         <td>${buildAdjustedCell(Math.round(pendingAdjustments.v26cBaru / multiplier), false, multiplier)}</td>
                     </tr>
@@ -981,7 +998,12 @@
 
             document.getElementById('val-27a').value = toRp(pendingAdjustments.omzetBaru / mult);
             document.getElementById('val-26b').value = toRp(pendingAdjustments.v26bBaru / mult);
-            document.getElementById('val-26c').value = toRp(pendingAdjustments.v26cBaru / mult);
+            
+            // Terapkan kembali 26c HANYA jika KBLI G
+            if (currentData.cat === 'G') {
+                document.getElementById('val-26c').value = toRp(pendingAdjustments.v26cBaru / mult);
+            }
+            
             document.getElementById('val-26d').value = toRp(pendingAdjustments.v26dBaru / mult);
 
             closeModal();
