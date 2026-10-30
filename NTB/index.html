@@ -370,7 +370,7 @@
                             <span class="stat-value text-highlight" id="res-rasio">0.00%</span>
                         </div>
                         <div class="stat-box">
-                            <span class="stat-label">Target (MAX - 1%)</span>
+                            <span class="stat-label">Target (Median KBLI)</span>
                             <span class="stat-value" id="res-target" style="color:var(--text-muted);">-</span>
                         </div>
                     </div>
@@ -413,7 +413,7 @@
             </div>
             <div class="modal-body">
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6;" id="modal-desc">
-                    Berikut simulasi perubahan agar rasio mendarat di <strong style="color:var(--primary)">MAX - 1%</strong> tanpa menurunkan NTB awal. Salin nominal di bawah ini, atau klik Terapkan.
+                    Berikut simulasi perubahan NTB (naik organik 10-20%) agar rasio mendarat di <strong>tengah rentang aman</strong>. Salin nominal mentah di bawah ini, atau klik Terapkan.
                 </p>
                 
                 <div style="overflow-x: auto;">
@@ -600,14 +600,6 @@
             return Math.round(num).toLocaleString('id-ID');
         }
 
-        function copyVal(id, btn) {
-            let val = document.getElementById(id).value || '0';
-            navigator.clipboard.writeText(val.replace(/\./g, ''));
-            let oriText = btn.innerText;
-            btn.innerText = 'Tersalin';
-            setTimeout(() => { btn.innerText = oriText; }, 1000);
-        }
-
         function copyRawText(text, btn) {
             navigator.clipboard.writeText(text);
             let ori = btn.innerText;
@@ -633,10 +625,10 @@
                 const limit = kbliLimits[cat];
                 const minPct = (limit.min * 100).toFixed(0);
                 const maxPct = (limit.max * 100).toFixed(0);
-                const targetPct = ((limit.max - 0.01) * 100).toFixed(2);
+                const targetPct = (((limit.min + limit.max) / 2) * 100).toFixed(2);
                 
-                info.innerText = `Rentang aman: ${minPct}% - ${maxPct}%. (Target presisi: ${targetPct}%)`;
-                document.getElementById('res-target').innerText = targetPct + '%';
+                info.innerText = `Rentang aman: ${minPct}% - ${maxPct}%. (Median: ${targetPct}%)`;
+                document.getElementById('res-target').innerText = '~ ' + targetPct + '%';
                 mainForms.classList.remove('disabled-area');
                 toggle.disabled = false;
                 document.getElementById('section-visual').style.display = 'block';
@@ -698,7 +690,7 @@
             document.getElementById('res-ntb').innerText = 'Rp ' + toRp(ntb);
             document.getElementById('res-rasio').innerText = rasioPct.toFixed(2) + '%';
 
-            currentData = { cat, v26d, v26c, v27a, output, ntb, rasio, biayaAntara, multiplier };
+            currentData = { cat, v26b, v26d, v26c, v27a, output, ntb, rasio, biayaAntara, multiplier };
 
             const limits = kbliLimits[cat];
             const badge = document.getElementById('badge-status');
@@ -751,155 +743,139 @@
 
         function prepareAdjustment() {
             if (!currentData) return;
-            let { cat, v26d, v26c, v27a, output, ntb, rasio, biayaAntara, multiplier } = currentData;
+            let { cat, v26b, v26c, v26d, v27a, ntb, multiplier } = currentData;
             
             const selectEl = document.getElementById('kbli-category');
             document.getElementById('modal-kbli-label').innerHTML = `Untuk <span class="chip-kbli">${selectEl.options[selectEl.selectedIndex].text}</span>`;
 
             const limits = kbliLimits[cat];
-            const targetRasio = limits.max - 0.01;
-            const targetPct = targetRasio * 100;
-            const rasioAwalPct = rasio * 100;
             
-            const omzetLamaRaw = Math.round(v27a / multiplier);
+            // LOGIKA V6: TARGET RASIO MEDIAN + NTB NAIK 10-20%
+            let targetRasio = (limits.min + limits.max) / 2;
+            let jitter = (Math.random() * 0.02) - 0.01; 
+            targetRasio = Math.max(limits.min + 0.01, Math.min(limits.max - 0.01, targetRasio + jitter));
+            
+            let targetNTB = ntb > 0 ? ntb * (1.10 + (Math.random() * 0.10)) : (1000000 * multiplier);
+            
+            let omzetBaru = v27a;
+            let v26cBaru = v26c;
+            let v26bBaru = v26b;
+            let v26dBaru = v26d;
 
-            pendingAdjustments = { 
-                kasus: rasio < limits.min ? 'UNDER' : 'OVER',
-                omzetBaru: v27a, 
-                v26dBaru: v26d,
-                v26cBaru: v26c,
-                ntbBaru: 0,
-                rasioBaruPct: targetPct
-            };
-
-            let tbodyHtml = '';
-            const isBulananText = multiplier === 12 ? '<br><span style="font-size:0.65rem; color:var(--primary); font-weight:600;">(Angka Salin = 1 Bulan)</span>' : '';
-
-            if (rasio < limits.min) {
-                let targetOutput = biayaAntara / (1 - targetRasio);
+            if (cat === 'G') {
+                let targetOutput = targetNTB / targetRasio;
+                let asumsiMargin = 0.25 + (Math.random() * 0.05); 
+                let idealOmzet = targetOutput / asumsiMargin;
+                omzetBaru = Math.max(v27a, idealOmzet);
                 
-                pendingAdjustments.omzetBaru = targetOutput + v26c; 
-                pendingAdjustments.ntbBaru = targetOutput - biayaAntara; 
+                v26cBaru = Math.max(0, omzetBaru - targetOutput);
                 
-                let omzetBaruRaw = Math.round(pendingAdjustments.omzetBaru / multiplier);
-                let ntbBaruRaw = Math.round(pendingAdjustments.ntbBaru / multiplier); 
-
-                if (cat === 'G') {
-                    let asumsiMargin = 0.25;
-                    let targetTotalPendapatan = targetOutput / asumsiMargin;
-                    pendingAdjustments.omzetBaru = targetTotalPendapatan;
-                    pendingAdjustments.v26cBaru = targetTotalPendapatan - targetOutput;
-                    
-                    let cBaruRaw = Math.round(pendingAdjustments.v26cBaru / multiplier);
-                    omzetBaruRaw = Math.round(pendingAdjustments.omzetBaru / multiplier);
-
-                    tbodyHtml = `
-                        <tr>
-                            <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dinaikkan proporsional</span>${isBulananText}</td>
-                            <td class="val-old">Rp ${toRp(omzetLamaRaw)}</td>
-                            <td>${buildAdjustedCell(omzetBaruRaw, false, multiplier)}</td>
-                        </tr>
-                        <tr>
-                            <td>Pembelian Terjual (26c)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">HPP disesuaikan proporsional</span>${isBulananText}</td>
-                            <td class="val-old">Rp ${toRp(v26c / multiplier)}</td>
-                            <td>${buildAdjustedCell(cBaruRaw, false, multiplier)}</td>
-                        </tr>
-                        <tr>
-                            <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Otomatis naik menyesuaikan</span>${isBulananText}</td>
-                            <td class="val-old">Rp ${toRp(ntb / multiplier)}</td>
-                            <td>${buildAdjustedCell(ntbBaruRaw, true, multiplier)}</td>
-                        </tr>
-                    `;
+                let biayaAntaraBaru = Math.max(0, targetOutput - targetNTB);
+                let totLama = v26b + v26d;
+                if (totLama > 0) {
+                    v26bBaru = biayaAntaraBaru * (v26b / totLama);
+                    v26dBaru = biayaAntaraBaru * (v26d / totLama);
                 } else {
-                    tbodyHtml = `
-                        <tr>
-                            <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dinaikkan proporsional</span>${isBulananText}</td>
-                            <td class="val-old">Rp ${toRp(omzetLamaRaw)}</td>
-                            <td>${buildAdjustedCell(omzetBaruRaw, false, multiplier)}</td>
-                        </tr>
-                        <tr>
-                            <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Otomatis naik menyesuaikan</span>${isBulananText}</td>
-                            <td class="val-old">Rp ${toRp(ntb / multiplier)}</td>
-                            <td>${buildAdjustedCell(ntbBaruRaw, true, multiplier)}</td>
-                        </tr>
-                    `;
+                    v26dBaru = biayaAntaraBaru;
+                    v26bBaru = 0;
                 }
             } else {
-                let targetOutput = ntb / targetRasio;
-                let selisihOutput = targetOutput - output;
-                pendingAdjustments.ntbBaru = ntb;
-
-                if (cat === 'G') {
-                    let asumsiMargin = 0.25; 
-                    let targetOmzet = targetOutput / asumsiMargin; 
-                    
-                    pendingAdjustments.omzetBaru = targetOmzet;
-                    pendingAdjustments.v26cBaru = targetOmzet - targetOutput;
-                    if(selisihOutput > 0) pendingAdjustments.v26dBaru = v26d + selisihOutput;
-                    
-                    let omzetBaruRaw = Math.round(pendingAdjustments.omzetBaru / multiplier);
-                    let cBaruRaw = Math.round(pendingAdjustments.v26cBaru / multiplier);
-                    let opsBaruRaw = Math.round(pendingAdjustments.v26dBaru / multiplier);
-                    let ntbBaruRaw = Math.round(pendingAdjustments.ntbBaru / multiplier);
-
-                    tbodyHtml += `
-                        <tr>
-                            <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Diekspansi menekan rasio</span>${isBulananText}</td>
-                            <td class="val-old">Rp ${toRp(omzetLamaRaw)}</td>
-                            <td>${buildAdjustedCell(omzetBaruRaw, false, multiplier)}</td>
-                        </tr>
-                        <tr>
-                            <td>Pembelian Terjual (26c)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">HPP disesuaikan (Logika Trade)</span>${isBulananText}</td>
-                            <td class="val-old">Rp ${toRp(v26c / multiplier)}</td>
-                            <td>${buildAdjustedCell(cBaruRaw, false, multiplier)}</td>
-                        </tr>
-                        <tr>
-                            <td>Biaya Operasional (26d)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Amortisasi pengunci NTB</span>${isBulananText}</td>
-                            <td class="val-old">Rp ${toRp(v26d / multiplier)}</td>
-                            <td>${buildAdjustedCell(opsBaruRaw, false, multiplier)}</td>
-                        </tr>
-                        <tr>
-                            <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Terkunci mutlak / Tidak turun</span>${isBulananText}</td>
-                            <td class="val-old">Rp ${toRp(ntb / multiplier)}</td>
-                            <td>${buildAdjustedCell(ntbBaruRaw, true, multiplier)}</td>
-                        </tr>
-                    `;
-
+                let targetOutput = omzetBaru - v26c;
+                if (targetOutput <= 0) targetOutput = 10000 * multiplier;
+                
+                let tempRasio = targetNTB / targetOutput;
+                if (tempRasio > targetRasio) {
+                    targetOutput = targetNTB / targetRasio;
+                    omzetBaru = targetOutput + v26c;
+                } else if (tempRasio < limits.min) {
+                    targetNTB = targetOutput * targetRasio; 
+                }
+                
+                let biayaAntaraBaru = Math.max(0, targetOutput - targetNTB);
+                let totLama = v26b + v26d;
+                if (totLama > 0) {
+                    v26bBaru = biayaAntaraBaru * (v26b / totLama);
+                    v26dBaru = biayaAntaraBaru * (v26d / totLama);
                 } else {
-                    pendingAdjustments.omzetBaru = targetOutput + v26c;
-                    if(selisihOutput > 0) pendingAdjustments.v26dBaru = v26d + selisihOutput;
-                    
-                    let omzetBaruRaw = Math.round(pendingAdjustments.omzetBaru / multiplier);
-                    let opsBaruRaw = Math.round(pendingAdjustments.v26dBaru / multiplier);
-                    let ntbBaruRaw = Math.round(pendingAdjustments.ntbBaru / multiplier);
-
-                    tbodyHtml += `
-                        <tr>
-                            <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Diekspansi menekan rasio</span>${isBulananText}</td>
-                            <td class="val-old">Rp ${toRp(omzetLamaRaw)}</td>
-                            <td>${buildAdjustedCell(omzetBaruRaw, false, multiplier)}</td>
-                        </tr>
-                        <tr>
-                            <td>Biaya Operasional (26d)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Amortisasi pengunci NTB</span>${isBulananText}</td>
-                            <td class="val-old">Rp ${toRp(v26d / multiplier)}</td>
-                            <td>${buildAdjustedCell(opsBaruRaw, false, multiplier)}</td>
-                        </tr>
-                        <tr>
-                            <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Terkunci mutlak / Tidak turun</span>${isBulananText}</td>
-                            <td class="val-old">Rp ${toRp(ntb / multiplier)}</td>
-                            <td>${buildAdjustedCell(ntbBaruRaw, true, multiplier)}</td>
-                        </tr>
-                    `;
+                    if (cat === 'C') {
+                        v26bBaru = biayaAntaraBaru * 0.7;
+                        v26dBaru = biayaAntaraBaru * 0.3;
+                    } else {
+                        v26bBaru = 0;
+                        v26dBaru = biayaAntaraBaru;
+                    }
                 }
             }
 
+            pendingAdjustments = { 
+                omzetBaru: omzetBaru, 
+                v26bBaru: v26bBaru,
+                v26cBaru: v26cBaru,
+                v26dBaru: v26dBaru,
+                ntbBaru: targetNTB,
+                rasioBaruPct: targetRasio * 100
+            };
+
+            const isBulananText = multiplier === 12 ? '<br><span style="font-size:0.65rem; color:var(--primary); font-weight:600;">(Angka Salin = 1 Bulan)</span>' : '';
+            let tbodyHtml = '';
+
+            // 1. Omzet
+            tbodyHtml += `
+                <tr>
+                    <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Diselaraskan dengan target rasio</span>${isBulananText}</td>
+                    <td class="val-old">Rp ${toRp(v27a / multiplier)}</td>
+                    <td>${buildAdjustedCell(Math.round(omzetBaru / multiplier), false, multiplier)}</td>
+                </tr>
+            `;
+
+            // 2. Biaya Produksi (26b) - Muncul jika berubah atau KBLI C
+            if (cat === 'C' || Math.round(v26bBaru) !== Math.round(v26b)) {
+                tbodyHtml += `
+                    <tr>
+                        <td>Biaya Produksi (26b)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Disesuaikan proporsional</span>${isBulananText}</td>
+                        <td class="val-old">Rp ${toRp(v26b / multiplier)}</td>
+                        <td>${buildAdjustedCell(Math.round(v26bBaru / multiplier), false, multiplier)}</td>
+                    </tr>
+                `;
+            }
+
+            // 3. Pembelian Terjual (26c) - Muncul jika berubah atau KBLI G
+            if (cat === 'G' || Math.round(v26cBaru) !== Math.round(v26c)) {
+                tbodyHtml += `
+                    <tr>
+                        <td>Pembelian Terjual (26c)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">HPP disesuaikan proporsional</span>${isBulananText}</td>
+                        <td class="val-old">Rp ${toRp(v26c / multiplier)}</td>
+                        <td>${buildAdjustedCell(Math.round(v26cBaru / multiplier), false, multiplier)}</td>
+                    </tr>
+                `;
+            }
+
+            // 4. Biaya Operasional (26d)
+            tbodyHtml += `
+                <tr>
+                    <td>Biaya Operasional (26d)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Amortisasi pengunci rasio</span>${isBulananText}</td>
+                    <td class="val-old">Rp ${toRp(v26d / multiplier)}</td>
+                    <td>${buildAdjustedCell(Math.round(v26dBaru / multiplier), false, multiplier)}</td>
+                </tr>
+            `;
+
+            // 5. NTB (Readonly Info)
+            tbodyHtml += `
+                <tr>
+                    <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dinaikkan secara organik (10-20%)</span>${isBulananText}</td>
+                    <td class="val-old">Rp ${toRp(ntb / multiplier)}</td>
+                    <td>${buildAdjustedCell(Math.round(targetNTB / multiplier), true, multiplier)}</td>
+                </tr>
+            `;
+
+            // 6. Rasio
             tbodyHtml += `
                 <tr style="background: rgba(14, 165, 233, 0.05);">
                     <td style="font-weight:700; color:var(--primary);">Rasio Evaluasi BPS</td>
-                    <td class="val-old">${rasioAwalPct.toFixed(2)}%</td>
+                    <td class="val-old">${(currentData.rasio * 100).toFixed(2)}%</td>
                     <td>
                         <div class="val-flex val-new" style="justify-content: flex-end; color:var(--primary);">
-                            <span>${targetPct.toFixed(2)}%</span>
+                            <span>${pendingAdjustments.rasioBaruPct.toFixed(2)}%</span>
                         </div>
                     </td>
                 </tr>
@@ -919,14 +895,9 @@
             const mult = currentData.multiplier;
 
             document.getElementById('val-27a').value = toRp(pendingAdjustments.omzetBaru / mult);
-            
-            if (currentData.cat === 'G') {
-                document.getElementById('val-26c').value = toRp(pendingAdjustments.v26cBaru / mult);
-            }
-
-            if (pendingAdjustments.kasus === 'OVER') {
-                document.getElementById('val-26d').value = toRp(pendingAdjustments.v26dBaru / mult);
-            }
+            document.getElementById('val-26b').value = toRp(pendingAdjustments.v26bBaru / mult);
+            document.getElementById('val-26c').value = toRp(pendingAdjustments.v26cBaru / mult);
+            document.getElementById('val-26d').value = toRp(pendingAdjustments.v26dBaru / mult);
 
             closeModal();
             calculateNTB(); 
