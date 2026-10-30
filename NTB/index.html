@@ -226,28 +226,28 @@
             </div>
             <div class="grid-auto">
                 <div>
-                    <select id="kbli-category" onchange="onCategoryChange()">
-                        <option value="">Pilih kategori KBLI usaha...</option>
-                        <option value="A">Kategori A: Pertanian (51% - 94%)</option>
-                        <option value="B">Kategori B: Pertambangan (28% - 81%)</option>
-                        <option value="C">Kategori C: Industri Pengolahan (15% - 61%)</option>
-                        <option value="D">Kategori D: Pengadaan Listrik (13% - 68%)</option>
-                        <option value="E">Kategori E: Pengelolaan Air (29% - 47%)</option>
-                        <option value="F">Kategori F: Konstruksi (34% - 44%)</option>
-                        <option value="G">Kategori G: Perdagangan (64% - 78%)</option>
-                        <option value="H">Kategori H: Pengangkutan (29% - 64%)</option>
-                        <option value="I">Kategori I: Penyediaan Akomodasi (36% - 69%)</option>
-                        <option value="J">Kategori J: Informasi & Komunikasi (36% - 73%)</option>
-                        <option value="K">Kategori K: Aktivitas Keuangan (50% - 72%)</option>
-                        <option value="L">Kategori L: Real Estat (46% - 86%)</option>
-                        <option value="M">Kategori M: Profesional, Ilmiah (50% - 99%)</option>
-                        <option value="N">Kategori N: Penyewaan & Jasa (44% - 57%)</option>
-                        <option value="O">Kategori O: Administrasi Pemerintahan (54% - 66%)</option>
-                        <option value="Q">Kategori Q: Aktivitas Kesehatan (27% - 82%)</option>
-                        <option value="R">Kategori R: Kesenian, Hiburan (20% - 60%)</option>
-                        <option value="S">Kategori S: Aktivitas Jasa Lainnya (21% - 57%)</option>
-                        <option value="T">Kategori T: Aktivitas Rumah Tangga (30% - 69%)</option>
-                    </select>
+ <select id="kbli-category" onchange="onCategoryChange()">
+    <option value="">Pilih kategori KBLI usaha...</option>
+    <option value="A">Kategori A: Pertanian, Kehutanan, dan Perikanan (51% - 94%)</option>
+    <option value="B">Kategori B: Pertambangan dan Penggalian (28% - 81%)</option>
+    <option value="C">Kategori C: Industri (15% - 61%)</option>
+    <option value="D">Kategori D: Penyediaan Listrik, Gas, Uap/Air Panas Dan Udara Dingin (13% - 68%)</option>
+    <option value="E">Kategori E: Penyediaan Air, Penegelolaan Air Limbah, Penanganan Limbah, dan Remediasi (29% - 47%)</option>
+    <option value="F">Kategori F: Konstruksi (34% - 44%)</option>
+    <option value="G">Kategori G: Perdagangan Besar Dan Eceran (64% - 78%)</option>
+    <option value="H">Kategori H: Transportasi dan Penyimpanan (29% - 64%)</option>
+    <option value="I">Kategori I: Aktivitas Penyediaan Akomodasi dan Makan Minum (36% - 69%)</option>
+    <option value="J">Kategori J: Aktivitas Penerbitan, Penyiaran, Produksi dan Distribusi Konten (36% - 73%)</option>
+    <option value="K">Kategori K: Aktivitas Telekomunikasi, Pemrograman Komputer, Konsultansi, Infrastruktur Komputasi, dan Jasa Informasi Lainnya (50% - 72%)</option>
+    <option value="L">Kategori L: Aktivitas Keuangan dan Asuransi (46% - 86%)</option>
+    <option value="M">Kategori M: Aktivitas Real Estat (50% - 99%)</option>
+    <option value="N">Kategori N: Aktivitas Profesional, Ilmiah, dan Teknis (44% - 57%)</option>
+    <option value="O">Kategori O: Aktivitas Administratif dan Penunjang Usaha (54% - 66%)</option>
+    <option value="Q">Kategori Q: Pendidikan (27% - 82%)</option>
+    <option value="R">Kategori R: Aktivitas Kesehatan Manusia dan Aktivitas Sosial (20% - 60%)</option>
+    <option value="S">Kategori S: Kesenian, Olahraga, dan Rekreasi (21% - 57%)</option>
+    <option value="T">Kategori T: Aktivitas Jasa Lainnya (30% - 69%)</option>
+</select>
                     <div id="kbli-info" style="font-size: 0.75rem; color: var(--primary); margin-top: 10px; font-weight: 500;">Pilih Kategori KBLI terlebih dahulu untuk memulai.</div>
                 </div>
                 <div class="toggle-container">
@@ -406,7 +406,7 @@
     <div id="adjust-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modal-kbli-label">Untuk <span class="chip-kbli">Kategori Terpilih</span></h3>
+                <h3 id="modal-kbli-label"><span class="chip-kbli">Kategori Terpilih</span></h3>
                 <button onclick="closeModal()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; padding:4px;">
                     <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
