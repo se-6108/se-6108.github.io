@@ -8,32 +8,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
     
     <style>
-        /* ==================================================
-           TEMA BIRU MATA ENGGANG (CYAN & SAPPHIRE) + DARK MODE
-        ================================================== */
         :root {
             --bg-body: #f0f9ff;
             --bg-card: #ffffff;
             --bg-header: #ffffff;
             --bg-dark: #082f49;
-            
             --text-main: #0f172a;
             --text-muted: #64748b;
             --border-color: #bae6fd;
-            
             --primary: #0284c7; 
             --primary-hover: #0369a1;
             --input-bg: #f8fafc;
             --focus-ring: rgba(2, 132, 199, 0.15);
-            
             --success: #059669;
             --warning: #d97706;
             --danger: #dc2626;
-            
             --radius-lg: 16px;
             --radius-md: 12px;
             --radius-pill: 9999px;
-            
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
         }
@@ -43,20 +35,16 @@
             --bg-card: #0f1c2e;
             --bg-header: #0f1c2e;
             --bg-dark: #06111d;
-            
             --text-main: #f1f5f9;
             --text-muted: #94a3b8;
             --border-color: #1e3656;
-            
             --primary: #0ea5e9; 
             --primary-hover: #38bdf8;
             --input-bg: #06111d;
             --focus-ring: rgba(14, 165, 233, 0.2);
-            
             --success: #34d399;
             --warning: #fbbf24;
             --danger: #f87171;
-            
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
         }
 
@@ -90,7 +78,9 @@
         .currency-wrapper:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
         .currency-symbol { position: absolute; left: 16px; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; pointer-events: none; }
         input[type="text"].text-right { width: 100%; padding: 12px 64px 12px 40px; border: none; background: transparent; font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 600; text-align: right; color: var(--text-main); outline: none; transition: 0.3s; }
-        
+        input[type="text"].input-regular { width: 100%; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--input-bg); font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--text-main); transition: 0.2s; outline: none; }
+        input[type="text"].input-regular:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
+
         select { width: 100%; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--input-bg); font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 500; color: var(--text-main); transition: 0.2s; outline: none; cursor: pointer; }
         select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
         
@@ -150,7 +140,7 @@
         .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: flex-start; flex-shrink: 0; }
         .modal-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
         
-        .chip-kbli { background: var(--primary); color: white; padding: 4px 12px; border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.3px; display: inline-block; white-space: nowrap; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2); }
+        .chip-kbli { background: var(--primary); color: white; padding: 6px 14px; border-radius: var(--radius-pill); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.3px; display: inline-block; white-space: nowrap; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2); }
         
         .modal-body { padding: 24px; overflow-y: auto; }
         .modal-footer { padding: 16px 24px; background: var(--bg-body); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; flex-shrink: 0; }
@@ -219,11 +209,17 @@
             </button>
         </section>
 
-        <!-- Seksi 1 -->
+        <!-- Seksi 1: Identitas & KBLI -->
         <section class="card">
             <div class="card-header" style="border:none; padding:0; margin-bottom: 20px;">
-                <div class="card-title"><div class="step-badge">1</div> Kategori KBLI & Periode</div>
+                <div class="card-title"><div class="step-badge">1</div> Identitas & Kategori KBLI</div>
             </div>
+            
+            <div style="margin-bottom: 24px;">
+                <label>Nama Perusahaan / Usaha</label>
+                <input type="text" id="nama-usaha-input" class="input-regular" placeholder="Diekstrak otomatis atau ketik manual..." oninput="updateBizTitle(this.value)">
+            </div>
+
             <div class="grid-auto">
                 <div>
                     <select id="kbli-category" onchange="onCategoryChange()">
@@ -260,6 +256,17 @@
                 </div>
             </div>
         </section>
+
+        <!-- Judul Dinamis Nama Usaha (Muncul Saat Form Aktif) -->
+        <div id="biz-title-container" class="hidden" style="text-align: center; margin: 10px 0 10px 0;">
+            <h2 id="display-biz-title" style="color: var(--primary); font-size: 1.4rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">-</h2>
+            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <span class="step-badge" style="width: 20px; height: 20px; font-size: 0.6rem; background: var(--warning);">
+                    <svg class="icon" viewBox="0 0 24 24" style="width:12px; height:12px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                </span> 
+                Matriks Penyesuaian Aktif
+            </div>
+        </div>
 
         <!-- Seksi 2 & 3 -->
         <div id="main-forms" class="grid-auto disabled-area">
@@ -406,7 +413,7 @@
     <div id="adjust-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modal-kbli-label">Untuk <span class="chip-kbli">Kategori Terpilih</span></h3>
+                <h3 id="modal-kbli-label">Nama Usaha <span class="chip-kbli">Kategori Terpilih</span></h3>
                 <button onclick="closeModal()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; padding:4px;">
                     <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
@@ -504,6 +511,17 @@
         let currentData = null;
         let pendingAdjustments = null;
 
+        function updateBizTitle(val) {
+            const container = document.getElementById('biz-title-container');
+            const titleEl = document.getElementById('display-biz-title');
+            if (val && val.trim() !== '') {
+                titleEl.innerText = val;
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
         function updateLabels2026(is2026) {
             document.getElementById('lbl-26a').innerText = is2026 ? "30a. Total upah, gaji & jaminan" : "26a. Total upah, gaji & jaminan";
             document.getElementById('lbl-26b').innerText = is2026 ? "30b. Biaya produksi" : "26b. Biaya produksi";
@@ -522,6 +540,22 @@
             }
 
             try {
+                let bizName = "";
+                const nameMatch = text.match(/(?:Nama\s+Perusahaan|Nama\s+Usaha|Nama\s+Perusahaan\/Usaha)[\s\S]*?\*\s*([^\n\r]+)/i);
+                if (nameMatch && nameMatch[1]) {
+                    bizName = nameMatch[1].trim();
+                } else {
+                    const fallbackMatch = text.match(/Nama\s+Perusahaan\/Usaha[\s\S]*?\n([^\n\r]+)/i);
+                    if (fallbackMatch && fallbackMatch[1]) {
+                        let tmp = fallbackMatch[1].trim();
+                        if (tmp.length > 2 && !tmp.toLowerCase().includes("alamat") && !tmp.toLowerCase().includes("kategori")) {
+                            bizName = tmp;
+                        }
+                    }
+                }
+                document.getElementById('nama-usaha-input').value = bizName;
+                updateBizTitle(bizName);
+
                 const kbliMatch = text.match(/13\.\s*h\.\s*Kategori\s*Lapangan\s*Usaha:[\s\S]*?([A-Z])/i);
                 if (kbliMatch && kbliMatch[1]) {
                     if(/^[A-T]$/i.test(kbliMatch[1])) {
@@ -617,11 +651,12 @@
         }
 
         function resetForm() {
-            ['val-26a','val-26b','val-26c','val-26d','val-26e','val-27a','val-27b'].forEach(id => {
+            ['val-26a','val-26b','val-26c','val-26d','val-26e','val-27a','val-27b', 'nama-usaha-input'].forEach(id => {
                 document.getElementById(id).value = '';
             });
             document.getElementById('is-year-2026').checked = false;
             updateLabels2026(false);
+            updateBizTitle('');
             calculateNTB();
         }
 
@@ -641,6 +676,10 @@
                 mainForms.classList.remove('disabled-area');
                 toggle.disabled = false;
                 document.getElementById('section-visual').style.display = 'block';
+                
+                if (document.getElementById('nama-usaha-input').value.trim() !== '') {
+                    document.getElementById('biz-title-container').classList.remove('hidden');
+                }
             } else {
                 info.innerText = 'Pilih Kategori KBLI terlebih dahulu untuk memulai.';
                 document.getElementById('res-target').innerText = '-';
@@ -649,6 +688,7 @@
                 toggle.checked = false;
                 updateLabels2026(false);
                 document.getElementById('section-visual').style.display = 'none';
+                document.getElementById('biz-title-container').classList.add('hidden');
             }
             calculateNTB();
         }
@@ -756,15 +796,17 @@
             let { cat, v26b, v26c, v26d, v27a, ntb, multiplier } = currentData;
             
             const selectEl = document.getElementById('kbli-category');
-            document.getElementById('modal-kbli-label').innerHTML = `Untuk <span class="chip-kbli">${selectEl.options[selectEl.selectedIndex].text}</span>`;
+            const rawBizName = document.getElementById('nama-usaha-input').value.trim();
+            const displayBizName = rawBizName !== '' ? rawBizName : 'Usaha Ini';
+            
+            document.getElementById('modal-kbli-label').innerHTML = `${displayBizName} &nbsp;<span class="chip-kbli">${selectEl.options[selectEl.selectedIndex].text}</span>`;
 
             const limits = kbliLimits[cat];
             
-            // Target Rasio dipatok ke batas atas untuk menekan Output dan meminimalkan 26d
+            // Patok Rasio di batas maksimal agar Output (dan 26d) menjadi serendah/seminimal mungkin
             let targetRasio = limits.max - (0.005 + Math.random() * 0.015);
             targetRasio = Math.max(limits.min + 0.01, Math.min(limits.max - 0.01, targetRasio));
             
-            // NTB naik organik 10-20%
             let targetNTB = ntb > 0 ? ntb * (1.10 + (Math.random() * 0.10)) : (1000000 * multiplier);
             
             let omzetBaru = v27a;
@@ -774,20 +816,29 @@
 
             if (cat === 'G') {
                 let targetOutput = targetNTB / targetRasio;
-                let biayaAntaraBaru = Math.max(0, targetOutput - targetNTB);
-
-                // KBLI G: 26b dikunci pada nilai asli agar tidak ada anomali biaya produksi
-                v26bBaru = v26b; 
-                v26dBaru = Math.max(0, biayaAntaraBaru - v26bBaru); // Sisa beban mutlak ke operasional
-
-                // KBLI G: 26c (HPP) dikerek naik proporsional sejajar pertumbuhan Output
-                let outputLama = Math.max(1, v27a - v26c);
-                let growthFactor = targetOutput / outputLama;
-                v26cBaru = Math.max(v26c * growthFactor, targetOutput * 0.25);
+                
+                // MICRO-GROWTH untuk 26c:
+                // HPP dibiarkan naik secara acak tetapi sangat tipis (hanya 2% hingga 8%)
+                // Agar tidak terlihat kaku terkunci, namun tetap tidak memompa Omzet secara drastis
+                let microGrowth = 1.02 + (Math.random() * 0.06); 
+                v26cBaru = v26c > 0 ? v26c * microGrowth : targetOutput * 0.05; 
+                
                 omzetBaru = targetOutput + v26cBaru;
+                
+                // Jika omzet terhitung ternyata masih lebih rendah dari omzet awal, pertahankan omzet awal
+                if (omzetBaru < v27a) {
+                    omzetBaru = v27a;
+                    v26cBaru = omzetBaru - targetOutput;
+                }
 
+                // 26b (Biaya Produksi) dikunci
+                v26bBaru = v26b; 
+                let biayaAntaraBaru = Math.max(0, targetOutput - targetNTB);
+                
+                // 26d (Operasional) menyerap penuh sisa rasio BPS (The Absorber)
+                v26dBaru = Math.max(0, biayaAntaraBaru - v26bBaru); 
+                
             } else if (cat === 'C') {
-                // KBLI C: 26c = 0, fokus pada Biaya Produksi (26b)
                 v26cBaru = 0;
                 let targetOutput = targetNTB / targetRasio;
                 omzetBaru = Math.max(v27a, targetOutput);
@@ -805,12 +856,12 @@
                     v26dBaru = biayaAntaraBaru * 0.15; 
                 }
             } else {
-                // KBLI Lainnya: 26c proporsional
                 let targetOutput = targetNTB / targetRasio;
-                let outputLama = Math.max(1, v27a - v26c);
-                let growthFactor = targetOutput / outputLama;
                 
-                v26cBaru = v26c > 0 ? v26c * growthFactor : 0; 
+                // Micro-Growth juga diaplikasikan untuk sektor selain G & C
+                let microGrowth = 1.02 + (Math.random() * 0.06); 
+                v26cBaru = v26c > 0 ? v26c * microGrowth : 0; 
+                
                 omzetBaru = targetOutput + v26cBaru;
                 
                 if (omzetBaru < v27a) {
@@ -849,7 +900,7 @@
 
             tbodyHtml += `
                 <tr>
-                    <td>Omzet Penjualan (${l_27a})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Selaras proporsional</span>${isBulananText}</td>
+                    <td>Omzet Penjualan (${l_27a})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dipertahankan pada wajar terendah</span>${isBulananText}</td>
                     <td class="val-old">Rp ${toRp(v27a / multiplier)}</td>
                     <td>${buildAdjustedCell(Math.round(pendingAdjustments.omzetBaru / multiplier), false, multiplier)}</td>
                 </tr>
@@ -858,7 +909,7 @@
             if (cat === 'C' || Math.round(pendingAdjustments.v26bBaru) !== Math.round(v26b)) {
                 tbodyHtml += `
                     <tr>
-                        <td>Biaya Produksi (${l_26b})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Beban produksi disesuaikan</span>${isBulananText}</td>
+                        <td>Biaya Produksi (${l_26b})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Terkunci pada profil asli</span>${isBulananText}</td>
                         <td class="val-old">Rp ${toRp(v26b / multiplier)}</td>
                         <td>${buildAdjustedCell(Math.round(pendingAdjustments.v26bBaru / multiplier), false, multiplier)}</td>
                     </tr>
@@ -868,7 +919,7 @@
             if (cat === 'G' || Math.round(pendingAdjustments.v26cBaru) !== Math.round(v26c)) {
                 tbodyHtml += `
                     <tr>
-                        <td>Pembelian Terjual (${l_26c})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Absorpsi proporsional Output</span>${isBulananText}</td>
+                        <td>Pembelian Terjual (${l_26c})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">HPP dinaikkan tipis (Micro-adjustment)</span>${isBulananText}</td>
                         <td class="val-old">Rp ${toRp(v26c / multiplier)}</td>
                         <td>${buildAdjustedCell(Math.round(pendingAdjustments.v26cBaru / multiplier), false, multiplier)}</td>
                     </tr>
@@ -877,7 +928,7 @@
 
             tbodyHtml += `
                 <tr>
-                    <td>Biaya Operasional (${l_26d})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Amortisasi selisih rasio</span>${isBulananText}</td>
+                    <td>Biaya Operasional (${l_26d})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Penyelamat rasio (Absorber utama)</span>${isBulananText}</td>
                     <td class="val-old">Rp ${toRp(v26d / multiplier)}</td>
                     <td>${buildAdjustedCell(Math.round(pendingAdjustments.v26dBaru / multiplier), false, multiplier)}</td>
                 </tr>
@@ -885,7 +936,7 @@
 
             tbodyHtml += `
                 <tr>
-                    <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Kenaikan organik (10-20%)</span>${isBulananText}</td>
+                    <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Naik absolut organik (10-20%)</span>${isBulananText}</td>
                     <td class="val-old">Rp ${toRp(ntb / multiplier)}</td>
                     <td>${buildAdjustedCell(Math.round(targetNTB / multiplier), true, multiplier)}</td>
                 </tr>
