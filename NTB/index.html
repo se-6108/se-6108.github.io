@@ -8,46 +8,61 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
     
     <style>
+        /* ==================================================
+           TEMA BIRU MATA ENGGANG (CYAN & SAPPHIRE) + DARK MODE
+        ================================================== */
         :root {
             --bg-body: #f0f9ff;
             --bg-card: #ffffff;
             --bg-header: #ffffff;
             --bg-dark: #082f49;
+            
             --text-main: #0f172a;
             --text-muted: #64748b;
             --border-color: #bae6fd;
+            
             --primary: #0284c7; 
             --primary-hover: #0369a1;
             --input-bg: #f8fafc;
             --focus-ring: rgba(2, 132, 199, 0.15);
+            
             --success: #059669;
             --warning: #d97706;
             --danger: #dc2626;
+            
             --radius-lg: 16px;
             --radius-md: 12px;
             --radius-pill: 9999px;
+            
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
         }
+
         [data-theme="dark"] {
             --bg-body: #08121f; 
             --bg-card: #0f1c2e;
             --bg-header: #0f1c2e;
             --bg-dark: #06111d;
+            
             --text-main: #f1f5f9;
             --text-muted: #94a3b8;
             --border-color: #1e3656;
+            
             --primary: #0ea5e9; 
             --primary-hover: #38bdf8;
             --input-bg: #06111d;
             --focus-ring: rgba(14, 165, 233, 0.2);
+            
             --success: #34d399;
             --warning: #fbbf24;
             --danger: #f87171;
+            
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-body); color: var(--text-main); font-size: 14px; line-height: 1.5; min-height: 100vh; display: flex; flex-direction: column; transition: background-color 0.3s, color 0.3s; }
+        
         header { position: sticky; top: 0; z-index: 50; background: var(--bg-header); border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-sm); padding: 14px 20px; transition: 0.3s; }
         .header-content { max-width: 1000px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
         .brand-group { display: flex; align-items: center; gap: 14px; }
@@ -55,36 +70,49 @@
         .header-title h1 { font-size: 1.1rem; font-weight: 700; color: var(--primary); letter-spacing: -0.5px; }
         .header-title p { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; font-style: italic; }
         .action-group { display: flex; gap: 8px; }
+        
         main { max-width: 1000px; width: 100%; margin: 32px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 24px; flex-grow: 1; }
+        
         .card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); transition: 0.3s; }
         .card-dark { background: var(--bg-dark); border-radius: var(--radius-lg); padding: 24px; color: #f1f5f9; border: 1px solid var(--border-color); transition: 0.3s; }
+        
         .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; }
         .card-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--text-main); }
         .step-badge { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; background: var(--primary); color: white; flex-shrink: 0; }
+        
         .grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
         .flex-col { display: flex; flex-direction: column; gap: 16px; }
+        
         label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
         .input-group { position: relative; }
+        
         .currency-wrapper { position: relative; display: flex; align-items: center; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); transition: 0.2s; overflow: hidden; }
         .currency-wrapper:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
         .currency-symbol { position: absolute; left: 16px; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; pointer-events: none; }
         input[type="text"].text-right { width: 100%; padding: 12px 64px 12px 40px; border: none; background: transparent; font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 600; text-align: right; color: var(--text-main); outline: none; transition: 0.3s; }
+        
         select { width: 100%; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--input-bg); font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 500; color: var(--text-main); transition: 0.2s; outline: none; cursor: pointer; }
         select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
+        
         .readonly-wrapper { background: var(--bg-body); opacity: 0.9; }
         input[readonly].text-right { font-weight: 700; color: var(--primary); cursor: not-allowed; }
+        
         .btn { padding: 10px 20px; border-radius: var(--radius-pill); font-weight: 600; font-size: 0.85rem; cursor: pointer; border: none; transition: 0.2s; font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
         .btn-outline:hover { background: var(--bg-body); border-color: var(--primary); color: var(--primary); }
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:hover { background: var(--primary-hover); }
         .btn-icon { padding: 10px; border-radius: 12px; }
+        
         .btn-action { background: var(--primary); color: white; width: 100%; padding: 14px; margin-top: 16px; font-size: 0.95rem; box-shadow: var(--shadow-sm); }
         .btn-action:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        
         .btn-copy { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color); padding: 4px 10px; font-size: 0.7rem; border-radius: var(--radius-pill); cursor: pointer; font-weight: 600; transition: 0.2s; }
         .btn-copy:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
         .btn-copy-sm { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 12px; font-size: 0.65rem; border-radius: var(--radius-pill); cursor: pointer; font-weight: 600; transition: 0.2s; font-family: inherit; margin-left: 12px; flex-shrink: 0; box-shadow: var(--shadow-sm); }
         .btn-copy-sm:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        
         .toggle-container { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; justify-content: center; transition: 0.3s; }
         .toggle-label { display: flex; align-items: center; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
         .toggle-label input { display: none; }
@@ -92,43 +120,57 @@
         .slider::after { content: ""; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: 0.3s; }
         .toggle-label input:checked + .slider { background: var(--primary); opacity: 1; }
         .toggle-label input:checked + .slider::after { transform: translateX(20px); }
+        
         .disabled-area { opacity: 0.3; pointer-events: none; filter: grayscale(100%); transition: 0.4s; }
         .hidden { display: none !important; }
+        
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 16px; margin-top: 16px; }
         .stat-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 16px; border-radius: var(--radius-md); display: flex; flex-direction: column; justify-content: space-between; }
         .stat-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
         .stat-value { font-size: 1rem; font-weight: 700; color: #f1f5f9; }
         .text-highlight { color: var(--primary); font-size: 1.25rem; text-shadow: 0 0 10px rgba(14, 165, 233, 0.2); }
+        
         .badge { padding: 6px 12px; border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 600; border: 1px solid; display: inline-flex; align-items: center; gap: 6px; }
         .badge-ideal { background: rgba(5, 150, 105, 0.1); color: var(--success); border-color: rgba(5, 150, 105, 0.2); }
         .badge-defisit { background: rgba(217, 119, 6, 0.1); color: var(--warning); border-color: rgba(217, 119, 6, 0.2); }
         .badge-surplus { background: rgba(220, 38, 38, 0.1); color: var(--danger); border-color: rgba(220, 38, 38, 0.2); }
         .badge-default { background: rgba(255,255,255,0.05); color: var(--text-muted); border-color: rgba(255,255,255,0.1); }
+
         .proportion-bar { display: flex; width: 100%; height: 12px; border-radius: var(--radius-pill); overflow: hidden; margin: 16px 0; background: var(--bg-body); }
         .prop-segment { height: 100%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         .legend-grid { display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
         .legend-item { display: flex; align-items: center; gap: 8px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; }
+
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; padding: 20px; }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal-content { background: var(--bg-card); width: 100%; max-width: 620px; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); transform: translateY(20px) scale(0.98); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--border-color); display: flex; flex-direction: column; max-height: 90vh; }
         .modal-overlay.active .modal-content { transform: translateY(0) scale(1); }
+        
         .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: flex-start; flex-shrink: 0; }
         .modal-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+        
         .chip-kbli { background: var(--primary); color: white; padding: 4px 12px; border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.3px; display: inline-block; white-space: nowrap; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2); }
+        
         .modal-body { padding: 24px; overflow-y: auto; }
         .modal-footer { padding: 16px 24px; background: var(--bg-body); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; flex-shrink: 0; }
+        
         .compare-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: clamp(0.75rem, 2vw, 0.9rem); }
         .compare-table th, .compare-table td { padding: 14px 8px; border-bottom: 1px solid var(--border-color); color: var(--text-main); vertical-align: middle; }
         .compare-table td:first-child { text-align: left; padding-left: 0; padding-right: 16px; width: 45%; line-height: 1.5; }
         .compare-table th { color: var(--text-muted); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; text-align: right; white-space: nowrap; }
         .compare-table th:first-child { text-align: left; padding-left: 0; }
+        
         .val-old { color: var(--text-muted); text-decoration: line-through; text-align: right; white-space: nowrap; }
         .val-flex { display: flex; align-items: center; justify-content: flex-end; white-space: nowrap; width: 100%; }
         .val-new { color: var(--text-main); font-weight: 700; }
+        
         .icon { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
         .parser-textarea { width: 100%; height: 80px; padding: 12px; border: 1px dashed var(--primary); border-radius: var(--radius-md); background: var(--input-bg); color: var(--text-main); font-family: monospace; font-size: 0.8rem; resize: none; outline: none; transition: 0.2s; }
         .parser-textarea:focus { border-style: solid; box-shadow: 0 0 0 3px var(--focus-ring); }
+        
+        /* Custom Native Notification Alert */
         .custom-alert-box { background: var(--bg-card); width: 100%; max-width: 400px; border-radius: var(--radius-lg); padding: 24px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); transform: translateY(20px) scale(0.98); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--border-color); }
         .modal-overlay.active .custom-alert-box { transform: translateY(0) scale(1); }
         .alert-icon { width: 48px; height: 48px; margin: 0 auto 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
@@ -159,6 +201,7 @@
     </header>
 
     <main>
+        <!-- SEKSI PARSER FASIH -->
         <section class="card" style="border: 2px solid var(--border-color);">
             <div class="card-header" style="border:none; padding:0; margin-bottom: 12px;">
                 <div class="card-title">
@@ -176,34 +219,35 @@
             </button>
         </section>
 
+        <!-- Seksi 1 -->
         <section class="card">
             <div class="card-header" style="border:none; padding:0; margin-bottom: 20px;">
                 <div class="card-title"><div class="step-badge">1</div> Kategori KBLI & Periode</div>
             </div>
             <div class="grid-auto">
                 <div>
-                    <select id="kbli-category" onchange="onCategoryChange()">
-                        <option value="">Pilih kategori KBLI usaha...</option>
-                        <option value="A">Kategori A: Pertanian, Kehutanan, dan Perikanan (51% - 94%)</option>
-                        <option value="B">Kategori B: Pertambangan dan Penggalian (28% - 81%)</option>
-                        <option value="C">Kategori C: Industri (15% - 61%)</option>
-                        <option value="D">Kategori D: Penyediaan Listrik, Gas, Uap/Air Panas Dan Udara Dingin (13% - 68%)</option>
-                        <option value="E">Kategori E: Penyediaan Air, Penegelolaan Air Limbah, Penanganan Limbah, dan Remediasi (29% - 47%)</option>
-                        <option value="F">Kategori F: Konstruksi (34% - 44%)</option>
-                        <option value="G">Kategori G: Perdagangan Besar Dan Eceran (64% - 78%)</option>
-                        <option value="H">Kategori H: Transportasi dan Penyimpanan (29% - 64%)</option>
-                        <option value="I">Kategori I: Aktivitas Penyediaan Akomodasi dan Makan Minum (36% - 69%)</option>
-                        <option value="J">Kategori J: Aktivitas Penerbitan, Penyiaran, Produksi dan Distribusi Konten (36% - 73%)</option>
-                        <option value="K">Kategori K: Aktivitas Telekomunikasi, Pemrograman Komputer, Konsultansi, Infrastruktur Komputasi, dan Jasa Informasi Lainnya (50% - 72%)</option>
-                        <option value="L">Kategori L: Aktivitas Keuangan dan Asuransi (46% - 86%)</option>
-                        <option value="M">Kategori M: Aktivitas Real Estat (50% - 99%)</option>
-                        <option value="N">Kategori N: Aktivitas Profesional, Ilmiah, dan Teknis (44% - 57%)</option>
-                        <option value="O">Kategori O: Aktivitas Administratif dan Penunjang Usaha (54% - 66%)</option>
-                        <option value="Q">Kategori Q: Pendidikan (27% - 82%)</option>
-                        <option value="R">Kategori R: Aktivitas Kesehatan Manusia dan Aktivitas Sosial (20% - 60%)</option>
-                        <option value="S">Kategori S: Kesenian, Olahraga, dan Rekreasi (21% - 57%)</option>
-                        <option value="T">Kategori T: Aktivitas Jasa Lainnya (30% - 69%)</option>
-                    </select>
+ <select id="kbli-category" onchange="onCategoryChange()">
+    <option value="">Pilih kategori KBLI usaha...</option>
+    <option value="A">Kategori A: Pertanian, Kehutanan, dan Perikanan (51% - 94%)</option>
+    <option value="B">Kategori B: Pertambangan dan Penggalian (28% - 81%)</option>
+    <option value="C">Kategori C: Industri (15% - 61%)</option>
+    <option value="D">Kategori D: Penyediaan Listrik, Gas, Uap/Air Panas Dan Udara Dingin (13% - 68%)</option>
+    <option value="E">Kategori E: Penyediaan Air, Penegelolaan Air Limbah, Penanganan Limbah, dan Remediasi (29% - 47%)</option>
+    <option value="F">Kategori F: Konstruksi (34% - 44%)</option>
+    <option value="G">Kategori G: Perdagangan Besar Dan Eceran (64% - 78%)</option>
+    <option value="H">Kategori H: Transportasi dan Penyimpanan (29% - 64%)</option>
+    <option value="I">Kategori I: Aktivitas Penyediaan Akomodasi dan Makan Minum (36% - 69%)</option>
+    <option value="J">Kategori J: Aktivitas Penerbitan, Penyiaran, Produksi dan Distribusi Konten (36% - 73%)</option>
+    <option value="K">Kategori K: Aktivitas Telekomunikasi, Pemrograman Komputer, Konsultansi, Infrastruktur Komputasi, dan Jasa Informasi Lainnya (50% - 72%)</option>
+    <option value="L">Kategori L: Aktivitas Keuangan dan Asuransi (46% - 86%)</option>
+    <option value="M">Kategori M: Aktivitas Real Estat (50% - 99%)</option>
+    <option value="N">Kategori N: Aktivitas Profesional, Ilmiah, dan Teknis (44% - 57%)</option>
+    <option value="O">Kategori O: Aktivitas Administratif dan Penunjang Usaha (54% - 66%)</option>
+    <option value="Q">Kategori Q: Pendidikan (27% - 82%)</option>
+    <option value="R">Kategori R: Aktivitas Kesehatan Manusia dan Aktivitas Sosial (20% - 60%)</option>
+    <option value="S">Kategori S: Kesenian, Olahraga, dan Rekreasi (21% - 57%)</option>
+    <option value="T">Kategori T: Aktivitas Jasa Lainnya (30% - 69%)</option>
+</select>
                     <div id="kbli-info" style="font-size: 0.75rem; color: var(--primary); margin-top: 10px; font-weight: 500;">Pilih Kategori KBLI terlebih dahulu untuk memulai.</div>
                 </div>
                 <div class="toggle-container">
@@ -217,11 +261,13 @@
             </div>
         </section>
 
+        <!-- Seksi 2 & 3 -->
         <div id="main-forms" class="grid-auto disabled-area">
             <section class="card flex-col">
                 <div class="card-header">
                     <div class="card-title"><div class="step-badge" style="background:var(--bg-dark);">2</div> Rincian Pengeluaran</div>
                 </div>
+                
                 <div class="input-group">
                     <label id="lbl-26a">26a. Total upah, gaji & jaminan</label>
                     <div class="currency-wrapper">
@@ -356,18 +402,20 @@
         </section>
     </main>
 
+    <!-- Modal Review Auto Adjust -->
     <div id="adjust-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modal-kbli-label">Untuk <span class="chip-kbli">Kategori Terpilih</span></h3>
+                <h3 id="modal-kbli-label"><span class="chip-kbli">Kategori Terpilih</span></h3>
                 <button onclick="closeModal()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; padding:4px;">
                     <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
             <div class="modal-body">
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6;" id="modal-desc">
-                    Berikut simulasi perubahan absolut NTB (naik organik 10-20%) agar rasio mendarat di batas wajar dan terhindar dari anomali.
+                    Berikut simulasi perubahan NTB (naik organik 10-20%) agar rasio mendarat di batas wajar dan aman dari anomali.
                 </p>
+                
                 <div style="overflow-x: auto;">
                     <table class="compare-table">
                         <thead>
@@ -378,6 +426,7 @@
                             </tr>
                         </thead>
                         <tbody id="modal-tbody">
+                            <!-- Injected via JS -->
                         </tbody>
                     </table>
                 </div>
@@ -392,6 +441,7 @@
         </div>
     </div>
 
+    <!-- NATIVE NOTIFICATION MODAL -->
     <div id="alert-modal" class="modal-overlay">
         <div class="custom-alert-box">
             <div id="alert-icon" class="alert-icon success">
@@ -470,6 +520,7 @@
                 showCustomAlert("Input Kosong", "Silakan paste data FASIH terlebih dahulu ke dalam kotak.", "warning");
                 return;
             }
+
             try {
                 const kbliMatch = text.match(/13\.\s*h\.\s*Kategori\s*Lapangan\s*Usaha:[\s\S]*?([A-Z])/i);
                 if (kbliMatch && kbliMatch[1]) {
@@ -479,6 +530,7 @@
                         onCategoryChange();
                     }
                 }
+
                 let is2026 = false;
                 if (text.match(/30\.\s*a\.\s*Total upah/i)) {
                     is2026 = true;
@@ -488,11 +540,14 @@
                         is2026 = true;
                     }
                 }
+
                 document.getElementById('is-year-2026').checked = is2026;
                 updateLabels2026(is2026);
+
                 if (is2026) {
                     showCustomAlert("Tahun 2026 Terdeteksi", "Sistem otomatis mengaktifkan mode <strong>Satu Bulan Terakhir</strong>.<br>Semua isian akan dikali 12 (disetahunkan).", "success");
                 }
+
                 const extractRealValue = (prefix2025, prefix2026) => {
                     const prefix = is2026 ? prefix2026 : prefix2025;
                     const regex = new RegExp(`${prefix}[\\s\\S]*?\\*([\\s\\S]*?)(?=(?:2[6-9]|3[0-3])\\.\\s*[a-z]\\.|$)`, 'i');
@@ -509,19 +564,28 @@
                     return ''; 
                 };
 
+                const v26a = extractRealValue("26\\.\\s*a\\.", "30\\.\\s*a\\.");
+                const v26b = extractRealValue("26\\.\\s*b\\.", "30\\.\\s*b\\.");
+                const v26c = extractRealValue("26\\.\\s*c\\.", "30\\.\\s*c\\.");
+                const v26d = extractRealValue("26\\.\\s*d\\.", "30\\.\\s*d\\.");
+                const v26e = extractRealValue("26\\.\\s*e\\.", "30\\.\\s*e\\.");
+                const v27a = extractRealValue("27\\.\\s*a\\.", "31\\.\\s*a\\.");
+                const v27b = extractRealValue("27\\.\\s*b\\.", "31\\.\\s*b\\.");
+
                 const setAndFormat = (id, val) => {
                     const el = document.getElementById(id);
                     el.value = val;
                     formatAndCalc(el);
                 };
 
-                setAndFormat('val-26a', extractRealValue("26\\.\\s*a\\.", "30\\.\\s*a\\."));
-                setAndFormat('val-26b', extractRealValue("26\\.\\s*b\\.", "30\\.\\s*b\\."));
-                setAndFormat('val-26c', extractRealValue("26\\.\\s*c\\.", "30\\.\\s*c\\."));
-                setAndFormat('val-26d', extractRealValue("26\\.\\s*d\\.", "30\\.\\s*d\\."));
-                setAndFormat('val-26e', extractRealValue("26\\.\\s*e\\.", "30\\.\\s*e\\."));
-                setAndFormat('val-27a', extractRealValue("27\\.\\s*a\\.", "31\\.\\s*a\\."));
-                setAndFormat('val-27b', extractRealValue("27\\.\\s*b\\.", "31\\.\\s*b\\."));
+                setAndFormat('val-26a', v26a);
+                setAndFormat('val-26b', v26b);
+                setAndFormat('val-26c', v26c);
+                setAndFormat('val-26d', v26d);
+                setAndFormat('val-26e', v26e);
+                setAndFormat('val-27a', v27a);
+                setAndFormat('val-27b', v27b);
+
                 document.getElementById('fasih-input').value = "";
                 
             } catch (err) {
@@ -685,6 +749,7 @@
                     ${btnHtml}
                 </div>
             `;
+            
             if (multiplier === 12) {
                 html += `
                     <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; text-align: right;">
@@ -704,10 +769,10 @@
 
             const limits = kbliLimits[cat];
             
-            let targetRasio = limits.max - (0.005 + Math.random() * 0.015);
+            // LOGIKA V7: TARGET RASIO DEKAT MAX (Biar Omzet tak meledak) + NTB NAIK ORGANIK
+            let targetRasio = limits.max - (0.01 + Math.random() * 0.02); 
             targetRasio = Math.max(limits.min + 0.01, Math.min(limits.max - 0.01, targetRasio));
             
-            // NTB naik organik 10-20%
             let targetNTB = ntb > 0 ? ntb * (1.10 + (Math.random() * 0.10)) : (1000000 * multiplier);
             
             let omzetBaru = v27a;
@@ -716,56 +781,44 @@
             let v26dBaru = v26d;
 
             if (cat === 'G') {
-                let outputLama = Math.max(1, v27a - v26c);
-                let targetOutput = targetNTB / targetRasio;
-                let growthFactor = targetOutput / outputLama;
+                let targetOutput = Math.max(targetNTB / targetRasio, targetNTB + v26b); 
                 
-                // HPP (26c) dinaikkan proporsional sejajar dengan pertumbuhan Output
-                v26cBaru = Math.max(v26c * growthFactor, targetOutput * 1.5); 
-                omzetBaru = targetOutput + v26cBaru;
+                let maxAllowedOmzet = Math.max(v27a * 1.5, v27a + (5000000 * multiplier)); 
+                let idealOmzet = targetOutput / 0.25; 
                 
-                if (omzetBaru < v27a) {
-                    omzetBaru = v27a;
-                    v26cBaru = omzetBaru - targetOutput;
-                }
-
-                v26bBaru = v26b; // Kunci Produksi
+                omzetBaru = Math.min(idealOmzet, maxAllowedOmzet);
+                omzetBaru = Math.max(omzetBaru, targetOutput + v26c); 
+                omzetBaru = Math.max(omzetBaru, v27a); 
+                
+                v26cBaru = omzetBaru - targetOutput;
+                
                 let biayaAntaraBaru = Math.max(0, targetOutput - targetNTB);
-                v26dBaru = Math.max(0, biayaAntaraBaru - v26bBaru); // Menyerap rasio BPS
+                v26bBaru = v26b; // LOCKED
+                v26dBaru = Math.max(0, biayaAntaraBaru - v26bBaru);
                 
-            } else if (cat === 'C') {
-                v26cBaru = 0;
-                let targetOutput = targetNTB / targetRasio;
-                omzetBaru = Math.max(v27a, targetOutput);
-                
-                let currentOutput = omzetBaru; 
-                targetNTB = currentOutput * targetRasio; 
-                
-                let biayaAntaraBaru = Math.max(0, currentOutput - targetNTB);
-                v26bBaru = biayaAntaraBaru * 0.85; 
-                v26dBaru = biayaAntaraBaru * 0.15; 
             } else {
-                let outputLama = Math.max(1, v27a - v26c);
-                let targetOutput = targetNTB / targetRasio;
-                let growthFactor = targetOutput / outputLama;
+                v26cBaru = v26c; // LOCKED
+                let targetOutput = Math.max(targetNTB / targetRasio, targetNTB + (v26b + v26d) * 0.1);
+                omzetBaru = Math.max(v27a, targetOutput + v26cBaru);
                 
-                v26cBaru = v26c > 0 ? v26c * growthFactor : 0; 
-                omzetBaru = targetOutput + v26cBaru;
-                
-                if (omzetBaru < v27a) {
-                    omzetBaru = v27a;
-                    targetOutput = omzetBaru - v26cBaru;
-                    targetNTB = targetOutput * targetRasio;
+                let currentOutput = omzetBaru - v26cBaru;
+                if (targetNTB / currentOutput < limits.min) {
+                    targetNTB = currentOutput * (limits.min + 0.01);
                 }
                 
-                let biayaAntaraBaru = Math.max(0, targetOutput - targetNTB);
+                let biayaAntaraBaru = Math.max(0, (omzetBaru - v26cBaru) - targetNTB);
                 let totLama = v26b + v26d;
                 if (totLama > 0) {
                     v26bBaru = biayaAntaraBaru * (v26b / totLama);
                     v26dBaru = biayaAntaraBaru * (v26d / totLama);
                 } else {
-                    v26bBaru = 0;
-                    v26dBaru = biayaAntaraBaru;
+                    if (cat === 'C') {
+                        v26bBaru = biayaAntaraBaru * 0.7;
+                        v26dBaru = biayaAntaraBaru * 0.3;
+                    } else {
+                        v26bBaru = 0;
+                        v26dBaru = biayaAntaraBaru;
+                    }
                 }
             }
 
@@ -779,6 +832,7 @@
             };
 
             const isBulananText = multiplier === 12 ? '<br><span style="font-size:0.65rem; color:var(--primary); font-weight:600;">(Angka Salin = 1 Bulan)</span>' : '';
+            
             const l_27a = multiplier === 12 ? '31a' : '27a';
             const l_26b = multiplier === 12 ? '30b' : '26b';
             const l_26c = multiplier === 12 ? '30c' : '26c';
@@ -788,43 +842,43 @@
 
             tbodyHtml += `
                 <tr>
-                    <td>Omzet Penjualan (${l_27a})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dipertahankan atau minimalisasi deviasi</span>${isBulananText}</td>
+                    <td>Omzet Penjualan (${l_27a})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dipertahankan semaksimal mungkin</span>${isBulananText}</td>
                     <td class="val-old">Rp ${toRp(v27a / multiplier)}</td>
-                    <td>${buildAdjustedCell(Math.round(pendingAdjustments.omzetBaru / multiplier), false, multiplier)}</td>
+                    <td>${buildAdjustedCell(Math.round(omzetBaru / multiplier), false, multiplier)}</td>
                 </tr>
             `;
 
-            if (cat === 'C' || Math.round(pendingAdjustments.v26bBaru) !== Math.round(v26b)) {
+            if (cat === 'C' || Math.round(v26bBaru) !== Math.round(v26b)) {
                 tbodyHtml += `
                     <tr>
-                        <td>Biaya Produksi (${l_26b})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Proporsi struktural terkunci</span>${isBulananText}</td>
+                        <td>Biaya Produksi (${l_26b})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Disesuaikan proporsional profil asli</span>${isBulananText}</td>
                         <td class="val-old">Rp ${toRp(v26b / multiplier)}</td>
-                        <td>${buildAdjustedCell(Math.round(pendingAdjustments.v26bBaru / multiplier), false, multiplier)}</td>
+                        <td>${buildAdjustedCell(Math.round(v26bBaru / multiplier), false, multiplier)}</td>
                     </tr>
                 `;
             }
 
-            if (cat === 'G' || Math.round(pendingAdjustments.v26cBaru) !== Math.round(v26c)) {
+            if (cat === 'G' || Math.round(v26cBaru) !== Math.round(v26c)) {
                 tbodyHtml += `
                     <tr>
-                        <td>Pembelian Terjual (${l_26c})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">HPP diselaraskan proporsional</span>${isBulananText}</td>
+                        <td>Pembelian Terjual (${l_26c})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">HPP disesuaikan khusus Perdagangan</span>${isBulananText}</td>
                         <td class="val-old">Rp ${toRp(v26c / multiplier)}</td>
-                        <td>${buildAdjustedCell(Math.round(pendingAdjustments.v26cBaru / multiplier), false, multiplier)}</td>
+                        <td>${buildAdjustedCell(Math.round(v26cBaru / multiplier), false, multiplier)}</td>
                     </tr>
                 `;
             }
 
             tbodyHtml += `
                 <tr>
-                    <td>Biaya Operasional (${l_26d})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Amortisasi batas wajar</span>${isBulananText}</td>
+                    <td>Biaya Operasional (${l_26d})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Amortisasi pengunci rasio wajar</span>${isBulananText}</td>
                     <td class="val-old">Rp ${toRp(v26d / multiplier)}</td>
-                    <td>${buildAdjustedCell(Math.round(pendingAdjustments.v26dBaru / multiplier), false, multiplier)}</td>
+                    <td>${buildAdjustedCell(Math.round(v26dBaru / multiplier), false, multiplier)}</td>
                 </tr>
             `;
 
             tbodyHtml += `
                 <tr>
-                    <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Target absolut tercapai organik</span>${isBulananText}</td>
+                    <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dinaikkan secara organik (10-20%)</span>${isBulananText}</td>
                     <td class="val-old">Rp ${toRp(ntb / multiplier)}</td>
                     <td>${buildAdjustedCell(Math.round(targetNTB / multiplier), true, multiplier)}</td>
                 </tr>
