@@ -139,6 +139,7 @@
     </style>
 </head>
 <body>
+
     <header>
         <div class="header-content">
             <div class="brand-group">
@@ -706,6 +707,7 @@
             let targetRasio = limits.max - (0.005 + Math.random() * 0.015);
             targetRasio = Math.max(limits.min + 0.01, Math.min(limits.max - 0.01, targetRasio));
             
+            // NTB naik organik 10-20%
             let targetNTB = ntb > 0 ? ntb * (1.10 + (Math.random() * 0.10)) : (1000000 * multiplier);
             
             let omzetBaru = v27a;
@@ -714,19 +716,23 @@
             let v26dBaru = v26d;
 
             if (cat === 'G') {
+                let outputLama = Math.max(1, v27a - v26c);
                 let targetOutput = targetNTB / targetRasio;
-                v26bBaru = v26b;
-                let biayaAntaraBaru = targetOutput - targetNTB;
-                v26dBaru = Math.max(0, biayaAntaraBaru - v26bBaru);
-
-                let minimalHPP = targetOutput * 0.2; 
-                v26cBaru = Math.max(v26c, minimalHPP);
+                let growthFactor = targetOutput / outputLama;
+                
+                // HPP (26c) dinaikkan proporsional sejajar dengan pertumbuhan Output
+                v26cBaru = Math.max(v26c * growthFactor, targetOutput * 1.5); 
                 omzetBaru = targetOutput + v26cBaru;
                 
                 if (omzetBaru < v27a) {
                     omzetBaru = v27a;
                     v26cBaru = omzetBaru - targetOutput;
                 }
+
+                v26bBaru = v26b; // Kunci Produksi
+                let biayaAntaraBaru = Math.max(0, targetOutput - targetNTB);
+                v26dBaru = Math.max(0, biayaAntaraBaru - v26bBaru); // Menyerap rasio BPS
+                
             } else if (cat === 'C') {
                 v26cBaru = 0;
                 let targetOutput = targetNTB / targetRasio;
@@ -739,14 +745,20 @@
                 v26bBaru = biayaAntaraBaru * 0.85; 
                 v26dBaru = biayaAntaraBaru * 0.15; 
             } else {
-                v26cBaru = v26c;
-                let targetOutput = Math.max(targetNTB / targetRasio, targetNTB + (v26b + v26d) * 0.1);
-                omzetBaru = Math.max(v27a, targetOutput + v26cBaru);
+                let outputLama = Math.max(1, v27a - v26c);
+                let targetOutput = targetNTB / targetRasio;
+                let growthFactor = targetOutput / outputLama;
                 
-                let currentOutput = omzetBaru - v26cBaru;
-                targetNTB = currentOutput * targetRasio;
+                v26cBaru = v26c > 0 ? v26c * growthFactor : 0; 
+                omzetBaru = targetOutput + v26cBaru;
                 
-                let biayaAntaraBaru = Math.max(0, currentOutput - targetNTB);
+                if (omzetBaru < v27a) {
+                    omzetBaru = v27a;
+                    targetOutput = omzetBaru - v26cBaru;
+                    targetNTB = targetOutput * targetRasio;
+                }
+                
+                let biayaAntaraBaru = Math.max(0, targetOutput - targetNTB);
                 let totLama = v26b + v26d;
                 if (totLama > 0) {
                     v26bBaru = biayaAntaraBaru * (v26b / totLama);
@@ -795,7 +807,7 @@
             if (cat === 'G' || Math.round(pendingAdjustments.v26cBaru) !== Math.round(v26c)) {
                 tbodyHtml += `
                     <tr>
-                        <td>Pembelian Terjual (${l_26c})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Absorpsi HPP prioritas</span>${isBulananText}</td>
+                        <td>Pembelian Terjual (${l_26c})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">HPP diselaraskan proporsional</span>${isBulananText}</td>
                         <td class="val-old">Rp ${toRp(v26c / multiplier)}</td>
                         <td>${buildAdjustedCell(Math.round(pendingAdjustments.v26cBaru / multiplier), false, multiplier)}</td>
                     </tr>
