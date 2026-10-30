@@ -265,11 +265,11 @@
         <div id="main-forms" class="grid-auto disabled-area">
             <section class="card flex-col">
                 <div class="card-header">
-                    <div class="card-title"><div class="step-badge" style="background:var(--bg-dark);">2</div> Rincian 26 (Pengeluaran)</div>
+                    <div class="card-title"><div class="step-badge" style="background:var(--bg-dark);">2</div> Rincian Pengeluaran</div>
                 </div>
                 
                 <div class="input-group">
-                    <label>26a. Total upah, gaji & jaminan</label>
+                    <label id="lbl-26a">26a. Total upah, gaji & jaminan</label>
                     <div class="currency-wrapper">
                         <span class="currency-symbol">Rp</span>
                         <input type="text" id="val-26a" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
@@ -277,7 +277,7 @@
                     </div>
                 </div>
                 <div class="input-group">
-                    <label>26b. Biaya produksi</label>
+                    <label id="lbl-26b">26b. Biaya produksi</label>
                     <div class="currency-wrapper">
                         <span class="currency-symbol">Rp</span>
                         <input type="text" id="val-26b" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
@@ -285,7 +285,7 @@
                     </div>
                 </div>
                 <div class="input-group">
-                    <label>26c. Biaya pembelian barang terjual</label>
+                    <label id="lbl-26c">26c. Biaya pembelian barang terjual</label>
                     <div class="currency-wrapper">
                         <span class="currency-symbol">Rp</span>
                         <input type="text" id="val-26c" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
@@ -293,7 +293,7 @@
                     </div>
                 </div>
                 <div class="input-group">
-                    <label>26d. Biaya operasional</label>
+                    <label id="lbl-26d">26d. Biaya operasional</label>
                     <div class="currency-wrapper">
                         <span class="currency-symbol">Rp</span>
                         <input type="text" id="val-26d" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
@@ -301,7 +301,7 @@
                     </div>
                 </div>
                 <div class="input-group">
-                    <label>26e. Biaya non operasional</label>
+                    <label id="lbl-26e">26e. Biaya non operasional</label>
                     <div class="currency-wrapper">
                         <span class="currency-symbol">Rp</span>
                         <input type="text" id="val-26e" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
@@ -321,11 +321,11 @@
             <div class="flex-col">
                 <section class="card flex-col">
                     <div class="card-header">
-                        <div class="card-title"><div class="step-badge" style="background:var(--bg-dark);">3</div> Rincian 27 (Pendapatan)</div>
+                        <div class="card-title"><div class="step-badge" style="background:var(--bg-dark);">3</div> Rincian Pendapatan</div>
                     </div>
                     
                     <div class="input-group">
-                        <label>27a. Nilai produksi / Omzet usaha</label>
+                        <label id="lbl-27a">27a. Nilai produksi / Omzet usaha</label>
                         <div class="currency-wrapper">
                             <span class="currency-symbol">Rp</span>
                             <input type="text" id="val-27a" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
@@ -333,7 +333,7 @@
                         </div>
                     </div>
                     <div class="input-group">
-                        <label>27b. Pendapatan lainnya</label>
+                        <label id="lbl-27b">27b. Pendapatan lainnya</label>
                         <div class="currency-wrapper">
                             <span class="currency-symbol">Rp</span>
                             <input type="text" id="val-27b" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
@@ -358,11 +358,11 @@
 
                     <div class="stats-grid">
                         <div class="stat-box">
-                            <span class="stat-label">Output (omzet - 26c, biaya pembelian barang yang terjual)</span>
+                            <span class="stat-label">Output (omzet - HPP)</span>
                             <span class="stat-value" id="res-output">Rp 0</span>
                         </div>
                         <div class="stat-box">
-                            <span class="stat-label">Nilai tambah (omzet - 26b - 26c - 26d)</span>
+                            <span class="stat-label">Nilai tambah (omzet - prod - HPP - ops)</span>
                             <span class="stat-value" id="res-ntb">Rp 0</span>
                         </div>
                         <div class="stat-box">
@@ -370,21 +370,21 @@
                             <span class="stat-value text-highlight" id="res-rasio">0.00%</span>
                         </div>
                         <div class="stat-box">
-                            <span class="stat-label">Target (Median KBLI)</span>
+                            <span class="stat-label">Target (Batas Atas Rasio)</span>
                             <span class="stat-value" id="res-target" style="color:var(--text-muted);">-</span>
                         </div>
                     </div>
 
                     <button id="btn-adjust" class="btn btn-action hidden" onclick="prepareAdjustment()">
                         <svg class="icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-                        Review penyesuaian rasio
+                        Review Penyesuaian Organik
                     </button>
                 </section>
             </div>
         </div>
 
         <section class="card" id="section-visual" style="display: none; padding: 20px 24px;">
-            <label style="margin-bottom: 0; color: var(--text-main);">Proporsi Pengeluaran (Rincian 26)</label>
+            <label style="margin-bottom: 0; color: var(--text-main);">Proporsi Pengeluaran</label>
             <div class="proportion-bar">
                 <div id="bar-26a" class="prop-segment" style="width: 0%; background: var(--success);"></div>
                 <div id="bar-26b" class="prop-segment" style="width: 0%; background: var(--primary);"></div>
@@ -413,7 +413,7 @@
             </div>
             <div class="modal-body">
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6;" id="modal-desc">
-                    Berikut simulasi perubahan NTB (naik organik 10-20%) agar rasio mendarat di <strong>tengah rentang aman</strong>. Salin nominal mentah di bawah ini, atau klik Terapkan.
+                    Berikut simulasi perubahan NTB (naik organik 10-20%) agar rasio mendarat di batas wajar dan aman dari anomali.
                 </p>
                 
                 <div style="overflow-x: auto;">
@@ -504,6 +504,16 @@
         let currentData = null;
         let pendingAdjustments = null;
 
+        function updateLabels2026(is2026) {
+            document.getElementById('lbl-26a').innerText = is2026 ? "30a. Total upah, gaji & jaminan" : "26a. Total upah, gaji & jaminan";
+            document.getElementById('lbl-26b').innerText = is2026 ? "30b. Biaya produksi" : "26b. Biaya produksi";
+            document.getElementById('lbl-26c').innerText = is2026 ? "30c. Biaya pembelian barang terjual" : "26c. Biaya pembelian barang terjual";
+            document.getElementById('lbl-26d').innerText = is2026 ? "30d. Biaya operasional" : "26d. Biaya operasional";
+            document.getElementById('lbl-26e').innerText = is2026 ? "30e. Biaya non operasional" : "26e. Biaya non operasional";
+            document.getElementById('lbl-27a').innerText = is2026 ? "31a. Nilai produksi / Omzet usaha" : "27a. Nilai produksi / Omzet usaha";
+            document.getElementById('lbl-27b').innerText = is2026 ? "31b. Pendapatan lainnya" : "27b. Pendapatan lainnya";
+        }
+
         function parseFasihData() {
             const text = document.getElementById('fasih-input').value;
             if (!text.trim()) {
@@ -531,11 +541,11 @@
                     }
                 }
 
+                document.getElementById('is-year-2026').checked = is2026;
+                updateLabels2026(is2026);
+
                 if (is2026) {
-                    document.getElementById('is-year-2026').checked = true;
                     showCustomAlert("Tahun 2026 Terdeteksi", "Sistem otomatis mengaktifkan mode <strong>Satu Bulan Terakhir</strong>.<br>Semua isian akan dikali 12 (disetahunkan).", "success");
-                } else {
-                    document.getElementById('is-year-2026').checked = false;
                 }
 
                 const extractRealValue = (prefix2025, prefix2026) => {
@@ -559,7 +569,6 @@
                 const v26c = extractRealValue("26\\.\\s*c\\.", "30\\.\\s*c\\.");
                 const v26d = extractRealValue("26\\.\\s*d\\.", "30\\.\\s*d\\.");
                 const v26e = extractRealValue("26\\.\\s*e\\.", "30\\.\\s*e\\.");
-                
                 const v27a = extractRealValue("27\\.\\s*a\\.", "31\\.\\s*a\\.");
                 const v27b = extractRealValue("27\\.\\s*b\\.", "31\\.\\s*b\\.");
 
@@ -600,6 +609,14 @@
             return Math.round(num).toLocaleString('id-ID');
         }
 
+        function copyVal(id, btn) {
+            let val = document.getElementById(id).value || '0';
+            navigator.clipboard.writeText(val.replace(/\./g, ''));
+            let oriText = btn.innerText;
+            btn.innerText = 'Tersalin';
+            setTimeout(() => { btn.innerText = oriText; }, 1000);
+        }
+
         function copyRawText(text, btn) {
             navigator.clipboard.writeText(text);
             let ori = btn.innerText;
@@ -612,6 +629,7 @@
                 document.getElementById(id).value = '';
             });
             document.getElementById('is-year-2026').checked = false;
+            updateLabels2026(false);
             calculateNTB();
         }
 
@@ -625,10 +643,9 @@
                 const limit = kbliLimits[cat];
                 const minPct = (limit.min * 100).toFixed(0);
                 const maxPct = (limit.max * 100).toFixed(0);
-                const targetPct = (((limit.min + limit.max) / 2) * 100).toFixed(2);
                 
-                info.innerText = `Rentang aman: ${minPct}% - ${maxPct}%. (Median: ${targetPct}%)`;
-                document.getElementById('res-target').innerText = '~ ' + targetPct + '%';
+                info.innerText = `Rentang aman BPS: ${minPct}% - ${maxPct}%.`;
+                document.getElementById('res-target').innerText = `~ ` + maxPct + '%';
                 mainForms.classList.remove('disabled-area');
                 toggle.disabled = false;
                 document.getElementById('section-visual').style.display = 'block';
@@ -638,6 +655,7 @@
                 mainForms.classList.add('disabled-area');
                 toggle.disabled = true;
                 toggle.checked = false;
+                updateLabels2026(false);
                 document.getElementById('section-visual').style.display = 'none';
             }
             calculateNTB();
@@ -648,6 +666,7 @@
             if (!cat) return;
 
             const isTahunan = document.getElementById('is-year-2026').checked;
+            updateLabels2026(isTahunan);
             const multiplier = isTahunan ? 12 : 1;
 
             const v26a = getNum('val-26a') * multiplier;
@@ -750,10 +769,9 @@
 
             const limits = kbliLimits[cat];
             
-            // LOGIKA V6: TARGET RASIO MEDIAN + NTB NAIK 10-20%
-            let targetRasio = (limits.min + limits.max) / 2;
-            let jitter = (Math.random() * 0.02) - 0.01; 
-            targetRasio = Math.max(limits.min + 0.01, Math.min(limits.max - 0.01, targetRasio + jitter));
+            // LOGIKA V7: TARGET RASIO DEKAT MAX (Biar Omzet tak meledak) + NTB NAIK ORGANIK
+            let targetRasio = limits.max - (0.01 + Math.random() * 0.02); 
+            targetRasio = Math.max(limits.min + 0.01, Math.min(limits.max - 0.01, targetRasio));
             
             let targetNTB = ntb > 0 ? ntb * (1.10 + (Math.random() * 0.10)) : (1000000 * multiplier);
             
@@ -763,35 +781,32 @@
             let v26dBaru = v26d;
 
             if (cat === 'G') {
-                let targetOutput = targetNTB / targetRasio;
-                let asumsiMargin = 0.25 + (Math.random() * 0.05); 
-                let idealOmzet = targetOutput / asumsiMargin;
-                omzetBaru = Math.max(v27a, idealOmzet);
+                let targetOutput = Math.max(targetNTB / targetRasio, targetNTB + v26b); 
                 
-                v26cBaru = Math.max(0, omzetBaru - targetOutput);
+                let maxAllowedOmzet = Math.max(v27a * 1.5, v27a + (5000000 * multiplier)); 
+                let idealOmzet = targetOutput / 0.25; 
+                
+                omzetBaru = Math.min(idealOmzet, maxAllowedOmzet);
+                omzetBaru = Math.max(omzetBaru, targetOutput + v26c); 
+                omzetBaru = Math.max(omzetBaru, v27a); 
+                
+                v26cBaru = omzetBaru - targetOutput;
                 
                 let biayaAntaraBaru = Math.max(0, targetOutput - targetNTB);
-                let totLama = v26b + v26d;
-                if (totLama > 0) {
-                    v26bBaru = biayaAntaraBaru * (v26b / totLama);
-                    v26dBaru = biayaAntaraBaru * (v26d / totLama);
-                } else {
-                    v26dBaru = biayaAntaraBaru;
-                    v26bBaru = 0;
-                }
+                v26bBaru = v26b; // LOCKED
+                v26dBaru = Math.max(0, biayaAntaraBaru - v26bBaru);
+                
             } else {
-                let targetOutput = omzetBaru - v26c;
-                if (targetOutput <= 0) targetOutput = 10000 * multiplier;
+                v26cBaru = v26c; // LOCKED
+                let targetOutput = Math.max(targetNTB / targetRasio, targetNTB + (v26b + v26d) * 0.1);
+                omzetBaru = Math.max(v27a, targetOutput + v26cBaru);
                 
-                let tempRasio = targetNTB / targetOutput;
-                if (tempRasio > targetRasio) {
-                    targetOutput = targetNTB / targetRasio;
-                    omzetBaru = targetOutput + v26c;
-                } else if (tempRasio < limits.min) {
-                    targetNTB = targetOutput * targetRasio; 
+                let currentOutput = omzetBaru - v26cBaru;
+                if (targetNTB / currentOutput < limits.min) {
+                    targetNTB = currentOutput * (limits.min + 0.01);
                 }
                 
-                let biayaAntaraBaru = Math.max(0, targetOutput - targetNTB);
+                let biayaAntaraBaru = Math.max(0, (omzetBaru - v26cBaru) - targetNTB);
                 let totLama = v26b + v26d;
                 if (totLama > 0) {
                     v26bBaru = biayaAntaraBaru * (v26b / totLama);
@@ -817,49 +832,50 @@
             };
 
             const isBulananText = multiplier === 12 ? '<br><span style="font-size:0.65rem; color:var(--primary); font-weight:600;">(Angka Salin = 1 Bulan)</span>' : '';
+            
+            const l_27a = multiplier === 12 ? '31a' : '27a';
+            const l_26b = multiplier === 12 ? '30b' : '26b';
+            const l_26c = multiplier === 12 ? '30c' : '26c';
+            const l_26d = multiplier === 12 ? '30d' : '26d';
+
             let tbodyHtml = '';
 
-            // 1. Omzet
             tbodyHtml += `
                 <tr>
-                    <td>Omzet Penjualan (27a)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Diselaraskan dengan target rasio</span>${isBulananText}</td>
+                    <td>Omzet Penjualan (${l_27a})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dipertahankan semaksimal mungkin</span>${isBulananText}</td>
                     <td class="val-old">Rp ${toRp(v27a / multiplier)}</td>
                     <td>${buildAdjustedCell(Math.round(omzetBaru / multiplier), false, multiplier)}</td>
                 </tr>
             `;
 
-            // 2. Biaya Produksi (26b) - Muncul jika berubah atau KBLI C
             if (cat === 'C' || Math.round(v26bBaru) !== Math.round(v26b)) {
                 tbodyHtml += `
                     <tr>
-                        <td>Biaya Produksi (26b)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Disesuaikan proporsional</span>${isBulananText}</td>
+                        <td>Biaya Produksi (${l_26b})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Disesuaikan proporsional profil asli</span>${isBulananText}</td>
                         <td class="val-old">Rp ${toRp(v26b / multiplier)}</td>
                         <td>${buildAdjustedCell(Math.round(v26bBaru / multiplier), false, multiplier)}</td>
                     </tr>
                 `;
             }
 
-            // 3. Pembelian Terjual (26c) - Muncul jika berubah atau KBLI G
             if (cat === 'G' || Math.round(v26cBaru) !== Math.round(v26c)) {
                 tbodyHtml += `
                     <tr>
-                        <td>Pembelian Terjual (26c)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">HPP disesuaikan proporsional</span>${isBulananText}</td>
+                        <td>Pembelian Terjual (${l_26c})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">HPP disesuaikan khusus Perdagangan</span>${isBulananText}</td>
                         <td class="val-old">Rp ${toRp(v26c / multiplier)}</td>
                         <td>${buildAdjustedCell(Math.round(v26cBaru / multiplier), false, multiplier)}</td>
                     </tr>
                 `;
             }
 
-            // 4. Biaya Operasional (26d)
             tbodyHtml += `
                 <tr>
-                    <td>Biaya Operasional (26d)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Amortisasi pengunci rasio</span>${isBulananText}</td>
+                    <td>Biaya Operasional (${l_26d})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Amortisasi pengunci rasio wajar</span>${isBulananText}</td>
                     <td class="val-old">Rp ${toRp(v26d / multiplier)}</td>
                     <td>${buildAdjustedCell(Math.round(v26dBaru / multiplier), false, multiplier)}</td>
                 </tr>
             `;
 
-            // 5. NTB (Readonly Info)
             tbodyHtml += `
                 <tr>
                     <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dinaikkan secara organik (10-20%)</span>${isBulananText}</td>
@@ -868,7 +884,6 @@
                 </tr>
             `;
 
-            // 6. Rasio
             tbodyHtml += `
                 <tr style="background: rgba(14, 165, 233, 0.05);">
                     <td style="font-weight:700; color:var(--primary);">Rasio Evaluasi BPS</td>
