@@ -420,7 +420,7 @@
             </div>
             <div class="modal-body">
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6;" id="modal-desc">
-                    Berikut simulasi perubahan absolut NTB (naik organik 10-20%) agar rasio mendarat di batas wajar dan terhindar dari anomali.
+                    Berikut simulasi perubahan NTB organik komprehensif agar rasio mendarat di batas wajar BPS tanpa mengubah profil keuangan secara tidak wajar.
                 </p>
                 
                 <div style="overflow-x: auto;">
@@ -793,7 +793,7 @@
 
         function prepareAdjustment() {
             if (!currentData) return;
-            let { cat, v26b, v26c, v26d, v27a, ntb, multiplier } = currentData;
+            let { cat, v26b, v26c, v26d, v27a, ntb, rasio, multiplier } = currentData;
             
             const selectEl = document.getElementById('kbli-category');
             const rawBizName = document.getElementById('nama-usaha-input').value.trim();
@@ -803,9 +803,14 @@
 
             const limits = kbliLimits[cat];
             
-            // Patok Rasio di batas maksimal agar Output (dan 26d) menjadi serendah/seminimal mungkin
-            let targetRasio = limits.max - (0.005 + Math.random() * 0.015);
-            targetRasio = Math.max(limits.min + 0.01, Math.min(limits.max - 0.01, targetRasio));
+            // DYNAMIC TARGETING: Bidik batas bawah jika defisit, bidik batas atas jika surplus
+            let targetRasio;
+            if (rasio < limits.min) {
+                targetRasio = limits.min + (0.005 + Math.random() * 0.015);
+            } else {
+                targetRasio = limits.max - (0.005 + Math.random() * 0.015);
+            }
+            targetRasio = Math.max(limits.min + 0.001, Math.min(limits.max - 0.001, targetRasio));
             
             let targetNTB = ntb > 0 ? ntb * (1.10 + (Math.random() * 0.10)) : (1000000 * multiplier);
             
@@ -817,25 +822,26 @@
             if (cat === 'G') {
                 let targetOutput = targetNTB / targetRasio;
                 
-                // MICRO-GROWTH untuk 26c:
-                // HPP dibiarkan naik secara acak tetapi sangat tipis (hanya 2% hingga 8%)
-                // Agar tidak terlihat kaku terkunci, namun tetap tidak memompa Omzet secara drastis
+                // Micro-Growth untuk 26c: Naik tipis (2%-8%) agar terlihat natural
                 let microGrowth = 1.02 + (Math.random() * 0.06); 
                 v26cBaru = v26c > 0 ? v26c * microGrowth : targetOutput * 0.05; 
                 
                 omzetBaru = targetOutput + v26cBaru;
                 
-                // Jika omzet terhitung ternyata masih lebih rendah dari omzet awal, pertahankan omzet awal
+                // Jika omzet terhitung lebih rendah dari omzet awal, KUNCI omzet awal
                 if (omzetBaru < v27a) {
                     omzetBaru = v27a;
-                    v26cBaru = omzetBaru - targetOutput;
+                    // JANGAN rusakkan 26c. Pertahankan microGrowth-nya!
+                    targetOutput = omzetBaru - v26cBaru;
+                    // Kompensasi rasio under: NTB harus naik secara matematis lebih tinggi
+                    targetNTB = targetOutput * targetRasio;
                 }
 
                 // 26b (Biaya Produksi) dikunci
                 v26bBaru = v26b; 
                 let biayaAntaraBaru = Math.max(0, targetOutput - targetNTB);
                 
-                // 26d (Operasional) menyerap penuh sisa rasio BPS (The Absorber)
+                // 26d (Operasional) menyerap sisa rasio BPS
                 v26dBaru = Math.max(0, biayaAntaraBaru - v26bBaru); 
                 
             } else if (cat === 'C') {
@@ -858,7 +864,6 @@
             } else {
                 let targetOutput = targetNTB / targetRasio;
                 
-                // Micro-Growth juga diaplikasikan untuk sektor selain G & C
                 let microGrowth = 1.02 + (Math.random() * 0.06); 
                 v26cBaru = v26c > 0 ? v26c * microGrowth : 0; 
                 
@@ -900,7 +905,7 @@
 
             tbodyHtml += `
                 <tr>
-                    <td>Omzet Penjualan (${l_27a})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dipertahankan pada wajar terendah</span>${isBulananText}</td>
+                    <td>Omzet Penjualan (${l_27a})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dipertahankan atau batas natural minimum</span>${isBulananText}</td>
                     <td class="val-old">Rp ${toRp(v27a / multiplier)}</td>
                     <td>${buildAdjustedCell(Math.round(pendingAdjustments.omzetBaru / multiplier), false, multiplier)}</td>
                 </tr>
@@ -928,7 +933,7 @@
 
             tbodyHtml += `
                 <tr>
-                    <td>Biaya Operasional (${l_26d})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Penyelamat rasio (Absorber utama)</span>${isBulananText}</td>
+                    <td>Biaya Operasional (${l_26d})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Penyelamat rasio (Absorber)</span>${isBulananText}</td>
                     <td class="val-old">Rp ${toRp(v26d / multiplier)}</td>
                     <td>${buildAdjustedCell(Math.round(pendingAdjustments.v26dBaru / multiplier), false, multiplier)}</td>
                 </tr>
@@ -936,7 +941,7 @@
 
             tbodyHtml += `
                 <tr>
-                    <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Naik absolut organik (10-20%)</span>${isBulananText}</td>
+                    <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Naik organik (atau kompensasi defisit)</span>${isBulananText}</td>
                     <td class="val-old">Rp ${toRp(ntb / multiplier)}</td>
                     <td>${buildAdjustedCell(Math.round(targetNTB / multiplier), true, multiplier)}</td>
                 </tr>
