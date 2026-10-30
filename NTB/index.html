@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnigmaStat | Adjustment Matrix</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-body: #f0f9ff;
+            --bg-card: #ffffff;
+            --bg-header: #ffffff;
+            --bg-dark: #082f49;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #bae6fd;
+            --primary: #0284c7; 
+            --primary-hover: #0369a1;
+            --input-bg: #f8fafc;
+            --focus-ring: rgba(2, 132, 199, 0.15);
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-pill: 9999px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #08121f; 
+            --bg-card: #0f1c2e;
+            --bg-header: #0f1c2e;
+            --bg-dark: #06111d;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: #1e3656;
+            --primary: #0ea5e9; 
+            --primary-hover: #38bdf8;
+            --input-bg: #06111d;
+            --focus-ring: rgba(14, 165, 233, 0.2);
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-body); color: var(--text-main); font-size: 14px; line-height: 1.5; min-height: 100vh; display: flex; flex-direction: column; transition: background-color 0.3s, color 0.3s; }
+        
+        header { position: sticky; top: 0; z-index: 50; background: var(--bg-header); border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-sm); padding: 14px 20px; transition: 0.3s; }
+        .header-content { max-width: 1000px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+        .brand-group { display: flex; align-items: center; gap: 14px; }
+        .brand-icon { width: 36px; height: 36px; border-radius: 10px; object-fit: cover; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); }
+        .header-title h1 { font-size: 1.1rem; font-weight: 700; color: var(--primary); letter-spacing: -0.5px; }
+        .header-title p { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; font-style: italic; }
+        .action-group { display: flex; gap: 8px; }
+        
+        main { max-width: 1000px; width: 100%; margin: 32px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 24px; flex-grow: 1; }
+        
+        .card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); transition: 0.3s; }
+        .card-dark { background: var(--bg-dark); border-radius: var(--radius-lg); padding: 24px; color: #f1f5f9; border: 1px solid var(--border-color); transition: 0.3s; }
+        
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; }
+        .card-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--text-main); }
+        .step-badge { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; background: var(--primary); color: white; flex-shrink: 0; }
+        
+        .grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+        .flex-col { display: flex; flex-direction: column; gap: 16px; }
+        
+        label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+        .input-group { position: relative; }
+        
+        .currency-wrapper { position: relative; display: flex; align-items: center; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); transition: 0.2s; overflow: hidden; }
+        .currency-wrapper:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
+        .currency-symbol { position: absolute; left: 16px; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; pointer-events: none; }
+        input[type="text"].text-right { width: 100%; padding: 12px 64px 12px 40px; border: none; background: transparent; font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 600; text-align: right; color: var(--text-main); outline: none; transition: 0.3s; }
+        input[type="text"].input-regular { width: 100%; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--input-bg); font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--text-main); transition: 0.2s; outline: none; }
+        input[type="text"].input-regular:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
+
+        select { width: 100%; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--input-bg); font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 500; color: var(--text-main); transition: 0.2s; outline: none; cursor: pointer; }
+        select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
+        
+        .readonly-wrapper { background: var(--bg-body); opacity: 0.9; }
+        input[readonly].text-right { font-weight: 700; color: var(--primary); cursor: not-allowed; }
+        
+        .btn { padding: 10px 20px; border-radius: var(--radius-pill); font-weight: 600; font-size: 0.85rem; cursor: pointer; border: none; transition: 0.2s; font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+        .btn-outline:hover { background: var(--bg-body); border-color: var(--primary); color: var(--primary); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-icon { padding: 10px; border-radius: 12px; }
+        
+        .btn-action { background: var(--primary); color: white; width: 100%; padding: 14px; margin-top: 16px; font-size: 0.95rem; box-shadow: var(--shadow-sm); }
+        .btn-action:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        
+        .btn-copy { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color); padding: 4px 10px; font-size: 0.7rem; border-radius: var(--radius-pill); cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn-copy:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .btn-copy-sm { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 4px 12px; font-size: 0.65rem; border-radius: var(--radius-pill); cursor: pointer; font-weight: 600; transition: 0.2s; font-family: inherit; margin-left: 12px; flex-shrink: 0; box-shadow: var(--shadow-sm); }
+        .btn-copy-sm:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        
+        .toggle-container { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; justify-content: center; transition: 0.3s; }
+        .toggle-label { display: flex; align-items: center; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+        .toggle-label input { display: none; }
+        .slider { width: 44px; height: 24px; background: var(--text-muted); border-radius: 24px; margin-right: 12px; position: relative; transition: 0.3s; opacity: 0.6; }
+        .slider::after { content: ""; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: 0.3s; }
+        .toggle-label input:checked + .slider { background: var(--primary); opacity: 1; }
+        .toggle-label input:checked + .slider::after { transform: translateX(20px); }
+        
+        .disabled-area { opacity: 0.3; pointer-events: none; filter: grayscale(100%); transition: 0.4s; }
+        .hidden { display: none !important; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 16px; margin-top: 16px; }
+        .stat-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 16px; border-radius: var(--radius-md); display: flex; flex-direction: column; justify-content: space-between; }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
+        .stat-value { font-size: 1rem; font-weight: 700; color: #f1f5f9; }
+        .text-highlight { color: var(--primary); font-size: 1.25rem; text-shadow: 0 0 10px rgba(14, 165, 233, 0.2); }
+        
+        .badge { padding: 6px 12px; border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 600; border: 1px solid; display: inline-flex; align-items: center; gap: 6px; }
+        .badge-ideal { background: rgba(5, 150, 105, 0.1); color: var(--success); border-color: rgba(5, 150, 105, 0.2); }
+        .badge-defisit { background: rgba(217, 119, 6, 0.1); color: var(--warning); border-color: rgba(217, 119, 6, 0.2); }
+        .badge-surplus { background: rgba(220, 38, 38, 0.1); color: var(--danger); border-color: rgba(220, 38, 38, 0.2); }
+        .badge-default { background: rgba(255,255,255,0.05); color: var(--text-muted); border-color: rgba(255,255,255,0.1); }
+
+        .proportion-bar { display: flex; width: 100%; height: 12px; border-radius: var(--radius-pill); overflow: hidden; margin: 16px 0; background: var(--bg-body); }
+        .prop-segment { height: 100%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .legend-grid { display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+        .legend-item { display: flex; align-items: center; gap: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; padding: 20px; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content { background: var(--bg-card); width: 100%; max-width: 620px; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); transform: translateY(20px) scale(0.98); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--border-color); display: flex; flex-direction: column; max-height: 90vh; }
+        .modal-overlay.active .modal-content { transform: translateY(0) scale(1); }
+        
+        .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: flex-start; flex-shrink: 0; }
+        .modal-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+        
+        .chip-kbli { background: var(--primary); color: white; padding: 6px 14px; border-radius: var(--radius-pill); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.3px; display: inline-block; white-space: nowrap; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2); }
+        
+        .modal-body { padding: 24px; overflow-y: auto; }
+        .modal-footer { padding: 16px 24px; background: var(--bg-body); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; flex-shrink: 0; }
+        
+        .compare-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: clamp(0.75rem, 2vw, 0.9rem); }
+        .compare-table th, .compare-table td { padding: 14px 8px; border-bottom: 1px solid var(--border-color); color: var(--text-main); vertical-align: middle; }
+        .compare-table td:first-child { text-align: left; padding-left: 0; padding-right: 16px; width: 45%; line-height: 1.5; }
+        .compare-table th { color: var(--text-muted); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; text-align: right; white-space: nowrap; }
+        .compare-table th:first-child { text-align: left; padding-left: 0; }
+        
+        .val-old { color: var(--text-muted); text-decoration: line-through; text-align: right; white-space: nowrap; }
+        .val-flex { display: flex; align-items: center; justify-content: flex-end; white-space: nowrap; width: 100%; }
+        .val-new { color: var(--text-main); font-weight: 700; }
+        
+        .icon { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+        .parser-textarea { width: 100%; height: 80px; padding: 12px; border: 1px dashed var(--primary); border-radius: var(--radius-md); background: var(--input-bg); color: var(--text-main); font-family: monospace; font-size: 0.8rem; resize: none; outline: none; transition: 0.2s; }
+        .parser-textarea:focus { border-style: solid; box-shadow: 0 0 0 3px var(--focus-ring); }
+        
+        /* Custom Native Notification Alert */
+        .custom-alert-box { background: var(--bg-card); width: 100%; max-width: 400px; border-radius: var(--radius-lg); padding: 24px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); transform: translateY(20px) scale(0.98); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--border-color); }
+        .modal-overlay.active .custom-alert-box { transform: translateY(0) scale(1); }
+        .alert-icon { width: 48px; height: 48px; margin: 0 auto 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .alert-icon.success { background: rgba(5, 150, 105, 0.1); color: var(--success); }
+        .alert-icon.warning { background: rgba(217, 119, 6, 0.1); color: var(--warning); }
+        .alert-title { font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+        .alert-message { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="brand-group">
+                <img src="icon.png" alt="Logo" class="brand-icon" onerror="this.style.display='none'">
+                <div class="header-title">
+                    <h1>EnigmaStat</h1>
+                    <p>Adjust like it's never enough.</p>
+                </div>
+            </div>
+            <div class="action-group">
+                <button class="btn btn-outline btn-icon" onclick="toggleTheme()" id="theme-toggle" aria-label="Toggle Dark Mode"></button>
+                <button class="btn btn-outline btn-icon" onclick="resetForm()" aria-label="Reset Form">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- SEKSI PARSER FASIH -->
+        <section class="card" style="border: 2px solid var(--border-color);">
+            <div class="card-header" style="border:none; padding:0; margin-bottom: 12px;">
+                <div class="card-title">
+                    <div class="step-badge" style="background:var(--success);">
+                        <svg class="icon" viewBox="0 0 24 24" style="width: 14px; height: 14px;"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg>
+                    </div> 
+                    Fasih Smart Parser (Ctrl+A & Ctrl+V)
+                </div>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Paste (Ctrl+V) seluruh isi halaman web FASIH BPS di bawah ini, lalu klik ekstrak. Form KBLI dan Rincian 26-27 akan terisi otomatis secara presisi.</p>
+            <textarea id="fasih-input" class="parser-textarea" placeholder="Paste (Ctrl+V) isi teks FASIH di sini..."></textarea>
+            <button class="btn btn-primary" style="margin-top: 12px; width: 100%; padding: 12px;" onclick="parseFasihData()">
+                <svg class="icon" viewBox="0 0 24 24"><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path></svg>
+                Ekstrak & Isi Form
+            </button>
+        </section>
+
+        <!-- Seksi 1: Identitas & KBLI -->
+        <section class="card">
+            <div class="card-header" style="border:none; padding:0; margin-bottom: 20px;">
+                <div class="card-title"><div class="step-badge">1</div> Identitas & Kategori KBLI</div>
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <label>Nama Perusahaan / Usaha</label>
+                <input type="text" id="nama-usaha-input" class="input-regular" placeholder="Diekstrak otomatis atau ketik manual..." oninput="updateBizTitle(this.value)">
+            </div>
+
+            <div class="grid-auto">
+                <div>
+                    <select id="kbli-category" onchange="onCategoryChange()">
+                        <option value="">Pilih kategori KBLI usaha...</option>
+                        <option value="A">Kategori A: Pertanian, Kehutanan, dan Perikanan (51% - 94%)</option>
+                        <option value="B">Kategori B: Pertambangan dan Penggalian (28% - 81%)</option>
+                        <option value="C">Kategori C: Industri (15% - 61%)</option>
+                        <option value="D">Kategori D: Penyediaan Listrik, Gas, Uap/Air Panas Dan Udara Dingin (13% - 68%)</option>
+                        <option value="E">Kategori E: Penyediaan Air, Penegelolaan Air Limbah, Penanganan Limbah, dan Remediasi (29% - 47%)</option>
+                        <option value="F">Kategori F: Konstruksi (34% - 44%)</option>
+                        <option value="G">Kategori G: Perdagangan Besar Dan Eceran (64% - 78%)</option>
+                        <option value="H">Kategori H: Transportasi dan Penyimpanan (29% - 64%)</option>
+                        <option value="I">Kategori I: Aktivitas Penyediaan Akomodasi dan Makan Minum (36% - 69%)</option>
+                        <option value="J">Kategori J: Aktivitas Penerbitan, Penyiaran, Produksi dan Distribusi Konten (36% - 73%)</option>
+                        <option value="K">Kategori K: Aktivitas Telekomunikasi, Pemrograman Komputer, Konsultansi, Infrastruktur Komputasi, dan Jasa Informasi Lainnya (50% - 72%)</option>
+                        <option value="L">Kategori L: Aktivitas Keuangan dan Asuransi (46% - 86%)</option>
+                        <option value="M">Kategori M: Aktivitas Real Estat (50% - 99%)</option>
+                        <option value="N">Kategori N: Aktivitas Profesional, Ilmiah, dan Teknis (44% - 57%)</option>
+                        <option value="O">Kategori O: Aktivitas Administratif dan Penunjang Usaha (54% - 66%)</option>
+                        <option value="Q">Kategori Q: Pendidikan (27% - 82%)</option>
+                        <option value="R">Kategori R: Aktivitas Kesehatan Manusia dan Aktivitas Sosial (20% - 60%)</option>
+                        <option value="S">Kategori S: Kesenian, Olahraga, dan Rekreasi (21% - 57%)</option>
+                        <option value="T">Kategori T: Aktivitas Jasa Lainnya (30% - 69%)</option>
+                    </select>
+                    <div id="kbli-info" style="font-size: 0.75rem; color: var(--primary); margin-top: 10px; font-weight: 500;">Pilih Kategori KBLI terlebih dahulu untuk memulai.</div>
+                </div>
+                <div class="toggle-container">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="is-year-2026" onchange="calculateNTB()">
+                        <div class="slider"></div>
+                        Usaha mulai beroperasi tahun ini
+                    </label>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; margin-left: 56px; font-weight: 500;">Aktifkan jika input berupa data bulanan (otomatis x12).</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Judul Dinamis Nama Usaha (Muncul Saat Form Aktif) -->
+        <div id="biz-title-container" class="hidden" style="text-align: center; margin: 10px 0 10px 0;">
+            <h2 id="display-biz-title" style="color: var(--primary); font-size: 1.4rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">-</h2>
+            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <span class="step-badge" style="width: 20px; height: 20px; font-size: 0.6rem; background: var(--warning);">
+                    <svg class="icon" viewBox="0 0 24 24" style="width:12px; height:12px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                </span> 
+                Matriks Penyesuaian Aktif
+            </div>
+        </div>
+
+        <!-- Seksi 2 & 3 -->
+        <div id="main-forms" class="grid-auto disabled-area">
+            <section class="card flex-col">
+                <div class="card-header">
+                    <div class="card-title"><div class="step-badge" style="background:var(--bg-dark);">2</div> Rincian Pengeluaran</div>
+                </div>
+                
+                <div class="input-group">
+                    <label id="lbl-26a">26a. Total upah, gaji & jaminan</label>
+                    <div class="currency-wrapper">
+                        <span class="currency-symbol">Rp</span>
+                        <input type="text" id="val-26a" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                        <button class="btn-copy" onclick="copyVal('val-26a', this)">Salin</button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label id="lbl-26b">26b. Biaya produksi</label>
+                    <div class="currency-wrapper">
+                        <span class="currency-symbol">Rp</span>
+                        <input type="text" id="val-26b" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                        <button class="btn-copy" onclick="copyVal('val-26b', this)">Salin</button>
+                    </div>
+                </div>
+
+                <!-- Input HPP 26c: Dinamis Disembunyikan Jika Bukan KBLI G -->
+                <div class="input-group" id="group-26c" style="display: none;">
+                    <label id="lbl-26c">26c. Biaya pembelian barang terjual</label>
+                    <div class="currency-wrapper">
+                        <span class="currency-symbol">Rp</span>
+                        <input type="text" id="val-26c" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                        <button class="btn-copy" onclick="copyVal('val-26c', this)">Salin</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label id="lbl-26d">26d. Biaya operasional</label>
+                    <div class="currency-wrapper">
+                        <span class="currency-symbol">Rp</span>
+                        <input type="text" id="val-26d" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                        <button class="btn-copy" onclick="copyVal('val-26d', this)">Salin</button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label id="lbl-26e">26e. Biaya non operasional</label>
+                    <div class="currency-wrapper">
+                        <span class="currency-symbol">Rp</span>
+                        <input type="text" id="val-26e" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                        <button class="btn-copy" onclick="copyVal('val-26e', this)">Salin</button>
+                    </div>
+                </div>
+                
+                <div style="border-top: 1px solid var(--border-color); padding-top: 16px;">
+                    <label style="color: var(--text-main); font-weight: 600;">Total Pengeluaran Usaha</label>
+                    <div class="currency-wrapper readonly-wrapper">
+                        <span class="currency-symbol" style="color:var(--primary);">Rp</span>
+                        <input type="text" id="tot-pengeluaran" placeholder="0" class="text-right" readonly>
+                    </div>
+                </div>
+            </section>
+
+            <div class="flex-col">
+                <section class="card flex-col">
+                    <div class="card-header">
+                        <div class="card-title"><div class="step-badge" style="background:var(--bg-dark);">3</div> Rincian Pendapatan</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label id="lbl-27a">27a. Nilai produksi / Omzet usaha</label>
+                        <div class="currency-wrapper">
+                            <span class="currency-symbol">Rp</span>
+                            <input type="text" id="val-27a" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                            <button class="btn-copy" onclick="copyVal('val-27a', this)">Salin</button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label id="lbl-27b">27b. Pendapatan lainnya</label>
+                        <div class="currency-wrapper">
+                            <span class="currency-symbol">Rp</span>
+                            <input type="text" id="val-27b" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                            <button class="btn-copy" onclick="copyVal('val-27b', this)">Salin</button>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid var(--border-color); padding-top: 16px;">
+                        <label style="color: var(--text-main); font-weight: 600;">Total Pendapatan Usaha</label>
+                        <div class="currency-wrapper readonly-wrapper">
+                            <span class="currency-symbol" style="color:var(--primary);">Rp</span>
+                            <input type="text" id="tot-pendapatan" placeholder="0" class="text-right" readonly>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card-dark flex-col" style="flex-grow: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-size: 1rem; font-weight: 600;">Evaluasi Statistik</h3>
+                        <span id="badge-status" class="badge badge-default">Menunggu input...</span>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <span class="stat-label">Output (omzet - HPP)</span>
+                            <span class="stat-value" id="res-output">Rp 0</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Nilai tambah (omzet - prod - HPP - ops)</span>
+                            <span class="stat-value" id="res-ntb">Rp 0</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Rasio NTB (nilai tambah ÷ output)</span>
+                            <span class="stat-value text-highlight" id="res-rasio">0.00%</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Target (Batas Atas Rasio)</span>
+                            <span class="stat-value" id="res-target" style="color:var(--text-muted);">-</span>
+                        </div>
+                    </div>
+
+                    <button id="btn-adjust" class="btn btn-action hidden" onclick="prepareAdjustment()">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                        Review Penyesuaian Organik
+                    </button>
+                </section>
+            </div>
+        </div>
+
+        <section class="card" id="section-visual" style="display: none; padding: 20px 24px;">
+            <label style="margin-bottom: 0; color: var(--text-main);">Proporsi Pengeluaran</label>
+            <div class="proportion-bar">
+                <div id="bar-26a" class="prop-segment" style="width: 0%; background: var(--success);"></div>
+                <div id="bar-26b" class="prop-segment" style="width: 0%; background: var(--primary);"></div>
+                <div id="bar-26c" class="prop-segment" style="width: 0%; background: var(--warning);"></div>
+                <div id="bar-26d" class="prop-segment" style="width: 0%; background: #8b5cf6;"></div>
+                <div id="bar-26e" class="prop-segment" style="width: 0%; background: #ec4899;"></div>
+            </div>
+            <div class="legend-grid">
+                <div class="legend-item"><div class="dot" style="background: var(--success);"></div>Gaji: <strong id="pct-26a">0%</strong></div>
+                <div class="legend-item"><div class="dot" style="background: var(--primary);"></div>Produksi: <strong id="pct-26b">0%</strong></div>
+                <div class="legend-item" id="legend-26c" style="display: none;"><div class="dot" style="background: var(--warning);"></div>Barang Terjual: <strong id="pct-26c">0%</strong></div>
+                <div class="legend-item"><div class="dot" style="background: #8b5cf6;"></div>Operasional: <strong id="pct-26d">0%</strong></div>
+                <div class="legend-item"><div class="dot" style="background: #ec4899;"></div>Non-Ops: <strong id="pct-26e">0%</strong></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Review Auto Adjust -->
+    <div id="adjust-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-kbli-label">Nama Usaha <span class="chip-kbli">Kategori Terpilih</span></h3>
+                <button onclick="closeModal()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; padding:4px;">
+                    <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6;" id="modal-desc">
+                    Berikut simulasi perubahan NTB organik komprehensif agar rasio mendarat di batas wajar BPS tanpa mengubah profil keuangan secara tidak wajar.
+                </p>
+                
+                <div style="overflow-x: auto;">
+                    <table class="compare-table">
+                        <thead>
+                            <tr>
+                                <th>Rincian</th>
+                                <th>Nilai Awal</th>
+                                <th>Setelah Disesuaikan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modal-tbody">
+                            <!-- Injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal()">Batal</button>
+                <button class="btn btn-primary" onclick="applyAdjustment()">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg>
+                    Terapkan Penyesuaian
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NATIVE NOTIFICATION MODAL -->
+    <div id="alert-modal" class="modal-overlay">
+        <div class="custom-alert-box">
+            <div id="alert-icon" class="alert-icon success">
+                <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <h3 id="alert-title" class="alert-title">Notifikasi</h3>
+            <p id="alert-message" class="alert-message">Pesan notifikasi di sini.</p>
+            <button class="btn btn-primary" style="width:100%;" onclick="document.getElementById('alert-modal').classList.remove('active')">Mengerti</button>
+        </div>
+    </div>
+
+    <script>
+        const moonIcon = `<svg class="icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+        const sunIcon = `<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+        
+        function initTheme() {
+            const saved = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', saved);
+            document.getElementById('theme-toggle').innerHTML = saved === 'dark' ? sunIcon : moonIcon;
+        }
+        
+        function toggleTheme() {
+            const root = document.documentElement;
+            const current = root.getAttribute('data-theme');
+            const target = current === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-theme', target);
+            localStorage.setItem('theme', target);
+            document.getElementById('theme-toggle').innerHTML = target === 'dark' ? sunIcon : moonIcon;
+        }
+
+        document.addEventListener('DOMContentLoaded', initTheme);
+
+        function showCustomAlert(title, message, type = 'success') {
+            const iconEl = document.getElementById('alert-icon');
+            if(type === 'warning') {
+                iconEl.className = 'alert-icon warning';
+                iconEl.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
+            } else {
+                iconEl.className = 'alert-icon success';
+                iconEl.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+            }
+            document.getElementById('alert-title').innerText = title;
+            document.getElementById('alert-message').innerHTML = message;
+            document.getElementById('alert-modal').classList.add('active');
+        }
+
+        const kbliLimits = {
+            'A': { min: 0.51, max: 0.94 }, 'B': { min: 0.28, max: 0.81 },
+            'C': { min: 0.15, max: 0.61 }, 'D': { min: 0.13, max: 0.68 },
+            'E': { min: 0.29, max: 0.47 }, 'F': { min: 0.34, max: 0.44 },
+            'G': { min: 0.64, max: 0.78 }, 'H': { min: 0.29, max: 0.64 },
+            'I': { min: 0.36, max: 0.69 }, 'J': { min: 0.36, max: 0.73 },
+            'K': { min: 0.50, max: 0.72 }, 'L': { min: 0.46, max: 0.86 },
+            'M': { min: 0.50, max: 0.99 }, 'N': { min: 0.44, max: 0.57 },
+            'O': { min: 0.54, max: 0.66 }, 'Q': { min: 0.27, max: 0.82 },
+            'R': { min: 0.20, max: 0.60 }, 'S': { min: 0.21, max: 0.57 },
+            'T': { min: 0.30, max: 0.69 }
+        };
+
+        let currentData = null;
+        let pendingAdjustments = null;
+
+        function updateBizTitle(val) {
+            const container = document.getElementById('biz-title-container');
+            const titleEl = document.getElementById('display-biz-title');
+            if (val && val.trim() !== '') {
+                titleEl.innerText = val;
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        function updateLabels2026(is2026) {
+            document.getElementById('lbl-26a').innerText = is2026 ? "30a. Total upah, gaji & jaminan" : "26a. Total upah, gaji & jaminan";
+            document.getElementById('lbl-26b').innerText = is2026 ? "30b. Biaya produksi" : "26b. Biaya produksi";
+            document.getElementById('lbl-26c').innerText = is2026 ? "30c. Biaya pembelian barang terjual" : "26c. Biaya pembelian barang terjual";
+            document.getElementById('lbl-26d').innerText = is2026 ? "30d. Biaya operasional" : "26d. Biaya operasional";
+            document.getElementById('lbl-26e').innerText = is2026 ? "30e. Biaya non operasional" : "26e. Biaya non operasional";
+            document.getElementById('lbl-27a').innerText = is2026 ? "31a. Nilai produksi / Omzet usaha" : "27a. Nilai produksi / Omzet usaha";
+            document.getElementById('lbl-27b').innerText = is2026 ? "31b. Pendapatan lainnya" : "27b. Pendapatan lainnya";
+        }
+
+        function parseFasihData() {
+            const text = document.getElementById('fasih-input').value;
+            if (!text.trim()) {
+                showCustomAlert("Input Kosong", "Silakan paste data FASIH terlebih dahulu ke dalam kotak.", "warning");
+                return;
+            }
+
+            try {
+                let bizName = "";
+                const nameMatch = text.match(/(?:Nama\s+Perusahaan|Nama\s+Usaha|Nama\s+Perusahaan\/Usaha)[\s\S]*?\*\s*([^\n\r]+)/i);
+                if (nameMatch && nameMatch[1]) {
+                    bizName = nameMatch[1].trim();
+                } else {
+                    const fallbackMatch = text.match(/Nama\s+Perusahaan\/Usaha[\s\S]*?\n([^\n\r]+)/i);
+                    if (fallbackMatch && fallbackMatch[1]) {
+                        let tmp = fallbackMatch[1].trim();
+                        if (tmp.length > 2 && !tmp.toLowerCase().includes("alamat") && !tmp.toLowerCase().includes("kategori")) {
+                            bizName = tmp;
+                        }
+                    }
+                }
+                document.getElementById('nama-usaha-input').value = bizName;
+                updateBizTitle(bizName);
+
+                const kbliMatch = text.match(/13\.\s*h\.\s*Kategori\s*Lapangan\s*Usaha:[\s\S]*?([A-Z])/i);
+                if (kbliMatch && kbliMatch[1]) {
+                    if(/^[A-T]$/i.test(kbliMatch[1])) {
+                        const selectEl = document.getElementById('kbli-category');
+                        selectEl.value = kbliMatch[1].toUpperCase();
+                        onCategoryChange();
+                    }
+                }
+
+                let is2026 = false;
+                if (text.match(/30\.\s*a\.\s*Total upah/i)) {
+                    is2026 = true;
+                } else {
+                    const tahunMatch = text.match(/25\.\s*Tahun.*?beroperasi[\s\S]*?\*\s*(\d{4})/i);
+                    if (tahunMatch && tahunMatch[1] === "2026") {
+                        is2026 = true;
+                    }
+                }
+
+                document.getElementById('is-year-2026').checked = is2026;
+                updateLabels2026(is2026);
+
+                if (is2026) {
+                    showCustomAlert("Tahun 2026 Terdeteksi", "Sistem otomatis mengaktifkan mode <strong>Satu Bulan Terakhir</strong>.<br>Semua isian akan dikali 12 (disetahunkan).", "success");
+                }
+
+                const extractRealValue = (prefix2025, prefix2026) => {
+                    const prefix = is2026 ? prefix2026 : prefix2025;
+                    const regex = new RegExp(`${prefix}[\\s\\S]*?\\*([\\s\\S]*?)(?=(?:2[6-9]|3[0-3])\\.\\s*[a-z]\\.|$)`, 'i');
+                    const blockMatch = text.match(regex);
+                    if (blockMatch && blockMatch[1]) {
+                        const numbers = blockMatch[1].match(/[\d.,]+/g);
+                        if (numbers) {
+                            const longestNum = numbers.reduce((a, b) => a.length > b.length ? a : b);
+                            let cleanNum = longestNum.replace(/[,.]/g, ''); 
+                            if (cleanNum === "1") return "0";
+                            return cleanNum;
+                        }
+                    }
+                    return ''; 
+                };
+
+                const setAndFormat = (id, val) => {
+                    const el = document.getElementById(id);
+                    el.value = val;
+                    formatAndCalc(el);
+                };
+
+                setAndFormat('val-26a', extractRealValue("26\\.\\s*a\\.", "30\\.\\s*a\\."));
+                setAndFormat('val-26b', extractRealValue("26\\.\\s*b\\.", "30\\.\\s*b\\."));
+                
+                // Hanya update 26c jika sedang di Kategori G
+                if (document.getElementById('kbli-category').value === 'G') {
+                    setAndFormat('val-26c', extractRealValue("26\\.\\s*c\\.", "30\\.\\s*c\\."));
+                }
+                
+                setAndFormat('val-26d', extractRealValue("26\\.\\s*d\\.", "30\\.\\s*d\\."));
+                setAndFormat('val-26e', extractRealValue("26\\.\\s*e\\.", "30\\.\\s*e\\."));
+                setAndFormat('val-27a', extractRealValue("27\\.\\s*a\\.", "31\\.\\s*a\\."));
+                setAndFormat('val-27b', extractRealValue("27\\.\\s*b\\.", "31\\.\\s*b\\."));
+
+                document.getElementById('fasih-input').value = "";
+                
+            } catch (err) {
+                showCustomAlert("Gagal Parse", "Format teks tidak dikenali. Pastikan Anda menekan Ctrl+A lalu Ctrl+V tepat dari halaman pengisian FASIH BPS.", "warning");
+                console.error(err);
+            }
+        }
+
+        function formatAndCalc(input) {
+            let val = input.value.replace(/[^0-9]/g, '');
+            input.value = val ? parseInt(val, 10).toLocaleString('id-ID') : '';
+            calculateNTB();
+        }
+
+        function getNum(id) {
+            let val = document.getElementById(id).value.replace(/[^0-9]/g, '');
+            return val ? parseFloat(val) : 0;
+        }
+
+        function toRp(num) {
+            return Math.round(num).toLocaleString('id-ID');
+        }
+
+        function copyVal(id, btn) {
+            let val = document.getElementById(id).value || '0';
+            navigator.clipboard.writeText(val.replace(/\./g, ''));
+            let oriText = btn.innerText;
+            btn.innerText = 'Tersalin';
+            setTimeout(() => { btn.innerText = oriText; }, 1000);
+        }
+
+        function copyRawText(text, btn) {
+            navigator.clipboard.writeText(text);
+            let ori = btn.innerText;
+            btn.innerText = 'Tersalin';
+            setTimeout(() => { btn.innerText = ori; }, 1000);
+        }
+
+        function resetForm() {
+            ['val-26a','val-26b','val-26c','val-26d','val-26e','val-27a','val-27b', 'nama-usaha-input'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('is-year-2026').checked = false;
+            updateLabels2026(false);
+            updateBizTitle('');
+            calculateNTB();
+        }
+
+        function onCategoryChange() {
+            const cat = document.getElementById('kbli-category').value;
+            const info = document.getElementById('kbli-info');
+            const mainForms = document.getElementById('main-forms');
+            const toggle = document.getElementById('is-year-2026');
+            
+            // LOGIKA SMART HIDE UNTUK 26c
+            const group26c = document.getElementById('group-26c');
+            const legend26c = document.getElementById('legend-26c');
+            const input26c = document.getElementById('val-26c');
+
+            if (cat === 'G') {
+                group26c.style.display = 'block';
+                legend26c.style.display = 'flex';
+            } else {
+                group26c.style.display = 'none';
+                input26c.value = ''; // Paksa kosong agar perhitungan aman
+                legend26c.style.display = 'none';
+            }
+            
+            if (cat && kbliLimits[cat]) {
+                const limit = kbliLimits[cat];
+                const minPct = (limit.min * 100).toFixed(0);
+                const maxPct = (limit.max * 100).toFixed(0);
+                
+                info.innerText = `Rentang aman BPS: ${minPct}% - ${maxPct}%.`;
+                document.getElementById('res-target').innerText = `~ ` + maxPct + '%';
+                mainForms.classList.remove('disabled-area');
+                toggle.disabled = false;
+                document.getElementById('section-visual').style.display = 'block';
+                
+                if (document.getElementById('nama-usaha-input').value.trim() !== '') {
+                    document.getElementById('biz-title-container').classList.remove('hidden');
+                }
+            } else {
+                info.innerText = 'Pilih Kategori KBLI terlebih dahulu untuk memulai.';
+                document.getElementById('res-target').innerText = '-';
+                mainForms.classList.add('disabled-area');
+                toggle.disabled = true;
+                toggle.checked = false;
+                updateLabels2026(false);
+                document.getElementById('section-visual').style.display = 'none';
+                document.getElementById('biz-title-container').classList.add('hidden');
+            }
+            calculateNTB();
+        }
+
+        function calculateNTB() {
+            const cat = document.getElementById('kbli-category').value;
+            if (!cat) return;
+
+            const isTahunan = document.getElementById('is-year-2026').checked;
+            updateLabels2026(isTahunan);
+            const multiplier = isTahunan ? 12 : 1;
+
+            const v26a = getNum('val-26a') * multiplier;
+            const v26b = getNum('val-26b') * multiplier;
+            // Jika KBLI bukan G, paksa v26c menjadi 0 untuk keamanan perhitungan
+            const v26c = cat === 'G' ? (getNum('val-26c') * multiplier) : 0;
+            const v26d = getNum('val-26d') * multiplier;
+            const v26e = getNum('val-26e') * multiplier;
+            const v27a = getNum('val-27a') * multiplier;
+            const v27b = getNum('val-27b') * multiplier;
+
+            const totKeluar = v26a + v26b + v26c + v26d + v26e;
+            const totDapat = v27a + v27b;
+            
+            document.getElementById('tot-pengeluaran').value = toRp(totKeluar / multiplier);
+            document.getElementById('tot-pendapatan').value = toRp(totDapat / multiplier);
+
+            if (totKeluar > 0) {
+                const setProp = (id, val) => {
+                    let pct = (val / totKeluar) * 100;
+                    document.getElementById(`bar-${id}`).style.width = `${pct}%`;
+                    document.getElementById(`pct-${id}`).innerText = `${pct.toFixed(0)}%`;
+                };
+                setProp('26a', v26a); setProp('26b', v26b); 
+                if(cat === 'G') setProp('26c', v26c);
+                setProp('26d', v26d); setProp('26e', v26e);
+            } else {
+                ['26a','26b','26c','26d','26e'].forEach(id => {
+                    document.getElementById(`bar-${id}`).style.width = '0%';
+                    document.getElementById(`pct-${id}`).innerText = '0%';
+                });
+            }
+
+            const omzet = v27a;
+            const output = omzet - v26c;
+            const biayaAntara = v26b + v26d;
+            const ntb = output - biayaAntara; 
+            const rasio = output > 0 ? (ntb / output) : 0;
+            const rasioPct = rasio * 100;
+
+            document.getElementById('res-output').innerText = 'Rp ' + toRp(output);
+            document.getElementById('res-ntb').innerText = 'Rp ' + toRp(ntb);
+            document.getElementById('res-rasio').innerText = rasioPct.toFixed(2) + '%';
+
+            currentData = { cat, v26b, v26d, v26c, v27a, output, ntb, rasio, biayaAntara, multiplier };
+
+            const limits = kbliLimits[cat];
+            const badge = document.getElementById('badge-status');
+            const btn = document.getElementById('btn-adjust');
+
+            if (totKeluar === 0 && totDapat === 0) {
+                badge.className = 'badge badge-default';
+                badge.innerHTML = 'Menunggu input...';
+                btn.classList.add('hidden');
+                return;
+            }
+
+            if (rasio >= limits.min && rasio <= limits.max) {
+                badge.className = 'badge badge-ideal';
+                badge.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Rasio Aman (Ideal)';
+                btn.classList.add('hidden');
+            } else if (rasio < limits.min) {
+                badge.className = 'badge badge-defisit';
+                badge.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 19 19 12"></polyline></svg> Rasio Under (Defisit)';
+                btn.classList.remove('hidden');
+            } else {
+                badge.className = 'badge badge-surplus';
+                badge.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 5 5 12"></polyline></svg> Rasio Over (Surplus)';
+                btn.classList.remove('hidden');
+            }
+        }
+
+        function buildAdjustedCell(adjustedMonthlyRaw, isNtb = false, multiplier = 1) {
+            let adjustedAnnualRaw = adjustedMonthlyRaw * multiplier;
+            let valClass = isNtb ? 'val-lock' : 'val-new';
+            let colorStyle = isNtb ? 'color:var(--text-main);' : '';
+            let btnHtml = isNtb ? '' : `<button class="btn-copy-sm" onclick="copyRawText('${adjustedMonthlyRaw}', this)">Salin</button>`;
+
+            let html = `
+                <div class="val-flex ${valClass}" style="${colorStyle}">
+                    <span>Rp ${toRp(adjustedMonthlyRaw)}</span>
+                    ${btnHtml}
+                </div>
+            `;
+            if (multiplier === 12) {
+                html += `
+                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; text-align: right;">
+                        <span style="opacity:0.7;">Satu Tahun:</span> Rp ${toRp(adjustedAnnualRaw)}
+                    </div>
+                `;
+            }
+            return html;
+        }
+
+        function prepareAdjustment() {
+            if (!currentData) return;
+            let { cat, v26b, v26c, v26d, v27a, ntb, rasio, multiplier } = currentData;
+            
+            const selectEl = document.getElementById('kbli-category');
+            const rawBizName = document.getElementById('nama-usaha-input').value.trim();
+            const displayBizName = rawBizName !== '' ? rawBizName : 'Usaha Ini';
+            
+            document.getElementById('modal-kbli-label').innerHTML = `${displayBizName} &nbsp;<span class="chip-kbli">${selectEl.options[selectEl.selectedIndex].text}</span>`;
+
+            const limits = kbliLimits[cat];
+            let isUnder = rasio < limits.min;
+            let targetRasio;
+            
+            // Dynamic Targeting: Bidik batas yang relevan agar beban penyesuaian minimal
+            if (isUnder) {
+                targetRasio = limits.min + (0.005 + Math.random() * 0.015);
+            } else {
+                targetRasio = limits.max - (0.005 + Math.random() * 0.015);
+            }
+            targetRasio = Math.max(limits.min + 0.001, Math.min(limits.max - 0.001, targetRasio));
+            
+            let targetNTB = ntb > 0 ? ntb * (1.10 + (Math.random() * 0.10)) : (1000000 * multiplier);
+            
+            let omzetBaru = v27a;
+            let v26cBaru = v26c;
+            let v26bBaru = v26b;
+            let v26dBaru = v26d;
+
+            if (isUnder) {
+                // ==========================================
+                // SKENARIO 1: RASIO UNDER (DEFISIT)
+                // ==========================================
+                v26bBaru = v26b;
+                v26dBaru = v26d > 0 ? v26d * (1.02 + Math.random() * 0.05) : 0;
+                
+                if (v26dBaru === 0 && v26bBaru === 0) v26dBaru = 100000 * multiplier;
+                
+                let biayaAntaraBaru = v26bBaru + v26dBaru;
+                let targetOutput = biayaAntaraBaru / (1 - targetRasio);
+                targetNTB = targetOutput - biayaAntaraBaru;
+                
+                if (cat === 'G') {
+                    let microGrowth = 1.02 + (Math.random() * 0.06); 
+                    v26cBaru = v26c > 0 ? v26c * microGrowth : targetOutput * 0.05; 
+                } else {
+                    v26cBaru = 0; // Pastikan Non-G selalu 0
+                }
+                
+                omzetBaru = targetOutput + v26cBaru;
+
+            } else {
+                // ==========================================
+                // SKENARIO 2: RASIO OVER (SURPLUS) / IDEAL
+                // ==========================================
+                let targetOutput = targetNTB / targetRasio;
+                
+                if (cat === 'G') {
+                    let microGrowth = 1.02 + (Math.random() * 0.06); 
+                    v26cBaru = v26c > 0 ? v26c * microGrowth : targetOutput * 0.05; 
+                } else {
+                    v26cBaru = 0; // Pastikan Non-G selalu 0
+                }
+                
+                omzetBaru = targetOutput + v26cBaru;
+                
+                if (omzetBaru < v27a) {
+                    omzetBaru = v27a;
+                    targetOutput = omzetBaru - v26cBaru;
+                    targetNTB = targetOutput * targetRasio;
+                }
+                
+                let biayaAntaraBaru = Math.max(0, targetOutput - targetNTB);
+                
+                if (cat === 'G' || cat === 'C') {
+                    v26bBaru = v26b;
+                    v26dBaru = Math.max(0, biayaAntaraBaru - v26bBaru); 
+                } else {
+                    let totLama = v26b + v26d;
+                    if (totLama > 0) {
+                        v26bBaru = biayaAntaraBaru * (v26b / totLama);
+                        v26dBaru = biayaAntaraBaru * (v26d / totLama);
+                    } else {
+                        v26bBaru = 0;
+                        v26dBaru = biayaAntaraBaru;
+                    }
+                }
+            }
+
+            pendingAdjustments = { 
+                omzetBaru: omzetBaru, 
+                v26bBaru: v26bBaru,
+                v26cBaru: v26cBaru,
+                v26dBaru: v26dBaru,
+                ntbBaru: targetNTB,
+                rasioBaruPct: targetRasio * 100
+            };
+
+            const isBulananText = multiplier === 12 ? '<br><span style="font-size:0.65rem; color:var(--primary); font-weight:600;">(Angka Salin = 1 Bulan)</span>' : '';
+            const l_27a = multiplier === 12 ? '31a' : '27a';
+            const l_26b = multiplier === 12 ? '30b' : '26b';
+            const l_26c = multiplier === 12 ? '30c' : '26c';
+            const l_26d = multiplier === 12 ? '30d' : '26d';
+
+            let descOmzet = isUnder ? "Dinaikkan wajar untuk mengimbangi defisit rasio" : "Dipertahankan pada batas natural minimum";
+            let desc26b = isUnder ? "Dipertahankan (Terkunci pada profil asli)" : "Terkunci pada profil asli";
+            let desc26d = isUnder ? "Dipertahankan (Naik tipis organik)" : "Penyelamat rasio (Spons Absorber)";
+            let descNTB = isUnder ? "Disesuaikan otomatis mengimbangi rasio" : "Naik absolut organik (10-20%)";
+
+            let tbodyHtml = '';
+
+            tbodyHtml += `
+                <tr>
+                    <td>Omzet Penjualan (${l_27a})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">${descOmzet}</span>${isBulananText}</td>
+                    <td class="val-old">Rp ${toRp(v27a / multiplier)}</td>
+                    <td>${buildAdjustedCell(Math.round(pendingAdjustments.omzetBaru / multiplier), false, multiplier)}</td>
+                </tr>
+            `;
+
+            if (cat === 'C' || Math.round(pendingAdjustments.v26bBaru) !== Math.round(v26b)) {
+                tbodyHtml += `
+                    <tr>
+                        <td>Biaya Produksi (${l_26b})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">${desc26b}</span>${isBulananText}</td>
+                        <td class="val-old">Rp ${toRp(v26b / multiplier)}</td>
+                        <td>${buildAdjustedCell(Math.round(pendingAdjustments.v26bBaru / multiplier), false, multiplier)}</td>
+                    </tr>
+                `;
+            }
+
+            // HANYA RENDER BARIS 26C JIKA KBLI G
+            if (cat === 'G') {
+                tbodyHtml += `
+                    <tr>
+                        <td>Pembelian Terjual (${l_26c})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">HPP dinaikkan tipis (Micro-adjustment)</span>${isBulananText}</td>
+                        <td class="val-old">Rp ${toRp(v26c / multiplier)}</td>
+                        <td>${buildAdjustedCell(Math.round(pendingAdjustments.v26cBaru / multiplier), false, multiplier)}</td>
+                    </tr>
+                `;
+            }
+
+            tbodyHtml += `
+                <tr>
+                    <td>Biaya Operasional (${l_26d})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">${desc26d}</span>${isBulananText}</td>
+                    <td class="val-old">Rp ${toRp(v26d / multiplier)}</td>
+                    <td>${buildAdjustedCell(Math.round(pendingAdjustments.v26dBaru / multiplier), false, multiplier)}</td>
+                </tr>
+            `;
+
+            tbodyHtml += `
+                <tr>
+                    <td>Nilai Tambah (NTB)<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">${descNTB}</span>${isBulananText}</td>
+                    <td class="val-old">Rp ${toRp(ntb / multiplier)}</td>
+                    <td>${buildAdjustedCell(Math.round(targetNTB / multiplier), true, multiplier)}</td>
+                </tr>
+            `;
+
+            tbodyHtml += `
+                <tr style="background: rgba(14, 165, 233, 0.05);">
+                    <td style="font-weight:700; color:var(--primary);">Rasio Evaluasi BPS</td>
+                    <td class="val-old">${(currentData.rasio * 100).toFixed(2)}%</td>
+                    <td>
+                        <div class="val-flex val-new" style="justify-content: flex-end; color:var(--primary);">
+                            <span>${pendingAdjustments.rasioBaruPct.toFixed(2)}%</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            document.getElementById('modal-tbody').innerHTML = tbodyHtml;
+            document.getElementById('adjust-modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('adjust-modal').classList.remove('active');
+            pendingAdjustments = null;
+        }
+
+        function applyAdjustment() {
+            if (!pendingAdjustments || !currentData) return;
+            const mult = currentData.multiplier;
+
+            document.getElementById('val-27a').value = toRp(pendingAdjustments.omzetBaru / mult);
+            document.getElementById('val-26b').value = toRp(pendingAdjustments.v26bBaru / mult);
+            
+            // Terapkan kembali 26c HANYA jika KBLI G
+            if (currentData.cat === 'G') {
+                document.getElementById('val-26c').value = toRp(pendingAdjustments.v26cBaru / mult);
+            }
+            
+            document.getElementById('val-26d').value = toRp(pendingAdjustments.v26dBaru / mult);
+
+            closeModal();
+            calculateNTB(); 
+        }
+    </script>
+</body>
+</html>
