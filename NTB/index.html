@@ -226,28 +226,28 @@
             </div>
             <div class="grid-auto">
                 <div>
-                    <select id="kbli-category" onchange="onCategoryChange()">
-                        <option value="">Pilih kategori KBLI usaha...</option>
-                        <option value="A">Kategori A: Pertanian, Kehutanan, dan Perikanan (51% - 94%)</option>
-                        <option value="B">Kategori B: Pertambangan dan Penggalian (28% - 81%)</option>
-                        <option value="C">Kategori C: Industri (15% - 61%)</option>
-                        <option value="D">Kategori D: Penyediaan Listrik, Gas, Uap/Air Panas Dan Udara Dingin (13% - 68%)</option>
-                        <option value="E">Kategori E: Penyediaan Air, Penegelolaan Air Limbah, Penanganan Limbah, dan Remediasi (29% - 47%)</option>
-                        <option value="F">Kategori F: Konstruksi (34% - 44%)</option>
-                        <option value="G">Kategori G: Perdagangan Besar Dan Eceran (64% - 78%)</option>
-                        <option value="H">Kategori H: Transportasi dan Penyimpanan (29% - 64%)</option>
-                        <option value="I">Kategori I: Aktivitas Penyediaan Akomodasi dan Makan Minum (36% - 69%)</option>
-                        <option value="J">Kategori J: Aktivitas Penerbitan, Penyiaran, Produksi dan Distribusi Konten (36% - 73%)</option>
-                        <option value="K">Kategori K: Aktivitas Telekomunikasi, Pemrograman Komputer, Konsultansi, Infrastruktur Komputasi, dan Jasa Informasi Lainnya (50% - 72%)</option>
-                        <option value="L">Kategori L: Aktivitas Keuangan dan Asuransi (46% - 86%)</option>
-                        <option value="M">Kategori M: Aktivitas Real Estat (50% - 99%)</option>
-                        <option value="N">Kategori N: Aktivitas Profesional, Ilmiah, dan Teknis (44% - 57%)</option>
-                        <option value="O">Kategori O: Aktivitas Administratif dan Penunjang Usaha (54% - 66%)</option>
-                        <option value="Q">Kategori Q: Pendidikan (27% - 82%)</option>
-                        <option value="R">Kategori R: Aktivitas Kesehatan Manusia dan Aktivitas Sosial (20% - 60%)</option>
-                        <option value="S">Kategori S: Kesenian, Olahraga, dan Rekreasi (21% - 57%)</option>
-                        <option value="T">Kategori T: Aktivitas Jasa Lainnya (30% - 69%)</option>
-                    </select>
+ <select id="kbli-category" onchange="onCategoryChange()">
+    <option value="">Pilih kategori KBLI usaha...</option>
+    <option value="A">Kategori A: Pertanian, Kehutanan, dan Perikanan (51% - 94%)</option>
+    <option value="B">Kategori B: Pertambangan dan Penggalian (28% - 81%)</option>
+    <option value="C">Kategori C: Industri (15% - 61%)</option>
+    <option value="D">Kategori D: Penyediaan Listrik, Gas, Uap/Air Panas Dan Udara Dingin (13% - 68%)</option>
+    <option value="E">Kategori E: Penyediaan Air, Penegelolaan Air Limbah, Penanganan Limbah, dan Remediasi (29% - 47%)</option>
+    <option value="F">Kategori F: Konstruksi (34% - 44%)</option>
+    <option value="G">Kategori G: Perdagangan Besar Dan Eceran (64% - 78%)</option>
+    <option value="H">Kategori H: Transportasi dan Penyimpanan (29% - 64%)</option>
+    <option value="I">Kategori I: Aktivitas Penyediaan Akomodasi dan Makan Minum (36% - 69%)</option>
+    <option value="J">Kategori J: Aktivitas Penerbitan, Penyiaran, Produksi dan Distribusi Konten (36% - 73%)</option>
+    <option value="K">Kategori K: Aktivitas Telekomunikasi, Pemrograman Komputer, Konsultansi, Infrastruktur Komputasi, dan Jasa Informasi Lainnya (50% - 72%)</option>
+    <option value="L">Kategori L: Aktivitas Keuangan dan Asuransi (46% - 86%)</option>
+    <option value="M">Kategori M: Aktivitas Real Estat (50% - 99%)</option>
+    <option value="N">Kategori N: Aktivitas Profesional, Ilmiah, dan Teknis (44% - 57%)</option>
+    <option value="O">Kategori O: Aktivitas Administratif dan Penunjang Usaha (54% - 66%)</option>
+    <option value="Q">Kategori Q: Pendidikan (27% - 82%)</option>
+    <option value="R">Kategori R: Aktivitas Kesehatan Manusia dan Aktivitas Sosial (20% - 60%)</option>
+    <option value="S">Kategori S: Kesenian, Olahraga, dan Rekreasi (21% - 57%)</option>
+    <option value="T">Kategori T: Aktivitas Jasa Lainnya (30% - 69%)</option>
+</select>
                     <div id="kbli-info" style="font-size: 0.75rem; color: var(--primary); margin-top: 10px; font-weight: 500;">Pilih Kategori KBLI terlebih dahulu untuk memulai.</div>
                 </div>
                 <div class="toggle-container">
@@ -406,7 +406,7 @@
     <div id="adjust-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modal-kbli-label">Untuk <span class="chip-kbli">Kategori Terpilih</span></h3>
+                <h3 id="modal-kbli-label"><span class="chip-kbli">Kategori Terpilih</span></h3>
                 <button onclick="closeModal()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; padding:4px;">
                     <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
@@ -769,11 +769,10 @@
 
             const limits = kbliLimits[cat];
             
-            // LOGIKA V8: TARGET RASIO (ZONA AMAN ATAS)
+            // LOGIKA V7: TARGET RASIO DEKAT MAX (Biar Omzet tak meledak) + NTB NAIK ORGANIK
             let targetRasio = limits.max - (0.01 + Math.random() * 0.02); 
             targetRasio = Math.max(limits.min + 0.01, Math.min(limits.max - 0.01, targetRasio));
             
-            // NTB Naik 10-20% Organik
             let targetNTB = ntb > 0 ? ntb * (1.10 + (Math.random() * 0.10)) : (1000000 * multiplier);
             
             let omzetBaru = v27a;
@@ -782,54 +781,44 @@
             let v26dBaru = v26d;
 
             if (cat === 'G') {
-                // KBLI G: Trade Margin Anchor (Margin Dagang 10-20%)
-                let targetOutput = targetNTB / targetRasio;
-                let asumsiMargin = 0.10 + (Math.random() * 0.10); 
-                omzetBaru = targetOutput / asumsiMargin;
+                let targetOutput = Math.max(targetNTB / targetRasio, targetNTB + v26b); 
                 
-                if (omzetBaru < v27a) {
-                    omzetBaru = v27a;
-                    targetOutput = omzetBaru * asumsiMargin;
-                    targetNTB = targetOutput * targetRasio; 
-                }
-
-                v26cBaru = Math.max(0, omzetBaru - targetOutput);
+                let maxAllowedOmzet = Math.max(v27a * 1.5, v27a + (5000000 * multiplier)); 
+                let idealOmzet = targetOutput / 0.25; 
+                
+                omzetBaru = Math.min(idealOmzet, maxAllowedOmzet);
+                omzetBaru = Math.max(omzetBaru, targetOutput + v26c); 
+                omzetBaru = Math.max(omzetBaru, v27a); 
+                
+                v26cBaru = omzetBaru - targetOutput;
+                
                 let biayaAntaraBaru = Math.max(0, targetOutput - targetNTB);
-                
-                v26bBaru = v26b; // LOCKED Original
+                v26bBaru = v26b; // LOCKED
                 v26dBaru = Math.max(0, biayaAntaraBaru - v26bBaru);
                 
-            } else if (cat === 'C') {
-                // KBLI C: Production Anchor (26c = 0)
-                v26cBaru = 0; // FASIH hides 26c for KBLI C
-                let targetOutput = targetNTB / targetRasio;
-                omzetBaru = Math.max(v27a, targetOutput); // Output = Omzet
-                
-                let currentOutput = omzetBaru; 
-                targetNTB = currentOutput * targetRasio; 
-                
-                let biayaAntaraBaru = Math.max(0, currentOutput - targetNTB);
-                
-                v26bBaru = biayaAntaraBaru * 0.85; // 85% diserap Biaya Produksi
-                v26dBaru = biayaAntaraBaru * 0.15; // 15% diserap Operasional
-                
             } else {
-                // KBLI Jasa/Lainnya
-                v26cBaru = v26c; // LOCKED Original
+                v26cBaru = v26c; // LOCKED
                 let targetOutput = Math.max(targetNTB / targetRasio, targetNTB + (v26b + v26d) * 0.1);
                 omzetBaru = Math.max(v27a, targetOutput + v26cBaru);
                 
                 let currentOutput = omzetBaru - v26cBaru;
-                targetNTB = currentOutput * targetRasio;
+                if (targetNTB / currentOutput < limits.min) {
+                    targetNTB = currentOutput * (limits.min + 0.01);
+                }
                 
-                let biayaAntaraBaru = Math.max(0, currentOutput - targetNTB);
+                let biayaAntaraBaru = Math.max(0, (omzetBaru - v26cBaru) - targetNTB);
                 let totLama = v26b + v26d;
                 if (totLama > 0) {
                     v26bBaru = biayaAntaraBaru * (v26b / totLama);
                     v26dBaru = biayaAntaraBaru * (v26d / totLama);
                 } else {
-                    v26bBaru = 0;
-                    v26dBaru = biayaAntaraBaru;
+                    if (cat === 'C') {
+                        v26bBaru = biayaAntaraBaru * 0.7;
+                        v26dBaru = biayaAntaraBaru * 0.3;
+                    } else {
+                        v26bBaru = 0;
+                        v26dBaru = biayaAntaraBaru;
+                    }
                 }
             }
 
@@ -853,7 +842,7 @@
 
             tbodyHtml += `
                 <tr>
-                    <td>Omzet Penjualan (${l_27a})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Diselaraskan proporsional</span>${isBulananText}</td>
+                    <td>Omzet Penjualan (${l_27a})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Dipertahankan semaksimal mungkin</span>${isBulananText}</td>
                     <td class="val-old">Rp ${toRp(v27a / multiplier)}</td>
                     <td>${buildAdjustedCell(Math.round(omzetBaru / multiplier), false, multiplier)}</td>
                 </tr>
@@ -862,7 +851,7 @@
             if (cat === 'C' || Math.round(v26bBaru) !== Math.round(v26b)) {
                 tbodyHtml += `
                     <tr>
-                        <td>Biaya Produksi (${l_26b})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Disesuaikan (Prioritas Industri)</span>${isBulananText}</td>
+                        <td>Biaya Produksi (${l_26b})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">Disesuaikan proporsional profil asli</span>${isBulananText}</td>
                         <td class="val-old">Rp ${toRp(v26b / multiplier)}</td>
                         <td>${buildAdjustedCell(Math.round(v26bBaru / multiplier), false, multiplier)}</td>
                     </tr>
@@ -872,7 +861,7 @@
             if (cat === 'G' || Math.round(v26cBaru) !== Math.round(v26c)) {
                 tbodyHtml += `
                     <tr>
-                        <td>Pembelian Terjual (${l_26c})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">HPP disesuaikan (Margin Trade 10-20%)</span>${isBulananText}</td>
+                        <td>Pembelian Terjual (${l_26c})<br><span style="font-size:0.75rem; color:var(--text-muted); font-weight:400; text-transform:none;">HPP disesuaikan khusus Perdagangan</span>${isBulananText}</td>
                         <td class="val-old">Rp ${toRp(v26c / multiplier)}</td>
                         <td>${buildAdjustedCell(Math.round(v26cBaru / multiplier), false, multiplier)}</td>
                     </tr>
