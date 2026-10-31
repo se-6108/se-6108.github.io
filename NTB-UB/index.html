@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnigmaStat ENTERPRISE | Inline Matrix</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-body: #f0fdf4;
+            --bg-card: #ffffff;
+            --bg-header: #ffffff;
+            --bg-dark: #064e3b;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #bbf7d0;
+            --primary: #059669; 
+            --primary-hover: #047857;
+            --input-bg: #f8fafc;
+            --focus-ring: rgba(5, 150, 105, 0.15);
+            --success: #10b981;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-pill: 9999px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #022c22; 
+            --bg-card: #064e3b;
+            --bg-header: #064e3b;
+            --bg-dark: #022c22;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: #065f46;
+            --primary: #10b981; 
+            --primary-hover: #34d399;
+            --input-bg: #022c22;
+            --focus-ring: rgba(16, 185, 129, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-body); color: var(--text-main); font-size: 14px; line-height: 1.5; min-height: 100vh; display: flex; flex-direction: column; transition: background-color 0.3s, color 0.3s; }
+        
+        header { position: sticky; top: 0; z-index: 50; background: var(--bg-header); border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-sm); padding: 14px 20px; transition: 0.3s; }
+        .header-content { max-width: 1000px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+        .brand-group { display: flex; align-items: center; gap: 14px; }
+        .brand-icon { width: 36px; height: 36px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-color); }
+        .header-title h1 { font-size: 1.1rem; font-weight: 700; color: var(--primary); letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px;}
+        .badge-enterprise { background: var(--text-main); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase;}
+		[data-theme="dark"] .badge-enterprise { background: var(--warning); color: #ffffff; }
+        .action-group { display: flex; gap: 8px; }
+        
+        main { max-width: 1000px; width: 100%; margin: 32px auto; padding: 0 20px; display: flex; flex-direction: column; gap: 24px; flex-grow: 1; padding-bottom: 60px; }
+        
+        .card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); transition: 0.3s; }
+        .card-dark { background: var(--bg-dark); border-radius: var(--radius-lg); padding: 24px; color: #f1f5f9; border: 1px solid var(--border-color); transition: 0.3s; }
+        
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; }
+        .card-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--text-main); }
+        .step-badge { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; background: var(--primary); color: white; flex-shrink: 0; }
+        
+        .grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+        .flex-col { display: flex; flex-direction: column; gap: 16px; }
+        .main-action-area { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; width: 100%; }
+        
+        label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+        .input-group { position: relative; }
+        
+        .currency-wrapper { position: relative; display: flex; align-items: center; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); transition: 0.2s; overflow: hidden; }
+        .currency-wrapper:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
+        .currency-symbol { position: absolute; left: 16px; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; pointer-events: none; }
+        input[type="text"].text-right { width: 100%; padding: 12px 76px 12px 40px; border: none; background: transparent; font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 600; text-align: right; color: var(--text-main); outline: none; transition: 0.3s; }
+        input[type="text"].input-regular { width: 100%; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--input-bg); font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--text-main); transition: 0.2s; outline: none; }
+        input[type="text"].input-regular:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
+        input[type="number"].input-num { width: 100px; padding: 10px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--input-bg); font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--text-main); text-align: center; }
+
+        select { width: 100%; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--input-bg); font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 500; color: var(--text-main); transition: 0.2s; outline: none; cursor: pointer; }
+        select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
+        
+        .readonly-wrapper { background: var(--bg-body); opacity: 0.9; }
+        input[readonly].text-right { font-weight: 700; color: var(--primary); cursor: not-allowed; padding-right: 16px;}
+        
+        .btn { padding: 10px 20px; border-radius: var(--radius-pill); font-weight: 600; font-size: 0.85rem; cursor: pointer; border: none; transition: 0.2s; font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+        .btn-outline:hover { background: var(--bg-body); border-color: var(--primary); color: var(--primary); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-icon { padding: 10px; border-radius: 12px; }
+        
+        .btn-action { background: var(--primary); color: white; width: 100%; padding: 14px; font-size: 0.95rem; box-shadow: var(--shadow-sm); border-radius: var(--radius-pill);}
+        .btn-action:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 8px rgba(5, 150, 105, 0.2); }
+        
+        .btn-copy { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-color); padding: 4px 10px; font-size: 0.7rem; border-radius: var(--radius-pill); cursor: pointer; font-weight: 600; transition: 0.2s; z-index: 5;}
+        .btn-copy:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        
+        .btn-sheet { background: #0f172a; color: white; width: 100%; padding: 16px; font-size: 1rem; border: 1px solid #000; font-weight: 700; letter-spacing: 0.3px; border-radius: var(--radius-pill); box-shadow: var(--shadow-md); transition: 0.3s; }
+        .btn-sheet:hover { background: #1e293b; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+
+        .toggle-container { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; justify-content: center; transition: 0.3s; }
+        .toggle-label { display: flex; align-items: center; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+        .toggle-label input { display: none; }
+        .slider-toggle { width: 44px; height: 24px; background: var(--text-muted); border-radius: 24px; margin-right: 12px; position: relative; transition: 0.3s; opacity: 0.6; }
+        .slider-toggle::after { content: ""; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: 0.3s; }
+        .toggle-label input:checked + .slider-toggle { background: var(--primary); opacity: 1; }
+        .toggle-label input:checked + .slider-toggle::after { transform: translateX(20px); }
+        
+        .disabled-area { opacity: 0.3; pointer-events: none; filter: grayscale(100%); transition: 0.4s; }
+        .hidden { display: none !important; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 16px; margin-top: 16px; }
+        .stat-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 16px; border-radius: var(--radius-md); display: flex; flex-direction: column; justify-content: space-between; }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; line-height: 1.3; }
+        .stat-value { font-size: 1rem; font-weight: 700; color: #f1f5f9; }
+        .text-highlight { color: var(--primary); font-size: 1.25rem; text-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
+        
+        .badge { padding: 6px 12px; border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 600; border: 1px solid; display: inline-flex; align-items: center; gap: 6px; }
+        .badge-ideal { background: rgba(5, 150, 105, 0.1); color: var(--success); border-color: rgba(5, 150, 105, 0.2); }
+        .badge-defisit { background: rgba(217, 119, 6, 0.1); color: var(--warning); border-color: rgba(217, 119, 6, 0.2); }
+        .badge-surplus { background: rgba(220, 38, 38, 0.1); color: var(--danger); border-color: rgba(220, 38, 38, 0.2); }
+        .badge-default { background: rgba(255,255,255,0.05); color: var(--text-muted); border-color: rgba(255,255,255,0.1); }
+
+        .parser-textarea { width: 100%; height: 80px; padding: 12px; border: 1px dashed var(--primary); border-radius: var(--radius-md); background: var(--input-bg); color: var(--text-main); font-family: monospace; font-size: 0.8rem; resize: none; outline: none; transition: 0.2s; }
+        .parser-textarea:focus { border-style: solid; box-shadow: 0 0 0 3px var(--focus-ring); }
+        
+        /* PANEL KONTROL NTB (INLINE) */
+        .control-panel { background: var(--bg-card); border: 2px solid var(--primary); border-radius: var(--radius-lg); padding: 24px; display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; box-shadow: var(--shadow-md); }
+        .control-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+        
+        /* PREVIOUS VALUE CAPTION & REVERT */
+        .prev-caption { font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; display: flex; align-items: center; justify-content: space-between; padding: 4px 8px; background: rgba(0,0,0,0.03); border-radius: 6px; }
+        .btn-revert { background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 4px; }
+        .btn-revert:hover { background: var(--text-muted); color: white; }
+
+        /* MAGIC SLIDER STYLING */
+        .magic-slider-wrapper { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border-color); display: none; }
+        .magic-slider-header { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--primary); font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        .magic-slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 4px; background: var(--border-color); outline: none; }
+        .magic-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--primary); cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: 0.1s; }
+        .magic-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+        
+        .icon { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+        /* NATIVE TOAST ALERT */
+        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #10b981; color: white; padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); opacity: 0; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 9999; display: flex; align-items: center; gap: 8px; pointer-events: none;}
+        #toast-alert.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        #toast-alert.warning { background: #d97706; }
+    </style>
+</head>
+<body>
+
+    <div id="toast-alert">
+        <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span id="toast-msg">Notifikasi</span>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <div class="brand-group">
+                <img src="icon.png" alt="Logo" class="brand-icon" onerror="this.style.display='none'">
+                <div class="header-title">
+                    <h1>EnigmaStat <span class="badge-enterprise">Enterprise</span></h1>
+                    <p>Inline Auto-Adjustment & Kalibrasi Data.</p>
+                </div>
+            </div>
+            <div class="action-group">
+                <button class="btn btn-outline btn-icon" onclick="toggleTheme()" id="theme-toggle" aria-label="Toggle Dark Mode"></button>
+                <button class="btn btn-outline btn-icon" onclick="resetForm()" aria-label="Reset Form">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- SEKSI PARSER FASIH -->
+        <section class="card" style="border: 2px solid var(--border-color);">
+            <div class="card-header" style="border:none; padding:0; margin-bottom: 12px;">
+                <div class="card-title">
+                    <div class="step-badge" style="background:var(--success);">
+                        <svg class="icon" viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg>
+                    </div> 
+                    Fasih Smart Parser (Ekstraktor Data)
+                </div>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Salin (Ctrl+C) seluruh rincian halaman pengisian web FASIH BPS, tempel (Ctrl+V) di kotak ini, lalu klik Ekstrak.</p>
+            <textarea id="fasih-input" class="parser-textarea" placeholder="Tempel teks FASIH di sini..."></textarea>
+            <button class="btn btn-primary" style="margin-top: 12px; width: 100%; padding: 12px;" onclick="parseFasihData()">
+                <svg class="icon" viewBox="0 0 24 24"><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path></svg>
+                Ekstrak ke Dalam Form
+            </button>
+        </section>
+
+        <!-- Seksi 1: Identitas & KBLI -->
+        <section class="card">
+            <div class="card-header" style="border:none; padding:0; margin-bottom: 20px;">
+                <div class="card-title"><div class="step-badge">1</div> Identitas & Kategori KBLI (Usaha Besar)</div>
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <label>Nama Perusahaan / Usaha</label>
+                <input type="text" id="nama-usaha-input" class="input-regular" placeholder="Ketik nama usaha..." oninput="updateBizTitle(this.value)">
+            </div>
+
+            <div class="grid-auto">
+                <div>
+                    <select id="kbli-category" onchange="onCategoryChange()">
+                        <option value="">Pilih kategori KBLI usaha...</option>
+                        <option value="A">Kategori A: Pertanian, Kehutanan, dan Perikanan (51% - 94%)</option>
+                        <option value="B">Kategori B: Pertambangan dan Penggalian (28% - 81%)</option>
+                        <option value="C">Kategori C: Industri (15% - 61%)</option>
+                        <option value="D">Kategori D: Penyediaan Listrik, Gas, Uap/Air Panas Dan Udara Dingin (13% - 68%)</option>
+                        <option value="E">Kategori E: Penyediaan Air, Penegelolaan Air Limbah, Penanganan Limbah, dan Remediasi (29% - 47%)</option>
+                        <option value="F">Kategori F: Konstruksi (34% - 44%)</option>
+                        <option value="G">Kategori G: Perdagangan Besar Dan Eceran (64% - 78%)</option>
+                        <option value="H">Kategori H: Transportasi dan Penyimpanan (29% - 64%)</option>
+                        <option value="I">Kategori I: Aktivitas Penyediaan Akomodasi dan Makan Minum (36% - 69%)</option>
+                        <option value="J">Kategori J: Aktivitas Penerbitan, Penyiaran, Produksi dan Distribusi Konten (36% - 73%)</option>
+                        <option value="K">Kategori K: Aktivitas Telekomunikasi, Pemrograman Komputer, Konsultansi, Infrastruktur Komputasi, dan Jasa Informasi Lainnya (50% - 72%)</option>
+                        <option value="L">Kategori L: Aktivitas Keuangan dan Asuransi (46% - 86%)</option>
+                        <option value="M">Kategori M: Aktivitas Real Estat (50% - 99%)</option>
+                        <option value="N">Kategori N: Aktivitas Profesional, Ilmiah, dan Teknis (44% - 57%)</option>
+                        <option value="O">Kategori O: Aktivitas Administratif dan Penunjang Usaha (54% - 66%)</option>
+                        <option value="Q">Kategori Q: Pendidikan (27% - 82%)</option>
+                        <option value="R">Kategori R: Aktivitas Kesehatan Manusia dan Aktivitas Sosial (20% - 60%)</option>
+                        <option value="S">Kategori S: Kesenian, Olahraga, dan Rekreasi (21% - 57%)</option>
+                        <option value="T">Kategori T: Aktivitas Jasa Lainnya (30% - 69%)</option>
+                    </select>
+                    <div id="kbli-info" style="font-size: 0.75rem; color: var(--primary); margin-top: 10px; font-weight: 500;">Pilih Kategori KBLI terlebih dahulu.</div>
+                </div>
+                <div class="toggle-container">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="is-year-2026" onchange="calculateNTB()">
+                        <div class="slider-toggle"></div>
+                        Usaha mulai beroperasi tahun ini
+                    </label>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; margin-left: 56px; font-weight: 500;">Aktifkan jika data bersifat bulanan (otomatis dikali 12).</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANEL KONTROL ADJUSTMENT INLINE -->
+        <div id="inline-control-panel" class="control-panel disabled-area">
+            <div class="control-row">
+                <div>
+                    <h3 style="font-size:1.1rem; font-weight:700; color:var(--primary); margin-bottom:4px;">Panel Penyesuaian Otomatis (Failsafe Laba)</h3>
+                    <p style="font-size:0.8rem; color:var(--text-muted);">Sistem menjamin Total Pendapatan > Total Pengeluaran (Laba Positif) tanpa merusak rasio BPS.</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <label style="margin-bottom:0;">Target Kenaikan NTB:</label>
+                    <div style="display:flex; align-items:center; background:var(--input-bg); border:1px solid var(--border-color); border-radius:8px; overflow:hidden;">
+                        <input type="number" id="target-ntb-pct" class="input-num" value="40" min="0" max="200" style="border:none; border-radius:0;">
+                        <span style="padding: 0 16px; font-weight:700; color:var(--text-muted); background:rgba(0,0,0,0.05); height:100%; display:flex; align-items:center;">%</span>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-action" onclick="applyInlineAdjustment()">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                Kalkulasi & Terapkan Penyesuaian ke Form
+            </button>
+        </div>
+
+        <div id="biz-title-container" class="hidden" style="text-align: center; margin: 10px 0 10px 0;">
+            <h2 id="display-biz-title" style="color: var(--primary); font-size: 1.4rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">-</h2>
+            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <span class="step-badge" style="width: 20px; height: 20px; font-size: 0.6rem; background: var(--text-main);">
+                    <svg class="icon" viewBox="0 0 24 24" style="width:12px; height:12px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </span> 
+                Matriks Penyesuaian Aktif (Enterprise)
+            </div>
+        </div>
+
+        <!-- Seksi 2 & 3 (Main Forms) -->
+        <div id="main-forms" class="grid-auto disabled-area">
+            <section class="card flex-col">
+                <div class="card-header">
+                    <div class="card-title"><div class="step-badge" style="background:var(--bg-dark);">2</div> Rincian Pengeluaran</div>
+                </div>
+                
+                <div class="input-group">
+                    <label id="lbl-26a">26a. Total upah, gaji & jaminan</label>
+                    <div class="currency-wrapper">
+                        <span class="currency-symbol">Rp</span>
+                        <input type="text" id="val-26a" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                        <button class="btn-copy" onclick="copyVal('val-26a', this)">Salin</button>
+                    </div>
+                    <div id="prev-wrap-26a" class="prev-caption hidden">
+                        <span id="prev-val-26a">Sebelumnya: Rp 0</span>
+                        <button class="btn-revert" onclick="revertField('26a')"><svg class="icon" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg> Kembalikan</button>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label id="lbl-26b">26b. Biaya produksi</label>
+                    <div class="currency-wrapper">
+                        <span class="currency-symbol">Rp</span>
+                        <input type="text" id="val-26b" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                        <button class="btn-copy" onclick="copyVal('val-26b', this)">Salin</button>
+                    </div>
+                    <div id="prev-wrap-26b" class="prev-caption hidden">
+                        <span id="prev-val-26b">Sebelumnya: Rp 0</span>
+                        <button class="btn-revert" onclick="revertField('26b')"><svg class="icon" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg> Kembalikan</button>
+                    </div>
+                </div>
+
+                <div class="input-group" id="group-26c" style="display: none;">
+                    <label id="lbl-26c">26c. Biaya pembelian barang terjual</label>
+                    <div class="currency-wrapper">
+                        <span class="currency-symbol">Rp</span>
+                        <input type="text" id="val-26c" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                        <button class="btn-copy" onclick="copyVal('val-26c', this)">Salin</button>
+                    </div>
+                    <div id="prev-wrap-26c" class="prev-caption hidden">
+                        <span id="prev-val-26c">Sebelumnya: Rp 0</span>
+                        <button class="btn-revert" onclick="revertField('26c')"><svg class="icon" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg> Kembalikan</button>
+                    </div>
+                    <div class="magic-slider-wrapper" id="wrap-slider-26c">
+                        <div class="magic-slider-header">
+                            <span>Geser Kalibrasi HPP</span>
+                            <span>Rasio Terkunci (Auto)</span>
+                        </div>
+                        <input type="range" class="magic-slider" id="slider-26c" oninput="onSlide26c(this.value)">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label id="lbl-26d">26d. Biaya operasional</label>
+                    <div class="currency-wrapper">
+                        <span class="currency-symbol">Rp</span>
+                        <input type="text" id="val-26d" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                        <button class="btn-copy" onclick="copyVal('val-26d', this)">Salin</button>
+                    </div>
+                    <div id="prev-wrap-26d" class="prev-caption hidden">
+                        <span id="prev-val-26d">Sebelumnya: Rp 0</span>
+                        <button class="btn-revert" onclick="revertField('26d')"><svg class="icon" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg> Kembalikan</button>
+                    </div>
+                    <div class="magic-slider-wrapper" id="wrap-slider-26d">
+                        <div class="magic-slider-header">
+                            <span>Geser Kalibrasi Ops</span>
+                            <span>Rasio Terkunci (Auto)</span>
+                        </div>
+                        <input type="range" class="magic-slider" id="slider-26d" oninput="onSlide26d(this.value)">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label id="lbl-26e">26e. Biaya non operasional</label>
+                    <div class="currency-wrapper">
+                        <span class="currency-symbol">Rp</span>
+                        <input type="text" id="val-26e" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                        <button class="btn-copy" onclick="copyVal('val-26e', this)">Salin</button>
+                    </div>
+                    <div id="prev-wrap-26e" class="prev-caption hidden">
+                        <span id="prev-val-26e">Sebelumnya: Rp 0</span>
+                        <button class="btn-revert" onclick="revertField('26e')"><svg class="icon" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg> Kembalikan</button>
+                    </div>
+                </div>
+                
+                <div style="border-top: 1px solid var(--border-color); padding-top: 16px;">
+                    <label style="color: var(--text-main); font-weight: 600;">Total Pengeluaran Usaha</label>
+                    <div class="currency-wrapper readonly-wrapper">
+                        <span class="currency-symbol" style="color:var(--primary);">Rp</span>
+                        <input type="text" id="tot-pengeluaran" placeholder="0" class="text-right" readonly>
+                    </div>
+                </div>
+            </section>
+
+            <div class="flex-col">
+                <section class="card flex-col">
+                    <div class="card-header">
+                        <div class="card-title"><div class="step-badge" style="background:var(--bg-dark);">3</div> Rincian Pendapatan</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label id="lbl-27a">27a. Nilai produksi / Omzet usaha</label>
+                        <div class="currency-wrapper">
+                            <span class="currency-symbol">Rp</span>
+                            <input type="text" id="val-27a" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                            <button class="btn-copy" onclick="copyVal('val-27a', this)">Salin</button>
+                        </div>
+                        <div id="prev-wrap-27a" class="prev-caption hidden">
+                            <span id="prev-val-27a">Sebelumnya: Rp 0</span>
+                            <button class="btn-revert" onclick="revertField('27a')"><svg class="icon" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg> Kembalikan</button>
+                        </div>
+                        <div class="magic-slider-wrapper" id="wrap-slider-27a">
+                            <div class="magic-slider-header">
+                                <span>Geser Kalibrasi Omzet</span>
+                                <span>Rasio Terkunci (Auto)</span>
+                            </div>
+                            <input type="range" class="magic-slider" id="slider-27a" oninput="onSlide27a(this.value)">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label id="lbl-27b">27b. Pendapatan lainnya</label>
+                        <div class="currency-wrapper">
+                            <span class="currency-symbol">Rp</span>
+                            <input type="text" id="val-27b" placeholder="0" class="text-right" oninput="formatAndCalc(this)">
+                            <button class="btn-copy" onclick="copyVal('val-27b', this)">Salin</button>
+                        </div>
+                        <div id="prev-wrap-27b" class="prev-caption hidden">
+                            <span id="prev-val-27b">Sebelumnya: Rp 0</span>
+                            <button class="btn-revert" onclick="revertField('27b')"><svg class="icon" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg> Kembalikan</button>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid var(--border-color); padding-top: 16px;">
+                        <label style="color: var(--text-main); font-weight: 600;">Total Pendapatan Usaha</label>
+                        <div class="currency-wrapper readonly-wrapper">
+                            <span class="currency-symbol" style="color:var(--primary);">Rp</span>
+                            <input type="text" id="tot-pendapatan" placeholder="0" class="text-right" readonly>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card-dark flex-col" style="flex-grow: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-size: 1rem; font-weight: 600;">Evaluasi Statistik</h3>
+                        <span id="badge-status" class="badge badge-default">Menunggu input...</span>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <span class="stat-label">Output (omzet - HPP)</span>
+                            <span class="stat-value" id="res-output">Rp 0</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Nilai Tambah<br>(omzet - prod - HPP - ops)</span>
+                            <span class="stat-value" id="res-ntb">Rp 0</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Rasio NTB<br>(nilai tambah ÷ output)</span>
+                            <span class="stat-value text-highlight" id="res-rasio">0.00%</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Target (Batas Atas Rasio)</span>
+                            <span class="stat-value" id="res-target" style="color:var(--text-muted);">-</span>
+                        </div>
+                        <div class="stat-box" style="grid-column: 1 / -1;">
+                            <span class="stat-label">Laba/Rugi Bersih<br>(Total Pendapatan - Total Pengeluaran)</span>
+                            <span class="stat-value" id="res-laba" style="color:var(--text-muted);">-</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+        
+        <div id="main-action-area" class="main-action-area disabled-area">
+            <button class="btn btn-sheet" id="btn-copy-main" onclick="copyMainFormToSheet()">
+                <svg class="icon" viewBox="0 0 24 24" style="stroke: white;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                Salin 8 Kolom (Format Absolut Google Sheet Anti-Geser)
+            </button>
+        </div>
+    </main>
+
+    <script>
+        const moonIcon = `<svg class="icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+        const sunIcon = `<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+        
+        function initTheme() {
+            const saved = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', saved);
+            document.getElementById('theme-toggle').innerHTML = saved === 'dark' ? sunIcon : moonIcon;
+        }
+        
+        function toggleTheme() {
+            const root = document.documentElement;
+            const current = root.getAttribute('data-theme');
+            const target = current === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-theme', target);
+            localStorage.setItem('theme', target);
+            document.getElementById('theme-toggle').innerHTML = target === 'dark' ? sunIcon : moonIcon;
+        }
+
+        document.addEventListener('DOMContentLoaded', initTheme);
+
+        function showToast(msg, isWarning = false) {
+            const toast = document.getElementById('toast-alert');
+            document.getElementById('toast-msg').innerText = msg;
+            if (isWarning) {
+                toast.classList.add('warning');
+            } else {
+                toast.classList.remove('warning');
+            }
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        const kbliLimits = {
+            'A': { min: 0.51, max: 0.94 }, 'B': { min: 0.28, max: 0.81 },
+            'C': { min: 0.15, max: 0.61 }, 'D': { min: 0.13, max: 0.68 },
+            'E': { min: 0.29, max: 0.47 }, 'F': { min: 0.34, max: 0.44 },
+            'G': { min: 0.64, max: 0.78 }, 'H': { min: 0.29, max: 0.64 },
+            'I': { min: 0.36, max: 0.69 }, 'J': { min: 0.36, max: 0.73 },
+            'K': { min: 0.50, max: 0.72 }, 'L': { min: 0.46, max: 0.86 },
+            'M': { min: 0.50, max: 0.99 }, 'N': { min: 0.44, max: 0.57 },
+            'O': { min: 0.54, max: 0.66 }, 'Q': { min: 0.27, max: 0.82 },
+            'R': { min: 0.20, max: 0.60 }, 'S': { min: 0.21, max: 0.57 },
+            'T': { min: 0.30, max: 0.69 }
+        };
+
+        let currentData = null;
+        let preAdjustData = {}; 
+        let lockedRasioMagic = null; 
+
+        function updateBizTitle(val) {
+            const container = document.getElementById('biz-title-container');
+            const titleEl = document.getElementById('display-biz-title');
+            if (val && val.trim() !== '') {
+                titleEl.innerText = val;
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        function updateLabels2026(is2026) {
+            document.getElementById('lbl-26a').innerText = is2026 ? "30a. Total upah, gaji & jaminan" : "26a. Total upah, gaji & jaminan";
+            document.getElementById('lbl-26b').innerText = is2026 ? "30b. Biaya produksi" : "26b. Biaya produksi";
+            document.getElementById('lbl-26c').innerText = is2026 ? "30c. Biaya pembelian barang terjual" : "26c. Biaya pembelian barang terjual";
+            document.getElementById('lbl-26d').innerText = is2026 ? "30d. Biaya operasional" : "26d. Biaya operasional";
+            document.getElementById('lbl-26e').innerText = is2026 ? "30e. Biaya non operasional" : "26e. Biaya non operasional";
+            document.getElementById('lbl-27a').innerText = is2026 ? "31a. Nilai produksi / Omzet usaha" : "27a. Nilai produksi / Omzet usaha";
+            document.getElementById('lbl-27b').innerText = is2026 ? "31b. Pendapatan lainnya" : "27b. Pendapatan lainnya";
+        }
+
+        function parseFasihData() {
+            const text = document.getElementById('fasih-input').value;
+            if (!text.trim()) {
+                showToast("Input Kosong! Silakan paste data dari web FASIH terlebih dahulu.", true);
+                return;
+            }
+
+            try {
+                let bizName = "";
+                const nameMatch = text.match(/(?:Nama\s+Perusahaan|Nama\s+Usaha|Nama\s+Perusahaan\/Usaha)[\s\S]*?\*\s*([^\n\r]+)/i);
+                if (nameMatch && nameMatch[1]) {
+                    bizName = nameMatch[1].trim();
+                } else {
+                    const fallbackMatch = text.match(/Nama\s+Perusahaan\/Usaha[\s\S]*?\n([^\n\r]+)/i);
+                    if (fallbackMatch && fallbackMatch[1]) {
+                        let tmp = fallbackMatch[1].trim();
+                        if (tmp.length > 2 && !tmp.toLowerCase().includes("alamat") && !tmp.toLowerCase().includes("kategori")) {
+                            bizName = tmp;
+                        }
+                    }
+                }
+                document.getElementById('nama-usaha-input').value = bizName;
+                updateBizTitle(bizName);
+
+                let is2026 = false;
+                if (text.match(/30\.\s*a\.\s*Total upah/i)) {
+                    is2026 = true;
+                } else {
+                    const tahunMatch = text.match(/25\.\s*Tahun.*?beroperasi[\s\S]*?\*\s*(\d{4})/i);
+                    if (tahunMatch && tahunMatch[1] === "2026") {
+                        is2026 = true;
+                    }
+                }
+
+                document.getElementById('is-year-2026').checked = is2026;
+                updateLabels2026(is2026);
+
+                if (is2026) {
+                    showToast("Format 1 Bulan Terakhir Terdeteksi (Otomatis x12).");
+                }
+
+                const extractRealValue = (prefix2025, prefix2026) => {
+                    const prefix = is2026 ? prefix2026 : prefix2025;
+                    const regex = new RegExp(`${prefix}[\\s\\S]*?\\*([\\s\\S]*?)(?=(?:2[6-9]|3[0-3])\\.\\s*[a-z]\\.|$)`, 'i');
+                    const blockMatch = text.match(regex);
+                    if (blockMatch && blockMatch[1]) {
+                        const numbers = blockMatch[1].match(/[\d.,]+/g);
+                        if (numbers) {
+                            const longestNum = numbers.reduce((a, b) => a.length > b.length ? a : b);
+                            let cleanNum = longestNum.replace(/[,.]/g, ''); 
+                            if (cleanNum === "1") return "0";
+                            return cleanNum;
+                        }
+                    }
+                    return ''; 
+                };
+
+                let val26a = extractRealValue("26\\.\\s*a\\.", "30\\.\\s*a\\.");
+                let val26b = extractRealValue("26\\.\\s*b\\.", "30\\.\\s*b\\.");
+                let val26c = extractRealValue("26\\.\\s*c\\.", "30\\.\\s*c\\.");
+                let val26d = extractRealValue("26\\.\\s*d\\.", "30\\.\\s*d\\.");
+                let val26e = extractRealValue("26\\.\\s*e\\.", "30\\.\\s*e\\.");
+                let val27a = extractRealValue("27\\.\\s*a\\.", "31\\.\\s*a\\.");
+                let val27b = extractRealValue("27\\.\\s*b\\.", "31\\.\\s*b\\.");
+
+                const kbliMatch = text.match(/13\.\s*h\.\s*Kategori\s*Lapangan\s*Usaha:[\s\S]*?([A-Z])/i);
+                let detectedKbli = '';
+                if (kbliMatch && kbliMatch[1] && /^[A-T]$/i.test(kbliMatch[1])) {
+                    detectedKbli = kbliMatch[1].toUpperCase();
+                } else if (val26c && parseInt(val26c) > 0) {
+                    detectedKbli = 'G'; 
+                }
+
+                if (detectedKbli) {
+                    document.getElementById('kbli-category').value = detectedKbli;
+                    onCategoryChange();
+                }
+
+                const setAndFormat = (id, val) => {
+                    const el = document.getElementById(id);
+                    el.value = val;
+                    formatAndCalc(el);
+                };
+
+                setAndFormat('val-26a', val26a);
+                setAndFormat('val-26b', val26b);
+                if (document.getElementById('kbli-category').value === 'G') {
+                    setAndFormat('val-26c', val26c);
+                }
+                setAndFormat('val-26d', val26d);
+                setAndFormat('val-26e', val26e);
+                setAndFormat('val-27a', val27a);
+                setAndFormat('val-27b', val27b);
+
+                document.getElementById('fasih-input').value = "";
+                showToast("Ekstraksi Berhasil!");
+                
+            } catch (err) {
+                console.error(err);
+                showToast("Gagal Parse. Pastikan format teks utuh.", true);
+            }
+        }
+
+        function formatAndCalc(input) {
+            let val = input.value.replace(/[^0-9]/g, '');
+            input.value = val ? parseInt(val, 10).toLocaleString('id-ID') : '';
+            calculateNTB();
+        }
+
+        function getNum(id) {
+            let val = document.getElementById(id).value.replace(/[^0-9]/g, '');
+            return val ? parseFloat(val) : 0;
+        }
+
+        function toRp(num) {
+            return Math.round(num).toLocaleString('id-ID');
+        }
+
+        function copyVal(id, btn) {
+            let val = document.getElementById(id).value || '0';
+            navigator.clipboard.writeText(val.replace(/\./g, ''));
+            let oriText = btn.innerHTML;
+            btn.innerHTML = 'Tersalin';
+            btn.style.color = 'var(--primary)';
+            setTimeout(() => { 
+                btn.innerHTML = oriText; 
+                btn.style.color = '';
+            }, 1000);
+        }
+
+        function copyMainFormToSheet() {
+            const m = document.getElementById('is-year-2026').checked ? 12 : 1;
+            
+            const ids = ['val-26a', 'val-26b', 'val-26c', 'val-26d', 'val-26e', 'tot-pengeluaran', 'val-27a', 'val-27b'];
+            
+            const arr = ids.map(id => {
+                let el = document.getElementById(id);
+                let rawNum = parseInt(el.value.replace(/[^0-9]/g, ''));
+                if (isNaN(rawNum)) return '0';
+                return Math.round(rawNum / m).toString();
+            });
+
+            const rowText = arr.join('\t');
+            
+            const tempEl = document.createElement('textarea');
+            tempEl.value = rowText;
+            tempEl.style.position = 'absolute';
+            tempEl.style.left = '-9999px';
+            document.body.appendChild(tempEl);
+            tempEl.select();
+            
+            try {
+                document.execCommand('copy');
+                const btn = document.getElementById('btn-copy-main');
+                const oriHtml = btn.innerHTML;
+                btn.innerHTML = `<svg class="icon" viewBox="0 0 24 24" style="stroke: white;"><polyline points="20 6 9 17 4 12"></polyline></svg> 8 Kolom Tersalin Absolut!`;
+                btn.style.background = "#10b981";
+                setTimeout(() => { 
+                    btn.innerHTML = oriHtml; 
+                    btn.style.background = "";
+                }, 2500);
+            } catch (err) {
+                console.error('Gagal menyalin execCommand: ', err);
+                showToast("Gagal menyalin ke clipboard.", true);
+            }
+            
+            document.body.removeChild(tempEl);
+        }
+
+        function resetForm() {
+            ['val-26a','val-26b','val-26c','val-26d','val-26e','val-27a','val-27b', 'nama-usaha-input'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('is-year-2026').checked = false;
+            updateLabels2026(false);
+            updateBizTitle('');
+            
+            ['26a','26b','26c','26d','26e','27a','27b'].forEach(id => {
+                document.getElementById('prev-wrap-' + id).classList.add('hidden');
+            });
+
+            calculateNTB();
+        }
+
+        function onCategoryChange() {
+            const cat = document.getElementById('kbli-category').value;
+            const info = document.getElementById('kbli-info');
+            const mainForms = document.getElementById('main-forms');
+            const mainAction = document.getElementById('main-action-area');
+            const inlineControl = document.getElementById('inline-control-panel');
+            const toggle = document.getElementById('is-year-2026');
+            
+            const group26c = document.getElementById('group-26c');
+            const input26c = document.getElementById('val-26c');
+
+            if (cat === 'G') {
+                group26c.style.display = 'block';
+            } else {
+                group26c.style.display = 'none';
+                input26c.value = ''; 
+            }
+            
+            if (cat && kbliLimits[cat]) {
+                const limit = kbliLimits[cat];
+                const minPct = (limit.min * 100).toFixed(0);
+                const maxPct = (limit.max * 100).toFixed(0);
+                
+                info.innerText = `Batas wajar Rasio BPS: ${minPct}% - ${maxPct}%.`;
+                document.getElementById('res-target').innerText = `~ ` + maxPct + '%';
+                
+                mainForms.classList.remove('disabled-area');
+                inlineControl.classList.remove('disabled-area');
+                mainAction.classList.remove('disabled-area');
+                toggle.disabled = false;
+                
+                if (document.getElementById('nama-usaha-input').value.trim() !== '') {
+                    document.getElementById('biz-title-container').classList.remove('hidden');
+                }
+            } else {
+                info.innerText = 'Pilih Kategori KBLI terlebih dahulu untuk memulai.';
+                document.getElementById('res-target').innerText = '-';
+                
+                mainForms.classList.add('disabled-area');
+                inlineControl.classList.add('disabled-area');
+                mainAction.classList.add('disabled-area');
+                toggle.disabled = true;
+                toggle.checked = false;
+                updateLabels2026(false);
+                document.getElementById('biz-title-container').classList.add('hidden');
+            }
+            calculateNTB();
+        }
+
+        function calculateNTB(isSliding = false) {
+            const cat = document.getElementById('kbli-category').value;
+            if (!cat) return;
+
+            const isTahunan = document.getElementById('is-year-2026').checked;
+            updateLabels2026(isTahunan);
+            const multiplier = isTahunan ? 12 : 1;
+
+            const v26a = getNum('val-26a');
+            const v26b = getNum('val-26b');
+            const v26c = cat === 'G' ? getNum('val-26c') : 0;
+            const v26d = getNum('val-26d');
+            const v26e = getNum('val-26e');
+            const v27a = getNum('val-27a');
+            const v27b = getNum('val-27b');
+
+            const totKeluar = v26a + v26b + v26c + v26d + v26e;
+            const totDapat = v27a + v27b;
+            const labaBersih = totDapat - totKeluar;
+            
+            document.getElementById('tot-pengeluaran').value = toRp(totKeluar);
+            document.getElementById('tot-pendapatan').value = toRp(totDapat);
+
+            const output = v27a - v26c;
+            const biayaAntara = v26b + v26d;
+            const ntb = output - biayaAntara; 
+            const rasio = output > 0 ? (ntb / output) : 0;
+            const rasioPct = rasio * 100;
+
+            document.getElementById('res-output').innerText = 'Rp ' + toRp(output);
+            document.getElementById('res-ntb').innerText = 'Rp ' + toRp(ntb);
+            document.getElementById('res-rasio').innerText = rasioPct.toFixed(2) + '%';
+            
+            let labaEl = document.getElementById('res-laba');
+            if (totKeluar === 0 && totDapat === 0) {
+                labaEl.innerText = '-';
+                labaEl.style.color = 'var(--text-muted)';
+            } else if (labaBersih < 0) {
+                labaEl.innerText = '- Rp ' + toRp(Math.abs(labaBersih));
+                labaEl.style.color = '#f87171'; 
+            } else {
+                labaEl.innerText = '+ Rp ' + toRp(labaBersih);
+                labaEl.style.color = '#34d399'; 
+            }
+
+            currentData = { cat, v26a, v26b, v26d, v26c, v26e, v27a, v27b, output, ntb, rasio, biayaAntara, multiplier };
+
+            const limits = kbliLimits[cat];
+            const badge = document.getElementById('badge-status');
+
+            if (totKeluar === 0 && totDapat === 0) {
+                badge.className = 'badge badge-default';
+                badge.innerHTML = 'Menunggu data...';
+                hideAllSliders();
+                return;
+            }
+
+            if (rasio >= limits.min && rasio <= limits.max) {
+                badge.className = 'badge badge-ideal';
+                badge.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Rasio Aman';
+                if (!isSliding) activateMagicSliders();
+            } else {
+                if (rasio < limits.min) {
+                    badge.className = 'badge badge-defisit';
+                    badge.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 19 19 12"></polyline></svg> Rasio Under';
+                } else {
+                    badge.className = 'badge badge-surplus';
+                    badge.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 5 5 12"></polyline></svg> Rasio Over';
+                }
+                hideAllSliders();
+            }
+        }
+
+        function applyInlineAdjustment() {
+            if (!currentData || currentData.output <= 0) {
+                showToast("Data belum lengkap atau Output tidak valid.", true);
+                return;
+            }
+            
+            preAdjustData = {
+                '26b': getNum('val-26b'),
+                '26c': getNum('val-26c'),
+                '26d': getNum('val-26d'),
+                '26e': getNum('val-26e'),
+                '27a': getNum('val-27a')
+            };
+
+            let { cat, v26a, v26b, v26c, v26d, v26e, v27a, v27b, ntb, multiplier } = currentData;
+            const limits = kbliLimits[cat];
+            
+            let targetRasio = limits.max - (0.005 + Math.random() * 0.015);
+            targetRasio = Math.max(limits.min + 0.001, Math.min(limits.max - 0.001, targetRasio));
+            
+            let inputTargetPct = parseFloat(document.getElementById('target-ntb-pct').value) || 40;
+            let targetNTB = ntb > 0 ? ntb * (1 + (inputTargetPct / 100)) : (10000000 * multiplier);
+            
+            let bufferLaba = 1000000 * multiplier;
+            let minimumNTBDibutuhkan = v26a + v26e - v27b + bufferLaba;
+            
+            if (targetNTB < minimumNTBDibutuhkan) {
+                targetNTB = minimumNTBDibutuhkan; 
+                showToast("Failsafe Aktif: NTB didorong agar Laba Bersih positif.");
+            } else {
+                showToast("Penyesuaian Berhasil Diterapkan.");
+            }
+            
+            let omzetBaru = v27a;
+            let v26cBaru = v26c;
+            let v26bBaru = v26b;
+            let v26dBaru = v26d;
+            let v26eBaru = v26e;
+
+            let targetOutput = targetNTB / targetRasio;
+            
+            if (cat === 'G') {
+                let microGrowth = 1.02 + (Math.random() * 0.06); 
+                v26cBaru = v26c > 0 ? v26c * microGrowth : targetOutput * 0.05; 
+            } else {
+                v26cBaru = 0;
+            }
+            
+            omzetBaru = targetOutput + v26cBaru;
+            
+            if (omzetBaru < v27a) {
+                omzetBaru = v27a;
+                targetOutput = omzetBaru - v26cBaru;
+                targetNTB = targetOutput * targetRasio;
+            }
+            
+            let biayaAntaraBaru = Math.max(0, targetOutput - targetNTB);
+            
+            if (cat === 'G' || cat === 'C') {
+                v26bBaru = v26b;
+                v26dBaru = Math.max(0, biayaAntaraBaru - v26bBaru); 
+            } else {
+                let totLama = v26b + v26d;
+                if (totLama > 0) {
+                    v26bBaru = biayaAntaraBaru * (v26b / totLama);
+                    v26dBaru = biayaAntaraBaru * (v26d / totLama);
+                } else {
+                    v26bBaru = 0;
+                    v26dBaru = biayaAntaraBaru;
+                }
+            }
+
+            if (v26e > 0) {
+                v26eBaru = v26e * (1.05 + Math.random() * 0.05);
+            }
+
+            const updateField = (idStr, newVal) => {
+                let el = document.getElementById('val-' + idStr);
+                let prevWrap = document.getElementById('prev-wrap-' + idStr);
+                let prevVal = document.getElementById('prev-val-' + idStr);
+                
+                el.value = toRp(newVal);
+                
+                if (Math.round(preAdjustData[idStr]) !== Math.round(newVal)) {
+                    prevWrap.classList.remove('hidden');
+                    prevVal.innerText = `Sebelumnya: Rp ${toRp(preAdjustData[idStr])}`;
+                } else {
+                    prevWrap.classList.add('hidden');
+                }
+            };
+
+            updateField('27a', omzetBaru);
+            updateField('26b', v26bBaru);
+            if (cat === 'G') updateField('26c', v26cBaru);
+            updateField('26d', v26dBaru);
+            if (v26e > 0) updateField('26e', v26eBaru);
+
+            calculateNTB();
+            
+            const mf = document.getElementById('main-forms');
+            mf.style.opacity = '0.3';
+            setTimeout(() => { mf.style.opacity = '1'; }, 200);
+        }
+
+        function revertField(idStr) {
+            if (preAdjustData[idStr] !== undefined) {
+                document.getElementById('val-' + idStr).value = toRp(preAdjustData[idStr]);
+                document.getElementById('prev-wrap-' + idStr).classList.add('hidden');
+                calculateNTB();
+            }
+        }
+
+        function hideAllSliders() {
+            document.getElementById('wrap-slider-26d').style.display = 'none';
+            document.getElementById('wrap-slider-27a').style.display = 'none';
+            document.getElementById('wrap-slider-26c').style.display = 'none';
+            lockedRasioMagic = null;
+        }
+
+        function activateMagicSliders() {
+            if (!currentData) return;
+            lockedRasioMagic = currentData.rasio; 
+            
+            document.getElementById('wrap-slider-26d').style.display = 'block';
+            document.getElementById('wrap-slider-27a').style.display = 'block';
+            
+            const v26d = currentData.v26d;
+            const s26d = document.getElementById('slider-26d');
+            s26d.min = 0;
+            s26d.max = v26d > 0 ? v26d * 3 : 500000000 * currentData.multiplier;
+            s26d.value = v26d;
+
+            const v27a = currentData.v27a;
+            const s27a = document.getElementById('slider-27a');
+            s27a.min = currentData.v26c; 
+            s27a.max = v27a > 0 ? v27a * 3 : 5000000000 * currentData.multiplier;
+            s27a.value = v27a;
+
+            if (currentData.cat === 'G') {
+                document.getElementById('wrap-slider-26c').style.display = 'block';
+                const s26c = document.getElementById('slider-26c');
+                s26c.min = 0;
+                s26c.max = currentData.v27a; 
+                s26c.value = currentData.v26c;
+            } else {
+                document.getElementById('wrap-slider-26c').style.display = 'none';
+            }
+        }
+
+        function onSlide26d(val) {
+            let v26dBaru = Number(val);
+            document.getElementById('val-26d').value = toRp(v26dBaru);
+            
+            let v26b = getNum('val-26b');
+            let v26c = getNum('val-26c');
+            
+            let biayaAntaraBaru = v26b + v26dBaru;
+            let targetOutput = biayaAntaraBaru / (1 - lockedRasioMagic);
+            let omzetBaru = targetOutput + v26c;
+            
+            document.getElementById('val-27a').value = toRp(omzetBaru);
+            document.getElementById('slider-27a').value = omzetBaru; 
+            
+            if(document.getElementById('kbli-category').value === 'G') {
+                document.getElementById('slider-26c').max = omzetBaru;
+            }
+            
+            calculateNTB(true); 
+        }
+
+        function onSlide27a(val) {
+            let omzetBaru = Number(val);
+            let v26c = getNum('val-26c');
+            
+            if(omzetBaru <= v26c) {
+                omzetBaru = v26c + 100000;
+                document.getElementById('slider-27a').value = omzetBaru;
+            }
+            
+            document.getElementById('val-27a').value = toRp(omzetBaru);
+            
+            if(document.getElementById('kbli-category').value === 'G') {
+                document.getElementById('slider-26c').max = omzetBaru;
+            }
+
+            let v26b = getNum('val-26b');
+            let targetOutput = omzetBaru - v26c;
+            let targetNTB = targetOutput * lockedRasioMagic;
+            
+            let biayaAntaraBaru = Math.max(0, targetOutput - targetNTB);
+            let v26dBaru = Math.max(0, biayaAntaraBaru - v26b);
+            
+            document.getElementById('val-26d').value = toRp(v26dBaru);
+            document.getElementById('slider-26d').value = v26dBaru;
+            
+            calculateNTB(true); 
+        }
+
+        function onSlide26c(val) {
+            let v26cBaru = Number(val);
+            document.getElementById('val-26c').value = toRp(v26cBaru);
+            
+            let v27a = getNum('val-27a');
+            let v26b = getNum('val-26b');
+            
+            let targetOutput = v27a - v26cBaru;
+            if(targetOutput <= 0) {
+                targetOutput = 100000;
+                v27a = v26cBaru + targetOutput;
+                document.getElementById('val-27a').value = toRp(v27a);
+                document.getElementById('slider-27a').value = v27a;
+                document.getElementById('slider-26c').max = v27a;
+            }
+            
+            let targetNTB = targetOutput * lockedRasioMagic;
+            let biayaAntaraBaru = targetOutput - targetNTB;
+            let v26dBaru = biayaAntaraBaru - v26b;
+            
+            if(v26dBaru < 0) {
+                v26dBaru = 0;
+                biayaAntaraBaru = v26b;
+                targetOutput = biayaAntaraBaru / (1 - lockedRasioMagic);
+                v27a = targetOutput + v26cBaru;
+                
+                document.getElementById('val-27a').value = toRp(v27a);
+                document.getElementById('slider-27a').value = v27a;
+                document.getElementById('slider-26c').max = v27a;
+            }
+            
+            document.getElementById('val-26d').value = toRp(v26dBaru);
+            document.getElementById('slider-26d').value = v26dBaru;
+            
+            calculateNTB(true);
+        }
+    </script>
+</body>
+</html>
